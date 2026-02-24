@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireUser, getUser } from "./helpers";
+import { getLimitsForPlan } from "./tierLimits";
 
 export const list = query({
   handler: async (ctx) => {
@@ -32,6 +33,23 @@ export const add = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
+
+    // Enforce strategy limit based on subscription tier
+    const sub = await ctx.db
+      .query("userSubscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    const { maxStrategies } = getLimitsForPlan(sub?.planId ?? "free");
+    if (maxStrategies !== -1) {
+      const count = (await ctx.db
+        .query("strategies")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect()).length;
+      if (count >= maxStrategies) {
+        throw new Error(`Strategy limit reached (${maxStrategies}). Upgrade your plan to add more strategies.`);
+      }
+    }
+
     return ctx.db.insert("strategies", { ...args, userId });
   },
 });

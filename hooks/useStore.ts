@@ -191,18 +191,22 @@ export function useProfile() {
   const setCapitalMutation = useMutation(api.profile.setCapital);
   const setDailyGoalMutation = useMutation(api.profile.setDailyGoal);
   const setCurrencyMutation = useMutation(api.profile.setCurrency);
+  const completeOnboardingMutation = useMutation(api.profile.completeOnboarding);
 
   const initialCapital: number = profileQuery?.initialCapital ?? 0;
   const dailyLossLimit: number | undefined = profileQuery?.dailyLossLimit;
   const dailyProfitTarget: number | undefined = profileQuery?.dailyProfitTarget;
   const goalMode: 'daily' | 'session' = profileQuery?.goalMode ?? 'daily';
   const currency: string = profileQuery?.currency ?? 'USD';
+  const onboardingComplete: boolean = profileQuery?.onboardingComplete ?? false;
   const isLoaded = profileQuery !== undefined;
 
   const setInitialCapital = (amount: number) => setCapitalMutation({ amount });
   const setDailyGoal = (args: { dailyLossLimit?: number; dailyProfitTarget?: number; goalMode?: 'daily' | 'session' }) =>
     setDailyGoalMutation(args);
   const setCurrency = (code: string) => setCurrencyMutation({ currency: code });
+  const completeOnboarding = (args: { initialCapital: number; currency: string; primaryMarket: string }) =>
+    completeOnboardingMutation(args);
 
-  return { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, currency, setCurrency, isLoaded };
+  return { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, currency, setCurrency, onboardingComplete, completeOnboarding, isLoaded };
 }

@@ -24,6 +24,9 @@ import {
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ShieldX, CheckCircle, TrendingUp,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import UsageCard from './UsageCard';
+import BrainMascot from './BrainMascot';
+import { useUsage } from '@/hooks/useUsage';
 
 interface DashboardProps {
   trades: Trade[];
@@ -46,6 +49,7 @@ type StatsWindow = '7d' | '30d' | '90d' | 'all';
 
 export default function Dashboard({ trades, strategies, reflections, triggers, onAddTrade, onNavigate, updateTrade, initialCapital = 0, onSetCapital, dailyLossLimit, dailyProfitTarget, goalMode = 'daily', onSetDailyGoal }: DashboardProps) {
   const { formatCurrency, currency } = useCurrency();
+  const usage = useUsage();
   const [showAllStats, setShowAllStats] = useState(false);
   const [mood, setMood] = useState<MoodState | null>(null);
   const [moodChecked, setMoodChecked] = useState(false);
@@ -626,6 +630,33 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
 
       {/* ── Overview Tab ── */}
       {subTab === 'overview' && (<>
+
+      {/* ── Welcome Empty State ── */}
+      {trades.length === 0 && (
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 sm:p-8 text-center space-y-4">
+          <div className="mx-auto"><BrainMascot size={48} glow /></div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--foreground)]">Welcome to PsychSync!</h2>
+            <p className="text-sm text-[var(--muted-foreground)] mt-1">Log your first trade to unlock insights and analytics.</p>
+          </div>
+          <ul className="text-xs text-[var(--muted-foreground)] space-y-1 text-left max-w-xs mx-auto">
+            <li>&bull; Track your P&L, win rate, and streaks</li>
+            <li>&bull; Get AI coaching based on your patterns</li>
+            <li>&bull; Build discipline with psychology tools</li>
+          </ul>
+          <button
+            onClick={onAddTrade}
+            className="px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+          >
+            Log First Trade
+          </button>
+        </div>
+      )}
+
+      {/* ── Usage Card (limited tiers) ── */}
+      {!usage.trades.isUnlimited && trades.length > 0 && (
+        <UsageCard trades={usage.trades} strategies={usage.strategies} tierName={usage.tierName} />
+      )}
 
       {/* ── Peak Trade Trophy ── */}
       {peakTrade && (

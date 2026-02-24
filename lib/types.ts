@@ -283,3 +283,42 @@ export type TabId =
   | 'whatif'
   | 'reports'
   | 'news';
+
+// ─── Admin back-office types ──────────────────────────────────────────
+export type AdminTabId = 'dashboard' | 'users' | 'revenue' | 'settings';
+
+export interface AdminSetting {
+  key: string;
+  value: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+export interface SubscriptionPlan {
+  planId: string;
+  name: string;
+  priceMonthly: number;
+  priceYearly: number;
+  stripePriceIdMonthly?: string;
+  stripePriceIdYearly?: string;
+  stripeProductId?: string;
+  features: string[];
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export type SubscriptionStatus =
+  | 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid' | 'incomplete' | 'free';
+
+export interface UserSubscription {
+  userId: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId?: string;
+  planId: string;
+  status: SubscriptionStatus;
+  interval?: 'month' | 'year';
+  currentPeriodEnd?: string;
+  cancelAtPeriodEnd?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

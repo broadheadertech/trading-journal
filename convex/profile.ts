@@ -13,6 +13,22 @@ export const get = query({
   },
 });
 
+export const getBanStatus = query({
+  handler: async (ctx) => {
+    const userId = await getUser(ctx);
+    if (!userId) return null;
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (!profile) return null;
+    return {
+      isBanned: profile.isBanned ?? false,
+      bannedReason: profile.bannedReason ?? null,
+    };
+  },
+});
+
 export const setCapital = mutation({
   args: { amount: v.number() },
   handler: async (ctx, { amount }) => {
@@ -45,6 +61,37 @@ export const setDailyGoal = mutation({
       await ctx.db.patch(existing._id, args);
     } else {
       await ctx.db.insert("profiles", { userId, initialCapital: 0, ...args });
+    }
+  },
+});
+
+export const completeOnboarding = mutation({
+  args: {
+    initialCapital: v.number(),
+    currency: v.string(),
+    primaryMarket: v.string(),
+  },
+  handler: async (ctx, { initialCapital, currency, primaryMarket }) => {
+    const userId = await requireUser(ctx);
+    const existing = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        initialCapital,
+        currency,
+        primaryMarket,
+        onboardingComplete: true,
+      });
+    } else {
+      await ctx.db.insert("profiles", {
+        userId,
+        initialCapital,
+        currency,
+        primaryMarket,
+        onboardingComplete: true,
+      });
     }
   },
 });

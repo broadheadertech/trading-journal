@@ -174,5 +174,65 @@ export default defineSchema({
     dailyProfitTarget: v.optional(v.number()),
     goalMode: v.optional(v.union(v.literal('daily'), v.literal('session'))),
     currency: v.optional(v.string()),
+    isBanned: v.optional(v.boolean()),
+    bannedAt: v.optional(v.string()),
+    bannedReason: v.optional(v.string()),
+    onboardingComplete: v.optional(v.boolean()),
+    primaryMarket: v.optional(v.string()),
   }).index("by_user", ["userId"]),
+
+  // ─── Admin back-office ─────────────────────────────────────────────
+  adminSettings: defineTable({
+    key: v.string(),
+    value: v.string(),
+    updatedAt: v.string(),
+    updatedBy: v.string(),
+  }).index("by_key", ["key"]),
+
+  subscriptionPlans: defineTable({
+    planId: v.string(),
+    name: v.string(),
+    priceMonthly: v.number(),
+    priceYearly: v.number(),
+    stripePriceIdMonthly: v.optional(v.string()),
+    stripePriceIdYearly: v.optional(v.string()),
+    stripeProductId: v.optional(v.string()),
+    features: v.array(v.string()),
+    isActive: v.boolean(),
+    sortOrder: v.number(),
+  }).index("by_active", ["isActive"]),
+
+  // ─── Admin activity events ──────────────────────────────────────────
+  adminEvents: defineTable({
+    type: v.string(),
+    userId: v.string(),
+    metadata: v.string(),
+    timestamp: v.string(),
+    adminId: v.optional(v.string()),
+  }).index("by_timestamp", ["timestamp"]),
+
+  // ─── User subscriptions ───────────────────────────────────────────
+  userSubscriptions: defineTable({
+    userId: v.string(),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.optional(v.string()),
+    planId: v.string(),
+    status: v.union(
+      v.literal("active"),
+      v.literal("trialing"),
+      v.literal("past_due"),
+      v.literal("canceled"),
+      v.literal("unpaid"),
+      v.literal("incomplete"),
+      v.literal("free"),
+    ),
+    interval: v.optional(v.union(v.literal("month"), v.literal("year"))),
+    currentPeriodEnd: v.optional(v.string()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_stripe_customer", ["stripeCustomerId"])
+    .index("by_status", ["status"]),
 });

@@ -7,6 +7,8 @@ import { Plus, Edit2, Trash2, X, ChevronDown, ChevronUp, AlertTriangle } from 'l
 import Modal from './ui/Modal';
 import { useToast } from './ui/Toast';
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import UsageBar from './UsageBar';
+import { useUsage } from '@/hooks/useUsage';
 
 interface PlaybookProps {
   strategies: Strategy[];
@@ -34,6 +36,7 @@ const emptyStrategy: {
 
 export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete }: PlaybookProps) {
   const { showToast } = useToast();
+  const usage = useUsage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyStrategy);
@@ -134,10 +137,25 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <h2 className="text-xl font-bold">Trading Playbook</h2>
           <p className="text-sm text-[var(--muted-foreground)]">Define your strategies, rules, and criteria</p>
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors">
+        <button
+          onClick={openAdd}
+          disabled={usage.strategies.isAtLimit}
+          title={usage.strategies.isAtLimit ? 'Strategy limit reached — upgrade to add more' : undefined}
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <Plus size={16} /> Add Strategy
         </button>
       </div>
+
+      {/* Usage indicator for limited tiers */}
+      {!usage.strategies.isUnlimited && (
+        <div className="max-w-xs">
+          <UsageBar label="Strategies" current={usage.strategies.current} max={usage.strategies.max} isUnlimited={false} />
+          {usage.strategies.isAtLimit && (
+            <p className="text-xs text-[var(--red)] mt-1">Strategy limit reached &mdash; upgrade to add more</p>
+          )}
+        </div>
+      )}
 
       {strategies.length === 0 ? (
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">

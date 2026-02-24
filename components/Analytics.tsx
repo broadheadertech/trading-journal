@@ -9,11 +9,12 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 import { format } from 'date-fns';
-import { Download } from 'lucide-react';
+import { Download, BarChart3 } from 'lucide-react';
 
 interface AnalyticsProps {
   trades: Trade[];
   initialCapital?: number;
+  onAddTrade?: () => void;
 }
 
 const tooltipStyle = {
@@ -35,7 +36,7 @@ function WinRateTooltip({ active, payload, label }: any) {
   );
 }
 
-export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps) {
+export default function Analytics({ trades, initialCapital = 0, onAddTrade }: AnalyticsProps) {
   const { formatCurrency } = useCurrency();
   const closedTrades = trades.filter(t => !t.isOpen && t.actualPnL !== null);
 
@@ -286,8 +287,29 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         ))}
       </div>
 
+      {/* ── Empty State ── */}
+      {closedTrades.length === 0 && (
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--muted)] flex items-center justify-center mx-auto">
+            <BarChart3 size={24} className="text-[var(--muted-foreground)]" />
+          </div>
+          <h3 className="text-base font-semibold text-[var(--foreground)]">Not enough data yet</h3>
+          <p className="text-sm text-[var(--muted-foreground)] max-w-xs mx-auto">
+            Complete at least one trade to unlock performance analytics and insights.
+          </p>
+          {onAddTrade && (
+            <button
+              onClick={onAddTrade}
+              className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+            >
+              Log a Trade
+            </button>
+          )}
+        </div>
+      )}
+
       {/* ── Overview Tab ── */}
-      {subTab === 'overview' && (<>
+      {subTab === 'overview' && closedTrades.length > 0 && (<>
 
       {/* ── Metrics Grid ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
@@ -381,7 +403,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Strategies Tab ── */}
-      {subTab === 'strategies' && (<>
+      {subTab === 'strategies' && closedTrades.length > 0 && (<>
 
       {/* ── Strategy Attribution Table (#6) ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
@@ -423,7 +445,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Coins Tab ── */}
-      {subTab === 'coins' && (<>
+      {subTab === 'coins' && closedTrades.length > 0 && (<>
 
       {/* ── P&L by Coin ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
@@ -530,7 +552,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Timing Tab ── */}
-      {subTab === 'timing' && (<>
+      {subTab === 'timing' && closedTrades.length > 0 && (<>
 
       {/* ── Time of Day + Day of Week (#6) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -578,7 +600,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Strategies Tab ── */}
-      {subTab === 'strategies' && (<>
+      {subTab === 'strategies' && closedTrades.length > 0 && (<>
 
       {/* ── Target vs Actual Return (#48) ── */}
       {rrAnalysis.rrCount > 0 && (
@@ -640,7 +662,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Edge Tab ── */}
-      {subTab === 'edge' && (<>
+      {subTab === 'edge' && closedTrades.length > 0 && (<>
 
       {/* ── Edge Profile + Confidence Calibration (C-33, C-29) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -809,7 +831,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </>)}
 
       {/* ── Risk Tab ── */}
-      {subTab === 'risk' && (<>
+      {subTab === 'risk' && closedTrades.length > 0 && (<>
 
       {/* ── Drawdown ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">

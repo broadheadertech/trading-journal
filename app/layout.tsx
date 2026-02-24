@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trade Journal - Trading Journal & Analytics",
-  description: "Track, analyze, and improve your trading performance",
+  title: "PsychSync - Trading Journal & Analytics",
+  description: "Unlock the psychology behind every trade. AI-powered journal for crypto, stocks, and forex.",
 };
 
 export default function RootLayout({

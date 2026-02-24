@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
+import type * as adminEvents from "../adminEvents.js";
 import type * as checklists from "../checklists.js";
 import type * as circuitBreakers from "../circuitBreakers.js";
 import type * as goals from "../goals.js";
@@ -19,6 +21,8 @@ import type * as reflections from "../reflections.js";
 import type * as ruleBreaks from "../ruleBreaks.js";
 import type * as seed from "../seed.js";
 import type * as strategies from "../strategies.js";
+import type * as subscriptions from "../subscriptions.js";
+import type * as tierLimits from "../tierLimits.js";
 import type * as trades from "../trades.js";
 import type * as triggers from "../triggers.js";
 import type * as weeklyReviews from "../weeklyReviews.js";
@@ -30,6 +34,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
+  adminEvents: typeof adminEvents;
   checklists: typeof checklists;
   circuitBreakers: typeof circuitBreakers;
   goals: typeof goals;
@@ -41,6 +47,8 @@ declare const fullApi: ApiFromModules<{
   ruleBreaks: typeof ruleBreaks;
   seed: typeof seed;
   strategies: typeof strategies;
+  subscriptions: typeof subscriptions;
+  tierLimits: typeof tierLimits;
   trades: typeof trades;
   triggers: typeof triggers;
   weeklyReviews: typeof weeklyReviews;

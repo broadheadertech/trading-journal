@@ -8,8 +8,13 @@ import {
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 import { useCurrency } from '@/hooks/useCurrency';
+import SubscriptionBadge from '@/components/SubscriptionBadge';
+import PricingPlans from '@/components/PricingPlans';
+import BrainMascot from '@/components/BrainMascot';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface NavigationProps {
   activeTab: TabId;
@@ -45,8 +50,14 @@ export default function Navigation({
   activeTab, onTabChange, isDark, onThemeToggle, onExport, onImport, onAddTrade, onReseedDemo, children,
 }: NavigationProps) {
   const { currency, setCurrency } = useCurrency();
+  const { user } = useUser();
+  const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
+  const { isFree, canAccessTab } = useSubscription();
+  const allowedTabs = tabs.filter(t => canAccessTab(t.id));
+  const allowedBottomTabs = bottomTabs.filter(id => canAccessTab(id));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [pricingOpen, setPricingOpen] = useState(false);
   const currencyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,11 +82,9 @@ export default function Navigation({
       <header className="shrink-0 z-40 border-b border-[var(--border)] bg-[var(--card)]">
         <div className="max-w-[1400px] mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-xs sm:text-sm">TJ</span>
-            </div>
+            <BrainMascot size={28} className="shrink-0" />
             <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Trade Journal
+              PsychSync
             </h1>
             <span className="hidden sm:inline text-[10px] font-medium text-[var(--muted-foreground)] opacity-60">{APP_VERSION}</span>
           </div>
@@ -127,9 +136,27 @@ export default function Navigation({
                 </div>
               )}
             </div>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                title="Admin Panel"
+              >
+                Admin
+              </Link>
+            )}
+            {isFree && (
+              <button
+                onClick={() => setPricingOpen(true)}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/20 transition-colors"
+              >
+                Upgrade
+              </button>
+            )}
             <button onClick={onThemeToggle} className="p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors" title="Toggle Theme">
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
+            <SubscriptionBadge />
             <UserButton afterSignOutUrl="/sign-in" />
             {/* Menu button — visible on mobile only (desktop uses bottom bar for all tabs) */}
             <button
@@ -145,7 +172,7 @@ export default function Navigation({
       {/* Desktop tab bar — below header */}
       <nav className="hidden md:block shrink-0 border-b border-[var(--border)] bg-[var(--card)]">
         <div className="max-w-[1400px] mx-auto flex items-stretch">
-          {tabs.map(tab => (
+          {allowedTabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
@@ -169,7 +196,7 @@ export default function Navigation({
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
           <div className="relative bg-[var(--card)] border-b border-[var(--border)] shadow-xl">
             <div className="p-3 grid grid-cols-4 gap-2">
-              {tabs.map(tab => (
+              {allowedTabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
@@ -218,10 +245,13 @@ export default function Navigation({
         {children}
       </div>
 
+      {/* Pricing modal */}
+      <PricingPlans open={pricingOpen} onClose={() => setPricingOpen(false)} />
+
       {/* Bottom navigation — mobile only */}
       <nav className="md:hidden shrink-0 z-40 border-t border-[var(--border)] bg-[var(--card)] safe-bottom">
         <div className="flex items-stretch">
-          {bottomTabs.map(tabId => {
+          {allowedBottomTabs.map(tabId => {
             const tab = tabs.find(t => t.id === tabId)!;
             return (
               <button
@@ -248,14 +278,14 @@ export default function Navigation({
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={cn(
               'flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 text-[10px] font-medium transition-colors min-h-[56px]',
-              !bottomTabs.includes(activeTab)
+              !allowedBottomTabs.includes(activeTab)
                 ? 'text-[var(--accent)]'
                 : 'text-[var(--muted-foreground)]'
             )}
           >
             <div className={cn(
               'p-1 rounded-lg transition-colors',
-              !bottomTabs.includes(activeTab) && 'bg-[var(--accent)]/15'
+              !allowedBottomTabs.includes(activeTab) && 'bg-[var(--accent)]/15'
             )}>
               <Menu size={20} />
             </div>

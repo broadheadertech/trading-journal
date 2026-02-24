@@ -11,6 +11,8 @@ import TradeForm from './TradeForm';
 import PostTradeReview, { PostTradeSnapshot } from './PostTradeReview';
 import TradeDetailView from './TradeDetailView';
 import { useToast } from './ui/Toast';
+import UsageBar from './UsageBar';
+import { useUsage } from '@/hooks/useUsage';
 
 interface TradesLogProps {
   trades: Trade[];
@@ -37,6 +39,7 @@ export default function TradesLog({
 }: TradesLogProps) {
   const { showToast } = useToast();
   const { formatCurrency, formatPrice } = useCurrency();
+  const usage = useUsage();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -219,11 +222,26 @@ export default function TradesLog({
           >
             <Filter size={16} /> Filters <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
           </button>
-          <button onClick={() => { setIsAddOpen(true); }} className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={() => { setIsAddOpen(true); }}
+            disabled={usage.trades.isAtLimit}
+            title={usage.trades.isAtLimit ? 'Trade limit reached — upgrade to add more' : undefined}
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Plus size={16} /> Add Trade
           </button>
         </div>
       </div>
+
+      {/* Usage indicator for limited tiers */}
+      {!usage.trades.isUnlimited && (
+        <div className="max-w-xs">
+          <UsageBar label="Trades" current={usage.trades.current} max={usage.trades.max} isUnlimited={false} />
+          {usage.trades.isAtLimit && (
+            <p className="text-xs text-[var(--red)] mt-1">Trade limit reached &mdash; upgrade to add more</p>
+          )}
+        </div>
+      )}
 
       {/* Sub-tabs */}
       <div className="flex gap-1.5 flex-wrap">
@@ -286,9 +304,21 @@ export default function TradesLog({
 
       {/* Trades */}
       {trades.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">
-          <p className="text-[var(--muted-foreground)] mb-3">No trades logged yet</p>
-          <button onClick={() => { setIsAddOpen(true); }} className="text-[var(--accent)] hover:underline text-sm">Log your first trade</button>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--muted)] flex items-center justify-center mx-auto">
+            <Plus size={24} className="text-[var(--muted-foreground)]" />
+          </div>
+          <h3 className="text-base font-semibold text-[var(--foreground)]">No trades yet</h3>
+          <p className="text-sm text-[var(--muted-foreground)] max-w-xs mx-auto">
+            Start logging trades to track your performance, build discipline, and unlock analytics.
+          </p>
+          <button
+            onClick={() => { setIsAddOpen(true); }}
+            disabled={usage.trades.isAtLimit}
+            className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            Log Your First Trade
+          </button>
         </div>
       ) : patternStrip ? (
         /* C-30: Pattern Strip View */
