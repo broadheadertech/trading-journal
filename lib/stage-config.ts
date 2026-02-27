@@ -9,28 +9,26 @@ export interface StageColorPalette {
 }
 
 export const STAGE_ORDER: Stage[] = [
-  'baby', 'toddler', 'kid', 'teen', 'adult', 'master', 'guru',
+  'beginner', 'intern', 'advance', 'professional', 'advance-professional', 'guru',
 ];
 
 /** Client-side stage thresholds — mirrors convex/lib/neuroScore.ts for display only. */
 export const STAGE_THRESHOLDS: { stage: Stage; min: number }[] = [
-  { stage: 'guru', min: 850 },
-  { stage: 'master', min: 700 },
-  { stage: 'adult', min: 500 },
-  { stage: 'teen', min: 350 },
-  { stage: 'kid', min: 200 },
-  { stage: 'toddler', min: 100 },
-  { stage: 'baby', min: 0 },
+  { stage: 'guru', min: 800 },
+  { stage: 'advance-professional', min: 600 },
+  { stage: 'professional', min: 400 },
+  { stage: 'advance', min: 200 },
+  { stage: 'intern', min: 100 },
+  { stage: 'beginner', min: 0 },
 ];
 
 export const STAGE_COLORS: Record<Stage, StageColorPalette> = {
-  baby:    { accent: 'hsl(340, 60%, 70%)', accentGlow: 'hsl(340 60% 70% / 0.15)', bgTint: 'hsl(340, 5%, 9%)' },
-  toddler: { accent: 'hsl(200, 70%, 65%)', accentGlow: 'hsl(200 70% 65% / 0.15)', bgTint: 'hsl(200, 5%, 9%)' },
-  kid:     { accent: 'hsl(142, 60%, 55%)', accentGlow: 'hsl(142 60% 55% / 0.15)', bgTint: 'hsl(142, 5%, 9%)' },
-  teen:    { accent: 'hsl(270, 65%, 60%)', accentGlow: 'hsl(270 65% 60% / 0.15)', bgTint: 'hsl(270, 5%, 9%)' },
-  adult:   { accent: 'hsl(45, 80%, 55%)',  accentGlow: 'hsl(45 80% 55% / 0.15)',  bgTint: 'hsl(45, 5%, 9%)' },
-  master:  { accent: 'hsl(220, 70%, 55%)', accentGlow: 'hsl(220 70% 55% / 0.15)', bgTint: 'hsl(220, 5%, 9%)' },
-  guru:    { accent: 'hsl(45, 50%, 85%)',  accentGlow: 'hsl(45 50% 85% / 0.20)',  bgTint: 'hsl(45, 8%, 10%)' },
+  'beginner':              { accent: 'hsl(340, 60%, 70%)', accentGlow: 'hsl(340 60% 70% / 0.15)', bgTint: 'hsl(340, 5%, 9%)' },
+  'intern':                { accent: 'hsl(200, 70%, 65%)', accentGlow: 'hsl(200 70% 65% / 0.15)', bgTint: 'hsl(200, 5%, 9%)' },
+  'advance':               { accent: 'hsl(142, 60%, 55%)', accentGlow: 'hsl(142 60% 55% / 0.15)', bgTint: 'hsl(142, 5%, 9%)' },
+  'professional':          { accent: 'hsl(270, 65%, 60%)', accentGlow: 'hsl(270 65% 60% / 0.15)', bgTint: 'hsl(270, 5%, 9%)' },
+  'advance-professional':  { accent: 'hsl(45, 80%, 55%)',  accentGlow: 'hsl(45 80% 55% / 0.15)',  bgTint: 'hsl(45, 5%, 9%)' },
+  'guru':                  { accent: 'hsl(45, 50%, 85%)',  accentGlow: 'hsl(45 50% 85% / 0.20)',  bgTint: 'hsl(45, 8%, 10%)' },
 };
 
 export function getStageColors(stage: Stage): StageColorPalette {
@@ -45,15 +43,14 @@ export interface StagePattern {
 }
 
 /**
- * 7 visually distinct SVG patterns — each distinguishable in grayscale.
- * Pattern SVG elements are rendered by getStagePatternDef() below.
+ * 6 visually distinct SVG patterns — each distinguishable in grayscale.
+ * Pattern SVG elements are rendered by SingleStagePatternDef() in PatternDefs.tsx.
  */
 export const STAGE_PATTERNS: Record<Stage, StagePattern> = {
-  baby:    { id: 'stage-pattern-baby',    label: 'Horizontal lines' },
-  toddler: { id: 'stage-pattern-toddler', label: 'Crosshatch' },
-  kid:     { id: 'stage-pattern-kid',     label: 'Polka dots' },
-  teen:    { id: 'stage-pattern-teen',     label: 'Wavy lines' },
-  adult:   { id: 'stage-pattern-adult',   label: 'Vertical lines' },
-  master:  { id: 'stage-pattern-master',  label: 'Diagonal lines' },
-  guru:    { id: 'stage-pattern-guru',    label: 'Diamonds' },
+  'beginner':              { id: 'stage-pattern-beginner',              label: 'Horizontal lines' },
+  'intern':                { id: 'stage-pattern-intern',                label: 'Crosshatch' },
+  'advance':               { id: 'stage-pattern-advance',              label: 'Polka dots' },
+  'professional':          { id: 'stage-pattern-professional',          label: 'Wavy lines' },
+  'advance-professional':  { id: 'stage-pattern-advance-professional',  label: 'Vertical lines' },
+  'guru':                  { id: 'stage-pattern-guru',                  label: 'Diamonds' },
 };

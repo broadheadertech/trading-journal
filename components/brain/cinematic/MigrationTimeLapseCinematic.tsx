@@ -19,7 +19,15 @@ interface Props {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function stageLabel(s: Stage): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+  const labels: Record<Stage, string> = {
+    'beginner': 'Beginner',
+    'intern': 'Intern',
+    'advance': 'Advance',
+    'professional': 'Professional',
+    'advance-professional': 'Advance Professional',
+    'guru': 'Guru',
+  };
+  return labels[s] ?? s;
 }
 
 // ─── MigrationTimeLapseCinematic ────────────────────────────────────────────
@@ -38,9 +46,9 @@ export default function MigrationTimeLapseCinematic({
   const frozenHistory = useRef(stageHistory);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  const finalStage = frozenHistory.current[frozenHistory.current.length - 1]?.stage ?? 'baby';
+  const finalStage = frozenHistory.current[frozenHistory.current.length - 1]?.stage ?? 'beginner';
   const finalColors = STAGE_COLORS[finalStage];
-  const currentStage = frozenHistory.current[currentStageIndex]?.stage ?? 'baby';
+  const currentStage = frozenHistory.current[currentStageIndex]?.stage ?? 'beginner';
 
   // ── intro → sweep after 500ms ─────────────────────────────────────────────
   useEffect(() => {

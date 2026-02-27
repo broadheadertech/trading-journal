@@ -5,12 +5,11 @@ const ruleCompliance = v.union(v.literal("yes"), v.literal("partial"), v.literal
 
 // ─── Brain / Neuro Score shared validators ───────────────────────────
 const stage = v.union(
-  v.literal("baby"),
-  v.literal("toddler"),
-  v.literal("kid"),
-  v.literal("teen"),
-  v.literal("adult"),
-  v.literal("master"),
+  v.literal("beginner"),
+  v.literal("intern"),
+  v.literal("advance"),
+  v.literal("professional"),
+  v.literal("advance-professional"),
   v.literal("guru")
 );
 

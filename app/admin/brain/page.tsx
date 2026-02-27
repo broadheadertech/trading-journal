@@ -7,18 +7,17 @@ import { STAGE_COLORS } from '@/lib/stage-config';
 
 // M2 fix: typed as Record<Stage, string> so TypeScript enforces exhaustiveness
 const STAGE_LABELS: Record<Stage, string> = {
-  baby: 'Baby',
-  toddler: 'Toddler',
-  kid: 'Kid',
-  teen: 'Teen',
-  adult: 'Adult',
-  master: 'Master',
-  guru: 'Guru',
+  'beginner': 'Beginner',
+  'intern': 'Intern',
+  'advance': 'Advance',
+  'professional': 'Professional',
+  'advance-professional': 'Adv Professional',
+  'guru': 'Guru',
 };
 
-// Free-tier cap is 'kid' — stages above this can be capped
-const FREE_TIER_CAP: Stage = 'kid';
-const STAGES_ABOVE_CAP: Stage[] = ['teen', 'adult', 'master', 'guru'];
+// Free-tier cap is 'advance' — stages above this can be capped
+const FREE_TIER_CAP: Stage = 'advance';
+const STAGES_ABOVE_CAP: Stage[] = ['professional', 'advance-professional', 'guru'];
 
 function PctBar({ pct, accent }: { pct: number; accent: string }) {
   return (

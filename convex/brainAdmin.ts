@@ -25,7 +25,7 @@ async function requireAdmin(ctx: AuthCtx): Promise<string> {
 }
 
 // Fixed stage order — must match STAGE_ORDER in convex/brain.ts
-const STAGES = ["baby", "toddler", "kid", "teen", "adult", "master", "guru"] as const;
+const STAGES = ["beginner", "intern", "advance", "professional", "advance-professional", "guru"] as const;
 type Stage = (typeof STAGES)[number];
 
 // ─── Brain stage distribution (FR38) ─────────────────────────────────────────
@@ -47,10 +47,10 @@ export const getBrainStageDistribution = query({
     const total = allStates.length;
 
     const currentCounts: Record<Stage, number> = {
-      baby: 0, toddler: 0, kid: 0, teen: 0, adult: 0, master: 0, guru: 0,
+      'beginner': 0, 'intern': 0, 'advance': 0, 'professional': 0, 'advance-professional': 0, 'guru': 0,
     };
     const effectiveCounts: Record<Stage, number> = {
-      baby: 0, toddler: 0, kid: 0, teen: 0, adult: 0, master: 0, guru: 0,
+      'beginner': 0, 'intern': 0, 'advance': 0, 'professional': 0, 'advance-professional': 0, 'guru': 0,
     };
 
     for (const s of allStates) {

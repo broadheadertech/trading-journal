@@ -15,7 +15,7 @@ import type { Stage } from '@/lib/types';
  */
 export function StageThemeProvider({ children }: { children: React.ReactNode }) {
   const { brainState } = useBrainState();
-  const stage: Stage = brainState?.currentStage ?? 'baby';
+  const stage: Stage = brainState?.currentStage ?? 'beginner';
   const colors = getStageColors(stage);
 
   // Score-decline dimming (Story 3.4)

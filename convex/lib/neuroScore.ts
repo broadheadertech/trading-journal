@@ -7,16 +7,15 @@
 const BASE_POINTS = 20;
 
 // ─── Stage Thresholds (FR10) ─────────────────────────────────────────
-type Stage = "baby" | "toddler" | "kid" | "teen" | "adult" | "master" | "guru";
+type Stage = "beginner" | "intern" | "advance" | "professional" | "advance-professional" | "guru";
 
 export const STAGE_THRESHOLDS: { stage: Stage; min: number }[] = [
-  { stage: "guru", min: 850 },
-  { stage: "master", min: 700 },
-  { stage: "adult", min: 500 },
-  { stage: "teen", min: 350 },
-  { stage: "kid", min: 200 },
-  { stage: "toddler", min: 100 },
-  { stage: "baby", min: 0 },
+  { stage: "guru", min: 800 },
+  { stage: "advance-professional", min: 600 },
+  { stage: "professional", min: 400 },
+  { stage: "advance", min: 200 },
+  { stage: "intern", min: 100 },
+  { stage: "beginner", min: 0 },
 ];
 
 /**
@@ -27,7 +26,7 @@ export function getStageForScore(score: number): Stage {
   for (const { stage, min } of STAGE_THRESHOLDS) {
     if (score >= min) return stage;
   }
-  return "baby";
+  return "beginner";
 }
 
 interface RuleComplianceItem {
