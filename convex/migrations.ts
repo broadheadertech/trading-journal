@@ -2,6 +2,7 @@ import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireUser } from "./helpers";
 import { migrateTrade } from "../lib/migrate";
+import { api } from "./_generated/api";
 
 export const importFromLocalStorage = mutation({
   args: { json: v.string() },
@@ -21,6 +22,8 @@ export const importFromLocalStorage = mutation({
     } catch {
       throw new Error("Invalid JSON");
     }
+
+    const tradeCount = (data.trades ?? []).length;
 
     for (const raw of (data.trades ?? [])) {
       const trade = migrateTrade(raw);
@@ -53,5 +56,12 @@ export const importFromLocalStorage = mutation({
     for (const event of (data.breakerEvents ?? [])) {
       await ctx.db.insert("circuitBreakerEvents", { ...event, userId });
     }
+
+    // Story 6.3 — schedule historical score backfill after import (FR33)
+    if (tradeCount > 0) {
+      await ctx.scheduler.runAfter(0, api.brain.backfillBrainScores, { targetUserId: userId });
+    }
+
+    return { imported: tradeCount, backfillScheduled: tradeCount > 0 };
   },
 });

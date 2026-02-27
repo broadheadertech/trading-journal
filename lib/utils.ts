@@ -1,12 +1,17 @@
-import { Trade, Verdict, RuleCompliance, EmotionState, JournalEntry, DailyReflection } from './types';
+import { Trade, Verdict, RuleCompliance, EmotionState, JournalEntry, DailyReflection, Direction } from './types';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 
 export function calculatePnL(
   entryPrice: number,
   exitPrice: number,
-  capital: number
+  capital: number,
+  direction: Direction = 'long',
+  leverage: number = 1
 ): { pnlPercent: number; pnlDollar: number } {
-  const pnlPercent = ((exitPrice - entryPrice) / entryPrice) * 100;
+  const rawPercent = direction === 'short'
+    ? ((entryPrice - exitPrice) / entryPrice) * 100
+    : ((exitPrice - entryPrice) / entryPrice) * 100;
+  const pnlPercent = rawPercent * (leverage > 0 ? leverage : 1);
   const pnlDollar = (pnlPercent / 100) * capital;
   return { pnlPercent: Math.round(pnlPercent * 100) / 100, pnlDollar: Math.round(pnlDollar * 100) / 100 };
 }
@@ -18,7 +23,6 @@ export function generateVerdict(trade: Trade): Verdict {
 
   if (followedRules && isProfit) return 'Well Executed';
   if (followedRules && !isProfit) return 'Good Discipline, Bad Luck';
-  if (!followedRules && isProfit) return 'Lucky Win';
   return 'Poorly Executed';
 }
 
@@ -26,7 +30,6 @@ export function getVerdictColor(verdict: Verdict | null): string {
   switch (verdict) {
     case 'Well Executed': return 'bg-green-500/20 text-green-400 border-green-500/30';
     case 'Good Discipline, Bad Luck': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-    case 'Lucky Win': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
     case 'Poorly Executed': return 'bg-red-500/20 text-red-400 border-red-500/30';
     default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   }
@@ -96,6 +99,20 @@ export function getWinRate(trades: Trade[]): number {
   if (closed.length === 0) return 0;
   const wins = closed.filter(t => (t.actualPnLPercent ?? 0) > 0).length;
   return Math.round((wins / closed.length) * 100);
+}
+
+export function getDirectionWinRates(trades: Trade[]): {
+  long: { winRate: number; total: number };
+  short: { winRate: number; total: number };
+} {
+  const closed = trades.filter(t => !t.isOpen && t.actualPnLPercent !== null);
+  const longs = closed.filter(t => (t.direction ?? 'long') === 'long');
+  const shorts = closed.filter(t => (t.direction ?? 'long') === 'short');
+  const wr = (pool: Trade[]) => pool.length === 0 ? 0 : Math.round((pool.filter(t => (t.actualPnLPercent ?? 0) > 0).length / pool.length) * 100);
+  return {
+    long: { winRate: wr(longs), total: longs.length },
+    short: { winRate: wr(shorts), total: shorts.length },
+  };
 }
 
 export function getTotalPnL(trades: Trade[]): number {
@@ -183,13 +200,11 @@ export function getVerdictDistribution(
   const VERDICT_COLORS: Record<string, string> = {
     'Well Executed': '#2dd4bf',
     'Good Discipline, Bad Luck': '#eab308',
-    'Lucky Win': '#6366f1',
     'Poorly Executed': '#fb923c',
   };
   const counts: Record<string, number> = {
     'Well Executed': 0,
     'Good Discipline, Bad Luck': 0,
-    'Lucky Win': 0,
     'Poorly Executed': 0,
   };
   trades
@@ -366,13 +381,6 @@ export function getCoolingOffPairs(trades: Trade[]): Trade[] {
     }
   }
   return violations;
-}
-
-// C-31: Profitable trade where 2+ rules have compliance 'no'
-export function isLuckyWin(trade: Trade): boolean {
-  if (trade.isOpen || (trade.actualPnL ?? 0) <= 0) return false;
-  const broke = trade.ruleChecklist.filter(r => r.compliance === 'no').length;
-  return broke >= 2;
 }
 
 // A-9: Last N closed trades with the same coin
@@ -793,7 +801,7 @@ export function getWarmOpeningMessage(trades: Trade[]): string {
   const totalPnL = lastDayTrades.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
   if (allFollowed && totalPnL > 0) return 'Good session yesterday. You followed every rule and came out ahead.';
   if (allFollowed && totalPnL <= 0) return 'Yesterday was disciplined. You followed your rules — the result was tough, but the process was right.';
-  if (!allFollowed && totalPnL > 0) return 'Yesterday was profitable. Watch the rules — a lucky win can mask a pattern worth reviewing.';
+  if (!allFollowed && totalPnL > 0) return 'Yesterday was profitable, but some rules were broken — profits can mask patterns worth reviewing.';
   return 'Yesterday was tough. Today is a fresh slate.';
 }
 

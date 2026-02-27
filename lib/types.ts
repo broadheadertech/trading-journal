@@ -25,14 +25,14 @@ export type TradeTag =
 export type Verdict =
   | 'Well Executed'
   | 'Poorly Executed'
-  | 'Good Discipline, Bad Luck'
-  | 'Lucky Win';
+  | 'Good Discipline, Bad Luck';
 
 export type RuleCompliance = 'yes' | 'partial' | 'no';
 
 export type MarketTrend = 'bullish' | 'bearish' | 'sideways';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'extreme';
 export type MarketType = 'crypto' | 'stocks' | 'forex';
+export type Direction = 'long' | 'short';
 export type StrategyType =
   | 'scalping'
   | 'swing'
@@ -82,6 +82,10 @@ export interface Trade {
   stopLoss: number | null;
   // Market type — crypto, stocks, or forex
   marketType?: MarketType;
+  // Trade direction — long or short
+  direction?: Direction;
+  // Leverage multiplier (null = no leverage / spot)
+  leverage?: number | null;
   isOpen: boolean;
   createdAt: string;
 }
@@ -271,6 +275,94 @@ export interface MonthlyGoal {
   createdAt: string;
 }
 
+// ─── Brain / Neuro Score types ──────────────────────────────────────
+export type Stage = 'baby' | 'toddler' | 'kid' | 'teen' | 'adult' | 'master' | 'guru';
+
+export type ScoreEventType = 'trade_scored' | 'decay_applied' | 'migration_replay' | 'admin_adjustment' | 'subscription_upgrade_unlock';
+
+export interface StageHistoryEntry {
+  stage: Stage;
+  reachedAt: number;
+  leftAt?: number;
+  reason?: string;
+}
+
+export interface DailySnapshot {
+  date: string;
+  score: number;
+  tradesLogged: number;
+  decayApplied: boolean;
+  streakActive: boolean;
+  vacationActive: boolean;
+}
+
+export interface BrainState {
+  _id?: string;
+  userId: string;
+  currentScore: number;
+  currentStage: Stage;
+  effectiveStage?: Stage; // Story 7.1/7.2 — tier-capped display stage (FR34); absent = same as currentStage
+  previousScore: number;
+  streakDays: number;
+  streakMultiplier: number;
+  lastTradeDate: number;
+  lastScoreUpdateDate: number;
+  isVacationMode: boolean;
+  vacationEnd: number | null;
+  vacationStartedAt?: number | null; // Story 5.4 — when vacation was activated
+  hasRegressed: boolean;
+  regressionBufferStart: number | null;
+  regressionBufferDays: number;
+  recoveryLockUntil: number | null;
+  stageHistory: StageHistoryEntry[];
+  latestCoachingMessage?: CoachingMessage | null;
+  updatedAt: number;
+  createdAt: number;
+}
+
+export type CoachingCategory =
+  | 'reinforcement'
+  | 'correction'
+  | 'encouragement'
+  | 'streak'
+  | 'recovery'
+  | 'anti_gaming'
+  | 'transition';
+
+export interface CoachingMessage {
+  message: string;
+  category: CoachingCategory;
+  disclaimer: string;
+  timestamp: number;
+}
+
+export interface ScoreTradeResult {
+  success: boolean;
+  delta: number;
+  previousScore: number;
+  newScore: number;
+  complianceScore: number;
+  previousStage: Stage;
+  newStage: Stage;
+  stageChanged: boolean;
+}
+
+export interface ScoreEvent {
+  _id?: string;
+  userId: string;
+  timestamp: number;
+  eventType: ScoreEventType;
+  delta: number;
+  previousScore: number;
+  newScore: number;
+  reason: string;
+  tradeId?: string;
+  ruleCompliance?: { rule: string; compliance: RuleCompliance }[];
+  antiGamingFlags: string[];
+  metadata: Record<string, unknown>;
+  createdAt: number;
+}
+
 export type TabId =
   | 'dashboard'
   | 'playbook'
@@ -282,7 +374,8 @@ export type TabId =
   | 'goals'
   | 'whatif'
   | 'reports'
-  | 'news';
+  | 'news'
+  | 'brain';
 
 // ─── Admin back-office types ──────────────────────────────────────────
 export type AdminTabId = 'dashboard' | 'users' | 'revenue' | 'settings';

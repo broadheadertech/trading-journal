@@ -23,5 +23,7 @@ export function migrateTrade(t: any): Trade {
     exitEmotion: t.exitEmotion ?? null,
     screenshots: t.screenshots ?? [],
     marketType: t.marketType ?? 'crypto',
+    direction: t.direction ?? 'long',
+    leverage: t.leverage ?? null,
   };
 }

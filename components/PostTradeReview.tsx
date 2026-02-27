@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Trade, EmotionState, RuleCompliance } from '@/lib/types';
+import { Trade, EmotionState, RuleCompliance, Direction } from '@/lib/types';
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { TrendingUp, TrendingDown, SkipForward } from 'lucide-react';
@@ -15,6 +15,8 @@ export interface PostTradeSnapshot {
   confidence: number;
   stopLoss: number | null;
   ruleChecklist: { rule: string; compliance: RuleCompliance }[];
+  direction?: Direction;
+  leverage?: number | null;
 }
 
 interface Props {
@@ -30,7 +32,12 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
 
   const pnlPercent = useMemo(() => {
     if (!snapshot.exitPrice || !snapshot.entryPrice) return null;
-    return ((snapshot.exitPrice - snapshot.entryPrice) / snapshot.entryPrice) * 100;
+    const dir = snapshot.direction ?? 'long';
+    const lev = snapshot.leverage && snapshot.leverage > 0 ? snapshot.leverage : 1;
+    const raw = dir === 'short'
+      ? ((snapshot.entryPrice - snapshot.exitPrice) / snapshot.entryPrice) * 100
+      : ((snapshot.exitPrice - snapshot.entryPrice) / snapshot.entryPrice) * 100;
+    return raw * lev;
   }, [snapshot]);
 
   const isWin = pnlPercent !== null && pnlPercent > 0;
@@ -40,7 +47,11 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
     if (!snapshot.exitPrice || !snapshot.entryPrice || !snapshot.stopLoss) return null;
     const risk = Math.abs(snapshot.entryPrice - snapshot.stopLoss);
     if (risk === 0) return null;
-    return (snapshot.exitPrice - snapshot.entryPrice) / risk;
+    const dir = snapshot.direction ?? 'long';
+    const move = dir === 'short'
+      ? snapshot.entryPrice - snapshot.exitPrice
+      : snapshot.exitPrice - snapshot.entryPrice;
+    return move / risk;
   }, [snapshot]);
 
   const rulesYes = snapshot.ruleChecklist.filter(r => r.compliance === 'yes').length;
@@ -69,8 +80,6 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
     return same.reduce((s, t) => s + (t.actualPnLPercent ?? 0), 0) / same.length;
   }, [allTrades, snapshot.coin]);
 
-  const isLuckyWin = isWin && rulesNo >= 2;
-
   const vsAverage = useMemo(() => {
     const stratTrades = allTrades.filter(t => !t.isOpen && t.strategy === snapshot.strategy && t.capital > 0);
     const avgCapital = stratTrades.length >= 3 ? stratTrades.reduce((s, t) => s + t.capital, 0) / stratTrades.length : null;
@@ -82,7 +91,7 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
     return { avgCapital, posRatio, avgConf, confDelta };
   }, [allTrades, snapshot.strategy, snapshot.capital, snapshot.confidence]);
 
-  const hasInsights = snapshot.ruleChecklist.length > 0 || rMultiple !== null || streak !== null || coinAvg !== null || isLuckyWin || vsAverage !== null;
+  const hasInsights = snapshot.ruleChecklist.length > 0 || rMultiple !== null || streak !== null || coinAvg !== null || vsAverage !== null;
 
   return (
     <div className="space-y-5">
@@ -167,12 +176,6 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
                   {pnlPercent > coinAvg ? 'above' : 'below'} your average
                 </span>
               </span>
-            </div>
-          )}
-
-          {isLuckyWin && (
-            <div className="text-sm text-amber-400">
-              🍀 Lucky win — profitable despite {rulesNo} rule break{rulesNo > 1 ? 's' : ''}
             </div>
           )}
 

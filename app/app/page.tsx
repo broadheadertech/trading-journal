@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -18,6 +18,9 @@ import { useTriggers, useReflections, useWeeklyReviews, useRuleBreakLogs } from 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { ToastProvider, useToast } from '@/components/ui/Toast';
 import { CurrencyProvider } from '@/hooks/useCurrency';
+import { StageThemeProvider } from '@/components/brain/providers/StageThemeProvider';
+import { ReducedMotionProvider } from '@/components/brain/ReducedMotionProvider';
+import { BrainMiniWidget } from '@/components/brain/BrainMiniWidget';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 import Playbook from '@/components/Playbook';
@@ -30,6 +33,10 @@ import WhatIfScenarios from '@/components/WhatIfScenarios';
 import Reports from '@/components/Reports';
 import Goals from '@/components/Goals';
 import News from '@/components/News';
+import { Loader2 } from 'lucide-react';
+
+const LazyBrainTab = lazy(() => import('@/components/brain/BrainTab'));
+const LazyTextOnlyBrainTab = lazy(() => import('@/components/brain/TextOnlyBrainTab'));
 
 type MigrationState = 'checking' | 'show' | 'migrating' | 'done';
 
@@ -48,6 +55,8 @@ function AppContent() {
   const banStatus = useQuery(api.profile.getBanStatus);
   const reseedMutation = useMutation(api.seed.forceReseed);
   const importMutation = useMutation(api.migrations.importFromLocalStorage);
+  const ensureFreeSub = useMutation(api.subscriptions.ensureFreeSubscription);
+  const initBrainState = useMutation(api.brain.initializeBrainState);
 
   const { trades, addTrade, updateTrade, deleteTrade, isLoaded: tradesLoaded } = useTrades();
   const { strategies, addStrategy, updateStrategy, deleteStrategy, isLoaded: strategiesLoaded } = useStrategies();
@@ -59,11 +68,17 @@ function AppContent() {
   const { reviews, addReview, isLoaded: reviewsLoaded } = useWeeklyReviews();
   const { addRuleBreak, isLoaded: ruleBreaksLoaded } = useRuleBreakLogs();
   const { goals, addGoal, updateGoal, isLoaded: goalsLoaded } = useGoals();
-  const { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, onboardingComplete, completeOnboarding } = useProfile();
+  const { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, onboardingComplete, completeOnboarding, textOnlyBrain } = useProfile();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Ensure every authenticated user has a subscription record
+  useEffect(() => {
+    if (user) ensureFreeSub().catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Seed / migration logic — runs once after trades are loaded
   useEffect(() => {
@@ -188,6 +203,21 @@ function AppContent() {
     setShowAddTrade(true);
   }, []);
 
+  // Stories 6.1 + 6.2 — initialize brain state (with personalized first message) and navigate to Brain tab
+  const handleOnboardingComplete = useCallback(
+    async (data: { initialCapital: number; currency: string; primaryMarket: string }) => {
+      initBrainState({
+        primaryMarket: data.primaryMarket,
+        initialCapital: data.initialCapital,
+        currency: data.currency,
+      }).catch(() => {});
+      await completeOnboarding(data);
+      setActiveTab('brain');
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [initBrainState, completeOnboarding],
+  );
+
   const handleNavigate = useCallback((tab: string) => {
     setActiveTab(tab as TabId);
   }, []);
@@ -274,7 +304,7 @@ function AppContent() {
   if (!onboardingComplete && trades.length === 0) {
     return (
       <OnboardingWizard
-        onComplete={completeOnboarding}
+        onComplete={handleOnboardingComplete}
         onLogFirstTrade={handleAddTrade}
         onGoToDashboard={() => setActiveTab('dashboard')}
       />
@@ -283,6 +313,10 @@ function AppContent() {
 
   return (
     <>
+      {activeTab !== 'brain' && (
+        <BrainMiniWidget onNavigate={() => setActiveTab('brain')} />
+      )}
+
       <input
         ref={importRef}
         type="file"
@@ -403,6 +437,23 @@ function AppContent() {
           )}
         </main>
       </Navigation>
+
+      {/* Brain dimension overlay — rendered outside Navigation for full-screen takeover */}
+      {/* Story 9.1 — conditionally render text-only or visual brain tab (FR43) */}
+      {activeTab === 'brain' && (
+        canAccessTab('brain') ? (
+          <Suspense fallback={
+            <div className="fixed inset-0 z-[60] flex items-center justify-center brain-dimension-bg">
+              <Loader2 className="animate-spin w-8 h-8 text-white/40" />
+            </div>
+          }>
+            {textOnlyBrain
+              ? <LazyTextOnlyBrainTab onBack={() => setActiveTab('dashboard')} />
+              : <LazyBrainTab onBack={() => setActiveTab('dashboard')} />
+            }
+          </Suspense>
+        ) : <UpgradePrompt requiredTier={getRequiredTier('brain')} />
+      )}
     </>
   );
 }
@@ -411,7 +462,11 @@ export default function Page() {
   return (
     <CurrencyProvider>
       <ToastProvider>
-        <AppContent />
+        <StageThemeProvider>
+          <ReducedMotionProvider>
+            <AppContent />
+          </ReducedMotionProvider>
+        </StageThemeProvider>
       </ToastProvider>
     </CurrencyProvider>
   );

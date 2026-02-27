@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Trade } from '@/lib/types';
-import { getWinRate, getEdgeProfile, getConfidenceCalibration, getDurationStats, formatDuration, getDrawdownStats, getAllCoinProfiles } from '@/lib/utils';
+import { getWinRate, getDirectionWinRates, getEdgeProfile, getConfidenceCalibration, getDurationStats, formatDuration, getDrawdownStats, getAllCoinProfiles } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area,
@@ -40,6 +40,7 @@ export default function Analytics({ trades, initialCapital = 0, onAddTrade }: An
   const { formatCurrency } = useCurrency();
   const closedTrades = trades.filter(t => !t.isOpen && t.actualPnL !== null);
 
+  const directionStats = useMemo(() => getDirectionWinRates(trades), [trades]);
   const edgeProfile = useMemo(() => getEdgeProfile(closedTrades), [closedTrades]);
   const confidenceCalibration = useMemo(() => getConfidenceCalibration(closedTrades), [closedTrades]);
   const durationStats = useMemo(() => getDurationStats(closedTrades), [closedTrades]);
@@ -334,6 +335,24 @@ export default function Analytics({ trades, initialCapital = 0, onAddTrade }: An
       {metrics.ruleInsight && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 sm:p-4 text-sm text-[var(--red)]">
           {metrics.ruleInsight}
+        </div>
+      )}
+
+      {/* Direction Performance Split */}
+      {directionStats.short.total > 0 && (
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          {[
+            { label: 'Longs', ...directionStats.long },
+            { label: 'Shorts', ...directionStats.short },
+          ].map(({ label, winRate, total }) => (
+            <div key={label} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4">
+              <div className="text-[10px] sm:text-xs text-[var(--muted-foreground)] mb-1">{label}</div>
+              <div className={`text-base sm:text-lg font-bold ${winRate >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
+                {total > 0 ? `${winRate}%` : '—'}
+              </div>
+              <div className="text-[10px] text-[var(--muted-foreground)]">{total} trade{total !== 1 ? 's' : ''}</div>
+            </div>
+          ))}
         </div>
       )}
 

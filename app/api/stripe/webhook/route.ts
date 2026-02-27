@@ -56,6 +56,8 @@ export async function POST(req: NextRequest) {
           currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000).toISOString() : undefined,
           cancelAtPeriodEnd: sub.cancel_at_period_end,
         });
+        // Story 7.4 — unlock effectiveStage immediately on upgrade (FR37)
+        await convex.mutation(api.brain.unlockStageOnUpgrade, { userId });
         break;
       }
 
@@ -95,6 +97,10 @@ export async function POST(req: NextRequest) {
           currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000).toISOString() : undefined,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
         });
+        // Story 7.4 — unlock effectiveStage immediately on upgrade (FR37)
+        if (mappedStatus === "active" || mappedStatus === "trialing") {
+          await convex.mutation(api.brain.unlockStageOnUpgrade, { userId });
+        }
         break;
       }
 

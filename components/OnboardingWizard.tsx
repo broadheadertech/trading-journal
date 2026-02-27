@@ -19,6 +19,13 @@ const MARKETS = [
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'PHP', 'JPY', 'AUD'] as const;
 
+// Story 6.6 — behavioral data collection disclosure (FR49)
+// Legal/product: update the body text here for any regulatory or copy changes
+export const BEHAVIORAL_DATA_DISCLOSURE = {
+  title: 'About your Brain data',
+  body: 'PsychSync analyzes your trading behavior — rule compliance, streaks, and discipline patterns — to power your Neuro Score, Brain stage, and coaching messages. This data is used only within your account and is never shared with third parties. You can delete your Brain data at any time from Settings.',
+} as const;
+
 export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDashboard }: OnboardingWizardProps) {
   const [step, setStep] = useState(0);
   const [market, setMarket] = useState('');
@@ -188,6 +195,15 @@ export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDa
               <h2 className="text-xl font-bold text-[var(--foreground)]">You&apos;re all set!</h2>
               <p className="text-sm text-[var(--muted-foreground)] mt-2">
                 Start logging trades to unlock insights, analytics, and AI coaching.
+              </p>
+            </div>
+            {/* Story 6.6 — behavioral data collection disclosure (FR49) */}
+            <div className="text-left bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3 space-y-1">
+              <p className="text-xs font-medium text-[var(--muted-foreground)]">
+                {BEHAVIORAL_DATA_DISCLOSURE.title}
+              </p>
+              <p className="text-[11px] text-[var(--muted-foreground)]/80 leading-relaxed">
+                {BEHAVIORAL_DATA_DISCLOSURE.body}
               </p>
             </div>
             <div className="flex flex-col gap-3">

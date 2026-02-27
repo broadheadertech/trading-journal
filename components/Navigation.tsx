@@ -4,7 +4,7 @@ import { TabId } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
@@ -40,6 +40,7 @@ const tabs: { id: TabId; label: string; shortLabel: string; icon: React.ReactNod
   { id: 'whatif', label: 'What-If', shortLabel: 'What-If', icon: <Sparkles size={20} /> },
   { id: 'reports', label: 'Reports', shortLabel: 'Reports', icon: <FileText size={20} /> },
   { id: 'news', label: 'News', shortLabel: 'News', icon: <Newspaper size={20} /> },
+  { id: 'brain', label: 'Brain', shortLabel: 'Brain', icon: <Orbit size={20} /> },
 ];
 
 // Bottom nav shows these 5 tabs on mobile; the rest go in "More" or top bar

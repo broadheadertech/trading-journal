@@ -96,6 +96,40 @@ export const completeOnboarding = mutation({
   },
 });
 
+// Story 9.1 — toggle text-only brain companion mode (FR43)
+export const setTextOnlyBrain = mutation({
+  args: { enabled: v.boolean() },
+  handler: async (ctx, { enabled }) => {
+    const userId = await requireUser(ctx);
+    const existing = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { textOnlyBrain: enabled });
+    } else {
+      await ctx.db.insert("profiles", { userId, initialCapital: 0, textOnlyBrain: enabled });
+    }
+  },
+});
+
+// Story 9.2 — toggle reduced motion mode (FR44)
+export const setReducedMotion = mutation({
+  args: { enabled: v.boolean() },
+  handler: async (ctx, { enabled }) => {
+    const userId = await requireUser(ctx);
+    const existing = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { reducedMotion: enabled });
+    } else {
+      await ctx.db.insert("profiles", { userId, initialCapital: 0, reducedMotion: enabled });
+    }
+  },
+});
+
 export const setCurrency = mutation({
   args: { currency: v.string() },
   handler: async (ctx, { currency }) => {

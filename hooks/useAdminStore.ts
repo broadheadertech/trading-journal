@@ -76,3 +76,48 @@ export function useAdminPlanDistribution() {
 export function useAdminRecentEvents() {
   return useQuery(api.adminEvents.getRecentEvents, { limit: 20 });
 }
+
+// ─── Epic 8: Brain admin ──────────────────────────────────────────────
+export function useAdminBrainDistribution() {
+  return useQuery(api.brainAdmin.getBrainStageDistribution);
+}
+
+export function useAdminAntiGamingFlags() {
+  return useQuery(api.brainAdmin.getAntiGamingFlags);
+}
+
+export function useAdminLogFlagView() {
+  return useMutation(api.brainAdmin.logAdminFlagView);
+}
+
+export function useAdminAntiGamingThresholds() {
+  return useQuery(api.brainAdmin.getAntiGamingThresholds);
+}
+
+export function useAdminUpdateThresholds() {
+  return useMutation(api.brainAdmin.updateAntiGamingThresholds);
+}
+
+// ─── Epic 8: Brain inspection (Story 8.4) ────────────────────────────
+export function useAdminUserBrainState(userId: string | null) {
+  return useQuery(
+    api.brainAdmin.getAdminUserBrainState,
+    userId ? { userId } : 'skip'
+  );
+}
+
+export function useAdminUserScoreEvents(userId: string | null) {
+  return useQuery(
+    api.brainAdmin.getAdminUserScoreEvents,
+    userId ? { userId } : 'skip'
+  );
+}
+
+export function useAdminLogBrainInspection() {
+  return useMutation(api.brainAdmin.logAdminBrainInspection);
+}
+
+// ─── Epic 8: Neuro Score trends (Story 8.5) ─────────────────────────
+export function useAdminNeuroScoreTrends(days: number) {
+  return useQuery(api.brainAdmin.getNeuroScoreTrends, { days });
+}

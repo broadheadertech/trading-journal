@@ -21,10 +21,27 @@ export const getUserSubscription = query({
   handler: async (ctx) => {
     const userId = await getUser(ctx);
     if (!userId) return null;
-    return ctx.db
+
+    const existing = await ctx.db
       .query("userSubscriptions")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .first();
+
+    // Auto-elevate admin to elite
+    const adminId = process.env.ADMIN_USER_ID;
+    if (adminId && userId === adminId && (!existing || existing.planId === "free")) {
+      const now = new Date().toISOString();
+      return {
+        userId,
+        stripeCustomerId: "",
+        planId: "elite",
+        status: "active" as const,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+      };
+    }
+
+    return existing;
   },
 });
 
