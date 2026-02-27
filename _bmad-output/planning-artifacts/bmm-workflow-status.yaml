@@ -50,13 +50,14 @@ workflow_status:
     workflows:
       - id: "prd"
         name: "Product Requirements Document"
-        status: "required"
+        status: "planning-artifacts/prd.md"
         agent: "pm"
         command: "/bmad:bmm:workflows:prd"
 
       - id: "create-ux-design"
         name: "UX Design"
-        status: "conditional:if_has_ui"
+        status: "planning-artifacts/ux-design-specification.md"
+        completed: "2026-02-24"
         agent: "ux-designer"
         command: "/bmad:bmm:workflows:create-ux-design"
 
@@ -66,7 +67,8 @@ workflow_status:
     workflows:
       - id: "create-architecture"
         name: "Architecture"
-        status: "required"
+        status: "planning-artifacts/architecture.md"
+        completed: "2026-02-24"
         agent: "architect"
         command: "/bmad:bmm:workflows:create-architecture"
 

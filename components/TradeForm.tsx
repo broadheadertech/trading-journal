@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Trade, EmotionState, TradeTag, Strategy, RuleCompliance, Verdict, MarketType } from '@/lib/types';
+import { Trade, EmotionState, TradeTag, Strategy, RuleCompliance, Verdict, MarketType, Direction } from '@/lib/types';
 import {
   CRYPTO_SUGGESTIONS, STOCK_SUGGESTIONS, FOREX_SUGGESTIONS, EMOTION_OPTIONS, TAG_OPTIONS,
   getSimilarTrades, getRMultiple, formatPercent,
@@ -59,6 +59,8 @@ export default function TradeForm({
   const { formatCurrency } = useCurrency();
   const [isDetailed, setIsDetailed] = useState(!!editTrade || !!prefilledEmotion);
   const [marketType, setMarketType] = useState<MarketType>(editTrade?.marketType ?? 'crypto');
+  const [direction, setDirection] = useState<Direction>(editTrade?.direction ?? 'long');
+  const [leverageVal, setLeverageVal] = useState(editTrade?.leverage ? editTrade.leverage.toString() : '');
   const [coin, setCoin] = useState(editTrade?.coin ?? '');
   const [entryPrice, setEntryPrice] = useState(editTrade?.entryPrice?.toString() ?? '');
   const [exitPrice, setExitPrice] = useState(editTrade?.exitPrice?.toString() ?? '');
@@ -127,12 +129,16 @@ export default function TradeForm({
     const exit = parseFloat(exitPrice);
     const cap = parseFloat(capital) || 0;
     if (!entry || !exit) return null;
-    const pct = ((exit - entry) / entry) * 100;
+    const rawPct = direction === 'short'
+      ? ((entry - exit) / entry) * 100
+      : ((exit - entry) / entry) * 100;
+    const lev = parseFloat(leverageVal) || 1;
+    const pct = rawPct * (lev > 0 ? lev : 1);
     const dollar = (pct / 100) * cap;
     return { pct: pct.toFixed(2), dollar: dollar.toFixed(2), positive: pct >= 0 };
-  }, [entryPrice, exitPrice, capital, isOpen]);
+  }, [entryPrice, exitPrice, capital, isOpen, direction, leverageVal]);
 
-  // C-27: R-multiple preview
+  // C-27: R-multiple preview (direction-aware)
   const rMultiplePreview = useMemo(() => {
     if (!entryPrice || !exitPrice || !stopLossVal || !capital || isOpen) return null;
     const entry = parseFloat(entryPrice);
@@ -143,9 +149,13 @@ export default function TradeForm({
     const riskPct = Math.abs((entry - sl) / entry);
     if (riskPct === 0) return null;
     const riskDollar = cap * riskPct;
-    const pnlDollar = ((exit - entry) / entry) * cap;
+    const rawPnl = direction === 'short'
+      ? ((entry - exit) / entry) * cap
+      : ((exit - entry) / entry) * cap;
+    const lev = parseFloat(leverageVal) || 1;
+    const pnlDollar = rawPnl * (lev > 0 ? lev : 1);
     return Math.round((pnlDollar / riskDollar) * 10) / 10;
-  }, [entryPrice, exitPrice, stopLossVal, capital, isOpen]);
+  }, [entryPrice, exitPrice, stopLossVal, capital, isOpen, direction, leverageVal]);
 
   // C-35: Suggest tags from most common tags used with this coin+strategy
   const suggestedTags = useMemo(() => {
@@ -181,6 +191,8 @@ export default function TradeForm({
 
     onSubmit({
       marketType,
+      direction,
+      leverage: leverageVal ? parseFloat(leverageVal) : null,
       coin,
       entryPrice: parseFloat(entryPrice),
       exitPrice: isOpen ? null : (exitPrice ? parseFloat(exitPrice) : null),
@@ -265,6 +277,33 @@ export default function TradeForm({
               {opt.label}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Direction Toggle */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Direction</label>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setDirection('long')}
+            className={`flex-1 py-2 text-sm rounded-lg border transition-colors font-medium ${
+              direction === 'long'
+                ? 'border-[var(--green)] bg-green-500/10 text-[var(--green)]'
+                : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--green)]/40'
+            }`}
+          >
+            <TrendingUp size={14} className="inline mr-1.5 -mt-0.5" />Long
+          </button>
+          <button
+            onClick={() => setDirection('short')}
+            className={`flex-1 py-2 text-sm rounded-lg border transition-colors font-medium ${
+              direction === 'short'
+                ? 'border-[var(--red)] bg-red-500/10 text-[var(--red)]'
+                : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--red)]/40'
+            }`}
+          >
+            <TrendingDown size={14} className="inline mr-1.5 -mt-0.5" />Short
+          </button>
         </div>
       </div>
 
@@ -386,6 +425,18 @@ export default function TradeForm({
               </>
             );
           })()}
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Leverage</label>
+          <input
+            type="number"
+            step="any"
+            min="1"
+            value={leverageVal}
+            onChange={e => setLeverageVal(e.target.value)}
+            placeholder="1x (spot)"
+          />
+          <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">Leave empty for spot trades</p>
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">P&L Preview</label>

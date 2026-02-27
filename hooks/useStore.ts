@@ -35,7 +35,9 @@ export function useTrades() {
       const { pnlPercent, pnlDollar } = calculatePnL(
         trade.entryPrice,
         trade.exitPrice,
-        trade.capital
+        trade.capital,
+        trade.direction ?? 'long',
+        trade.leverage ?? 1
       );
       actualPnL = pnlDollar;
       actualPnLPercent = pnlPercent;
@@ -72,7 +74,9 @@ export function useTrades() {
         const { pnlPercent, pnlDollar } = calculatePnL(
           merged.entryPrice,
           merged.exitPrice,
-          merged.capital
+          merged.capital,
+          merged.direction ?? 'long',
+          merged.leverage ?? 1
         );
         finalUpdates = {
           ...finalUpdates,
@@ -191,18 +195,28 @@ export function useProfile() {
   const setCapitalMutation = useMutation(api.profile.setCapital);
   const setDailyGoalMutation = useMutation(api.profile.setDailyGoal);
   const setCurrencyMutation = useMutation(api.profile.setCurrency);
+  const completeOnboardingMutation = useMutation(api.profile.completeOnboarding);
+  const setTextOnlyBrainMutation = useMutation(api.profile.setTextOnlyBrain);
+  const setReducedMotionMutation = useMutation(api.profile.setReducedMotion);
 
   const initialCapital: number = profileQuery?.initialCapital ?? 0;
   const dailyLossLimit: number | undefined = profileQuery?.dailyLossLimit;
   const dailyProfitTarget: number | undefined = profileQuery?.dailyProfitTarget;
   const goalMode: 'daily' | 'session' = profileQuery?.goalMode ?? 'daily';
   const currency: string = profileQuery?.currency ?? 'USD';
+  const onboardingComplete: boolean = profileQuery?.onboardingComplete ?? false;
+  const textOnlyBrain: boolean = profileQuery?.textOnlyBrain ?? false;
+  const reducedMotion: boolean = profileQuery?.reducedMotion ?? false;
   const isLoaded = profileQuery !== undefined;
 
   const setInitialCapital = (amount: number) => setCapitalMutation({ amount });
   const setDailyGoal = (args: { dailyLossLimit?: number; dailyProfitTarget?: number; goalMode?: 'daily' | 'session' }) =>
     setDailyGoalMutation(args);
   const setCurrency = (code: string) => setCurrencyMutation({ currency: code });
+  const completeOnboarding = (args: { initialCapital: number; currency: string; primaryMarket: string }) =>
+    completeOnboardingMutation(args);
+  const setTextOnlyBrain = (enabled: boolean) => setTextOnlyBrainMutation({ enabled });
+  const setReducedMotion = (enabled: boolean) => setReducedMotionMutation({ enabled });
 
-  return { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, currency, setCurrency, isLoaded };
+  return { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, currency, setCurrency, onboardingComplete, completeOnboarding, textOnlyBrain, setTextOnlyBrain, reducedMotion, setReducedMotion, isLoaded };
 }

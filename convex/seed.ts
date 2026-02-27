@@ -63,6 +63,71 @@ export const forceReseed = mutation({
   },
 });
 
+// Seed subscription plans — idempotent, can be run from CLI or by admin
+export const seedPlans = mutation({
+  handler: async (ctx) => {
+    const existing = await ctx.db.query("subscriptionPlans").collect();
+    const existingIds = new Set(existing.map((p) => p.planId));
+
+    const plans = [
+      {
+        planId: "essential",
+        name: "Essential",
+        priceMonthly: 9,
+        priceYearly: 90,
+        features: [
+          "Everything in Free",
+          "Up to 200 trades",
+          "10 strategies",
+          "Goals & milestones",
+          "Trade verdicts",
+          "Pre-trade checklists",
+          "Brain insights",
+        ],
+        isActive: true,
+        sortOrder: 1,
+      },
+      {
+        planId: "pro",
+        name: "Pro",
+        priceMonthly: 19,
+        priceYearly: 190,
+        features: [
+          "Everything in Essential",
+          "Unlimited trades & strategies",
+          "What-If scenarios",
+          "Advanced reports",
+          "Market news feed",
+          "Full brain visualization",
+        ],
+        isActive: true,
+        sortOrder: 2,
+      },
+      {
+        planId: "elite",
+        name: "Elite",
+        priceMonthly: 39,
+        priceYearly: 390,
+        features: [
+          "Everything in Pro",
+          "Priority support",
+          "Early access to new features",
+          "Custom coaching insights",
+          "Export & API access",
+        ],
+        isActive: true,
+        sortOrder: 3,
+      },
+    ];
+
+    for (const plan of plans) {
+      if (!existingIds.has(plan.planId)) {
+        await ctx.db.insert("subscriptionPlans", plan);
+      }
+    }
+  },
+});
+
 export const seedIfEmpty = mutation({
   handler: async (ctx) => {
     const userId = await requireUser(ctx);

@@ -1,5 +1,36 @@
 @import "tailwindcss";
 
+/* Register CSS custom properties for smooth transitions (D10) */
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6366f1;
+}
+
+@property --accent-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(99, 102, 241, 0.15);
+}
+
+@property --bg-tint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b0e14;
+}
+
+@property --brain-dimming {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --brain-pulse-speed {
+  syntax: "<time>";
+  inherits: true;
+  initial-value: 2s;
+}
+
 :root {
   --background: #0b0e14;
   --foreground: #e2e8f0;
@@ -10,6 +41,8 @@
   --muted-foreground: #64748b;
   --accent: #6366f1;
   --accent-hover: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --bg-tint: #0b0e14;
   --green: #22c55e;
   --red: #ef4444;
   --yellow: #eab308;
@@ -31,6 +64,8 @@
   --muted-foreground: #64748b;
   --accent: #6366f1;
   --accent-hover: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --bg-tint: #f8fafc;
   --green: #16a34a;
   --red: #dc2626;
   --yellow: #ca8a04;
@@ -54,6 +89,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  transition: --accent 2s ease, --accent-glow 2s ease, --bg-tint 2s ease,
+              --brain-dimming 1.5s ease, --brain-pulse-speed 1s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: --brain-dimming 0s, --brain-pulse-speed 0s;
+  }
+}
+/* Story 9.2 — app-level reduced motion (FR44) */
+body[data-reduced-motion="true"] {
+  transition: --brain-dimming 0s, --brain-pulse-speed 0s;
 }
 
 @keyframes animate-in {
@@ -118,6 +165,71 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus, text
 }
 input::placeholder, textarea::placeholder {
   color: var(--muted-foreground);
+}
+
+/* Brain mini-widget pulse animation (Story 3.2) */
+@keyframes brain-pulse {
+  0%, 100% { box-shadow: 0 0 15px var(--accent-glow); }
+  50% { box-shadow: 0 0 30px var(--accent-glow); }
+}
+
+.brain-pulse {
+  animation: brain-pulse var(--brain-pulse-speed, 2s) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brain-pulse {
+    animation: none;
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+}
+[data-reduced-motion="true"] .brain-pulse {
+  animation: none;
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* Stage dot heartbeat animation */
+@keyframes stage-heartbeat {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  14% { transform: scale(1.5); opacity: 1; }
+  28% { transform: scale(1); opacity: 0.85; }
+  42% { transform: scale(1.35); opacity: 1; }
+  70% { transform: scale(1); opacity: 0.85; }
+}
+
+.stage-dot-beat {
+  animation: stage-heartbeat 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-dot-beat {
+    animation: none;
+  }
+}
+[data-reduced-motion="true"] .stage-dot-beat {
+  animation: none;
+}
+
+/* Brain dimension immersive background (Story 3.4) */
+.brain-dimension-bg {
+  background-color: #020208;
+  background-image: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.03) 0%, #050510 50%, #020208 100%);
+  background-position: center;
+  animation: dimension-bg 8s ease-in-out infinite;
+}
+
+@keyframes dimension-bg {
+  0%, 100% { background-size: 100% 100%; }
+  50% { background-size: 120% 120%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brain-dimension-bg {
+    animation: none;
+  }
+}
+[data-reduced-motion="true"] .brain-dimension-bg {
+  animation: none;
 }
 
 /* Recharts overrides */

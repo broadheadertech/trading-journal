@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { Trade, Strategy, EmotionState } from '@/lib/types';
-import { formatPercent, isLuckyWin } from '@/lib/utils';
+import { formatPercent } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { Plus, Edit2, Trash2, Filter, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Search, LayoutGrid, List, ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -11,6 +11,8 @@ import TradeForm from './TradeForm';
 import PostTradeReview, { PostTradeSnapshot } from './PostTradeReview';
 import TradeDetailView from './TradeDetailView';
 import { useToast } from './ui/Toast';
+import UsageBar from './UsageBar';
+import { useUsage } from '@/hooks/useUsage';
 
 interface TradesLogProps {
   trades: Trade[];
@@ -37,12 +39,14 @@ export default function TradesLog({
 }: TradesLogProps) {
   const { showToast } = useToast();
   const { formatCurrency, formatPrice } = useCurrency();
+  const usage = useUsage();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filterCoin, setFilterCoin] = useState('');
   const [filterStrategy, setFilterStrategy] = useState('');
   const [filterResult, setFilterResult] = useState<'all' | 'win' | 'loss' | 'open'>('all');
+  const [filterDirection, setFilterDirection] = useState<'all' | 'long' | 'short'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('entryDate');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [showFilters, setShowFilters] = useState(false);
@@ -91,6 +95,7 @@ export default function TradesLog({
     if (filterResult === 'win') result = result.filter(t => !t.isOpen && (t.actualPnLPercent ?? 0) > 0);
     if (filterResult === 'loss') result = result.filter(t => !t.isOpen && (t.actualPnLPercent ?? 0) <= 0);
     if (filterResult === 'open') result = result.filter(t => t.isOpen);
+    if (filterDirection !== 'all') result = result.filter(t => (t.direction ?? 'long') === filterDirection);
     // C-32: Search across all text fields
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -118,7 +123,7 @@ export default function TradesLog({
       return sortDir === 'desc' ? -cmp : cmp;
     });
     return result;
-  }, [trades, filterCoin, filterStrategy, filterResult, sortKey, sortDir, searchQuery]);
+  }, [trades, filterCoin, filterStrategy, filterResult, filterDirection, sortKey, sortDir, searchQuery]);
 
   // Running balance map: tradeId → cumulative balance after that closed trade
   const balanceMap = useMemo(() => {
@@ -135,7 +140,7 @@ export default function TradesLog({
   }, [trades, initialCapital]);
 
   // Reset to page 1 whenever filters/search/sort change
-  useEffect(() => { setCurrentPage(1); }, [searchQuery, filterCoin, filterStrategy, filterResult, sortKey, sortDir]);
+  useEffect(() => { setCurrentPage(1); }, [searchQuery, filterCoin, filterStrategy, filterResult, filterDirection, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginatedTrades = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
@@ -163,6 +168,8 @@ export default function TradesLog({
         confidence: trade.confidence,
         stopLoss: trade.stopLoss ?? null,
         ruleChecklist: trade.ruleChecklist,
+        direction: trade.direction,
+        leverage: trade.leverage,
       });
     } else {
       showToast('Trade logged successfully');
@@ -219,11 +226,26 @@ export default function TradesLog({
           >
             <Filter size={16} /> Filters <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
           </button>
-          <button onClick={() => { setIsAddOpen(true); }} className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors">
+          <button
+            onClick={() => { setIsAddOpen(true); }}
+            disabled={usage.trades.isAtLimit}
+            title={usage.trades.isAtLimit ? 'Trade limit reached — upgrade to add more' : undefined}
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Plus size={16} /> Add Trade
           </button>
         </div>
       </div>
+
+      {/* Usage indicator for limited tiers */}
+      {!usage.trades.isUnlimited && (
+        <div className="max-w-xs">
+          <UsageBar label="Trades" current={usage.trades.current} max={usage.trades.max} isUnlimited={false} />
+          {usage.trades.isAtLimit && (
+            <p className="text-xs text-[var(--red)] mt-1">Trade limit reached &mdash; upgrade to add more</p>
+          )}
+        </div>
+      )}
 
       {/* Sub-tabs */}
       <div className="flex gap-1.5 flex-wrap">
@@ -257,7 +279,7 @@ export default function TradesLog({
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] rounded-xl animate-in">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] rounded-xl animate-in">
           <div>
             <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Symbol</label>
             <select value={filterCoin} onChange={e => setFilterCoin(e.target.value)}>
@@ -281,14 +303,34 @@ export default function TradesLog({
               <option value="open">Open</option>
             </select>
           </div>
+          <div>
+            <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Direction</label>
+            <select value={filterDirection} onChange={e => setFilterDirection(e.target.value as typeof filterDirection)}>
+              <option value="all">All</option>
+              <option value="long">Longs Only</option>
+              <option value="short">Shorts Only</option>
+            </select>
+          </div>
         </div>
       )}
 
       {/* Trades */}
       {trades.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">
-          <p className="text-[var(--muted-foreground)] mb-3">No trades logged yet</p>
-          <button onClick={() => { setIsAddOpen(true); }} className="text-[var(--accent)] hover:underline text-sm">Log your first trade</button>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--muted)] flex items-center justify-center mx-auto">
+            <Plus size={24} className="text-[var(--muted-foreground)]" />
+          </div>
+          <h3 className="text-base font-semibold text-[var(--foreground)]">No trades yet</h3>
+          <p className="text-sm text-[var(--muted-foreground)] max-w-xs mx-auto">
+            Start logging trades to track your performance, build discipline, and unlock analytics.
+          </p>
+          <button
+            onClick={() => { setIsAddOpen(true); }}
+            disabled={usage.trades.isAtLimit}
+            className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            Log Your First Trade
+          </button>
         </div>
       ) : patternStrip ? (
         /* C-30: Pattern Strip View */
@@ -299,15 +341,14 @@ export default function TradesLog({
               const isWin = !trade.isOpen && (trade.actualPnL ?? 0) > 0;
               const isLoss = !trade.isOpen && (trade.actualPnL ?? 0) < 0;
               const broke = trade.ruleChecklist.some(r => r.compliance === 'no');
-              const lucky = isLuckyWin(trade);
               return (
                 <div
                   key={trade.id}
-                  title={`${trade.coin} · ${trade.exitDate ? format(new Date(trade.exitDate), 'MMM d') : 'Open'} · ${trade.actualPnLPercent !== null ? formatPercent(trade.actualPnLPercent) : '—'}${lucky ? ' · Lucky Win' : ''}`}
+                  title={`${trade.coin} · ${trade.exitDate ? format(new Date(trade.exitDate), 'MMM d') : 'Open'} · ${trade.actualPnLPercent !== null ? formatPercent(trade.actualPnLPercent) : '—'}`}
                   className="flex flex-col items-center gap-0.5 cursor-pointer"
                   onClick={() => setViewTrade(trade)}
                 >
-                  <div className={`w-4 h-4 rounded-sm ${trade.isOpen ? 'bg-[var(--muted)]' : isWin ? 'bg-[var(--green)]' : 'bg-[var(--red)]'} ${lucky ? 'ring-1 ring-amber-400' : ''}`} />
+                  <div className={`w-4 h-4 rounded-sm ${trade.isOpen ? 'bg-[var(--muted)]' : isWin ? 'bg-[var(--green)]' : 'bg-[var(--red)]'}`} />
                   <div className={`w-4 h-1 rounded-sm ${broke ? 'bg-red-400/60' : trade.ruleChecklist.length > 0 ? 'bg-green-400/40' : 'bg-[var(--muted)]'}`} />
                 </div>
               );
@@ -317,7 +358,6 @@ export default function TradesLog({
             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[var(--green)] inline-block" /> Win</span>
             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[var(--red)] inline-block" /> Loss</span>
             <span className="flex items-center gap-1"><span className="w-3 h-1 rounded-sm bg-red-400/60 inline-block" /> Rule break</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm ring-1 ring-amber-400 bg-[var(--green)] inline-block" /> Lucky Win</span>
           </div>
         </div>
       ) : (
@@ -341,13 +381,24 @@ export default function TradesLog({
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
                   {paginatedTrades.map(trade => {
-                    const lucky = isLuckyWin(trade);
                     return (
                       <tr key={trade.id} className="hover:bg-[var(--card-hover)] transition-colors cursor-pointer" onClick={() => setViewTrade(trade)}>
                         <td className="py-3 px-3">{format(new Date(trade.entryDate), 'MMM dd, yy')}</td>
                         <td className="py-3 px-3 font-medium">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span>{trade.coin}</span>
+                            <span className={`text-[10px] px-1 py-0.5 rounded font-semibold ${
+                              (trade.direction ?? 'long') === 'short'
+                                ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                                : 'bg-green-500/15 text-green-400 border border-green-500/30'
+                            }`}>
+                              {(trade.direction ?? 'long') === 'short' ? 'S' : 'L'}
+                            </span>
+                            {trade.leverage && trade.leverage > 1 && (
+                              <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">
+                                {trade.leverage}x
+                              </span>
+                            )}
                             {trade.marketType && trade.marketType !== 'crypto' && (
                               <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">
                                 {trade.marketType === 'stocks' ? '📈' : '💱'}
@@ -358,7 +409,6 @@ export default function TradesLog({
                                 <ImageIcon size={11} className="text-[var(--muted-foreground)]" />
                               </span>
                             )}
-                            {lucky && <span className="text-[10px] bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded px-1">🍀 Lucky Win</span>}
                           </div>
                         </td>
                         <td className="py-3 px-3 text-[var(--muted-foreground)]">{formatPrice(trade.entryPrice)}</td>
@@ -401,16 +451,24 @@ export default function TradesLog({
           {/* Mobile Card View */}
           <div className="md:hidden space-y-3">
             {paginatedTrades.map(trade => {
-              const lucky = isLuckyWin(trade);
               return (
                 <div key={trade.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 hover:border-[var(--accent)]/30 transition-colors cursor-pointer" onClick={() => setViewTrade(trade)}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold">{trade.coin}</span>
+                      <span className={`text-[10px] px-1 py-0.5 rounded font-semibold ${
+                        (trade.direction ?? 'long') === 'short'
+                          ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                          : 'bg-green-500/15 text-green-400 border border-green-500/30'
+                      }`}>
+                        {(trade.direction ?? 'long') === 'short' ? 'S' : 'L'}
+                      </span>
+                      {trade.leverage && trade.leverage > 1 && (
+                        <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">{trade.leverage}x</span>
+                      )}
                       {trade.marketType && trade.marketType !== 'crypto' && (
                         <span className="text-[10px]">{trade.marketType === 'stocks' ? '📈' : '💱'}</span>
                       )}
-                      {lucky && <span className="text-[10px] bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded px-1">🍀 Lucky Win</span>}
                     </div>
                     <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                       <button onClick={() => setEditTrade(trade)} className="p-1.5 hover:bg-[var(--muted)] rounded-lg text-[var(--muted-foreground)]">

@@ -9,10 +9,10 @@ import {
 import { Trade, Strategy, DailyReflection, TriggerEntry, EmotionState } from '@/lib/types';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  getTotalPnL, getWinRate, getCurrentStreak, formatPercent,
+  getTotalPnL, getWinRate, getDirectionWinRates, getCurrentStreak, formatPercent,
   getVerdictColor, getEquityCurveData, getVerdictDistribution, getWinRateDelta,
   getGoodDecisionRate, generateDashboardInsights, getCalendarData,
-  getDisciplineScore, getCoolingOffPairs, isLuckyWin, getRMultiple, getEmotionalRuleMap,
+  getDisciplineScore, getCoolingOffPairs, getRMultiple, getEmotionalRuleMap,
   getDurationStats, getDrawdownStats,
   getDisciplineStreak, getWeeklyRuleReport, getWeeklyFocusInsight, getWarmOpeningMessage,
   getMultiDayBreaches, getEmotionRuleBreakInsight, getLuckyVsDisciplineStreak,
@@ -24,6 +24,9 @@ import {
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ShieldX, CheckCircle, TrendingUp,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import UsageCard from './UsageCard';
+import BrainMascot from './BrainMascot';
+import { useUsage } from '@/hooks/useUsage';
 
 interface DashboardProps {
   trades: Trade[];
@@ -46,6 +49,7 @@ type StatsWindow = '7d' | '30d' | '90d' | 'all';
 
 export default function Dashboard({ trades, strategies, reflections, triggers, onAddTrade, onNavigate, updateTrade, initialCapital = 0, onSetCapital, dailyLossLimit, dailyProfitTarget, goalMode = 'daily', onSetDailyGoal }: DashboardProps) {
   const { formatCurrency, currency } = useCurrency();
+  const usage = useUsage();
   const [showAllStats, setShowAllStats] = useState(false);
   const [mood, setMood] = useState<MoodState | null>(null);
   const [moodChecked, setMoodChecked] = useState(false);
@@ -138,6 +142,7 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
     disciplineScore,
     coolingOffPairs,
     emotionalRuleMap,
+    directionStats,
   } = useMemo(() => {
     const closed = trades.filter(t => !t.isOpen);
 
@@ -504,6 +509,7 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
       coolingOffPairs: coolingOffPairsList,
       emotionalRuleMap,
       dailyProfitGuard,
+      directionStats: getDirectionWinRates(trades),
     };
   }, [trades, reflections, triggers, statsWindow, strategies, dailyLossLimit, dailyProfitTarget]);
 
@@ -626,6 +632,33 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
 
       {/* ── Overview Tab ── */}
       {subTab === 'overview' && (<>
+
+      {/* ── Welcome Empty State ── */}
+      {trades.length === 0 && (
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 sm:p-8 text-center space-y-4">
+          <div className="mx-auto"><BrainMascot size={48} glow /></div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--foreground)]">Welcome to PsychSync!</h2>
+            <p className="text-sm text-[var(--muted-foreground)] mt-1">Log your first trade to unlock insights and analytics.</p>
+          </div>
+          <ul className="text-xs text-[var(--muted-foreground)] space-y-1 text-left max-w-xs mx-auto">
+            <li>&bull; Track your P&L, win rate, and streaks</li>
+            <li>&bull; Get AI coaching based on your patterns</li>
+            <li>&bull; Build discipline with psychology tools</li>
+          </ul>
+          <button
+            onClick={onAddTrade}
+            className="px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+          >
+            Log First Trade
+          </button>
+        </div>
+      )}
+
+      {/* ── Usage Card (limited tiers) ── */}
+      {!usage.trades.isUnlimited && trades.length > 0 && (
+        <UsageCard trades={usage.trades} strategies={usage.strategies} tierName={usage.tierName} />
+      )}
 
       {/* ── Peak Trade Trophy ── */}
       {peakTrade && (
@@ -1006,6 +1039,19 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
             {personalBest && statsWindow === 'all' && closedTrades.length > 0 && (
               <div className="text-[10px] sm:text-xs mt-0.5 text-[var(--muted-foreground)]">
                 Peak: {personalBest.winRate}% ({personalBest.month})
+              </div>
+            )}
+            {(directionStats.long.total > 0 || directionStats.short.total > 0) && closedTrades.length > 0 && (
+              <div className="flex items-center gap-2 mt-1.5 text-[10px] sm:text-xs">
+                {directionStats.long.total > 0 && (
+                  <span className="text-[var(--gain)]">L {directionStats.long.winRate}%</span>
+                )}
+                {directionStats.long.total > 0 && directionStats.short.total > 0 && (
+                  <span className="text-[var(--muted-foreground)]">|</span>
+                )}
+                {directionStats.short.total > 0 && (
+                  <span className="text-[var(--loss)]">S {directionStats.short.winRate}%</span>
+                )}
               </div>
             )}
           </div>
@@ -1778,6 +1824,37 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
           )}
         </div>
 
+        {/* Direction Performance (Long vs Short) */}
+        {(directionStats.long.total > 0 && directionStats.short.total > 0) && (
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
+            <h3 className="font-semibold text-[var(--foreground)] mb-3 text-sm">Direction Split</h3>
+            <div className="space-y-2.5">
+              {[
+                { label: 'Longs', emoji: '📈', ...directionStats.long },
+                { label: 'Shorts', emoji: '📉', ...directionStats.short },
+              ].map(({ label, emoji, winRate, total }) => (
+                <div key={label} className="flex items-center gap-2.5 p-2 rounded-lg">
+                  <span className="text-sm shrink-0">{emoji}</span>
+                  <span className="text-xs text-[var(--foreground)] w-14 shrink-0 font-medium">{label}</span>
+                  <div className="flex-1 h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${winRate}%`,
+                        backgroundColor: winRate >= 50 ? 'rgba(45,212,191,0.7)' : 'rgba(251,146,60,0.7)',
+                      }}
+                    />
+                  </div>
+                  <span className={`text-sm font-semibold w-9 text-right shrink-0 ${winRate >= 50 ? 'text-[var(--gain)]' : 'text-[var(--loss)]'}`}>
+                    {winRate}%
+                  </span>
+                  <span className="text-[10px] text-[var(--muted-foreground)] w-14 text-right shrink-0">{total} trade{total !== 1 ? 's' : ''}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
 
       </div>{/* end Know Yourself space-y wrapper */}
@@ -1941,13 +2018,11 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
                 <tbody className="divide-y divide-[var(--border)]">
                   {recentTrades.map(trade => {
                     const rMultiple = !trade.isOpen ? getRMultiple(trade) : null;
-                    const luckyWin = !trade.isOpen && isLuckyWin(trade);
                     return (
                       <tr key={trade.id} className="hover:bg-[var(--card-hover)] transition-colors">
                         <td className="py-2.5">{format(new Date(trade.entryDate), 'MMM dd')}</td>
                         <td className="py-2.5 font-medium">
                           {trade.coin}
-                          {luckyWin && <span className="ml-1 text-amber-400 text-xs" title="Lucky Win">🍀</span>}
                         </td>
                         <td className={`py-2.5 text-right font-medium ${(trade.actualPnLPercent ?? 0) >= 0 ? 'text-[var(--gain)]' : 'text-[var(--loss)]'}`}>
                           {trade.isOpen ? (
@@ -1982,13 +2057,11 @@ export default function Dashboard({ trades, strategies, reflections, triggers, o
             <div className="sm:hidden space-y-2">
               {recentTrades.map(trade => {
                 const rMultiple = !trade.isOpen ? getRMultiple(trade) : null;
-                const luckyWin = !trade.isOpen && isLuckyWin(trade);
                 return (
                   <div key={trade.id} className="bg-[var(--background)]/40 rounded-lg p-3 space-y-1.5">
                     {/* Row 1: Coin + Strategy + Verdict */}
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">{trade.coin}</span>
-                      {luckyWin && <span className="text-amber-400 text-xs" title="Lucky Win">🍀</span>}
                       {trade.strategy && (
                         <span className="text-[10px] text-[var(--muted-foreground)] bg-[var(--muted)]/60 px-1.5 py-0.5 rounded-full truncate max-w-[100px]">
                           {trade.strategy}

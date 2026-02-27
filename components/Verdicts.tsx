@@ -16,21 +16,18 @@ interface VerdictsProps {
 const VERDICT_ORDER: Verdict[] = [
   'Well Executed',
   'Good Discipline, Bad Luck',
-  'Lucky Win',
   'Poorly Executed',
 ];
 
 const VERDICT_COLORS: Record<Verdict, string> = {
   'Well Executed': '#4ade80',
   'Good Discipline, Bad Luck': '#60a5fa',
-  'Lucky Win': '#facc15',
   'Poorly Executed': '#f97316',
 };
 
 const VERDICT_ICONS: Record<Verdict, string> = {
   'Well Executed': '✓',
   'Good Discipline, Bad Luck': '~',
-  'Lucky Win': '⚠',
   'Poorly Executed': '✗',
 };
 
@@ -38,7 +35,6 @@ const VERDICT_ICONS: Record<Verdict, string> = {
 const VERDICT_SHORT: Record<Verdict, string> = {
   'Well Executed': 'Well Executed',
   'Good Discipline, Bad Luck': 'Good Discipline',
-  'Lucky Win': 'Lucky Win',
   'Poorly Executed': 'Poorly Executed',
 };
 
@@ -72,7 +68,6 @@ export default function Verdicts({ trades }: VerdictsProps) {
 
     const we   = assessed.filter(t => t.verdict === 'Well Executed').length;
     const gdbl = assessed.filter(t => t.verdict === 'Good Discipline, Bad Luck').length;
-    const lw   = assessed.filter(t => t.verdict === 'Lucky Win').length;
     const pe   = assessed.filter(t => t.verdict === 'Poorly Executed').length;
     const good = we + gdbl;
 
@@ -83,7 +78,6 @@ export default function Verdicts({ trades }: VerdictsProps) {
       total,
       we,   wePct:   Math.round((we   / total) * 100),
       gdbl, gdblPct: Math.round((gdbl / total) * 100),
-      lw,   lwPct:   Math.round((lw   / total) * 100),
       pe,   pePct:   Math.round((pe   / total) * 100),
       good, goodPct: Math.round((good / total) * 100),
       selfCount:    withSelf.length,
@@ -116,14 +110,13 @@ export default function Verdicts({ trades }: VerdictsProps) {
 
   // ── Verdict by coin ───────────────────────────────────────────────────────────
   const byCoin = useMemo(() => {
-    const map: Record<string, { we: number; gdbl: number; lw: number; pe: number; total: number }> = {};
+    const map: Record<string, { we: number; gdbl: number; pe: number; total: number }> = {};
     assessed.forEach(t => {
       const c = t.coin || 'Unknown';
-      if (!map[c]) map[c] = { we: 0, gdbl: 0, lw: 0, pe: 0, total: 0 };
+      if (!map[c]) map[c] = { we: 0, gdbl: 0, pe: 0, total: 0 };
       map[c].total++;
       if      (t.verdict === 'Well Executed')            map[c].we++;
       else if (t.verdict === 'Good Discipline, Bad Luck') map[c].gdbl++;
-      else if (t.verdict === 'Lucky Win')                map[c].lw++;
       else if (t.verdict === 'Poorly Executed')          map[c].pe++;
     });
     return Object.entries(map)
@@ -133,31 +126,15 @@ export default function Verdicts({ trades }: VerdictsProps) {
       .slice(0, 8);
   }, [assessed]);
 
-  // ── Lucky Win: which rules were broken most ───────────────────────────────────
-  const lwRules = useMemo(() => {
-    const counts: Record<string, number> = {};
-    assessed
-      .filter(t => t.verdict === 'Lucky Win')
-      .forEach(t => {
-        (t.ruleChecklist ?? []).forEach(r => {
-          if (r.compliance === 'no') counts[r.rule] = (counts[r.rule] ?? 0) + 1;
-        });
-      });
-    return Object.entries(counts)
-      .map(([rule, count]) => ({ rule, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-  }, [assessed]);
-
   // ── Self-verdict calibration (trades where selfVerdict was set) ───────────────
   const calibration = useMemo(() => {
     const withSelf = assessed.filter(t => t.selfVerdict !== null);
     if (withSelf.length === 0) return null;
 
-    // Overconfident: self said Good/Mixed, journal said Lucky Win or Poorly Executed
+    // Overconfident: self said Good/Mixed, journal said Poorly Executed
     const overconfident = withSelf.filter(
       t => (t.selfVerdict === 'Well Executed' || t.selfVerdict === 'Good Discipline, Bad Luck') &&
-           (t.verdict === 'Lucky Win' || t.verdict === 'Poorly Executed'),
+           t.verdict === 'Poorly Executed',
     );
     // Underconfident: self said Poor, journal said good
     const underconfident = withSelf.filter(
@@ -228,10 +205,10 @@ export default function Verdicts({ trades }: VerdictsProps) {
             </div>
 
             <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Lucky Wins</p>
-              <p className="text-2xl sm:text-3xl font-bold text-yellow-400">{stats.lw}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Poorly Executed</p>
+              <p className="text-2xl sm:text-3xl font-bold text-orange-400">{stats.pe}</p>
               <p className="text-xs text-[var(--muted-foreground)] mt-1">
-                {stats.lwPct}% — won despite rule breaks
+                {stats.pePct}% — rules broken
               </p>
             </div>
 
@@ -271,7 +248,6 @@ export default function Verdicts({ trades }: VerdictsProps) {
                   const countAndPct: Record<Verdict, { count: number; pct: number }> = {
                     'Well Executed':               { count: stats.we,   pct: stats.wePct   },
                     'Good Discipline, Bad Luck':   { count: stats.gdbl, pct: stats.gdblPct },
-                    'Lucky Win':                   { count: stats.lw,   pct: stats.lwPct   },
                     'Poorly Executed':             { count: stats.pe,   pct: stats.pePct   },
                   };
                   const { count, pct } = countAndPct[v];
@@ -303,12 +279,12 @@ export default function Verdicts({ trades }: VerdictsProps) {
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">Needs Review</p>
                   <p className="text-xl font-bold text-orange-400">{100 - stats.goodPct}%</p>
-                  <p className="text-[10px] text-[var(--muted-foreground)]">Lucky Win + PE</p>
+                  <p className="text-[10px] text-[var(--muted-foreground)]">Poorly Executed</p>
                 </div>
               </div>
             </div>
 
-            {/* Calibration card (if enough self-verdicts) OR Lucky Win rules */}
+            {/* Calibration card (if enough self-verdicts) */}
             {calibration && calibration.count >= 3 ? (
               <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
                 <p className="text-sm font-semibold mb-1">Self-Verdict Calibration</p>
@@ -325,7 +301,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
                       <div>
                         <p className="text-xs font-medium text-yellow-400">Overconfident</p>
                         <p className="text-[10px] text-[var(--muted-foreground)]">
-                          Rated Good — journal said Lucky Win or Poorly Executed
+                          Rated Good — journal said Poorly Executed
                         </p>
                       </div>
                       <span className="text-sm font-bold text-yellow-400 ml-4">
@@ -357,45 +333,11 @@ export default function Verdicts({ trades }: VerdictsProps) {
                 </div>
               </div>
             ) : (
-              /* Lucky Win rules — shown when calibration data is insufficient */
               <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                <p className="text-sm font-semibold mb-1">Lucky Win Analysis</p>
-                {stats.lw === 0 ? (
-                  <p className="text-xs text-[var(--muted-foreground)] mt-2">
-                    No Lucky Wins yet — every profitable trade followed your rules.
-                  </p>
-                ) : (
-                  <>
-                    <p className="text-xs text-[var(--muted-foreground)] mb-4">
-                      Rules most broken in profitable but undisciplined trades
-                    </p>
-                    {lwRules.length > 0 ? (
-                      <div className="space-y-2.5">
-                        {lwRules.map((r, i) => (
-                          <div key={r.rule} className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-yellow-400 w-4 shrink-0">{i + 1}</span>
-                            <p className="text-xs flex-1 min-w-0 truncate">{r.rule}</p>
-                            <span className="text-xs font-semibold text-yellow-400 shrink-0">×{r.count}</span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-xs text-[var(--muted-foreground)]">
-                        No per-rule data on Lucky Win trades yet.
-                      </p>
-                    )}
-                    <p className="text-[10px] text-yellow-400/70 mt-4 leading-relaxed">
-                      Breaking these rules may feel safe because you won — but the habit compounds risk over time.
-                    </p>
-                  </>
-                )}
-                {!calibration && (
-                  <div className="mt-4 pt-3 border-t border-[var(--border)]">
-                    <p className="text-[10px] text-[var(--muted-foreground)]">
-                      Rate trades with Self-Verdict (in the trade form) to unlock calibration insights here.
-                    </p>
-                  </div>
-                )}
+                <p className="text-sm font-semibold mb-1">Self-Verdict Calibration</p>
+                <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                  Rate trades with Self-Verdict (in the trade form) to unlock calibration insights here.
+                </p>
               </div>
             )}
 
@@ -465,7 +407,6 @@ export default function Verdicts({ trades }: VerdictsProps) {
                     <div className="h-3 rounded-full bg-[var(--muted)] overflow-hidden flex">
                       {c.we   > 0 && <div style={{ width: `${Math.round(c.we   / c.total * 100)}%`, backgroundColor: VERDICT_COLORS['Well Executed']            }} className="h-full" />}
                       {c.gdbl > 0 && <div style={{ width: `${Math.round(c.gdbl / c.total * 100)}%`, backgroundColor: VERDICT_COLORS['Good Discipline, Bad Luck'] }} className="h-full" />}
-                      {c.lw   > 0 && <div style={{ width: `${Math.round(c.lw   / c.total * 100)}%`, backgroundColor: VERDICT_COLORS['Lucky Win']                }} className="h-full" />}
                       {c.pe   > 0 && <div style={{ width: `${Math.round(c.pe   / c.total * 100)}%`, backgroundColor: VERDICT_COLORS['Poorly Executed']           }} className="h-full" />}
                     </div>
                   </div>

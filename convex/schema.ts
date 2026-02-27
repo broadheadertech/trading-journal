@@ -3,6 +3,41 @@ import { v } from "convex/values";
 
 const ruleCompliance = v.union(v.literal("yes"), v.literal("partial"), v.literal("no"));
 
+// ─── Brain / Neuro Score shared validators ───────────────────────────
+const stage = v.union(
+  v.literal("baby"),
+  v.literal("toddler"),
+  v.literal("kid"),
+  v.literal("teen"),
+  v.literal("adult"),
+  v.literal("master"),
+  v.literal("guru")
+);
+
+const scoreEventType = v.union(
+  v.literal("trade_scored"),
+  v.literal("decay_applied"),
+  v.literal("migration_replay"),
+  v.literal("retroactive_recalculation"), // Story 6.5 — edit-triggered replay (FR8)
+  v.literal("admin_adjustment"),
+  v.literal("stage_transition"),     // Story 5.1 — cron-triggered stage changes (FR11, FR12)
+  v.literal("vacation_activated"),   // Story 5.4 — vacation mode toggled on
+  v.literal("vacation_deactivated"), // Story 5.4 — vacation mode toggled off
+  v.literal("subscription_upgrade_unlock"), // Story 7.4 — effectiveStage unlocked on upgrade (FR37)
+);
+
+const stageHistoryEntry = v.object({
+  stage,
+  reachedAt: v.number(),
+  leftAt: v.optional(v.number()),
+  reason: v.optional(v.string()),
+});
+
+const ruleComplianceRecord = v.object({
+  rule: v.string(),
+  compliance: ruleCompliance,
+});
+
 export default defineSchema({
   // ─── Core trading data ───────────────────────────────────────────────
   trades: defineTable({
@@ -40,6 +75,8 @@ export default defineSchema({
     lossHypothesis: v.union(v.null(), v.string()),
     stopLoss: v.union(v.null(), v.number()),
     marketType: v.optional(v.union(v.literal("crypto"), v.literal("stocks"), v.literal("forex"))),
+    direction: v.optional(v.union(v.literal("long"), v.literal("short"))),
+    leverage: v.optional(v.union(v.null(), v.number())),
     isOpen: v.boolean(),
     createdAt: v.string(),
   }).index("by_user", ["userId"]),
@@ -166,6 +203,69 @@ export default defineSchema({
     reason: v.string(),
   }).index("by_user", ["userId"]),
 
+  // ─── Brain / Neuro Score data ────────────────────────────────────────
+  brainStates: defineTable({
+    userId: v.string(),
+    currentScore: v.number(),
+    currentStage: stage,
+    effectiveStage: v.optional(stage), // Story 7.1 — tier-capped display stage (FR34); absent = same as currentStage
+    previousScore: v.number(),
+    streakDays: v.number(),
+    streakMultiplier: v.number(),
+    lastTradeDate: v.number(),
+    lastScoreUpdateDate: v.number(),
+    isVacationMode: v.boolean(),
+    vacationEnd: v.union(v.null(), v.number()),
+    vacationStartedAt: v.optional(v.union(v.null(), v.number())), // Story 5.4 — when vacation was activated (optional for backward compat)
+    hasRegressed: v.boolean(),
+    regressionBufferStart: v.union(v.null(), v.number()),
+    regressionBufferDays: v.number(),
+    evolutionCooldownStart: v.optional(v.union(v.null(), v.number())), // Story 5.1 — optional so existing docs without field still validate (FR11)
+    recoveryLockUntil: v.union(v.null(), v.number()),
+    stageHistory: v.array(stageHistoryEntry),
+    latestCoachingMessage: v.optional(v.object({
+      message: v.string(),
+      category: v.string(),
+      disclaimer: v.string(),
+      timestamp: v.number(),
+    })),
+    updatedAt: v.number(),
+    createdAt: v.number(),
+  }).index("by_user", ["userId"]),
+
+  scoreEvents: defineTable({
+    userId: v.string(),
+    timestamp: v.number(),
+    eventType: scoreEventType,
+    delta: v.number(),
+    previousScore: v.number(),
+    newScore: v.number(),
+    reason: v.string(),
+    tradeId: v.optional(v.string()),
+    ruleCompliance: v.optional(v.array(ruleComplianceRecord)),
+    antiGamingFlags: v.array(v.string()),
+    metadata: v.any(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_timestamp", ["userId", "timestamp"]),
+
+  dailySnapshots: defineTable({
+    userId: v.string(),
+    date: v.string(),
+    score: v.number(),
+    stage,
+    tradesLogged: v.number(),
+    dailyDelta: v.number(),
+    decayApplied: v.boolean(),
+    streakActive: v.boolean(),
+    vacationActive: v.boolean(),
+    hibernationActive: v.optional(v.boolean()), // Story 5.5 — was this day a weekend/holiday? (optional for backward compat)
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_date", ["userId", "date"]),
+
   // ─── User profile / settings ─────────────────────────────────────────
   profiles: defineTable({
     userId: v.string(),
@@ -174,5 +274,67 @@ export default defineSchema({
     dailyProfitTarget: v.optional(v.number()),
     goalMode: v.optional(v.union(v.literal('daily'), v.literal('session'))),
     currency: v.optional(v.string()),
+    isBanned: v.optional(v.boolean()),
+    bannedAt: v.optional(v.string()),
+    bannedReason: v.optional(v.string()),
+    onboardingComplete: v.optional(v.boolean()),
+    primaryMarket: v.optional(v.string()),
+    textOnlyBrain: v.optional(v.boolean()), // Story 9.1 — text-only companion mode (FR43)
+    reducedMotion: v.optional(v.boolean()), // Story 9.2 — reduced motion mode (FR44)
   }).index("by_user", ["userId"]),
+
+  // ─── Admin back-office ─────────────────────────────────────────────
+  adminSettings: defineTable({
+    key: v.string(),
+    value: v.string(),
+    updatedAt: v.string(),
+    updatedBy: v.string(),
+  }).index("by_key", ["key"]),
+
+  subscriptionPlans: defineTable({
+    planId: v.string(),
+    name: v.string(),
+    priceMonthly: v.number(),
+    priceYearly: v.number(),
+    stripePriceIdMonthly: v.optional(v.string()),
+    stripePriceIdYearly: v.optional(v.string()),
+    stripeProductId: v.optional(v.string()),
+    features: v.array(v.string()),
+    isActive: v.boolean(),
+    sortOrder: v.number(),
+  }).index("by_active", ["isActive"]),
+
+  // ─── Admin activity events ──────────────────────────────────────────
+  adminEvents: defineTable({
+    type: v.string(),
+    userId: v.string(),
+    metadata: v.string(),
+    timestamp: v.string(),
+    adminId: v.optional(v.string()),
+  }).index("by_timestamp", ["timestamp"]),
+
+  // ─── User subscriptions ───────────────────────────────────────────
+  userSubscriptions: defineTable({
+    userId: v.string(),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.optional(v.string()),
+    planId: v.string(),
+    status: v.union(
+      v.literal("active"),
+      v.literal("trialing"),
+      v.literal("past_due"),
+      v.literal("canceled"),
+      v.literal("unpaid"),
+      v.literal("incomplete"),
+      v.literal("free"),
+    ),
+    interval: v.optional(v.union(v.literal("month"), v.literal("year"))),
+    currentPeriodEnd: v.optional(v.string()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_stripe_customer", ["stripeCustomerId"])
+    .index("by_status", ["status"]),
 });

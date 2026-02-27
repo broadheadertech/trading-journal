@@ -1,6 +1,9 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireUser, getUser } from "./helpers";
+import { getLimitsForPlan } from "./tierLimits";
+import { scoreTradeInternal } from "./brain";
+import { api } from "./_generated/api";
 
 export const list = query({
   handler: async (ctx) => {
@@ -52,12 +55,36 @@ export const add = mutation({
     lossHypothesis: v.union(v.null(), v.string()),
     stopLoss: v.union(v.null(), v.number()),
     marketType: v.optional(v.union(v.literal("crypto"), v.literal("stocks"), v.literal("forex"))),
+    direction: v.optional(v.union(v.literal("long"), v.literal("short"))),
+    leverage: v.optional(v.union(v.null(), v.number())),
     isOpen: v.boolean(),
     createdAt: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
-    return ctx.db.insert("trades", { ...args, userId });
+
+    // Enforce trade limit based on subscription tier
+    const sub = await ctx.db
+      .query("userSubscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    const { maxTrades } = getLimitsForPlan(sub?.planId ?? "free");
+    if (maxTrades !== -1) {
+      const count = (await ctx.db
+        .query("trades")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect()).length;
+      if (count >= maxTrades) {
+        throw new Error(`Trade limit reached (${maxTrades}). Upgrade your plan to add more trades.`);
+      }
+    }
+
+    const tradeDocId = await ctx.db.insert("trades", { ...args, userId });
+
+    // Atomic scoring — D7: score within same mutation
+    await scoreTradeInternal(ctx, userId, args.id, args.ruleChecklist);
+
+    return tradeDocId;
   },
 });
 
@@ -70,7 +97,16 @@ export const update = mutation({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .filter((q) => q.eq(q.field("id"), id))
       .first();
-    if (doc) await ctx.db.patch(doc._id, updates);
+    if (doc) {
+      await ctx.db.patch(doc._id, updates);
+      // Story 6.5 — retroactively recalculate when scoring-relevant fields change (FR8)
+      if (updates.ruleChecklist !== undefined) {
+        await ctx.scheduler.runAfter(0, api.brain.backfillBrainScores, {
+          targetUserId: userId,
+          replayEventType: "retroactive_recalculation",
+        });
+      }
+    }
   },
 });
 
