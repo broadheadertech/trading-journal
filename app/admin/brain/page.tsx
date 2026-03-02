@@ -1,9 +1,10 @@
 'use client';
 
-import { Brain } from 'lucide-react';
-import { useAdminBrainDistribution } from '@/hooks/useAdminStore';
+import { Brain, Wrench } from 'lucide-react';
+import { useAdminBrainDistribution, useAdminMigrateBrainStages } from '@/hooks/useAdminStore';
 import type { Stage } from '@/lib/types';
 import { STAGE_COLORS } from '@/lib/stage-config';
+import { useState } from 'react';
 
 // M2 fix: typed as Record<Stage, string> so TypeScript enforces exhaustiveness
 const STAGE_LABELS: Record<Stage, string> = {
@@ -37,6 +38,20 @@ function PctBar({ pct, accent }: { pct: number; accent: string }) {
 
 export default function BrainMonitorPage() {
   const data = useAdminBrainDistribution();
+  const migrateBrainStages = useAdminMigrateBrainStages();
+  const [migrating, setMigrating] = useState(false);
+  const [migrateResult, setMigrateResult] = useState<{ migrated: number; total: number } | null>(null);
+
+  const handleMigrate = async () => {
+    setMigrating(true);
+    setMigrateResult(null);
+    try {
+      const result = await migrateBrainStages({});
+      setMigrateResult(result);
+    } finally {
+      setMigrating(false);
+    }
+  };
 
   if (data === undefined) {
     return (
@@ -178,6 +193,32 @@ export default function BrainMonitorPage() {
       <p className="text-xs text-[var(--muted-foreground)]">
         Data updates in real-time via Convex subscriptions. Free-tier users are capped at &quot;{FREE_TIER_CAP}&quot; for visible stage.
       </p>
+
+      {/* Stage migration tool */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Wrench size={14} className="text-amber-400" />
+          <h3 className="text-sm font-semibold text-[var(--foreground)]">Stage Migration Tool</h3>
+        </div>
+        <p className="text-xs text-[var(--muted-foreground)] mb-3">
+          Remaps legacy stage names (baby → beginner, toddler → intern, etc.) in all brain state documents.
+          Run once after upgrading from the old stage system. Safe to run multiple times.
+        </p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleMigrate}
+            disabled={migrating}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg font-medium disabled:opacity-50 transition-colors"
+          >
+            <Wrench size={14} /> {migrating ? 'Running…' : 'Fix Legacy Stages'}
+          </button>
+          {migrateResult && (
+            <span className="text-sm text-[var(--muted-foreground)]">
+              Done — {migrateResult.migrated} of {migrateResult.total} documents updated.
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
