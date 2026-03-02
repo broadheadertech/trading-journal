@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Trophy, AlertTriangle, TrendingUp,
-  Flame, HeartPulse, ShieldAlert, Star,
+  Flame, HeartPulse, ShieldAlert, Star, Zap, Sparkles,
 } from 'lucide-react';
 import type { CoachingMessage, CoachingCategory } from '@/lib/types';
 
@@ -56,6 +56,18 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
     color: '#e879f9',
     glow: 'rgba(232,121,249,0.25)',
     label: 'Stage transition',
+  },
+  comeback: {
+    icon: Zap,
+    color: '#38bdf8',
+    glow: 'rgba(56,189,248,0.2)',
+    label: 'Welcome back',
+  },
+  onboarding: {
+    icon: Sparkles,
+    color: '#a3e635',
+    glow: 'rgba(163,230,53,0.2)',
+    label: 'Getting started',
   },
 };
 
