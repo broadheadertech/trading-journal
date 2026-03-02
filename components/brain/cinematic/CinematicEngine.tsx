@@ -147,7 +147,7 @@ function detectMigrationTimeLapse(
 function detectEggHatch(brainState: BrainState | null): EggHatchEvent | null {
   if (!brainState?.stageHistory) return null;
   if (brainState.stageHistory.length !== 1) return null;        // must be first-ever stage
-  if (brainState.stageHistory[0].stage !== 'baby') return null; // must be baby
+  if (brainState.stageHistory[0].stage !== 'beginner') return null; // must be beginner
   if (brainState.lastTradeDate !== 0) return null;              // must have no trades yet
 
   // Dedup key — localStorage prevents replay across page loads/sessions
@@ -330,13 +330,13 @@ function ReducedMotionEggBanner({ onDismiss }: { onDismiss: () => void }) {
       className="fixed inset-x-4 bottom-24 z-70 flex justify-center"
       role="status"
       aria-live="polite"
-      aria-label="Your Baby Brain is born"
+      aria-label="Your Beginner Brain is born"
     >
       <div className="rounded-2xl bg-black/85 border border-white/10 backdrop-blur-md px-6 py-4 max-w-sm w-full text-center">
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-1">
           New Brain
         </p>
-        <p className="text-xl font-bold text-white">Your Baby Brain is born!</p>
+        <p className="text-xl font-bold text-white">Your Beginner Brain is born!</p>
         <button
           onClick={onDismiss}
           className="mt-3 text-xs text-white/25 hover:text-white/50 transition-colors cursor-pointer"

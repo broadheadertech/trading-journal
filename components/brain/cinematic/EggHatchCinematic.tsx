@@ -34,7 +34,7 @@ export default function EggHatchCinematic({ onComplete }: Props) {
   const [canSkip, setCanSkip] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  const babyColors = STAGE_COLORS['baby'];
+  const babyColors = STAGE_COLORS['beginner'];
 
   // ── Phase timeline ────────────────────────────────────────────────────────
   // dormant(0–0.6s) → cracking(0.6–1.8s) → hatching(1.8–3.0s) → revealed(3.0–4.2s) → exit(4.2–5.0s)
@@ -81,11 +81,11 @@ export default function EggHatchCinematic({ onComplete }: Props) {
       onClick={() => canSkip && onComplete()}
       role="dialog"
       aria-modal="true"
-      aria-label="Your Baby Brain is hatching"
+      aria-label="Your Beginner Brain is hatching"
     >
       {/* Story 9.4 — live region announces birth when revealed */}
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        {(phase === 'revealed' || phase === 'exit') ? 'Your Baby Brain is born! Every rule you follow grows your brain.' : ''}
+        {(phase === 'revealed' || phase === 'exit') ? 'Your Beginner Brain is born! Every rule you follow grows your brain.' : ''}
       </div>
 
       {/* ── Background radial gradient (GPU-composited) ── */}
@@ -231,7 +231,7 @@ export default function EggHatchCinematic({ onComplete }: Props) {
                   color: babyColors.accent,
                 }}
               >
-                Your Baby Brain<br />is born!
+                Your Beginner Brain<br />is born!
               </p>
 
               <motion.p

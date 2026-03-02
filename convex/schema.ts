@@ -5,13 +5,20 @@ const ruleCompliance = v.union(v.literal("yes"), v.literal("partial"), v.literal
 
 // ─── Brain / Neuro Score shared validators ───────────────────────────
 const stage = v.union(
+  v.literal("beginner"),
+  v.literal("intern"),
+  v.literal("advance"),
+  v.literal("professional"),
+  v.literal("advance-professional"),
+  v.literal("guru"),
+  // Legacy stage names (pre-2026-02 rename) — kept so existing documents can be read/written
+  // until migrateAllBrainStages admin mutation is run. Safe to remove after migration.
   v.literal("baby"),
   v.literal("toddler"),
   v.literal("kid"),
   v.literal("teen"),
   v.literal("adult"),
-  v.literal("master"),
-  v.literal("guru")
+  v.literal("master")
 );
 
 const scoreEventType = v.union(

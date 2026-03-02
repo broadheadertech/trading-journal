@@ -22,7 +22,15 @@ import CinematicEngine from './cinematic/CinematicEngine';
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function stageLabel(s: Stage): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+  const labels: Record<Stage, string> = {
+    'beginner': 'Beginner',
+    'intern': 'Intern',
+    'advance': 'Advance',
+    'professional': 'Professional',
+    'advance-professional': 'Advance Professional',
+    'guru': 'Guru',
+  };
+  return labels[s] ?? s;
 }
 
 function formatDate(ts: number): string {

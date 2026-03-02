@@ -25,7 +25,7 @@ async function requireAdmin(ctx: AuthCtx): Promise<string> {
 }
 
 // Fixed stage order — must match STAGE_ORDER in convex/brain.ts
-const STAGES = ["baby", "toddler", "kid", "teen", "adult", "master", "guru"] as const;
+const STAGES = ["beginner", "intern", "advance", "professional", "advance-professional", "guru"] as const;
 type Stage = (typeof STAGES)[number];
 
 // ─── Brain stage distribution (FR38) ─────────────────────────────────────────
@@ -47,10 +47,10 @@ export const getBrainStageDistribution = query({
     const total = allStates.length;
 
     const currentCounts: Record<Stage, number> = {
-      baby: 0, toddler: 0, kid: 0, teen: 0, adult: 0, master: 0, guru: 0,
+      'beginner': 0, 'intern': 0, 'advance': 0, 'professional': 0, 'advance-professional': 0, 'guru': 0,
     };
     const effectiveCounts: Record<Stage, number> = {
-      baby: 0, toddler: 0, kid: 0, teen: 0, adult: 0, master: 0, guru: 0,
+      'beginner': 0, 'intern': 0, 'advance': 0, 'professional': 0, 'advance-professional': 0, 'guru': 0,
     };
 
     for (const s of allStates) {
@@ -342,5 +342,65 @@ export const logAdminFlagView = mutation({
       timestamp: new Date().toISOString(),
       adminId: adminSubject,
     });
+  },
+});
+
+// ─── One-time migration: remap legacy stage names (pre-2026-02 rename) ────────
+const LEGACY_STAGE_REMAP: Record<string, string> = {
+  baby: "beginner",
+  toddler: "intern",
+  kid: "advance",
+  teen: "professional",
+  adult: "advance-professional",
+  master: "advance-professional",
+};
+
+function remapStage(s: string): string {
+  return LEGACY_STAGE_REMAP[s] ?? s;
+}
+
+/**
+ * Iterates all brainState documents, remaps old stage names to new names,
+ * and patches any that need updating. Safe to run multiple times (idempotent).
+ */
+export const migrateAllBrainStages = mutation({
+  args: {},
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+
+    const allStates = await ctx.db.query("brainStates").collect();
+    let migrated = 0;
+
+    for (const state of allStates) {
+      const newCurrentStage = remapStage(state.currentStage);
+      const newEffectiveStage = state.effectiveStage != null
+        ? remapStage(state.effectiveStage)
+        : state.effectiveStage;
+      const newHistory = state.stageHistory?.map(
+        (e: { stage: string; reachedAt: number; leftAt?: number; reason?: string }) => ({
+          ...e,
+          stage: remapStage(e.stage),
+        })
+      );
+
+      const needsFix =
+        newCurrentStage !== state.currentStage ||
+        (state.effectiveStage != null && newEffectiveStage !== state.effectiveStage) ||
+        state.stageHistory?.some(
+          (e: { stage: string }, i: number) => newHistory?.[i]?.stage !== e.stage
+        );
+
+      if (needsFix) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await ctx.db.patch(state._id, {
+          currentStage: newCurrentStage as any,
+          ...(state.effectiveStage != null ? { effectiveStage: newEffectiveStage as any } : {}),
+          stageHistory: newHistory as any,
+        });
+        migrated++;
+      }
+    }
+
+    return { migrated, total: allStates.length };
   },
 });

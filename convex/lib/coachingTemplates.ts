@@ -7,7 +7,7 @@
 // ─── Types ──────────────────────────────────────────────────────────
 
 // Inline type — do NOT import from lib/types.ts (client-side, cross-boundary violation)
-type Stage = "baby" | "toddler" | "kid" | "teen" | "adult" | "master" | "guru";
+type Stage = "beginner" | "intern" | "advance" | "professional" | "advance-professional" | "guru";
 
 export type CoachingCategory =
   | "reinforcement"
@@ -169,43 +169,37 @@ const DATA_TEMPLATE_MAP: Record<NonTransitionCategory, string[]> = {
 // Keep intros short (1-4 words + space) — the base message carries the substance.
 
 const STAGE_VOICE: Record<Stage, string[]> = {
-  baby: [
-    "Ooh! ",
-    "Wow, this is new! ",
+  "beginner": [
+    "Hey! ",
+    "First steps: ",
     "Hmm, let me think... ",
-    "Oh! Oh! ",
+    "Starting out! ",
   ],
-  toddler: [
-    "Yay! ",
-    "Ooh, doing it! ",
+  "intern": [
+    "Getting it! ",
+    "Learning fast: ",
     "More! More! ",
     "Look what happened! ",
   ],
-  kid: [
+  "advance": [
     "Awesome! ",
     "Level up! ",
     "Here we go! ",
     "Cool! ",
   ],
-  teen: [
+  "professional": [
     "Real talk: ",
     "Straight up — ",
     "No sugarcoating: ",
     "Brutal truth: ",
   ],
-  adult: [
+  "advance-professional": [
     "Noted. ",
     "Analysis: ",
     "Observation: ",
     "Data says: ",
   ],
-  master: [
-    "Consider this: ",
-    "Wisdom check — ",
-    "The pattern reveals: ",
-    "A master notes: ",
-  ],
-  guru: [
+  "guru": [
     "In the stillness between trades, ",
     "The market is a mirror — ",
     "As the ancient traders knew: ",
@@ -312,45 +306,51 @@ export interface TransitionInput {
   userWinRate?: number;         // reserved for future data-referenced transition templates
 }
 
+/** Display label for stage name in coaching messages */
+function stageDisplayName(s: Stage): string {
+  switch (s) {
+    case "beginner": return "Beginner";
+    case "intern": return "Intern";
+    case "advance": return "Advance";
+    case "professional": return "Professional";
+    case "advance-professional": return "Advance Professional";
+    case "guru": return "Guru";
+  }
+}
+
 // Farewell templates — spoken by the stage being left (4 per stage)
 const FAREWELL_TEMPLATES: Record<Stage, string[]> = {
-  baby: [
-    "Your baby steps led you here — {daysInStage} days of curiosity well spent.",
-    "Time to leave the nest! {daysInStage} days as a Baby built your foundation.",
-    "Baby stage complete. {daysInStage} days of wondering — now you'll start knowing.",
-    "{daysInStage} days as a Baby. Your curiosity paid off.",
+  "beginner": [
+    "Your first steps led you here — {daysInStage} days of curiosity well spent.",
+    "Time to leave the starting line! {daysInStage} days as a Beginner built your foundation.",
+    "Beginner stage complete. {daysInStage} days of wondering — now you'll start knowing.",
+    "{daysInStage} days as a Beginner. Your curiosity paid off.",
   ],
-  toddler: [
-    "You outgrew the Toddler stage in {daysInStage} days. Your wobbles became strides.",
-    "{daysInStage} days as a Toddler — finding your feet is over. Now you walk with intent.",
-    "Toddler stage done. {daysInStage} days of small wins. They added up.",
-    "After {daysInStage} days as a Toddler, the stumbling is behind you.",
+  "intern": [
+    "You outgrew the Intern stage in {daysInStage} days. Your wobbles became strides.",
+    "{daysInStage} days as an Intern — finding your feet is over. Now you walk with intent.",
+    "Intern stage done. {daysInStage} days of small wins. They added up.",
+    "After {daysInStage} days as an Intern, the stumbling is behind you.",
   ],
-  kid: [
-    "After {daysInStage} days as a Kid, you've outgrown the playground.",
-    "The Kid is growing up! {daysInStage} days of learning — now it gets real.",
-    "{daysInStage} days of pure hustle as a Kid. Time for the next challenge.",
-    "Kid stage done. {daysInStage} days built your foundation — now use it.",
+  "advance": [
+    "After {daysInStage} days at Advance, you've outgrown the training ground.",
+    "The Advance stage is behind you! {daysInStage} days of learning — now it gets real.",
+    "{daysInStage} days of pure hustle at Advance. Time for the next challenge.",
+    "Advance stage done. {daysInStage} days built your foundation — now use it.",
   ],
-  teen: [
-    "After {daysInStage} days as a Teen, the raw edge is sharpened.",
-    "{daysInStage} days of teenage fire — channelled into something real.",
-    "Teen stage: {daysInStage} days of learning what NOT to do. Worth every loss.",
-    "The teenage phase ends after {daysInStage} days. Growth hurts — growth won.",
+  "professional": [
+    "After {daysInStage} days as a Professional, the raw edge is sharpened.",
+    "{daysInStage} days of professional fire — channelled into something real.",
+    "Professional stage: {daysInStage} days of learning what NOT to do. Worth every loss.",
+    "The professional phase ends after {daysInStage} days. Growth hurts — growth won.",
   ],
-  adult: [
-    "{daysInStage} days as an Adult trader. You traded with clarity.",
-    "Adult stage complete. {daysInStage} days of analytical precision.",
-    "Leaving the Adult stage after {daysInStage} days. The data was with you.",
-    "{daysInStage} days of disciplined adulthood. The next chapter begins.",
+  "advance-professional": [
+    "{daysInStage} days as an Advance Professional. You traded with clarity.",
+    "Advance Professional stage complete. {daysInStage} days of analytical precision.",
+    "Leaving the Advance Professional stage after {daysInStage} days. The data was with you.",
+    "{daysInStage} days of disciplined execution. The next chapter begins.",
   ],
-  master: [
-    "{daysInStage} days as a Master. Few reach this. Fewer leave it still improving.",
-    "Master stage: {daysInStage} days of deep refinement. The edge was real.",
-    "After {daysInStage} days mastering your craft, a new horizon opens.",
-    "{daysInStage} days at Master level. Your consistency earned the next step.",
-  ],
-  guru: [
+  "guru": [
     "{daysInStage} days as a Guru. The highest expression of this craft.",
     "After {daysInStage} days at Guru level, even the market reflects your patience.",
     "{daysInStage} days of Guru-level discipline. The journey never truly ends.",
@@ -360,43 +360,37 @@ const FAREWELL_TEMPLATES: Record<Stage, string[]> = {
 
 // Welcome templates — spoken by the new stage on evolution upward (4 per stage)
 const WELCOME_TEMPLATES: Record<Stage, string[]> = {
-  baby: [
+  "beginner": [
     "Welcome. Every journey begins here.",
-    "The Baby stage: your first step into mastery.",
+    "The Beginner stage: your first step into mastery.",
     "Curiosity is your superpower right now. Use it.",
-    "Welcome, Baby brain. The road ahead is everything.",
+    "Welcome, Beginner. The road ahead is everything.",
   ],
-  toddler: [
-    "Welcome to Toddler! Your brain is finding its legs.",
-    "Toddler stage unlocked! Every step forward is a victory.",
-    "You're a Toddler now — clumsy, curious, and growing fast.",
-    "The Toddler stage begins. Small wins compound into big ones.",
+  "intern": [
+    "Welcome to Intern! Your brain is finding its legs.",
+    "Intern stage unlocked! Every step forward is a victory.",
+    "You're an Intern now — curious and growing fast.",
+    "The Intern stage begins. Small wins compound into big ones.",
   ],
-  kid: [
-    "Welcome to the Kid stage! Time to start building real patterns.",
-    "Kid unlocked! The rules are clicking — keep going.",
-    "You've levelled up to Kid. The game just got more interesting.",
-    "Kid stage: where curiosity becomes skill. You earned it.",
+  "advance": [
+    "Welcome to Advance! Time to start building real patterns.",
+    "Advance unlocked! The rules are clicking — keep going.",
+    "You've levelled up to Advance. The game just got more interesting.",
+    "Advance stage: where curiosity becomes skill. You earned it.",
   ],
-  teen: [
-    "Welcome to Teen! Raw drive plus growing knowledge — watch out.",
-    "Teen stage unlocked. The edge starts to sharpen here.",
-    "You're a Teen now — intensity + pattern recognition. Dangerous combo.",
-    "Teen stage: brutal self-awareness begins. You're ready for it.",
+  "professional": [
+    "Welcome to Professional! Raw drive plus growing knowledge — watch out.",
+    "Professional stage unlocked. The edge starts to sharpen here.",
+    "You're a Professional now — intensity + pattern recognition. Dangerous combo.",
+    "Professional stage: brutal self-awareness begins. You're ready for it.",
   ],
-  adult: [
-    "Welcome to Adult. Clarity over reaction, data over emotion.",
-    "Adult stage unlocked. The discipline is starting to compound.",
-    "You've earned the Adult stage. Now you trade the plan, not the noise.",
-    "Adult: where real consistency lives. Welcome.",
+  "advance-professional": [
+    "Welcome to Advance Professional. Clarity over reaction, data over emotion.",
+    "Advance Professional unlocked. The discipline is starting to compound.",
+    "You've earned the Advance Professional stage. Now you trade the plan, not the noise.",
+    "Advance Professional: where real consistency lives. Welcome.",
   ],
-  master: [
-    "Welcome to Master. This is where the few operate.",
-    "Master stage unlocked. Your process is a weapon.",
-    "Master: consistent, disciplined, dangerous. Welcome.",
-    "You've reached Master. Every rule you followed brought you here.",
-  ],
-  guru: [
+  "guru": [
     "Welcome to Guru. The market has nothing left to teach you — only remind you.",
     "Guru stage. The highest state. The market is an old friend now.",
     "Guru unlocked. Patience, process, presence — you have all three.",
@@ -406,43 +400,37 @@ const WELCOME_TEMPLATES: Record<Stage, string[]> = {
 
 // Welcome-back templates — spoken by the new stage on regression downward (4 per stage)
 const WELCOME_BACK_TEMPLATES: Record<Stage, string[]> = {
-  baby: [
-    "Back to Baby. Every reset is a chance to rebuild stronger.",
-    "Starting over at Baby. The fundamentals exist for a reason.",
-    "Baby stage, again. The basics aren't punishment — they're protection.",
-    "Reset to Baby. This is the foundation. Use it.",
+  "beginner": [
+    "Back to Beginner. Every reset is a chance to rebuild stronger.",
+    "Starting over at Beginner. The fundamentals exist for a reason.",
+    "Beginner stage, again. The basics aren't punishment — they're protection.",
+    "Reset to Beginner. This is the foundation. Use it.",
   ],
-  toddler: [
-    "Back to Toddler. Slow down. Your foundation needs attention.",
-    "Toddler again. Return to basics — they always work.",
-    "Welcome back to Toddler. The wobbles are temporary if you focus.",
-    "Reset to Toddler. Crawl before you run — again.",
+  "intern": [
+    "Back to Intern. Slow down. Your foundation needs attention.",
+    "Intern again. Return to basics — they always work.",
+    "Welcome back to Intern. The wobbles are temporary if you focus.",
+    "Reset to Intern. Crawl before you run — again.",
   ],
-  kid: [
-    "Back to Kid. The discipline that got you here still lives in you.",
-    "Kid stage again. This is where you rebuild your process.",
-    "Welcome back, Kid. Take your time. Your real level is still ahead.",
-    "Regression to Kid. The path forward goes through the basics.",
+  "advance": [
+    "Back to Advance. The discipline that got you here still lives in you.",
+    "Advance stage again. This is where you rebuild your process.",
+    "Welcome back, Advance. Take your time. Your real level is still ahead.",
+    "Regression to Advance. The path forward goes through the basics.",
   ],
-  teen: [
-    "Back to Teen. The fire still burns — channel it properly this time.",
-    "Regression to Teen. Use this reset to eliminate what cost you.",
-    "Teen again. The lessons learned above still count. Use them.",
-    "Welcome back to Teen. This is temporary if you trade your system.",
+  "professional": [
+    "Back to Professional. The fire still burns — channel it properly this time.",
+    "Regression to Professional. Use this reset to eliminate what cost you.",
+    "Professional again. The lessons learned above still count. Use them.",
+    "Welcome back to Professional. This is temporary if you trade your system.",
   ],
-  adult: [
-    "Back to Adult. Reconnect with your analytical edge.",
-    "Adult stage, again. Trade the data — not the hope.",
-    "Regression to Adult. The discipline that works is already in you.",
-    "Welcome back to Adult. Reset and refocus — you know how.",
+  "advance-professional": [
+    "Back to Advance Professional. Reconnect with your analytical edge.",
+    "Advance Professional, again. Trade the data — not the hope.",
+    "Regression to Advance Professional. The discipline that works is already in you.",
+    "Welcome back to Advance Professional. Reset and refocus — you know how.",
   ],
-  master: [
-    "Back to Master. You've been here before. You'll be back higher.",
-    "Regression to Master. The craft knowledge doesn't leave with the stage.",
-    "Master, again. The discipline that earned this stage once will earn it again.",
-    "Welcome back to Master. Your edge is intact — rebuild the consistency.",
-  ],
-  guru: [
+  "guru": [
     "Regression from Guru. Even the deepest discipline needs recalibration sometimes.",
     "Back to Guru stage. The wisdom was never gone — just obscured.",
     "Guru again. The market humbles all — including the great. Recalibrate.",
@@ -504,7 +492,7 @@ export function generateComebackMessage(input: ComebackInput): CoachingOutput {
   let baseMessage = selectTemplate(COMEBACK_TEMPLATES, tradeTimestamp);
   baseMessage = baseMessage.replace(/\{daysSinceLastTrade\}/g, String(daysSinceLastTrade));
   baseMessage = baseMessage.replace(/\{currentScore\}/g, String(Math.round(currentScore)));
-  baseMessage = baseMessage.replace(/\{stage\}/g, currentStage.charAt(0).toUpperCase() + currentStage.slice(1));
+  baseMessage = baseMessage.replace(/\{stage\}/g, stageDisplayName(currentStage));
 
   const introIndex = Math.abs(tradeTimestamp >> 3) % 4;
   const intro = STAGE_VOICE[currentStage][introIndex];
@@ -519,14 +507,14 @@ export function generateComebackMessage(input: ComebackInput): CoachingOutput {
 
 // ─── Onboarding First Message (FR31, Story 6.2) ──────────────────────────────
 
-// Market-specific Baby Brain templates (AC: #2–#5).
+// Market-specific Beginner Brain templates (AC: #2–#5).
 // Rules: include market name, express wonder/curiosity, invite engagement,
-// NO statistics, NO advice, pure curious/innocent Baby voice (no STAGE_VOICE prefix —
-// these templates ARE the baby voice directly).
+// NO statistics, NO advice, pure curious/innocent Beginner voice (no STAGE_VOICE prefix —
+// these templates ARE the beginner voice directly).
 const FIRST_MESSAGE_TEMPLATES: Record<string, string[]> = {
   crypto: [
-    "Ooh! You trade crypto! I've never seen a real trade before — can you show me one?",
-    "Crypto! Is that real money? I just hatched and I'm already curious about everything you do!",
+    "Hey! You trade crypto! I've never seen a real trade before — can you show me one?",
+    "Crypto! Is that real money? I just started and I'm already curious about everything you do!",
     "You trade crypto! There are so many coins — which one do you like? I want to learn!",
     "Crypto trading! I heard it moves really fast. I'll try to keep up — show me your first trade?",
   ],
@@ -534,7 +522,7 @@ const FIRST_MESSAGE_TEMPLATES: Record<string, string[]> = {
     "Whoa! Stock trading! I'm so new to this — tell me about your first trade?",
     "Stocks! Do you pick them yourself? I've never seen a real trade before — I can't wait!",
     "You trade stocks! Are there favorites you like? I'm still learning what everything means!",
-    "Stock trading! I just hatched and you're already here — will you show me how this works?",
+    "Stock trading! I just started and you're already here — will you show me how this works?",
   ],
   forex: [
     "Currencies! Is that different from other markets? Show me how this works — I'm fascinated!",
@@ -545,7 +533,7 @@ const FIRST_MESSAGE_TEMPLATES: Record<string, string[]> = {
   multi: [
     "You trade multiple markets! That sounds exciting — which one do we start with?",
     "Multiple markets! You must know a lot of things I don't yet — will you teach me?",
-    "Wow, you trade everything! I just hatched and I'm already in awe — show me your first trade?",
+    "Wow, you trade everything! I just started and I'm already in awe — show me your first trade?",
     "Multi-market trading! I'm not sure where to look first — I'll follow your lead!",
   ],
 };
@@ -558,9 +546,9 @@ export interface FirstMessageInput {
 }
 
 /**
- * Generates Baby Brain's first personalized greeting based on the user's onboarding market selection (FR31).
+ * Generates Beginner Brain's first personalized greeting based on the user's onboarding market selection (FR31).
  * Pure function — deterministic, no side effects (NFR17).
- * No STAGE_VOICE prefix — the templates themselves are Baby Brain's direct voice.
+ * No STAGE_VOICE prefix — the templates themselves are Beginner Brain's direct voice.
  */
 export function generateFirstMessage(input: FirstMessageInput): CoachingOutput {
   const { primaryMarket, timestamp } = input;

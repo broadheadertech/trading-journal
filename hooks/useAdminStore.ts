@@ -121,3 +121,7 @@ export function useAdminLogBrainInspection() {
 export function useAdminNeuroScoreTrends(days: number) {
   return useQuery(api.brainAdmin.getNeuroScoreTrends, { days });
 }
+
+export function useAdminMigrateBrainStages() {
+  return useMutation(api.brainAdmin.migrateAllBrainStages);
+}

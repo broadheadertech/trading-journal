@@ -24,10 +24,14 @@ export function BrainMiniWidget({ onNavigate }: BrainMiniWidgetProps) {
     );
   }
 
-  const stage = brainState?.currentStage ?? 'baby';
+  const stage = brainState?.currentStage ?? 'beginner';
   const score = brainState?.currentScore ?? 0;
   const previousScore = brainState?.previousScore ?? 0;
-  const stageShort = stage.charAt(0).toUpperCase() + stage.slice(1);
+  const STAGE_LABELS: Record<string, string> = {
+    'beginner': 'Beginner', 'intern': 'Intern', 'advance': 'Advance',
+    'professional': 'Pro', 'advance-professional': 'Adv Pro', 'guru': 'Guru',
+  };
+  const stageShort = STAGE_LABELS[stage] ?? stage;
 
   // Story 9.4 — include trending direction in ARIA label
   const trending = score > previousScore ? 'up' : score < previousScore ? 'down' : 'stable';

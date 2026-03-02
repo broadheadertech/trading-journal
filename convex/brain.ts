@@ -23,19 +23,36 @@ import {
 import { generateCoachingMessage, generateTransitionMessage, generateComebackMessage, generateFirstMessage } from "./lib/coachingTemplates";
 
 // Module-level stage order — used in scoreTradeInternal and backfillBrainScores
-const STAGE_ORDER = ["baby", "toddler", "kid", "teen", "adult", "master", "guru"] as const;
+const STAGE_ORDER = ["beginner", "intern", "advance", "professional", "advance-professional", "guru"] as const;
 
 // Story 7.1 — tier-based stage cap (FR34, D4)
-const FREE_TIER_STAGE_CAP = "kid" as const;
+const FREE_TIER_STAGE_CAP = "advance" as const;
 const FREE_TIER_CAP_INDEX = STAGE_ORDER.indexOf(FREE_TIER_STAGE_CAP); // = 2
+// Legacy stage remap — guards against documents written before the 2026-02 rename
+const LEGACY_STAGE_MAP: Record<string, string> = {
+  baby: "beginner", toddler: "intern", kid: "advance",
+  teen: "professional", adult: "advance-professional", master: "advance-professional",
+};
+
+/** Normalizes a potentially-legacy stage string to a valid Stage. */
+function normalizeToStage(stage: string): (typeof STAGE_ORDER)[number] {
+  const mapped = LEGACY_STAGE_MAP[stage] ?? stage;
+  return (STAGE_ORDER as readonly string[]).includes(mapped)
+    ? (mapped as (typeof STAGE_ORDER)[number])
+    : "beginner";
+}
+
 /** Returns the effectiveStage after applying Free-tier cap. Essential/Pro/Elite are uncapped. */
 function computeEffectiveStage(
-  actualStage: (typeof STAGE_ORDER)[number],
+  actualStage: string,
   planId: string,
 ): (typeof STAGE_ORDER)[number] {
-  if (planId !== "free") return actualStage;
-  const actualIdx = STAGE_ORDER.indexOf(actualStage);
-  return actualIdx <= FREE_TIER_CAP_INDEX ? actualStage : STAGE_ORDER[FREE_TIER_CAP_INDEX];
+  // Normalize legacy stage names before any cap logic
+  const normalized = (LEGACY_STAGE_MAP[actualStage] ?? actualStage) as (typeof STAGE_ORDER)[number];
+  const safeStage = STAGE_ORDER.includes(normalized) ? normalized : "beginner";
+  if (planId !== "free") return safeStage;
+  const actualIdx = STAGE_ORDER.indexOf(safeStage);
+  return actualIdx <= FREE_TIER_CAP_INDEX ? safeStage : STAGE_ORDER[FREE_TIER_CAP_INDEX];
 }
 
 // ── Weekend & Holiday Hibernation (FR7, Story 5.5) ───────────────────────────
@@ -92,8 +109,8 @@ export const initializeBrainState = mutation({
     return ctx.db.insert("brainStates", {
       userId,
       currentScore: 0,
-      currentStage: "baby",
-      effectiveStage: "baby" as const, // Story 7.1 — always baby at init; below free-tier cap (FR34)
+      currentStage: "beginner",
+      effectiveStage: "beginner" as const, // Story 7.1 — always beginner at init; below free-tier cap (FR34)
       previousScore: 0,
       streakDays: 0,
       streakMultiplier: 1.0,
@@ -106,7 +123,7 @@ export const initializeBrainState = mutation({
       regressionBufferDays: 0,
       evolutionCooldownStart: null,
       recoveryLockUntil: null,
-      stageHistory: [{ stage: "baby" as const, reachedAt: now }],
+      stageHistory: [{ stage: "beginner" as const, reachedAt: now }],
       latestCoachingMessage: coaching
         ? { message: coaching.message, category: coaching.category, disclaimer: coaching.disclaimer, timestamp: now }
         : undefined,
@@ -137,7 +154,7 @@ export async function scoreTradeInternal(
     const id = await ctx.db.insert("brainStates", {
       userId,
       currentScore: 0,
-      currentStage: "baby",
+      currentStage: "beginner",
       previousScore: 0,
       streakDays: 0,
       streakMultiplier: 1.0,
@@ -150,7 +167,7 @@ export async function scoreTradeInternal(
       regressionBufferDays: 0,
       evolutionCooldownStart: null,
       recoveryLockUntil: null,
-      stageHistory: [{ stage: "baby" as const, reachedAt: now }],
+      stageHistory: [{ stage: "beginner" as const, reachedAt: now }],
       updatedAt: now,
       createdAt: now,
     });
@@ -242,7 +259,7 @@ export async function scoreTradeInternal(
       delta: 0,
       isRecoveryLock: false,
       tradeTimestamp: now,
-      currentStage: brainState.currentStage,
+      currentStage: normalizeToStage(brainState.currentStage),
       closedTradeCount: 0,
     });
     await ctx.db.patch(brainState._id, {
@@ -341,7 +358,7 @@ export async function scoreTradeInternal(
       delta: 0,
       isRecoveryLock: true,
       tradeTimestamp: now,
-      currentStage: brainState.currentStage,
+      currentStage: normalizeToStage(brainState.currentStage),
       userWinRate: winRate,
       overallCompliancePercent,
       closedTradeCount: totalClosed,
@@ -422,7 +439,7 @@ export async function scoreTradeInternal(
 
   // 6. Stage gating (FR11, FR12) — evolution cooldown (3-day) + regression buffer (5-day)
   const scoreBasedStage = getStageForScore(cappedNewScore); // what score would indicate
-  const previousStage = brainState.currentStage;
+  const previousStage = normalizeToStage(brainState.currentStage);
 
   let newStage = previousStage;         // effective stage (may be held back by gate)
   let stageChanged = false;
@@ -876,7 +893,7 @@ export const createDailySnapshots = internalMutation({
 
         const newScoreStage = getStageForScore(newScore);
         const decayCrossesThreshold =
-          STAGE_ORDER.indexOf(newScoreStage) < STAGE_ORDER.indexOf(bs.currentStage);
+          STAGE_ORDER.indexOf(newScoreStage) < STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         decayApplied = true;
         await ctx.db.patch(bs._id, {
@@ -912,7 +929,7 @@ export const createDailySnapshots = internalMutation({
         userId: bs.userId,
         date: dateStr,
         score: bs.currentScore,          // pre-decay score — represents end-of-yesterday state
-        stage: bs.currentStage,
+        stage: normalizeToStage(bs.currentStage),
         tradesLogged: tradeScoredEvents.length,
         dailyDelta,
         decayApplied,
@@ -932,7 +949,7 @@ export const createDailySnapshots = internalMutation({
       if (bs.evolutionCooldownStart != null) { // != handles both null and undefined (optional field on old docs)
         const daysQualifying = Math.floor((now - bs.evolutionCooldownStart) / 86_400_000);
         const scoreBasedStage = getStageForScore(bs.currentScore);
-        const wouldEvolve = STAGE_ORDER.indexOf(scoreBasedStage) > STAGE_ORDER.indexOf(bs.currentStage);
+        const wouldEvolve = STAGE_ORDER.indexOf(scoreBasedStage) > STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         if (wouldEvolve && daysQualifying >= 3) {
           // Trigger evolution
@@ -947,7 +964,7 @@ export const createDailySnapshots = internalMutation({
           updatedHistory.push({ stage: newStage, reachedAt: now });
 
           const coaching = generateTransitionMessage({
-            previousStage: bs.currentStage,
+            previousStage: normalizeToStage(bs.currentStage),
             newStage,
             daysInPreviousStage,
             tradeTimestamp: now,
@@ -995,7 +1012,7 @@ export const createDailySnapshots = internalMutation({
       if (bs.regressionBufferStart !== null) {
         const daysBelow = Math.floor((now - bs.regressionBufferStart) / 86_400_000);
         const scoreBasedStage = getStageForScore(bs.currentScore);
-        const wouldRegress = STAGE_ORDER.indexOf(scoreBasedStage) < STAGE_ORDER.indexOf(bs.currentStage);
+        const wouldRegress = STAGE_ORDER.indexOf(scoreBasedStage) < STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         if (wouldRegress && daysBelow >= 5) {
           // Trigger regression
@@ -1010,7 +1027,7 @@ export const createDailySnapshots = internalMutation({
           updatedHistory.push({ stage: newStage, reachedAt: now });
 
           const coaching = generateTransitionMessage({
-            previousStage: bs.currentStage,
+            previousStage: normalizeToStage(bs.currentStage),
             newStage,
             daysInPreviousStage,
             tradeTimestamp: now,
@@ -1140,7 +1157,7 @@ export const backfillBrainScores = mutation({
     );
 
     if (allTrades.length === 0) {
-      return { scored: 0, finalScore: 0, finalStage: "baby" as const };
+      return { scored: 0, finalScore: 0, finalStage: "beginner" as const };
     }
 
     // 3. Replay trades through pure scoring pipeline
@@ -1151,10 +1168,10 @@ export const backfillBrainScores = mutation({
     let previousScore = 0;
     let streakDays = 0;
     let streakMultiplier = 1.0;
-    let currentStage: "baby" | "toddler" | "kid" | "teen" | "adult" | "master" | "guru" = "baby";
-    type Stage = "baby" | "toddler" | "kid" | "teen" | "adult" | "master" | "guru";
+    let currentStage: "beginner" | "intern" | "advance" | "professional" | "advance-professional" | "guru" = "beginner";
+    type Stage = "beginner" | "intern" | "advance" | "professional" | "advance-professional" | "guru";
     const stageHistory: { stage: Stage; reachedAt: number; leftAt?: number }[] = [
-      { stage: "baby", reachedAt: firstTradeTime },
+      { stage: "beginner", reachedAt: firstTradeTime },
     ];
 
     let currentDay = "";

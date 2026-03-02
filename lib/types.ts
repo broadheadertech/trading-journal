@@ -276,7 +276,7 @@ export interface MonthlyGoal {
 }
 
 // ─── Brain / Neuro Score types ──────────────────────────────────────
-export type Stage = 'baby' | 'toddler' | 'kid' | 'teen' | 'adult' | 'master' | 'guru';
+export type Stage = 'beginner' | 'intern' | 'advance' | 'professional' | 'advance-professional' | 'guru';
 
 export type ScoreEventType = 'trade_scored' | 'decay_applied' | 'migration_replay' | 'admin_adjustment' | 'subscription_upgrade_unlock';
 
