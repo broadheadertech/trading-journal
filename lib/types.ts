@@ -327,7 +327,9 @@ export type CoachingCategory =
   | 'streak'
   | 'recovery'
   | 'anti_gaming'
-  | 'transition';
+  | 'transition'
+  | 'comeback'
+  | 'onboarding';
 
 export interface CoachingMessage {
   message: string;
