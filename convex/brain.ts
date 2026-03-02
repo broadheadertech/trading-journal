@@ -34,9 +34,17 @@ const LEGACY_STAGE_MAP: Record<string, string> = {
   teen: "professional", adult: "advance-professional", master: "advance-professional",
 };
 
+/** Normalizes a potentially-legacy stage string to a valid Stage. */
+function normalizeToStage(stage: string): (typeof STAGE_ORDER)[number] {
+  const mapped = LEGACY_STAGE_MAP[stage] ?? stage;
+  return (STAGE_ORDER as readonly string[]).includes(mapped)
+    ? (mapped as (typeof STAGE_ORDER)[number])
+    : "beginner";
+}
+
 /** Returns the effectiveStage after applying Free-tier cap. Essential/Pro/Elite are uncapped. */
 function computeEffectiveStage(
-  actualStage: (typeof STAGE_ORDER)[number],
+  actualStage: string,
   planId: string,
 ): (typeof STAGE_ORDER)[number] {
   // Normalize legacy stage names before any cap logic
@@ -251,7 +259,7 @@ export async function scoreTradeInternal(
       delta: 0,
       isRecoveryLock: false,
       tradeTimestamp: now,
-      currentStage: brainState.currentStage,
+      currentStage: normalizeToStage(brainState.currentStage),
       closedTradeCount: 0,
     });
     await ctx.db.patch(brainState._id, {
@@ -350,7 +358,7 @@ export async function scoreTradeInternal(
       delta: 0,
       isRecoveryLock: true,
       tradeTimestamp: now,
-      currentStage: brainState.currentStage,
+      currentStage: normalizeToStage(brainState.currentStage),
       userWinRate: winRate,
       overallCompliancePercent,
       closedTradeCount: totalClosed,
@@ -431,7 +439,7 @@ export async function scoreTradeInternal(
 
   // 6. Stage gating (FR11, FR12) — evolution cooldown (3-day) + regression buffer (5-day)
   const scoreBasedStage = getStageForScore(cappedNewScore); // what score would indicate
-  const previousStage = brainState.currentStage;
+  const previousStage = normalizeToStage(brainState.currentStage);
 
   let newStage = previousStage;         // effective stage (may be held back by gate)
   let stageChanged = false;
@@ -885,7 +893,7 @@ export const createDailySnapshots = internalMutation({
 
         const newScoreStage = getStageForScore(newScore);
         const decayCrossesThreshold =
-          STAGE_ORDER.indexOf(newScoreStage) < STAGE_ORDER.indexOf(bs.currentStage);
+          STAGE_ORDER.indexOf(newScoreStage) < STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         decayApplied = true;
         await ctx.db.patch(bs._id, {
@@ -921,7 +929,7 @@ export const createDailySnapshots = internalMutation({
         userId: bs.userId,
         date: dateStr,
         score: bs.currentScore,          // pre-decay score — represents end-of-yesterday state
-        stage: bs.currentStage,
+        stage: normalizeToStage(bs.currentStage),
         tradesLogged: tradeScoredEvents.length,
         dailyDelta,
         decayApplied,
@@ -941,7 +949,7 @@ export const createDailySnapshots = internalMutation({
       if (bs.evolutionCooldownStart != null) { // != handles both null and undefined (optional field on old docs)
         const daysQualifying = Math.floor((now - bs.evolutionCooldownStart) / 86_400_000);
         const scoreBasedStage = getStageForScore(bs.currentScore);
-        const wouldEvolve = STAGE_ORDER.indexOf(scoreBasedStage) > STAGE_ORDER.indexOf(bs.currentStage);
+        const wouldEvolve = STAGE_ORDER.indexOf(scoreBasedStage) > STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         if (wouldEvolve && daysQualifying >= 3) {
           // Trigger evolution
@@ -956,7 +964,7 @@ export const createDailySnapshots = internalMutation({
           updatedHistory.push({ stage: newStage, reachedAt: now });
 
           const coaching = generateTransitionMessage({
-            previousStage: bs.currentStage,
+            previousStage: normalizeToStage(bs.currentStage),
             newStage,
             daysInPreviousStage,
             tradeTimestamp: now,
@@ -1004,7 +1012,7 @@ export const createDailySnapshots = internalMutation({
       if (bs.regressionBufferStart !== null) {
         const daysBelow = Math.floor((now - bs.regressionBufferStart) / 86_400_000);
         const scoreBasedStage = getStageForScore(bs.currentScore);
-        const wouldRegress = STAGE_ORDER.indexOf(scoreBasedStage) < STAGE_ORDER.indexOf(bs.currentStage);
+        const wouldRegress = STAGE_ORDER.indexOf(scoreBasedStage) < STAGE_ORDER.indexOf(normalizeToStage(bs.currentStage));
 
         if (wouldRegress && daysBelow >= 5) {
           // Trigger regression
@@ -1019,7 +1027,7 @@ export const createDailySnapshots = internalMutation({
           updatedHistory.push({ stage: newStage, reachedAt: now });
 
           const coaching = generateTransitionMessage({
-            previousStage: bs.currentStage,
+            previousStage: normalizeToStage(bs.currentStage),
             newStage,
             daysInPreviousStage,
             tradeTimestamp: now,
