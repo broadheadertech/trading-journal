@@ -8,6 +8,7 @@ import {
 } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { CheckCircle, AlertTriangle, X, TrendingUp, TrendingDown, Minus, ImagePlus } from 'lucide-react';
+import { SpeechButton } from '@/components/SpeechButton';
 
 async function compressImage(file: File): Promise<string> {
   return new Promise((resolve) => {
@@ -574,7 +575,10 @@ export default function TradeForm({
           {/* C-36: Three Targeted Notes */}
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">What did you see? <span className="text-[var(--muted-foreground)] font-normal">(Setup)</span></label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">What did you see? <span className="text-[var(--muted-foreground)] font-normal">(Setup)</span></label>
+                <SpeechButton value={setupNotes} onChange={setSetupNotes} />
+              </div>
               <textarea
                 value={setupNotes}
                 onChange={e => setSetupNotes(e.target.value)}
@@ -623,7 +627,10 @@ export default function TradeForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">What did you do? <span className="text-[var(--muted-foreground)] font-normal">(Execution)</span></label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">What did you do? <span className="text-[var(--muted-foreground)] font-normal">(Execution)</span></label>
+                <SpeechButton value={executionNotes} onChange={setExecutionNotes} />
+              </div>
               <textarea
                 value={executionNotes}
                 onChange={e => setExecutionNotes(e.target.value)}
@@ -632,7 +639,10 @@ export default function TradeForm({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Context / Why You Entered</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">Context / Why You Entered</label>
+                {!prefilledEmotion && <SpeechButton value={reasoning} onChange={setReasoning} />}
+              </div>
               <textarea
                 value={reasoning}
                 onChange={e => setReasoning(e.target.value)}
@@ -677,12 +687,15 @@ export default function TradeForm({
 
           {/* C-36 / C-28: Lesson Notes — amplified when rule broken */}
           <div className={`rounded-xl p-3 border ${hasRuleBreaks ? 'border-amber-500/40 bg-amber-500/5' : 'border-[var(--border)]'}`}>
-            <label className="block text-sm font-medium mb-1">
-              {hasRuleBreaks
-                ? <span className="text-amber-400">⚠ What would you change? <span className="text-[var(--muted-foreground)] font-normal">(A rule was broken — what led to it?)</span></span>
-                : <span>What would you change? <span className="text-[var(--muted-foreground)] font-normal">(Reflection)</span></span>
-              }
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">
+                {hasRuleBreaks
+                  ? <span className="text-amber-400">⚠ What would you change? <span className="text-[var(--muted-foreground)] font-normal">(A rule was broken — what led to it?)</span></span>
+                  : <span>What would you change? <span className="text-[var(--muted-foreground)] font-normal">(Reflection)</span></span>
+                }
+              </label>
+              <SpeechButton value={lessonNotes} onChange={setLessonNotes} />
+            </div>
             <textarea
               value={lessonNotes}
               onChange={e => setLessonNotes(e.target.value)}
@@ -697,9 +710,12 @@ export default function TradeForm({
 
           {/* A-6: One Thing Field */}
           <div>
-            <label className="block text-sm font-medium mb-1">
-              One thing for your future self <span className="text-[var(--muted-foreground)] font-normal">(optional)</span>
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">
+                One thing for your future self <span className="text-[var(--muted-foreground)] font-normal">(optional)</span>
+              </label>
+              <SpeechButton value={oneThingNote} onChange={setOneThingNote} />
+            </div>
             <input
               type="text"
               value={oneThingNote}

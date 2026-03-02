@@ -5,6 +5,7 @@ import { DailyReflection as DailyReflectionType, WeeklyReview, DisciplineGrade, 
 import { getGradeColor } from '@/lib/discipline-engine';
 import { getWeeklyDataQuestions } from '@/lib/utils';
 import { Sun, Moon, CalendarDays, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { SpeechButton } from '@/components/SpeechButton';
 import { format, startOfWeek } from 'date-fns';
 import { useToast } from './ui/Toast';
 import Modal from './ui/Modal';
@@ -163,9 +164,12 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
 
           {tradedMyPlan !== null && (
             <div>
-              <label className="block text-sm font-medium mb-1">
-                {tradedMyPlan ? 'What went well?' : 'What happened?'}
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">
+                  {tradedMyPlan ? 'What went well?' : 'What happened?'}
+                </label>
+                <SpeechButton value={explanation} onChange={setExplanation} />
+              </div>
               <textarea
                 value={explanation}
                 onChange={e => setExplanation(e.target.value)}
@@ -176,7 +180,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-1">What emotional mistakes did you make?</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">What emotional mistakes did you make?</label>
+              <SpeechButton value={emotionalMistakes} onChange={setEmotionalMistakes} />
+            </div>
             <textarea
               value={emotionalMistakes}
               onChange={e => setEmotionalMistakes(e.target.value)}
@@ -187,7 +194,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Biggest Lesson</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">Biggest Lesson</label>
+                <SpeechButton value={biggestLesson} onChange={setBiggestLesson} />
+              </div>
               <textarea
                 value={biggestLesson}
                 onChange={e => setBiggestLesson(e.target.value)}
@@ -196,7 +206,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Tomorrow&apos;s Goal</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">Tomorrow&apos;s Goal</label>
+                <SpeechButton value={tomorrowGoal} onChange={setTomorrowGoal} />
+              </div>
               <textarea
                 value={tomorrowGoal}
                 onChange={e => setTomorrowGoal(e.target.value)}
@@ -273,7 +286,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-1">What emotional mistakes did you make this week?</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">What emotional mistakes did you make this week?</label>
+              <SpeechButton value={weeklyMistakes} onChange={setWeeklyMistakes} />
+            </div>
             <textarea
               value={weeklyMistakes}
               onChange={e => setWeeklyMistakes(e.target.value)}
@@ -286,7 +302,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Patterns you noticed</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Patterns you noticed</label>
+              <SpeechButton value={weeklyPatterns} onChange={setWeeklyPatterns} />
+            </div>
             <textarea
               value={weeklyPatterns}
               onChange={e => setWeeklyPatterns(e.target.value)}
@@ -299,7 +318,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Improvement plan for next week</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Improvement plan for next week</label>
+              <SpeechButton value={weeklyPlan} onChange={setWeeklyPlan} />
+            </div>
             <textarea
               value={weeklyPlan}
               onChange={e => setWeeklyPlan(e.target.value)}

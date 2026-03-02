@@ -5,6 +5,7 @@ import { TriggerEntry, EmotionState, TriggerSource } from '@/lib/types';
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { TRIGGER_SOURCE_OPTIONS, analyzeTriggerPatterns } from '@/lib/discipline-engine';
 import { Plus, Trash2, Zap, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { SpeechButton } from '@/components/SpeechButton';
 import { format } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import Modal from './ui/Modal';
@@ -165,7 +166,10 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">What happened?</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">What happened?</label>
+              <SpeechButton value={description} onChange={setDescription} />
+            </div>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}

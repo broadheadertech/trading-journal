@@ -28,14 +28,23 @@ const STAGE_ORDER = ["beginner", "intern", "advance", "professional", "advance-p
 // Story 7.1 — tier-based stage cap (FR34, D4)
 const FREE_TIER_STAGE_CAP = "advance" as const;
 const FREE_TIER_CAP_INDEX = STAGE_ORDER.indexOf(FREE_TIER_STAGE_CAP); // = 2
+// Legacy stage remap — guards against documents written before the 2026-02 rename
+const LEGACY_STAGE_MAP: Record<string, string> = {
+  baby: "beginner", toddler: "intern", kid: "advance",
+  teen: "professional", adult: "advance-professional", master: "advance-professional",
+};
+
 /** Returns the effectiveStage after applying Free-tier cap. Essential/Pro/Elite are uncapped. */
 function computeEffectiveStage(
   actualStage: (typeof STAGE_ORDER)[number],
   planId: string,
 ): (typeof STAGE_ORDER)[number] {
-  if (planId !== "free") return actualStage;
-  const actualIdx = STAGE_ORDER.indexOf(actualStage);
-  return actualIdx <= FREE_TIER_CAP_INDEX ? actualStage : STAGE_ORDER[FREE_TIER_CAP_INDEX];
+  // Normalize legacy stage names before any cap logic
+  const normalized = (LEGACY_STAGE_MAP[actualStage] ?? actualStage) as (typeof STAGE_ORDER)[number];
+  const safeStage = STAGE_ORDER.includes(normalized) ? normalized : "beginner";
+  if (planId !== "free") return safeStage;
+  const actualIdx = STAGE_ORDER.indexOf(safeStage);
+  return actualIdx <= FREE_TIER_CAP_INDEX ? safeStage : STAGE_ORDER[FREE_TIER_CAP_INDEX];
 }
 
 // ── Weekend & Holiday Hibernation (FR7, Story 5.5) ───────────────────────────

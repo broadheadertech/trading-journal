@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { Trade, JournalEntry, EmotionState, CircuitBreakerEvent, TriggerEntry, DailyReflection as DailyReflectionType, WeeklyReview } from '@/lib/types';
 import { EMOTION_OPTIONS, findRelevantReflection, getReflectionEvolution } from '@/lib/utils';
 import { Plus, Trash2, Edit2, Brain, Flame } from 'lucide-react';
+import { SpeechButton } from '@/components/SpeechButton';
 import { format } from 'date-fns';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import Modal from './ui/Modal';
@@ -511,11 +512,17 @@ export default function PsychologyJournal({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Daily Notes</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Daily Notes</label>
+              <SpeechButton value={notes} onChange={setNotes} />
+            </div>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="How was your trading day? What happened?" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Lesson Learned</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Lesson Learned</label>
+              <SpeechButton value={lessonLearned} onChange={setLessonLearned} />
+            </div>
             <textarea value={lessonLearned} onChange={e => setLessonLearned(e.target.value)} rows={2} placeholder="What did you learn today?" />
           </div>
           <div className="flex justify-end gap-3 pt-1">

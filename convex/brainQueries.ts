@@ -2,18 +2,44 @@ import { query } from "./_generated/server";
 import { getUser } from "./helpers";
 import { v } from "convex/values";
 
+// Legacy stage names from before the 2026-02 rename (baby→beginner, etc.)
+// Map old → new so documents written before the rename don't crash the UI.
+const LEGACY_STAGE_MAP: Record<string, string> = {
+  baby: "beginner",
+  toddler: "intern",
+  kid: "advance",
+  teen: "professional",
+  adult: "advance-professional",
+  master: "advance-professional",
+};
+
+function normalizeStage(stage: string): string {
+  return LEGACY_STAGE_MAP[stage] ?? stage;
+}
+
 /** Returns the current brain state for the authenticated user, or null if none exists. */
 export const getBrainState = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getUser(ctx);
     if (!userId) return null;
-    return (
-      (await ctx.db
-        .query("brainStates")
-        .withIndex("by_user", (q) => q.eq("userId", userId))
-        .first()) ?? null
-    );
+    const doc = (await ctx.db
+      .query("brainStates")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first()) ?? null;
+    if (!doc) return null;
+    // Remap legacy stage names so old Convex documents don't crash the UI
+    return {
+      ...doc,
+      currentStage: normalizeStage(doc.currentStage),
+      effectiveStage: doc.effectiveStage ? normalizeStage(doc.effectiveStage) : doc.effectiveStage,
+      stageHistory: doc.stageHistory?.map(
+        (entry: { stage: string; reachedAt: number; leftAt?: number }) => ({
+          ...entry,
+          stage: normalizeStage(entry.stage),
+        })
+      ),
+    };
   },
 });
 
