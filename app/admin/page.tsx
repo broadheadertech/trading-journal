@@ -52,7 +52,7 @@ function ActivityRow({ event }: { event: { type: string; userId: string; metadat
           {config.label}
           <span className="text-[var(--muted-foreground)]">{detail}</span>
         </p>
-        <p className="text-[10px] text-[var(--muted-foreground)] font-mono truncate">
+        <p className="text-[10px] text-[var(--muted-foreground)] truncate">
           {event.userId.slice(0, 20)}...
         </p>
       </div>

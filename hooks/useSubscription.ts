@@ -15,6 +15,7 @@ export function useSubscription() {
   const tier = TIERS[tierName];
 
   const canAccessTab = (tabId: TabId): boolean => tier.tabs.includes(tabId);
+  const hasTeamAccess = tier.hasTeam;
 
   const limits = {
     maxTrades: tier.maxTrades,
@@ -28,6 +29,7 @@ export function useSubscription() {
     planId,
     tierName,
     canAccessTab,
+    hasTeamAccess,
     limits,
     isLoading: subscription === undefined,
   };

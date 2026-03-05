@@ -2,12 +2,17 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { Trade, Strategy, EmotionState } from '@/lib/types';
-import { formatPercent } from '@/lib/utils';
+import { formatPercent, getDisciplineScore } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
-import { Plus, Edit2, Trash2, Filter, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Search, LayoutGrid, List, ImageIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import {
+  Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search,
+  LayoutGrid, List, Calendar, TrendingUp, TrendingDown, Clock,
+  Eye, EyeOff, Sparkles, Shield, Target, BarChart3, Upload,
+} from 'lucide-react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, parseISO, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import Modal from './ui/Modal';
 import TradeForm from './TradeForm';
+import TradeImport from './TradeImport';
 import PostTradeReview, { PostTradeSnapshot } from './PostTradeReview';
 import TradeDetailView from './TradeDetailView';
 import { useToast } from './ui/Toast';
@@ -20,22 +25,17 @@ interface TradesLogProps {
   onAdd: (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => void;
   onUpdate: (id: string, updates: Partial<Trade>) => void;
   onDelete: (id: string) => void;
+  onBulkImport?: (trades: any[]) => Promise<number>;
   showAddModal?: boolean;
   onCloseAddModal?: () => void;
   onRuleBreak?: (ruleName: string, explanation: string) => void;
   initialCapital?: number;
 }
 
-type SortKey = 'entryDate' | 'coin' | 'actualPnLPercent' | 'capital' | 'strategy';
-type TradesSubTab = 'log' | 'lessons';
-
-const SUB_TABS: { id: TradesSubTab; label: string }[] = [
-  { id: 'log', label: 'Trade Log' },
-  { id: 'lessons', label: 'Lessons' },
-];
+type JournalView = 'day-cards' | 'timeline';
 
 export default function TradesLog({
-  trades, strategies, onAdd, onUpdate, onDelete, showAddModal, onCloseAddModal, onRuleBreak, initialCapital = 0,
+  trades, strategies, onAdd, onUpdate, onDelete, onBulkImport, showAddModal, onCloseAddModal, onRuleBreak, initialCapital = 0,
 }: TradesLogProps) {
   const { showToast } = useToast();
   const { formatCurrency, formatPrice } = useCurrency();
@@ -43,675 +43,542 @@ export default function TradesLog({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [filterCoin, setFilterCoin] = useState('');
-  const [filterStrategy, setFilterStrategy] = useState('');
-  const [filterResult, setFilterResult] = useState<'all' | 'win' | 'loss' | 'open'>('all');
-  const [filterDirection, setFilterDirection] = useState<'all' | 'long' | 'short'>('all');
-  const [sortKey, setSortKey] = useState<SortKey>('entryDate');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [patternStrip, setPatternStrip] = useState(false);
-  const [postTradeSnapshot, setPostTradeSnapshot] = useState<PostTradeSnapshot | null>(null);
-  const [viewTrade, setViewTrade] = useState<Trade | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [subTab, setSubTab] = useState<TradesSubTab>('log');
-  const PAGE_SIZE = 10;
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [journalView, setJournalView] = useState<JournalView>('day-cards');
+  const [hiddenDays, setHiddenDays] = useState<Set<string>>(new Set());
+  const [showImport, setShowImport] = useState(false);
+  const [detailTrade, setDetailTrade] = useState<Trade | null>(null);
+  const [postReviewSnapshot, setPostReviewSnapshot] = useState<PostTradeSnapshot | null>(null);
 
-  const isModalOpen = isAddOpen || !!showAddModal;
+  // External add modal trigger
+  useEffect(() => {
+    if (showAddModal) setIsAddOpen(true);
+  }, [showAddModal]);
 
-  const handleCloseModal = () => {
-    setIsAddOpen(false);
-    onCloseAddModal?.();
-  };
+  useEffect(() => {
+    if (!isAddOpen && onCloseAddModal) onCloseAddModal();
+  }, [isAddOpen, onCloseAddModal]);
 
-  const currentBalance = useMemo(() => {
-    const totalPnL = trades
-      .filter(t => !t.isOpen && t.actualPnL !== null)
-      .reduce((sum, t) => sum + (t.actualPnL ?? 0), 0);
-    return initialCapital + totalPnL;
-  }, [trades, initialCapital]);
-
-  // All trades with broken rules or lesson notes, sorted by rule break count desc
-  const lessonTrades = useMemo(() => {
-    return [...trades]
-      .filter(t => !t.isOpen && (
-        t.ruleChecklist.some(r => r.compliance === 'no') ||
-        t.lessonNotes.trim() ||
-        t.lossHypothesis?.trim()
-      ))
-      .sort((a, b) => {
-        const aBroken = a.ruleChecklist.filter(r => r.compliance === 'no').length;
-        const bBroken = b.ruleChecklist.filter(r => r.compliance === 'no').length;
-        if (bBroken !== aBroken) return bBroken - aBroken;
-        return new Date(b.exitDate || b.entryDate).getTime() - new Date(a.exitDate || a.entryDate).getTime();
-      });
+  /* ── Closed trades (time filtering handled by universal top-bar filter) ── */
+  const filtered = useMemo(() => {
+    return trades.filter(t => !t.isOpen && t.actualPnL !== null);
   }, [trades]);
 
-  const filtered = useMemo(() => {
-    let result = [...trades];
-    if (filterCoin) result = result.filter(t => t.coin.toLowerCase().includes(filterCoin.toLowerCase()));
-    if (filterStrategy) result = result.filter(t => t.strategy === filterStrategy);
-    if (filterResult === 'win') result = result.filter(t => !t.isOpen && (t.actualPnLPercent ?? 0) > 0);
-    if (filterResult === 'loss') result = result.filter(t => !t.isOpen && (t.actualPnLPercent ?? 0) <= 0);
-    if (filterResult === 'open') result = result.filter(t => t.isOpen);
-    if (filterDirection !== 'all') result = result.filter(t => (t.direction ?? 'long') === filterDirection);
-    // C-32: Search across all text fields
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(t =>
-        t.coin.toLowerCase().includes(q) ||
-        t.strategy.toLowerCase().includes(q) ||
-        t.setupNotes.toLowerCase().includes(q) ||
-        t.executionNotes.toLowerCase().includes(q) ||
-        t.lessonNotes.toLowerCase().includes(q) ||
-        t.notes.toLowerCase().includes(q) ||
-        t.oneThingNote.toLowerCase().includes(q) ||
-        t.tags.join(' ').toLowerCase().includes(q)
-      );
-    }
+  /* ── Metrics ──────────────────────────────────────── */
+  const metrics = useMemo(() => {
+    const total = filtered.length;
+    const netPnL = filtered.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+    const wins = filtered.filter(t => (t.actualPnL ?? 0) > 0);
+    const losses = filtered.filter(t => (t.actualPnL ?? 0) < 0);
+    const winRate = total > 0 ? Math.round((wins.length / total) * 100) : 0;
+    const avgPnL = total > 0 ? netPnL / total : 0;
+    const reviewed = filtered.filter(t => t.verdict !== null).length;
+    const reviewCoverage = total > 0 ? Math.round((reviewed / total) * 100) : 100;
+    const bestTrade = wins.sort((a, b) => (b.actualPnL ?? 0) - (a.actualPnL ?? 0))[0] ?? null;
+    const worstTrade = losses.sort((a, b) => (a.actualPnL ?? 0) - (b.actualPnL ?? 0))[0] ?? null;
+    const avgWin = wins.length > 0 ? wins.reduce((s, t) => s + (t.actualPnL ?? 0), 0) / wins.length : 0;
+    const avgLoss = losses.length > 0 ? losses.reduce((s, t) => s + Math.abs(t.actualPnL ?? 0), 0) / losses.length : 0;
+    const avgR = avgLoss > 0 ? (avgWin / avgLoss) : 0;
+    const disciplineScore = getDisciplineScore(filtered);
+    const processHealth = Math.round(disciplineScore * 100);
 
-    result.sort((a, b) => {
-      let cmp = 0;
-      switch (sortKey) {
-        case 'entryDate': cmp = new Date(a.entryDate).getTime() - new Date(b.entryDate).getTime(); break;
-        case 'coin': cmp = a.coin.localeCompare(b.coin); break;
-        case 'actualPnLPercent': cmp = (a.actualPnLPercent ?? 0) - (b.actualPnLPercent ?? 0); break;
-        case 'capital': cmp = a.capital - b.capital; break;
-        case 'strategy': cmp = (a.strategy || '').localeCompare(b.strategy || ''); break;
-      }
-      return sortDir === 'desc' ? -cmp : cmp;
+    return { total, netPnL, wins: wins.length, losses: losses.length, winRate, avgPnL, reviewCoverage, reviewed, bestTrade, worstTrade, avgR, processHealth };
+  }, [filtered]);
+
+  /* ── Calendar data ───────────────────────────────── */
+  const calendarDays = useMemo(() => {
+    const monthStart = startOfMonth(calendarMonth);
+    const monthEnd = endOfMonth(calendarMonth);
+    const calStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+    const calEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    const days = eachDayOfInterval({ start: calStart, end: calEnd });
+    return days.map(day => {
+      const dateStr = format(day, 'yyyy-MM-dd');
+      const dayTrades = trades.filter(t => {
+        const d = t.exitDate ? format(parseISO(t.exitDate), 'yyyy-MM-dd') : format(new Date(t.createdAt), 'yyyy-MM-dd');
+        return d === dateStr;
+      });
+      const pnl = dayTrades.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      return { day, dateStr, trades: dayTrades, pnl, inMonth: isSameMonth(day, calendarMonth) };
     });
+  }, [calendarMonth, trades]);
+
+  /* ── Day-grouped trades ──────────────────────────── */
+  const dayGroups = useMemo(() => {
+    const groups = new Map<string, Trade[]>();
+    const sorted = [...filtered].sort((a, b) => {
+      const da = a.exitDate ? new Date(a.exitDate) : new Date(a.createdAt);
+      const db = b.exitDate ? new Date(b.exitDate) : new Date(b.createdAt);
+      return db.getTime() - da.getTime();
+    });
+    sorted.forEach(t => {
+      const d = t.exitDate ? format(parseISO(t.exitDate), 'yyyy-MM-dd') : format(new Date(t.createdAt), 'yyyy-MM-dd');
+      if (!groups.has(d)) groups.set(d, []);
+      groups.get(d)!.push(t);
+    });
+    return [...groups.entries()].map(([date, dayTrades]) => {
+      const pnl = dayTrades.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      const wins = dayTrades.filter(t => (t.actualPnL ?? 0) > 0).length;
+      const losses = dayTrades.filter(t => (t.actualPnL ?? 0) < 0).length;
+      const totalSize = dayTrades.reduce((s, t) => s + t.capital, 0);
+      return { date, trades: dayTrades, pnl, wins, losses, totalSize };
+    });
+  }, [filtered]);
+
+  /* ── Patterns discovered ─────────────────────────── */
+  const patterns = useMemo(() => {
+    const result: { name: string; icon: string; net: number; count: number; winRate: number; share: number; color: string }[] = [];
+    // Hour-based patterns
+    const afternoonTrades = filtered.filter(t => { const h = new Date(t.createdAt).getHours(); return h >= 12 && h < 18; });
+    const nightTrades = filtered.filter(t => { const h = new Date(t.createdAt).getHours(); return h >= 18 || h < 6; });
+    if (afternoonTrades.length > 0) {
+      const net = afternoonTrades.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      const wr = Math.round((afternoonTrades.filter(t => (t.actualPnL ?? 0) > 0).length / afternoonTrades.length) * 100);
+      result.push({ name: 'Afternoon Window', icon: 'clock', net, count: afternoonTrades.length, winRate: wr, share: filtered.length > 0 ? Math.round((afternoonTrades.length / filtered.length) * 100) : 0, color: net >= 0 ? 'green' : 'red' });
+    }
+    if (nightTrades.length > 0) {
+      const net = nightTrades.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      const wr = Math.round((nightTrades.filter(t => (t.actualPnL ?? 0) > 0).length / nightTrades.length) * 100);
+      result.push({ name: 'Night Edge', icon: 'moon', net, count: nightTrades.length, winRate: wr, share: filtered.length > 0 ? Math.round((nightTrades.length / filtered.length) * 100) : 0, color: net >= 0 ? 'green' : 'cyan' });
+    }
+    // Coin-based patterns
+    const coinMap = new Map<string, Trade[]>();
+    filtered.forEach(t => { if (!coinMap.has(t.coin)) coinMap.set(t.coin, []); coinMap.get(t.coin)!.push(t); });
+    const best = [...coinMap.entries()].filter(([, ts]) => ts.length >= 2).sort((a, b) => {
+      const na = a[1].reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      const nb = b[1].reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      return nb - na;
+    })[0];
+    if (best) {
+      const net = best[1].reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      const wr = Math.round((best[1].filter(t => (t.actualPnL ?? 0) > 0).length / best[1].length) * 100);
+      result.push({ name: `Strongest Symbol: ${best[0]}`, icon: 'target', net, count: best[1].length, winRate: wr, share: filtered.length > 0 ? Math.round((best[1].length / filtered.length) * 100) : 0, color: 'green' });
+    }
     return result;
-  }, [trades, filterCoin, filterStrategy, filterResult, filterDirection, sortKey, sortDir, searchQuery]);
+  }, [filtered]);
 
-  // Running balance map: tradeId → cumulative balance after that closed trade
-  const balanceMap = useMemo(() => {
-    const map = new Map<string, number>();
-    const sorted = [...trades]
-      .filter(t => !t.isOpen && t.actualPnL !== null && t.exitDate)
-      .sort((a, b) => new Date(a.exitDate!).getTime() - new Date(b.exitDate!).getTime());
-    let balance = initialCapital;
-    for (const t of sorted) {
-      balance += t.actualPnL ?? 0;
-      map.set(t.id, balance);
-    }
-    return map;
-  }, [trades, initialCapital]);
-
-  // Reset to page 1 whenever filters/search/sort change
-  useEffect(() => { setCurrentPage(1); }, [searchQuery, filterCoin, filterStrategy, filterResult, filterDirection, sortKey, sortDir]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginatedTrades = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('desc');
-    }
-  };
-
+  /* ── CRUD handlers ───────────────────────────────── */
   const handleAdd = (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
     onAdd(trade);
-    handleCloseModal();
-    // Show post-trade analysis for closed trades
-    if (!trade.isOpen && trade.exitPrice) {
-      setPostTradeSnapshot({
-        coin: trade.coin,
-        strategy: trade.strategy,
-        entryPrice: trade.entryPrice,
-        exitPrice: trade.exitPrice,
-        capital: trade.capital,
-        confidence: trade.confidence,
-        stopLoss: trade.stopLoss ?? null,
-        ruleChecklist: trade.ruleChecklist,
-        direction: trade.direction,
-        leverage: trade.leverage,
-      });
-    } else {
-      showToast('Trade logged successfully');
-    }
+    setIsAddOpen(false);
+    showToast('Trade added');
   };
-
   const handleEdit = (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
-    if (editTrade) {
-      onUpdate(editTrade.id, trade);
-      setEditTrade(null);
-      showToast('Trade updated');
-    }
+    if (editTrade) { onUpdate(editTrade.id, trade); setEditTrade(null); showToast('Trade updated'); }
   };
-
-  const handleDelete = (id: string) => {
-    onDelete(id);
-    setDeleteConfirm(null);
-    showToast('Trade deleted');
-  };
-
-  const uniqueCoins = [...new Set(trades.map(t => t.coin))];
-  const uniqueStrategies = [...new Set(trades.map(t => t.strategy).filter(Boolean))];
-
-  const SortHeader = ({ label, sortId }: { label: string; sortId: SortKey }) => (
-    <th
-      onClick={() => handleSort(sortId)}
-      className="py-3 px-3 font-medium cursor-pointer hover:text-[var(--foreground)] transition-colors select-none"
-    >
-      <div className="flex items-center gap-1">
-        {label}
-        <ArrowUpDown size={12} className={sortKey === sortId ? 'text-[var(--accent)]' : 'opacity-30'} />
-      </div>
-    </th>
-  );
+  const handleDeleteConfirm = (id: string) => { onDelete(id); setDeleteConfirm(null); showToast('Trade deleted'); };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-xl font-bold">Trades Log</h2>
-          <p className="text-sm text-[var(--muted-foreground)]">{trades.length} total · {filtered.length} shown</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setPatternStrip(p => !p)}
-            title={patternStrip ? 'Table view' : 'Pattern strip view'}
-            className={`p-2 rounded-lg border transition-colors ${patternStrip ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/50'}`}
-          >
-            {patternStrip ? <List size={16} /> : <LayoutGrid size={16} />}
-          </button>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-colors ${showFilters ? 'border-[var(--accent)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/50'}`}
-          >
-            <Filter size={16} /> Filters <ChevronDown size={14} className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-          </button>
-          <button
-            onClick={() => { setIsAddOpen(true); }}
-            disabled={usage.trades.isAtLimit}
-            title={usage.trades.isAtLimit ? 'Trade limit reached — upgrade to add more' : undefined}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Plus size={16} /> Add Trade
+    <div className="space-y-6">
+
+      {/* ── Hero Section ── */}
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">
+              <Calendar size={12} /> Interactive Trade Journal
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-3">Journal Every Trade With Click-to-Review Flow</h1>
+            <p className="text-[var(--muted-foreground)] text-sm max-w-2xl">
+              This is your interactive journal. Filter by behavior pattern, click any trade row, and open full root-cause review with notes, setup tags, emotions, and evidence.
+            </p>
+          </div>
+          <button onClick={() => setIsAddOpen(true)} disabled={usage.trades.isAtLimit}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shrink-0">
+            <Plus size={14} /> Add New Trade
           </button>
         </div>
+        <div className="flex gap-2 flex-wrap">
+          {['1. Use filters to isolate one pattern', '2. Click a trade to open review details', '3. Log lesson and move to next trade'].map((step, i) => (
+            <span key={i} className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-medium">{step}</span>
+          ))}
+        </div>
+        {!usage.trades.isUnlimited && (
+          <div className="max-w-xs mt-4">
+            <UsageBar label="Trades" current={usage.trades.current} max={usage.trades.max} isUnlimited={false} />
+          </div>
+        )}
       </div>
 
-      {/* Usage indicator for limited tiers */}
-      {!usage.trades.isUnlimited && (
-        <div className="max-w-xs">
-          <UsageBar label="Trades" current={usage.trades.current} max={usage.trades.max} isUnlimited={false} />
-          {usage.trades.isAtLimit && (
-            <p className="text-xs text-[var(--red)] mt-1">Trade limit reached &mdash; upgrade to add more</p>
-          )}
-        </div>
-      )}
-
-      {/* Sub-tabs */}
-      <div className="flex gap-1.5 flex-wrap">
-        {SUB_TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setSubTab(tab.id)}
-            className={`px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-              subTab === tab.id
-                ? 'bg-[var(--accent)] text-white'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {subTab === 'log' && (<>
-      {/* C-32: Search bar */}
-      <div className="relative">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none z-10" />
-        <input
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search trades by coin, strategy, notes, tags..."
-          className="text-sm"
-          style={{ paddingLeft: '2.25rem' }}
-        />
-      </div>
-
-      {/* Filters */}
-      {showFilters && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 sm:p-4 bg-[var(--card)] border border-[var(--border)] rounded-xl animate-in">
-          <div>
-            <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Symbol</label>
-            <select value={filterCoin} onChange={e => setFilterCoin(e.target.value)}>
-              <option value="">All Symbols</option>
-              {uniqueCoins.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Strategy</label>
-            <select value={filterStrategy} onChange={e => setFilterStrategy(e.target.value)}>
-              <option value="">All Strategies</option>
-              {uniqueStrategies.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Result</label>
-            <select value={filterResult} onChange={e => setFilterResult(e.target.value as typeof filterResult)}>
-              <option value="all">All</option>
-              <option value="win">Wins</option>
-              <option value="loss">Losses</option>
-              <option value="open">Open</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Direction</label>
-            <select value={filterDirection} onChange={e => setFilterDirection(e.target.value as typeof filterDirection)}>
-              <option value="all">All</option>
-              <option value="long">Longs Only</option>
-              <option value="short">Shorts Only</option>
-            </select>
-          </div>
-        </div>
-      )}
-
-      {/* Trades */}
-      {trades.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--muted)] flex items-center justify-center mx-auto">
-            <Plus size={24} className="text-[var(--muted-foreground)]" />
-          </div>
-          <h3 className="text-base font-semibold text-[var(--foreground)]">No trades yet</h3>
-          <p className="text-sm text-[var(--muted-foreground)] max-w-xs mx-auto">
-            Start logging trades to track your performance, build discipline, and unlock analytics.
-          </p>
-          <button
-            onClick={() => { setIsAddOpen(true); }}
-            disabled={usage.trades.isAtLimit}
-            className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
-          >
-            Log Your First Trade
-          </button>
-        </div>
-      ) : patternStrip ? (
-        /* C-30: Pattern Strip View */
+      {/* ── Top 4 Stat Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <p className="text-xs text-[var(--muted-foreground)] mb-3">Last {Math.min(filtered.length, 20)} trades — dot color = outcome, bottom bar = rule compliance</p>
-          <div className="flex flex-wrap gap-1.5">
-            {filtered.slice(0, 20).map(trade => {
-              const isWin = !trade.isOpen && (trade.actualPnL ?? 0) > 0;
-              const isLoss = !trade.isOpen && (trade.actualPnL ?? 0) < 0;
-              const broke = trade.ruleChecklist.some(r => r.compliance === 'no');
-              return (
-                <div
-                  key={trade.id}
-                  title={`${trade.coin} · ${trade.exitDate ? format(new Date(trade.exitDate), 'MMM d') : 'Open'} · ${trade.actualPnLPercent !== null ? formatPercent(trade.actualPnLPercent) : '—'}`}
-                  className="flex flex-col items-center gap-0.5 cursor-pointer"
-                  onClick={() => setViewTrade(trade)}
-                >
-                  <div className={`w-4 h-4 rounded-sm ${trade.isOpen ? 'bg-[var(--muted)]' : isWin ? 'bg-[var(--green)]' : 'bg-[var(--red)]'}`} />
-                  <div className={`w-4 h-1 rounded-sm ${broke ? 'bg-red-400/60' : trade.ruleChecklist.length > 0 ? 'bg-green-400/40' : 'bg-[var(--muted)]'}`} />
-                </div>
-              );
-            })}
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Filtered Net P&L</p>
+            <TrendingUp size={14} className="text-[var(--muted-foreground)]" />
           </div>
-          <div className="flex items-center gap-4 mt-2 text-[10px] text-[var(--muted-foreground)]">
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[var(--green)] inline-block" /> Win</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[var(--red)] inline-block" /> Loss</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-1 rounded-sm bg-red-400/60 inline-block" /> Rule break</span>
-          </div>
+          <p className={`text-2xl font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trades &middot; {metrics.winRate}% win rate &middot; Avg {formatCurrency(metrics.avgPnL)}</p>
         </div>
-      ) : (
-        <>
-          {/* Desktop Table */}
-          <div className="hidden md:block bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-[var(--muted-foreground)] border-b border-[var(--border)] text-xs uppercase tracking-wide">
-                    <SortHeader label="Date" sortId="entryDate" />
-                    <SortHeader label="Symbol" sortId="coin" />
-                    <th className="py-3 px-3 font-medium">Entry</th>
-                    <th className="py-3 px-3 font-medium">Exit</th>
-                    <SortHeader label="P&L %" sortId="actualPnLPercent" />
-                    <th className="py-3 px-3 font-medium">P&L $</th>
-                    {initialCapital > 0 && <th className="py-3 px-3 font-medium">Balance</th>}
-                    <SortHeader label="Strategy" sortId="strategy" />
-                    <th className="py-3 px-3 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {paginatedTrades.map(trade => {
-                    return (
-                      <tr key={trade.id} className="hover:bg-[var(--card-hover)] transition-colors cursor-pointer" onClick={() => setViewTrade(trade)}>
-                        <td className="py-3 px-3">{format(new Date(trade.entryDate), 'MMM dd, yy')}</td>
-                        <td className="py-3 px-3 font-medium">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span>{trade.coin}</span>
-                            <span className={`text-[10px] px-1 py-0.5 rounded font-semibold ${
-                              (trade.direction ?? 'long') === 'short'
-                                ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                                : 'bg-green-500/15 text-green-400 border border-green-500/30'
-                            }`}>
-                              {(trade.direction ?? 'long') === 'short' ? 'S' : 'L'}
-                            </span>
-                            {trade.leverage && trade.leverage > 1 && (
-                              <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">
-                                {trade.leverage}x
-                              </span>
-                            )}
-                            {trade.marketType && trade.marketType !== 'crypto' && (
-                              <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">
-                                {trade.marketType === 'stocks' ? '📈' : '💱'}
-                              </span>
-                            )}
-                            {trade.screenshots?.length > 0 && (
-                              <span title={`${trade.screenshots.length} chart${trade.screenshots.length > 1 ? 's' : ''}`} className="shrink-0">
-                                <ImageIcon size={11} className="text-[var(--muted-foreground)]" />
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-3 px-3 text-[var(--muted-foreground)]">{formatPrice(trade.entryPrice)}</td>
-                        <td className="py-3 px-3 text-[var(--muted-foreground)]">
-                          {trade.isOpen ? <span className="text-[var(--yellow)]">Open</span> : trade.exitPrice ? formatPrice(trade.exitPrice) : '—'}
-                        </td>
-                        <td className={`py-3 px-3 font-medium ${trade.isOpen ? '' : (trade.actualPnLPercent ?? 0) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                          {trade.isOpen ? '—' : formatPercent(trade.actualPnLPercent ?? 0)}
-                        </td>
-                        <td className={`py-3 px-3 font-medium ${trade.isOpen ? '' : (trade.actualPnL ?? 0) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                          {trade.isOpen ? '—' : formatCurrency(trade.actualPnL ?? 0)}
-                        </td>
-                        {initialCapital > 0 && (
-                          <td className={`py-3 px-3 font-medium tabular-nums ${
-                            trade.isOpen || !balanceMap.has(trade.id) ? 'text-[var(--muted-foreground)]' :
-                            (balanceMap.get(trade.id)! >= initialCapital) ? 'text-[var(--green)]' : 'text-[var(--red)]'
-                          }`}>
-                            {trade.isOpen || !balanceMap.has(trade.id) ? '—' : formatCurrency(balanceMap.get(trade.id)!)}
-                          </td>
-                        )}
-                        <td className="py-3 px-3 text-[var(--muted-foreground)]">{trade.strategy || '—'}</td>
-                        <td className="py-3 px-3" onClick={e => e.stopPropagation()}>
-                          <div className="flex justify-end gap-1">
-                            <button onClick={() => setEditTrade(trade)} className="p-1.5 hover:bg-[var(--muted)] rounded-lg text-[var(--muted-foreground)]">
-                              <Edit2 size={14} />
-                            </button>
-                            <button onClick={() => setDeleteConfirm(trade.id)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-[var(--red)]">
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Review Coverage (Filtered)</p>
+            <Eye size={14} className="text-[var(--muted-foreground)]" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">{metrics.reviewCoverage}%</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.reviewed}/{metrics.total} reviewed &middot; Queue pressure {100 - metrics.reviewCoverage}%</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Execution Queue (Filtered)</p>
+            <Clock size={14} className="text-[var(--muted-foreground)]" />
+          </div>
+          <p className="text-2xl font-bold text-yellow-400">{metrics.total - metrics.reviewed}</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">Period pending {metrics.total - metrics.reviewed} &middot; Weekly progress {metrics.reviewCoverage}%</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Process Health</p>
+            <Shield size={14} className="text-[var(--muted-foreground)]" />
+          </div>
+          <p className="text-2xl font-bold">{metrics.processHealth}</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">Plan adherence &middot; Documentation {metrics.reviewCoverage}%</p>
+        </div>
+      </div>
+
+      {/* ── Secondary Stats Row ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Period P&L</p>
+            <TrendingDown size={12} className="text-[var(--muted-foreground)]" />
+          </div>
+          <p className={`text-lg font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Win Rate</p>
+            <span className="text-[10px] text-[var(--muted-foreground)]">%</span>
+          </div>
+          <p className="text-lg font-bold">{metrics.winRate}%</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Best Trade</p>
+          <p className="text-sm font-bold">{metrics.bestTrade?.coin ?? '--'}</p>
+          {metrics.bestTrade && <p className="text-[10px] text-green-400">+{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Worst Trade</p>
+          <p className="text-sm font-bold">{metrics.worstTrade?.coin ?? '--'}</p>
+          {metrics.worstTrade && <p className="text-[10px] text-red-400">{formatCurrency(metrics.worstTrade.actualPnL ?? 0)}</p>}
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Avg R</p>
+          <p className="text-lg font-bold">{metrics.avgR.toFixed(2)} <span className="text-xs text-[var(--muted-foreground)]">R:R</span></p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">Avg win / avg loss</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Fees + Funding</p>
+          <p className="text-lg font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</p>
+        </div>
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Lots/Qty/Size</p>
+          <p className="text-lg font-bold">{filtered.reduce((s, t) => s + t.capital, 0).toFixed(2)}</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trade{metrics.total !== 1 ? 's' : ''}</p>
+        </div>
+      </div>
+
+      {/* ── Monthly Calendar ── */}
+      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <Calendar size={20} />
+            <div>
+              <h2 className="text-xl font-bold">Monthly Calendar</h2>
+              <p className="text-xs text-[var(--muted-foreground)]">Independent from timeframe. Jump quickly between months.</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setCalendarMonth(prev => subMonths(prev, 1))} className="p-1.5 rounded-lg hover:bg-[var(--muted)]"><ChevronLeft size={16} /></button>
+            <select value={calendarMonth.getMonth()} onChange={e => setCalendarMonth(new Date(calendarMonth.getFullYear(), parseInt(e.target.value), 1))}
+              className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm">
+              {Array.from({ length: 12 }, (_, i) => <option key={i} value={i}>{format(new Date(2024, i), 'MMMM')}</option>)}
+            </select>
+            <select value={calendarMonth.getFullYear()} onChange={e => setCalendarMonth(new Date(parseInt(e.target.value), calendarMonth.getMonth(), 1))}
+              className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm">
+              {Array.from({ length: 5 }, (_, i) => { const y = new Date().getFullYear() - 2 + i; return <option key={y} value={y}>{y}</option>; })}
+            </select>
+            <button onClick={() => setCalendarMonth(prev => addMonths(prev, 1))} className="p-1.5 rounded-lg hover:bg-[var(--muted)]"><ChevronRight size={16} /></button>
+          </div>
+        </div>
+        <div className="inline-flex px-3 py-1 rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-medium mb-4">
+          {format(calendarMonth, 'MMMM yyyy')}
+        </div>
+        {/* Day headers */}
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(d => (
+            <div key={d} className="text-center text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] py-1">{d}</div>
+          ))}
+        </div>
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {calendarDays.map(({ day, dateStr, trades: dayTrades, pnl, inMonth }) => {
+            const isToday = isSameDay(day, new Date());
+            return (
+              <div key={dateStr}
+                className={`rounded-lg p-2 min-h-[70px] border transition-colors cursor-default ${
+                  !inMonth ? 'opacity-30 border-transparent' :
+                  isToday ? 'border-[var(--accent)] bg-[var(--accent)]/5' :
+                  dayTrades.length > 0 ? 'border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/30' :
+                  'border-[var(--border)]'
+                }`}>
+                <p className={`text-sm font-bold ${isToday ? 'text-[var(--accent)]' : ''}`}>{format(day, 'd')}</p>
+                {inMonth && (
+                  <>
+                    <p className={`text-[10px] font-bold ${pnl > 0 ? 'text-green-400' : pnl < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
+                      {formatCurrency(pnl)}
+                    </p>
+                    <p className="text-[10px] text-[var(--muted-foreground)]">{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</p>
+                  </>
+                )}
+                {!inMonth && <p className="text-[10px] text-[var(--muted-foreground)]">--</p>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-          {/* Mobile Card View */}
-          <div className="md:hidden space-y-3">
-            {paginatedTrades.map(trade => {
-              return (
-                <div key={trade.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 hover:border-[var(--accent)]/30 transition-colors cursor-pointer" onClick={() => setViewTrade(trade)}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold">{trade.coin}</span>
-                      <span className={`text-[10px] px-1 py-0.5 rounded font-semibold ${
-                        (trade.direction ?? 'long') === 'short'
-                          ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                          : 'bg-green-500/15 text-green-400 border border-green-500/30'
-                      }`}>
-                        {(trade.direction ?? 'long') === 'short' ? 'S' : 'L'}
-                      </span>
-                      {trade.leverage && trade.leverage > 1 && (
-                        <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]">{trade.leverage}x</span>
+      {/* ── Trade Journal + Sidebar ── */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+
+        {/* Main: Trade Journal (3/4) */}
+        <div className="xl:col-span-3 space-y-4">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Trade Journal</h2>
+                <p className="text-xs text-[var(--muted-foreground)]">Click any trade card to open full review, violations context, and evidence.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 rounded-lg bg-[var(--muted)] text-xs">{dayGroups.length} day groups &middot; {filtered.length}/{filtered.length} rows loaded</span>
+                {onBulkImport && (
+                  <button onClick={() => setShowImport(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg text-xs">
+                    <Upload size={12} /> Import
+                  </button>
+                )}
+              </div>
+            </div>
+            {/* View toggle */}
+            <div className="flex gap-1 mb-4">
+              <button onClick={() => setJournalView('day-cards')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  journalView === 'day-cards' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                }`}><LayoutGrid size={14} /> Day Cards</button>
+              <button onClick={() => setJournalView('timeline')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  journalView === 'timeline' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                }`}><List size={14} /> Timeline</button>
+            </div>
+
+            {/* Day groups */}
+            {dayGroups.length === 0 ? (
+              <div className="py-12 text-center text-[var(--muted-foreground)] text-sm">
+                No closed trades in this period. Add your first trade to get started.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {dayGroups.map(group => {
+                  const hidden = hiddenDays.has(group.date);
+                  const winRate = group.trades.length > 0 ? Math.round((group.wins / group.trades.length) * 100) : 0;
+                  return (
+                    <div key={group.date}>
+                      {/* Day header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <p className="text-sm font-bold">{group.date}</p>
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[var(--muted)] text-[var(--muted-foreground)]">{group.trades.length} trades</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <p className="text-xs text-[var(--muted-foreground)]">
+                            Win rate {winRate}% &middot; Wins {group.wins} &middot; Losses {group.losses} &middot; Size {group.totalSize.toFixed(2)}
+                          </p>
+                          <p className={`text-sm font-bold ${group.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(group.pnl)}</p>
+                          <button onClick={() => setHiddenDays(prev => { const n = new Set(prev); hidden ? n.delete(group.date) : n.add(group.date); return n; })}
+                            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+                            {hidden ? 'Show' : 'Hide'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Trade cards */}
+                      {!hidden && (
+                        <div className={`grid gap-3 ${journalView === 'day-cards' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                          {group.trades.map(trade => (
+                            <div key={trade.id} onClick={() => setDetailTrade(trade)}
+                              className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 cursor-pointer hover:border-[var(--accent)]/30 transition-colors">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-sm font-bold">{trade.coin.length > 6 ? trade.coin.slice(0, 6) + '...' : trade.coin}</p>
+                                  {trade.direction && (
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                      trade.direction === 'long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                    }`}>{trade.direction === 'long' ? 'Long' : 'Short'}</span>
+                                  )}
+                                </div>
+                                <p className={`text-sm font-bold ${(trade.actualPnL ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                  {formatCurrency(trade.actualPnL ?? 0)}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] mb-2">
+                                <span>{format(new Date(trade.createdAt), 'dd/MM')}</span>
+                                <span>{trade.capital.toFixed(2)} size</span>
+                                {trade.actualPnLPercent !== null && <span className={trade.actualPnLPercent >= 0 ? 'text-green-400' : 'text-red-400'}>{formatPercent(trade.actualPnLPercent)}</span>}
+                              </div>
+                              <p className="text-xs text-[var(--muted-foreground)] mb-2">{trade.strategy || 'No strategy'}</p>
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {trade.tags.slice(0, 3).map(tag => (
+                                  <span key={tag} className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]">{tag}</span>
+                                ))}
+                                {trade.tags.length > 3 && <span className="text-[10px] text-[var(--muted-foreground)]">+{trade.tags.length - 3}</span>}
+                              </div>
+                              <div className="flex items-center justify-between">
+                                {trade.verdict ? (
+                                  <span className="flex items-center gap-1 text-[10px] text-green-400"><Eye size={10} /> Reviewed</span>
+                                ) : (
+                                  <span className="text-[10px] text-yellow-400">Pending review</span>
+                                )}
+                                <button onClick={(e) => { e.stopPropagation(); setDetailTrade(trade); }}
+                                  className="text-[10px] text-[var(--accent)] hover:underline">Open review</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       )}
-                      {trade.marketType && trade.marketType !== 'crypto' && (
-                        <span className="text-[10px]">{trade.marketType === 'stocks' ? '📈' : '💱'}</span>
-                      )}
                     </div>
-                    <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                      <button onClick={() => setEditTrade(trade)} className="p-1.5 hover:bg-[var(--muted)] rounded-lg text-[var(--muted-foreground)]">
-                        <Edit2 size={14} />
-                      </button>
-                      <button onClick={() => setDeleteConfirm(trade.id)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-[var(--red)]">
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-[var(--muted-foreground)]">{format(new Date(trade.entryDate), 'MMM dd, yyyy')}</span>
-                    {trade.isOpen ? (
-                      <span className="text-sm font-medium text-[var(--yellow)]">Open</span>
-                    ) : (
-                      <span className={`text-sm font-bold ${(trade.actualPnLPercent ?? 0) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                        {formatPercent(trade.actualPnLPercent ?? 0)} ({formatCurrency(trade.actualPnL ?? 0)})
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
-                    <span>Entry: {formatPrice(trade.entryPrice)}</span>
-                    <span>Exit: {trade.isOpen ? '—' : trade.exitPrice ? formatPrice(trade.exitPrice) : '—'}</span>
-                    {trade.strategy && <span className="ml-auto truncate max-w-[120px]">{trade.strategy}</span>}
-                  </div>
-                  {initialCapital > 0 && !trade.isOpen && balanceMap.has(trade.id) && (
-                    <div className="mt-1.5 pt-1.5 border-t border-[var(--border)] flex items-center justify-between text-xs">
-                      <span className="text-[var(--muted-foreground)]">Balance after</span>
-                      <span className={`font-medium tabular-nums ${balanceMap.get(trade.id)! >= initialCapital ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                        {formatCurrency(balanceMap.get(trade.id)!)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Right Sidebar (1/4) ── */}
+        <div className="space-y-4">
+          {/* Review Queue Focus */}
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1 rounded bg-green-500/20"><Eye size={14} className="text-green-400" /></div>
+              <h3 className="text-sm font-bold">Review Queue Focus</h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">Pending in view</p>
+                <span className="text-xs font-bold text-red-400">{metrics.total - metrics.reviewed}</span>
+              </div>
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">Unknown side</p>
+                <span className="text-xs font-bold text-red-400">{filtered.filter(t => !t.direction).length}</span>
+              </div>
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">High-fee trades</p>
+                <span className="text-xs font-bold text-red-400">0</span>
+              </div>
+            </div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mt-3 mb-1">Top Pending Symbols</p>
+            <p className="text-xs text-[var(--muted-foreground)]">
+              {filtered.filter(t => !t.verdict).length === 0
+                ? 'No pending clusters in current filters.'
+                : `${[...new Set(filtered.filter(t => !t.verdict).map(t => t.coin))].slice(0, 3).join(', ')} pending`}
+            </p>
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-1">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-(--border) text-(--muted-foreground) hover:bg-(--muted) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft size={14} /> Previous
-              </button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-7 h-7 text-xs rounded-md transition-colors ${
-                      page === currentPage
-                        ? 'bg-(--accent) text-white'
-                        : 'text-(--muted-foreground) hover:bg-(--muted)'
-                    }`}
-                  >
-                    {page}
-                  </button>
+          {/* Process Diagnostics */}
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles size={14} className="text-[var(--accent)]" />
+              <h3 className="text-sm font-bold">Process Diagnostics</h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">Current streak</p>
+                <span className="text-xs font-bold">0 days</span>
+              </div>
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">Average review rating</p>
+                <span className="text-xs font-bold">--/5</span>
+              </div>
+              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
+                <p className="text-xs">Cost drag (fees+funding)</p>
+                <span className="text-xs font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</span>
+              </div>
+            </div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mt-3 mb-1">Setup Quality</p>
+            <p className="text-xs text-[var(--muted-foreground)]">
+              {metrics.total < 5 ? 'Not enough setup sample yet. Add more reviewed trades to rank setup quality.' : `${metrics.processHealth}% process health across ${metrics.total} trades.`}
+            </p>
+          </div>
+
+          {/* Patterns Discovered */}
+          <div className="bg-[var(--card)] border border-[var(--accent)]/20 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles size={14} className="text-[var(--accent)]" />
+              <h3 className="text-sm font-bold">Patterns Discovered</h3>
+            </div>
+            <p className="text-xs text-[var(--muted-foreground)] mb-3">Insights based on your trades in the selected period</p>
+            {patterns.length === 0 ? (
+              <p className="text-xs text-[var(--muted-foreground)]">Not enough data to detect patterns yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {patterns.map((p, i) => (
+                  <div key={i} className={`rounded-xl p-3 border-l-2 ${
+                    p.color === 'green' ? 'border-green-400 bg-green-500/5' :
+                    p.color === 'red' ? 'border-red-400 bg-red-500/5' :
+                    'border-cyan-400 bg-cyan-500/5'
+                  }`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className={`text-sm font-bold ${
+                        p.color === 'green' ? 'text-green-400' : p.color === 'red' ? 'text-red-400' : 'text-cyan-400'
+                      }`}>{p.name}</p>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        p.winRate >= 50 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                      }`}>{p.winRate}% Win</span>
+                    </div>
+                    <p className="text-xs text-[var(--muted-foreground)] mb-2">Net {formatCurrency(p.net)} across {p.count} trades.</p>
+                    <div className="flex items-center justify-between">
+                      <div className="h-1.5 flex-1 rounded-full bg-[var(--card)] overflow-hidden mr-3">
+                        <div className={`h-full rounded-full ${
+                          p.color === 'green' ? 'bg-green-400' : p.color === 'red' ? 'bg-red-400' : 'bg-cyan-400'
+                        }`} style={{ width: `${p.share}%` }} />
+                      </div>
+                      <span className="text-[10px] text-[var(--muted-foreground)]">Share {p.share}%</span>
+                    </div>
+                  </div>
                 ))}
               </div>
-              <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-(--border) text-(--muted-foreground) hover:bg-(--muted) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                Next <ChevronRight size={14} />
-              </button>
-            </div>
-          )}
-        </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Add Trade Modal ── */}
+      <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="" size="xl">
+        <TradeForm strategies={strategies} trades={trades} onSubmit={handleAdd} onCancel={() => setIsAddOpen(false)} onRuleBreak={onRuleBreak} availableBalance={initialCapital} />
+      </Modal>
+
+      {/* ── Edit Trade Modal ── */}
+      <Modal isOpen={!!editTrade} onClose={() => setEditTrade(null)} title="" size="xl">
+        {editTrade && <TradeForm strategies={strategies} trades={trades} editTrade={editTrade} onSubmit={handleEdit} onCancel={() => setEditTrade(null)} onRuleBreak={onRuleBreak} availableBalance={initialCapital} />}
+      </Modal>
+
+      {/* ── Trade Detail Modal ── */}
+      <Modal isOpen={!!detailTrade} onClose={() => setDetailTrade(null)} title={detailTrade?.coin ?? ''} size="xl">
+        {detailTrade && <TradeDetailView trade={detailTrade} onEdit={() => { setEditTrade(detailTrade); setDetailTrade(null); }} />}
+      </Modal>
+
+      {/* ── Import Modal ── */}
+      {onBulkImport && (
+        <Modal isOpen={showImport} onClose={() => setShowImport(false)} title="Import Trades" size="lg">
+          <TradeImport onImport={async (data) => { const count = await onBulkImport(data); showToast(`${count} trades imported`); setShowImport(false); }} onClose={() => setShowImport(false)} strategies={strategies.map(s => s.name)} />
+        </Modal>
       )}
 
-      </>)}
-
-      {/* Lessons sub-tab */}
-      {subTab === 'lessons' && (
-        lessonTrades.length === 0 ? (
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">
-            <p className="text-[var(--muted-foreground)]">No lessons yet. Broken rules and lesson notes from your trades will appear here.</p>
-          </div>
-        ) : (<>
-          {/* Desktop table */}
-          <div className="hidden md:block bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-[var(--muted-foreground)] border-b border-[var(--border)] text-xs uppercase tracking-wide">
-                    <th className="py-3 px-3 font-medium">Date</th>
-                    <th className="py-3 px-3 font-medium">Symbol</th>
-                    <th className="py-3 px-3 font-medium">Strategy</th>
-                    <th className="py-3 px-3 font-medium">P&L %</th>
-                    <th className="py-3 px-3 font-medium">Broken Rules</th>
-                    <th className="py-3 px-3 font-medium">Lesson / Hypothesis</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {lessonTrades.map(trade => {
-                    const brokenRules = trade.ruleChecklist.filter(r => r.compliance === 'no').map(r => r.rule);
-                    const lesson = trade.lessonNotes || trade.lossHypothesis || trade.notes;
-                    return (
-                      <tr key={trade.id} className="hover:bg-[var(--card-hover)] transition-colors cursor-pointer" onClick={() => setViewTrade(trade)}>
-                        <td className="py-3 px-3 whitespace-nowrap">{format(new Date(trade.exitDate || trade.entryDate), 'MMM dd, yy')}</td>
-                        <td className="py-3 px-3 font-medium">{trade.coin}</td>
-                        <td className="py-3 px-3 text-[var(--muted-foreground)]">{trade.strategy || '—'}</td>
-                        <td className={`py-3 px-3 font-medium ${(trade.actualPnLPercent ?? 0) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                          {trade.actualPnLPercent !== null ? formatPercent(trade.actualPnLPercent) : '—'}
-                        </td>
-                        <td className="py-3 px-3">
-                          <div className="flex flex-wrap gap-1">
-                            {brokenRules.length > 0 ? brokenRules.map((r, i) => (
-                              <span key={i} className="text-[10px] px-1.5 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded">
-                                {r}
-                              </span>
-                            )) : <span className="text-[var(--muted-foreground)] text-xs">—</span>}
-                          </div>
-                        </td>
-                        <td className="py-3 px-3 text-xs text-[var(--muted-foreground)] max-w-[300px]">
-                          {lesson ? <span className="line-clamp-2">{lesson}</span> : '—'}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-3">
-            {lessonTrades.map(trade => {
-              const brokenRules = trade.ruleChecklist.filter(r => r.compliance === 'no').map(r => r.rule);
-              const lesson = trade.lessonNotes || trade.lossHypothesis || trade.notes;
-              return (
-                <div key={trade.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3.5 cursor-pointer hover:border-[var(--accent)]/30 transition-colors" onClick={() => setViewTrade(trade)}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{trade.coin}</span>
-                      {trade.strategy && <span className="text-[10px] px-1.5 py-0.5 bg-[var(--muted)] text-[var(--muted-foreground)] rounded">{trade.strategy}</span>}
-                    </div>
-                    <span className={`text-sm font-bold ${(trade.actualPnLPercent ?? 0) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                      {trade.actualPnLPercent !== null ? formatPercent(trade.actualPnLPercent) : '—'}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[var(--muted-foreground)] mb-1.5">{format(new Date(trade.exitDate || trade.entryDate), 'MMM dd, yyyy')}</p>
-                  {brokenRules.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-1.5">
-                      {brokenRules.map((r, i) => (
-                        <span key={i} className="text-[10px] px-1.5 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded">{r}</span>
-                      ))}
-                    </div>
-                  )}
-                  {lesson && (
-                    <p className="text-xs text-[var(--muted-foreground)] line-clamp-2">{lesson}</p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </>)
-      )}
-
-      {/* Add Modal */}
-      <Modal isOpen={isModalOpen && !editTrade} onClose={handleCloseModal} title="Log New Trade" size="xl">
-        <TradeForm
-          strategies={strategies}
-          trades={trades}
-          onSubmit={handleAdd}
-          onCancel={handleCloseModal}
-          onRuleBreak={onRuleBreak}
-          availableBalance={currentBalance}
-        />
-      </Modal>
-
-      {/* Trade Detail View */}
-      <Modal
-        isOpen={!!viewTrade && !editTrade}
-        onClose={() => setViewTrade(null)}
-        title={viewTrade ? `${viewTrade.coin} · ${viewTrade.strategy || 'Trade'}` : 'Trade'}
-        size="xl"
-      >
-        {viewTrade && (
-          <TradeDetailView
-            trade={viewTrade}
-            onEdit={() => {
-              setEditTrade(viewTrade);
-              setViewTrade(null);
-            }}
-          />
-        )}
-      </Modal>
-
-      {/* Edit Modal - Direct to form (no checkpoint for edits) */}
-      <Modal isOpen={!!editTrade} onClose={() => setEditTrade(null)} title="Edit Trade" size="xl">
-        <TradeForm
-          strategies={strategies}
-          trades={trades}
-          editTrade={editTrade}
-          onSubmit={handleEdit}
-          onCancel={() => setEditTrade(null)}
-          onRuleBreak={onRuleBreak}
-          availableBalance={currentBalance}
-        />
-      </Modal>
-
-      {/* Delete Confirmation */}
+      {/* ── Delete Confirmation ── */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Trade" size="sm">
-        <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure you want to delete this trade? This cannot be undone.</p>
+        <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure? This cannot be undone.</p>
         <div className="flex justify-end gap-3">
           <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-          <button onClick={() => deleteConfirm && handleDelete(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-white rounded-lg">Delete</button>
+          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-white rounded-lg">Delete</button>
         </div>
-      </Modal>
-
-      {/* Post-Trade Review */}
-      <Modal
-        isOpen={!!postTradeSnapshot}
-        onClose={() => setPostTradeSnapshot(null)}
-        title="Trade Analysis"
-        size="lg"
-      >
-        {postTradeSnapshot && (
-          <PostTradeReview
-            snapshot={postTradeSnapshot}
-            allTrades={trades}
-            onSave={(exitEmotion: EmotionState) => {
-              // Save exit emotion on the most recently added trade
-              const newest = trades.reduce<Trade | null>(
-                (latest, t) => (!latest || t.createdAt > latest.createdAt) ? t : latest,
-                null
-              );
-              if (newest) onUpdate(newest.id, { exitEmotion });
-              setPostTradeSnapshot(null);
-              showToast('Reflection saved');
-            }}
-            onSkip={() => {
-              setPostTradeSnapshot(null);
-              showToast('Trade logged successfully');
-            }}
-          />
-        )}
       </Modal>
     </div>
   );

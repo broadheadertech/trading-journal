@@ -117,7 +117,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           </button>
           <button
             onClick={() => setActiveForm(activeForm === 'weekly' ? 'none' : 'weekly')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-cyan-400 rounded-lg text-sm font-medium transition-colors"
           >
             <Moon size={14} /> Weekly
           </button>
@@ -352,7 +352,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             <button
               onClick={handleWeeklySubmit}
               disabled={!weeklyMistakes}
-              className="px-4 py-2 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium disabled:opacity-50"
+              className="px-4 py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
             >
               Save Review
             </button>
@@ -408,7 +408,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                 )}
                 {r.biggestLesson && (
                   <div>
-                    <span className="text-xs font-medium text-purple-400">Lesson:</span>
+                    <span className="text-xs font-medium text-cyan-400">Lesson:</span>
                     <p className="text-sm">{r.biggestLesson}</p>
                   </div>
                 )}
@@ -428,10 +428,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
       {reviews.length > 0 && (
         <div className="space-y-2">
           <h4 className="text-sm font-semibold flex items-center gap-2">
-            <Moon size={14} className="text-purple-400" /> Weekly Reviews
+            <Moon size={14} className="text-cyan-400" /> Weekly Reviews
           </h4>
           {reviews.slice(0, 5).map(review => (
-            <div key={review.id} className="bg-[var(--card)] border border-purple-500/20 rounded-xl p-3.5 space-y-2">
+            <div key={review.id} className="bg-[var(--card)] border border-blue-500/20 rounded-xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted-foreground)]">Week of {format(new Date(review.weekStart), 'MMM dd')}</span>
                 <span className={`text-sm font-bold px-2 py-0.5 rounded-lg border ${getGradeColor(review.disciplineGrade)}`}>

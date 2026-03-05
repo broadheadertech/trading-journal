@@ -69,9 +69,9 @@ function StageBadge({ stage }: { stage: string }) {
 
 // ─── Delta indicator ─────────────────────────────────────────────────────────
 function DeltaDisplay({ delta }: { delta: number }) {
-  if (delta > 0) return <span className="inline-flex items-center gap-0.5 text-green-400 font-mono text-xs"><ArrowUp size={12} />+{delta.toFixed(1)}</span>;
-  if (delta < 0) return <span className="inline-flex items-center gap-0.5 text-red-400 font-mono text-xs"><ArrowDown size={12} />{delta.toFixed(1)}</span>;
-  return <span className="inline-flex items-center gap-0.5 text-[var(--muted-foreground)] font-mono text-xs"><Minus size={12} />0</span>;
+  if (delta > 0) return <span className="inline-flex items-center gap-0.5 text-green-400 text-xs"><ArrowUp size={12} />+{delta.toFixed(1)}</span>;
+  if (delta < 0) return <span className="inline-flex items-center gap-0.5 text-red-400 text-xs"><ArrowDown size={12} />{delta.toFixed(1)}</span>;
+  return <span className="inline-flex items-center gap-0.5 text-[var(--muted-foreground)] text-xs"><Minus size={12} />0</span>;
 }
 
 export default function InspectPage() {
@@ -166,7 +166,7 @@ export default function InspectPage() {
           <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
             <p className="text-sm font-semibold text-[var(--foreground)] mb-3">Brain State</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
-              <Row label="User ID" value={brainState.userId} valueClass="font-mono text-xs text-[var(--foreground)]" />
+              <Row label="User ID" value={brainState.userId} valueClass="text-xs text-[var(--foreground)]" />
               <Row label="Plan" value={PLAN_LABEL[brainState.planId] ?? brainState.planId} />
               <Row label="Current Score" value={String(brainState.currentScore)} />
               <div className="flex items-center justify-between text-sm py-1">
@@ -279,7 +279,7 @@ export default function InspectPage() {
                     key={e._id}
                     className="grid grid-cols-[120px_100px_60px_60px_1fr] gap-2 items-start text-xs py-1.5 border-b border-[var(--border)]/50 last:border-0"
                   >
-                    <span className="text-[var(--muted-foreground)] font-mono tabular-nums">
+                    <span className="text-[var(--muted-foreground)] tabular-nums">
                       {fmtDateTime(e.timestamp)}
                     </span>
                     <span className="text-[var(--foreground)]">
@@ -288,7 +288,7 @@ export default function InspectPage() {
                     <span className="text-right">
                       <DeltaDisplay delta={e.delta} />
                     </span>
-                    <span className="text-right font-mono tabular-nums text-[var(--foreground)]">
+                    <span className="text-right tabular-nums text-[var(--foreground)]">
                       {e.newScore}
                     </span>
                     <div className="min-w-0">

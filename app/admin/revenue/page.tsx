@@ -200,7 +200,7 @@ export default function AdminRevenuePage() {
                     {stats?.subscribersByPlan?.[plan.planId] ?? 0} subscribers
                   </p>
                   {plan.stripePriceIdMonthly && (
-                    <p className="mt-1 text-[10px] text-[var(--muted-foreground)] font-mono truncate">
+                    <p className="mt-1 text-[10px] text-[var(--muted-foreground)] truncate">
                       Stripe: {plan.stripePriceIdMonthly}
                     </p>
                   )}

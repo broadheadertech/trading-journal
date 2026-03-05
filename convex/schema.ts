@@ -84,6 +84,10 @@ export default defineSchema({
     marketType: v.optional(v.union(v.literal("crypto"), v.literal("stocks"), v.literal("forex"))),
     direction: v.optional(v.union(v.literal("long"), v.literal("short"))),
     leverage: v.optional(v.union(v.null(), v.number())),
+    fees: v.optional(v.union(v.null(), v.number())),
+    funding: v.optional(v.union(v.null(), v.number())),
+    margin: v.optional(v.union(v.null(), v.number())),
+    followedPlan: v.optional(v.union(v.null(), v.boolean())),
     isOpen: v.boolean(),
     createdAt: v.string(),
   }).index("by_user", ["userId"]),
@@ -320,11 +324,75 @@ export default defineSchema({
     adminId: v.optional(v.string()),
   }).index("by_timestamp", ["timestamp"]),
 
+  // ─── Team / workspace data ──────────────────────────────────────────
+  workspaces: defineTable({
+    id: v.string(),
+    name: v.string(),
+    ownerId: v.string(),
+    createdAt: v.string(),
+  }).index("by_owner", ["ownerId"]),
+
+  workspaceMembers: defineTable({
+    workspaceId: v.string(),
+    userId: v.string(),
+    displayName: v.string(),
+    email: v.string(),
+    role: v.union(v.literal("owner"), v.literal("admin"), v.literal("coach"), v.literal("member")),
+    joinedAt: v.string(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_user", ["userId"]),
+
+  workspaceCohorts: defineTable({
+    workspaceId: v.string(),
+    id: v.string(),
+    name: v.string(),
+    code: v.string(),
+    memberUserIds: v.array(v.string()),
+    createdAt: v.string(),
+  }).index("by_workspace", ["workspaceId"]),
+
+  workspaceMessages: defineTable({
+    workspaceId: v.string(),
+    fromUserId: v.string(),
+    toUserId: v.string(),
+    message: v.string(),
+    visibility: v.union(v.literal("private"), v.literal("shared")),
+    timestamp: v.string(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_conversation", ["workspaceId", "fromUserId", "toUserId"]),
+
+  workspaceActivityFeed: defineTable({
+    workspaceId: v.string(),
+    userId: v.string(),
+    displayName: v.string(),
+    type: v.string(),
+    message: v.string(),
+    timestamp: v.string(),
+  }).index("by_workspace", ["workspaceId"]),
+
+  // ─── User notifications ────────────────────────────────────────────
+  notifications: defineTable({
+    userId: v.string(),
+    type: v.string(),
+    title: v.string(),
+    message: v.string(),
+    read: v.boolean(),
+    link: v.optional(v.string()),
+    timestamp: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_unread", ["userId", "read"]),
+
   // ─── User subscriptions ───────────────────────────────────────────
   userSubscriptions: defineTable({
     userId: v.string(),
     stripeCustomerId: v.string(),
     stripeSubscriptionId: v.optional(v.string()),
+    paymongoCustomerId: v.optional(v.string()),
+    paymongoSubscriptionId: v.optional(v.string()),
+    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"))),
     planId: v.string(),
     status: v.union(
       v.literal("active"),

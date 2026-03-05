@@ -213,7 +213,7 @@ export default function AdminSettingsPage() {
                     value={planForm.stripeProductId}
                     onChange={(e) => setPlanForm({ ...planForm, stripeProductId: e.target.value })}
                     placeholder="prod_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40 font-mono"
+                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
                   />
                 </div>
                 <div>
@@ -223,7 +223,7 @@ export default function AdminSettingsPage() {
                     value={planForm.stripePriceIdMonthly}
                     onChange={(e) => setPlanForm({ ...planForm, stripePriceIdMonthly: e.target.value })}
                     placeholder="price_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40 font-mono"
+                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
                   />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ export default function AdminSettingsPage() {
                     value={planForm.stripePriceIdYearly}
                     onChange={(e) => setPlanForm({ ...planForm, stripePriceIdYearly: e.target.value })}
                     placeholder="price_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40 font-mono"
+                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
                   />
                 </div>
               </div>

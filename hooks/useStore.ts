@@ -97,7 +97,84 @@ export function useTrades() {
 
   const deleteTrade = (id: string) => removeMutation({ id });
 
-  return { trades, addTrade, updateTrade, deleteTrade, isLoaded };
+  const bulkImportMutation = useMutation(api.trades.bulkImport);
+  const bulkImportTrades = async (
+    importedTrades: Array<{
+      coin: string;
+      entryPrice: number;
+      exitPrice: number | null;
+      entryDate: string;
+      exitDate: string | null;
+      capital: number;
+      actualPnL: number | null;
+      actualPnLPercent: number | null;
+      strategy: string;
+      direction: 'long' | 'short';
+      leverage: number | null;
+      stopLoss: number | null;
+      notes: string;
+      tags: string[];
+      marketType: 'crypto' | 'stocks' | 'forex';
+      isOpen: boolean;
+    }>
+  ) => {
+    // Convert imported trades to full Trade shape in chunks of 50
+    const fullTrades = importedTrades.map((t) => {
+      const hasBreak = false;
+      const verdict = t.actualPnLPercent !== null
+        ? (t.actualPnLPercent > 0 ? 'Well Executed' : 'Poorly Executed')
+        : null;
+      return {
+        id: uuidv4(),
+        coin: t.coin,
+        entryPrice: t.entryPrice,
+        exitPrice: t.exitPrice,
+        entryDate: t.entryDate,
+        exitDate: t.exitDate,
+        capital: t.capital,
+        targetPnL: null,
+        actualPnL: t.actualPnL,
+        actualPnLPercent: t.actualPnLPercent,
+        strategy: t.strategy,
+        rulesFollowed: null,
+        ruleChecklist: [] as { rule: string; compliance: 'yes' | 'partial' | 'no' }[],
+        reasoning: '',
+        emotion: 'Neutral',
+        exitEmotion: null,
+        confidence: 5,
+        setupConfidence: 5,
+        executionConfidence: 5,
+        tags: t.tags,
+        screenshots: [] as string[],
+        verdict,
+        notes: t.notes,
+        setupNotes: '',
+        executionNotes: '',
+        lessonNotes: '',
+        oneThingNote: '',
+        selfVerdict: null,
+        lossHypothesis: null,
+        stopLoss: t.stopLoss,
+        marketType: t.marketType as 'crypto' | 'stocks' | 'forex',
+        direction: t.direction as 'long' | 'short',
+        leverage: t.leverage,
+        isOpen: t.isOpen,
+        createdAt: new Date().toISOString(),
+      };
+    });
+
+    // Batch in chunks of 50 to stay within Convex limits
+    const CHUNK_SIZE = 50;
+    let totalInserted = 0;
+    for (let i = 0; i < fullTrades.length; i += CHUNK_SIZE) {
+      const chunk = fullTrades.slice(i, i + CHUNK_SIZE);
+      const result = await bulkImportMutation({ trades: chunk });
+      totalInserted += result.inserted;
+    }
+    return totalInserted;
+  };
+
+  return { trades, addTrade, updateTrade, deleteTrade, bulkImportTrades, isLoaded };
 }
 
 // ─── Strategies ───────────────────────────────────────────────────────────────

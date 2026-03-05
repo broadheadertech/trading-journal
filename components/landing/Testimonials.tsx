@@ -4,18 +4,18 @@ import { motion } from 'framer-motion';
 
 const testimonials = [
   {
-    quote: 'PsychSync helped me see that my forex losses were emotion-driven. The discipline scoring changed my game completely.',
+    quote: 'Tradia helped me see that my forex losses were emotion-driven. The discipline scoring changed my game completely.',
     author: 'Alex M.',
     role: 'Forex Swing Trader',
     initials: 'AM',
-    color: 'from-indigo-500 to-blue-500',
+    color: 'from-teal-500 to-teal-700',
   },
   {
-    quote: 'I trade both crypto and stocks. PsychSync\'s AI Coach caught patterns across both markets I never noticed — my win rate improved 15% in two months.',
+    quote: 'I trade both crypto and stocks. Tradia\'s AI Coach caught patterns across both markets I never noticed — my win rate improved 15% in two months.',
     author: 'Sarah K.',
     role: 'Multi-Market Day Trader',
     initials: 'SK',
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-blue-500 to-violet-500',
   },
   {
     quote: 'The psychology journal showed me patterns across all my markets. Understanding my emotions was the missing piece to consistent profits.',
@@ -51,7 +51,7 @@ export default function Testimonials() {
             Trusted by Traders
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
-            See what crypto, stock, and forex traders are saying about PsychSync.
+            See what crypto, stock, and forex traders are saying about Tradia.
           </p>
         </motion.div>
 

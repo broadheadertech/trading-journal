@@ -23,7 +23,7 @@ const CURRENCIES = ['USD', 'EUR', 'GBP', 'PHP', 'JPY', 'AUD'] as const;
 // Legal/product: update the body text here for any regulatory or copy changes
 export const BEHAVIORAL_DATA_DISCLOSURE = {
   title: 'About your Brain data',
-  body: 'PsychSync analyzes your trading behavior — rule compliance, streaks, and discipline patterns — to power your Neuro Score, Brain stage, and coaching messages. This data is used only within your account and is never shared with third parties. You can delete your Brain data at any time from Settings.',
+  body: 'Tradia analyzes your trading behavior — rule compliance, streaks, and discipline patterns — to power your Neuro Score, Brain stage, and coaching messages. This data is used only within your account and is never shared with third parties. You can delete your Brain data at any time from Settings.',
 } as const;
 
 export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDashboard }: OnboardingWizardProps) {
@@ -70,7 +70,7 @@ export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDa
               <BrainMascot size={64} glow />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Welcome to PsychSync!</h2>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">Welcome to Tradia!</h2>
               <p className="text-sm text-[var(--muted-foreground)] mt-2">
                 Your AI-powered trading journal for better decisions. Let&apos;s set up your account in 30 seconds.
               </p>

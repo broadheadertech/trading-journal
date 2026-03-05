@@ -23,6 +23,7 @@ import type * as lib_antiGaming from "../lib/antiGaming.js";
 import type * as lib_coachingTemplates from "../lib/coachingTemplates.js";
 import type * as lib_neuroScore from "../lib/neuroScore.js";
 import type * as migrations from "../migrations.js";
+import type * as notifications from "../notifications.js";
 import type * as profile from "../profile.js";
 import type * as reflections from "../reflections.js";
 import type * as ruleBreaks from "../ruleBreaks.js";
@@ -34,6 +35,7 @@ import type * as tierLimits from "../tierLimits.js";
 import type * as trades from "../trades.js";
 import type * as triggers from "../triggers.js";
 import type * as weeklyReviews from "../weeklyReviews.js";
+import type * as workspaces from "../workspaces.js";
 
 import type {
   ApiFromModules,
@@ -57,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   "lib/coachingTemplates": typeof lib_coachingTemplates;
   "lib/neuroScore": typeof lib_neuroScore;
   migrations: typeof migrations;
+  notifications: typeof notifications;
   profile: typeof profile;
   reflections: typeof reflections;
   ruleBreaks: typeof ruleBreaks;
@@ -68,6 +71,7 @@ declare const fullApi: ApiFromModules<{
   trades: typeof trades;
   triggers: typeof triggers;
   weeklyReviews: typeof weeklyReviews;
+  workspaces: typeof workspaces;
 }>;
 
 /**

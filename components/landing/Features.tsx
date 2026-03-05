@@ -61,7 +61,7 @@ export default function Features() {
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
             Everything You Need to
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"> Trade Better</span>
+            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent"> Trade Better</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
             A complete trading toolkit for crypto, stock, and forex traders who want to master their psychology and grow their edge.

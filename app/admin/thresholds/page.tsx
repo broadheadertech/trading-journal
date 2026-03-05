@@ -214,7 +214,7 @@ export default function ThresholdsPage() {
                     min={field.min}
                     max={field.max}
                     step={field.step}
-                    className="w-20 px-2 py-1.5 text-sm text-right font-mono tabular-nums rounded-lg border border-[var(--border)] bg-[var(--muted)]/40 text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-20 px-2 py-1.5 text-sm text-right tabular-nums rounded-lg border border-[var(--border)] bg-[var(--muted)]/40 text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
                   />
                   <span className="text-xs text-[var(--muted-foreground)] w-16">{field.unit}</span>
 

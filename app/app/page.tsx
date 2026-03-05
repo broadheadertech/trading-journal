@@ -5,8 +5,9 @@ import { useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { ShieldAlert } from 'lucide-react';
-import { TabId } from '@/lib/types';
+import { TabId, TimeRange } from '@/lib/types';
 import { storage } from '@/lib/storage';
+import { filterTradesByTimeRange } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { getRequiredTier } from '@/lib/features';
 import UpgradePrompt from '@/components/UpgradePrompt';
@@ -21,7 +22,7 @@ import { CurrencyProvider } from '@/hooks/useCurrency';
 import { StageThemeProvider } from '@/components/brain/providers/StageThemeProvider';
 import { ReducedMotionProvider } from '@/components/brain/ReducedMotionProvider';
 import { BrainMiniWidget } from '@/components/brain/BrainMiniWidget';
-import Navigation from '@/components/Navigation';
+import Sidebar from '@/components/Sidebar';
 import Dashboard from '@/components/Dashboard';
 import Playbook from '@/components/Playbook';
 import PreTradeChecklist from '@/components/PreTradeChecklist';
@@ -29,10 +30,13 @@ import TradesLog from '@/components/TradesLog';
 import Analytics from '@/components/Analytics';
 import Verdicts from '@/components/Verdicts';
 import PsychologyJournal from '@/components/PsychologyJournal';
-import WhatIfScenarios from '@/components/WhatIfScenarios';
+import WhatIfSimulation from '@/components/WhatIfSimulation';
 import Reports from '@/components/Reports';
 import Goals from '@/components/Goals';
 import News from '@/components/News';
+import Leaderboard from '@/components/Leaderboard';
+import Tools from '@/components/Tools';
+import TeamLayout from '@/components/team/TeamLayout';
 import { Loader2 } from 'lucide-react';
 
 const LazyBrainTab = lazy(() => import('@/components/brain/BrainTab'));
@@ -44,21 +48,26 @@ function AppContent() {
   const { showToast } = useToast();
   const { user } = useUser();
   const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
-  const { canAccessTab } = useSubscription();
+  const { canAccessTab, hasTeamAccess } = useSubscription();
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [isDark, setIsDark] = useLocalStorage('crypto-journal-theme-dark', true);
   const [showAddTrade, setShowAddTrade] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [migrationState, setMigrationState] = useState<MigrationState>('checking');
+  const [timeRange, setTimeRange] = useState<TimeRange>('ALL');
+  const [teamMode, setTeamMode] = useState(false);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useLocalStorage<string | null>('crypto-journal-active-workspace', null);
   const importRef = useRef<HTMLInputElement>(null);
 
   const banStatus = useQuery(api.profile.getBanStatus);
+  const userWorkspaces = useQuery(api.workspaces.getUserWorkspaces);
+  const createWorkspaceMutation = useMutation(api.workspaces.createWorkspace);
   const reseedMutation = useMutation(api.seed.forceReseed);
   const importMutation = useMutation(api.migrations.importFromLocalStorage);
   const ensureFreeSub = useMutation(api.subscriptions.ensureFreeSubscription);
   const initBrainState = useMutation(api.brain.initializeBrainState);
 
-  const { trades, addTrade, updateTrade, deleteTrade, isLoaded: tradesLoaded } = useTrades();
+  const { trades, addTrade, updateTrade, deleteTrade, bulkImportTrades, isLoaded: tradesLoaded } = useTrades();
   const { strategies, addStrategy, updateStrategy, deleteStrategy, isLoaded: strategiesLoaded } = useStrategies();
   const { checklists, addChecklist, deleteChecklist, isLoaded: checklistsLoaded } = useChecklists();
   const { entries, addEntry, updateEntry, deleteEntry, isLoaded: journalLoaded } = useJournal();
@@ -199,7 +208,7 @@ function AppContent() {
   }, [importMutation, showToast]);
 
   const handleAddTrade = useCallback(() => {
-    setActiveTab('trades');
+    setActiveTab('journal');
     setShowAddTrade(true);
   }, []);
 
@@ -222,6 +231,39 @@ function AppContent() {
     setActiveTab(tab as TabId);
   }, []);
 
+  // Team mode — must be before any early returns to satisfy Rules of Hooks
+  const workspacesList = userWorkspaces ?? [];
+  const activeWs = workspacesList.find((ws: any) => ws?.id === activeWorkspaceId) ?? workspacesList[0];
+
+  const handleEnterTeamMode = useCallback(async () => {
+    if (activeWs) {
+      setActiveWorkspaceId(activeWs.id);
+      setTeamMode(true);
+    } else {
+      // No workspace yet — create one automatically
+      try {
+        const name = user?.fullName
+          ? `${user.fullName}'s Team`
+          : 'My Team';
+        const newId = await createWorkspaceMutation({ name });
+        setActiveWorkspaceId(newId);
+        setTeamMode(true);
+      } catch {
+        showToast('Failed to create team workspace. Please try again.', 'error');
+      }
+    }
+  }, [activeWs, setActiveWorkspaceId, createWorkspaceMutation, user, showToast]);
+
+  const handleExitTeamMode = useCallback(() => {
+    setTeamMode(false);
+  }, []);
+
+  // Filter trades by selected time range
+  const filteredTrades = filterTradesByTimeRange(trades, timeRange);
+
+  // Last synced — use the most recent trade's timestamp as a proxy
+  const lastSyncedAt = trades.length > 0 ? new Date().toISOString() : null;
+
   const allLoaded = mounted && tradesLoaded && strategiesLoaded && checklistsLoaded &&
     journalLoaded && breakersLoaded && triggersLoaded && reflectionsLoaded &&
     reviewsLoaded && ruleBreaksLoaded && goalsLoaded;
@@ -233,7 +275,7 @@ function AppContent() {
           <div className="mx-auto mb-4">
             <BrainMascot size={48} glow />
           </div>
-          <p className="text-[var(--muted-foreground)] text-sm">Loading PsychSync...</p>
+          <p className="text-[var(--muted-foreground)] text-sm">Loading Tradia...</p>
         </div>
       </div>
     );
@@ -311,6 +353,30 @@ function AppContent() {
     );
   }
 
+  if (teamMode) {
+    if (activeWs) {
+      return (
+        <TeamLayout
+          workspaceId={activeWs.id}
+          workspaceName={activeWs.name}
+          role={activeWs.role}
+          onBackToPersonal={handleExitTeamMode}
+        />
+      );
+    }
+    // Workspace is being created — show loading
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="text-center">
+          <div className="mx-auto mb-4">
+            <BrainMascot size={48} glow />
+          </div>
+          <p className="text-[var(--muted-foreground)] text-sm">Setting up your team...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {activeTab !== 'brain' && (
@@ -325,7 +391,7 @@ function AppContent() {
         className="hidden"
       />
 
-      <Navigation
+      <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
         isDark={isDark}
@@ -334,11 +400,16 @@ function AppContent() {
         onImport={handleImport}
         onAddTrade={handleAddTrade}
         onReseedDemo={isAdmin ? handleReseedDemo : undefined}
+        hasTeam={hasTeamAccess}
+        onTeamMode={handleEnterTeamMode}
+        timeRange={timeRange}
+        onTimeRangeChange={setTimeRange}
+        lastSyncedAt={lastSyncedAt}
       >
-        <main className="max-w-[1400px] mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {activeTab === 'dashboard' && (
             <Dashboard
-              trades={trades}
+              trades={filteredTrades}
               strategies={strategies}
               reflections={reflections}
               triggers={triggers}
@@ -356,7 +427,7 @@ function AppContent() {
           {activeTab === 'playbook' && (
             <Playbook
               strategies={strategies}
-              trades={trades}
+              trades={filteredTrades}
               onAdd={addStrategy}
               onUpdate={updateStrategy}
               onDelete={deleteStrategy}
@@ -367,18 +438,20 @@ function AppContent() {
               <PreTradeChecklist
                 checklists={checklists}
                 strategies={strategies}
+                trades={filteredTrades}
                 onAdd={addChecklist}
                 onDelete={deleteChecklist}
               />
             ) : <UpgradePrompt requiredTier={getRequiredTier('checklist')} />
           )}
-          {activeTab === 'trades' && (
+          {activeTab === 'journal' && (
             <TradesLog
-              trades={trades}
+              trades={filteredTrades}
               strategies={strategies}
               onAdd={addTrade}
               onUpdate={updateTrade}
               onDelete={deleteTrade}
+              onBulkImport={bulkImportTrades}
               showAddModal={showAddTrade}
               onCloseAddModal={() => setShowAddTrade(false)}
               onRuleBreak={(ruleName, explanation) => addRuleBreak({ tradeId: '', ruleName, explanation, timestamp: new Date().toISOString() })}
@@ -386,16 +459,16 @@ function AppContent() {
             />
           )}
           {activeTab === 'analytics' && (
-            <Analytics trades={trades} initialCapital={initialCapital} onAddTrade={handleAddTrade} />
+            <Analytics trades={filteredTrades} initialCapital={initialCapital} onAddTrade={handleAddTrade} />
           )}
           {activeTab === 'verdicts' && (
             canAccessTab('verdicts') ? (
-              <Verdicts trades={trades} />
+              <Verdicts trades={filteredTrades} />
             ) : <UpgradePrompt requiredTier={getRequiredTier('verdicts')} />
           )}
           {activeTab === 'psychology' && (
             <PsychologyJournal
-              trades={trades}
+              trades={filteredTrades}
               entries={entries}
               onAddEntry={addEntry}
               onUpdateEntry={updateEntry}
@@ -414,7 +487,7 @@ function AppContent() {
             canAccessTab('goals') ? (
               <Goals
                 goals={goals}
-                trades={trades}
+                trades={filteredTrades}
                 onAdd={addGoal}
                 onUpdate={updateGoal}
               />
@@ -422,12 +495,12 @@ function AppContent() {
           )}
           {activeTab === 'whatif' && (
             canAccessTab('whatif') ? (
-              <WhatIfScenarios trades={trades} strategies={strategies} />
+              <WhatIfSimulation trades={filteredTrades} />
             ) : <UpgradePrompt requiredTier={getRequiredTier('whatif')} />
           )}
           {activeTab === 'reports' && (
             canAccessTab('reports') ? (
-              <Reports trades={trades} strategies={strategies} />
+              <Reports trades={filteredTrades} strategies={strategies} />
             ) : <UpgradePrompt requiredTier={getRequiredTier('reports')} />
           )}
           {activeTab === 'news' && (
@@ -435,8 +508,18 @@ function AppContent() {
               <News />
             ) : <UpgradePrompt requiredTier={getRequiredTier('news')} />
           )}
+          {activeTab === 'leaderboard' && (
+            canAccessTab('leaderboard') ? (
+              <Leaderboard trades={filteredTrades} />
+            ) : <UpgradePrompt requiredTier={getRequiredTier('leaderboard')} />
+          )}
+          {activeTab === 'tools' && (
+            canAccessTab('tools') ? (
+              <Tools />
+            ) : <UpgradePrompt requiredTier={getRequiredTier('tools')} />
+          )}
         </main>
-      </Navigation>
+      </Sidebar>
 
       {/* Brain dimension overlay — rendered outside Navigation for full-screen takeover */}
       {/* Story 9.1 — conditionally render text-only or visual brain tab (FR43) */}

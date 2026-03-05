@@ -210,7 +210,7 @@ function Row({ label, value, mono, valueClass }: { label: string; value: string;
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="text-[var(--muted-foreground)]">{label}</span>
-      <span className={`font-medium ${mono ? 'font-mono text-xs' : ''} ${valueClass ?? 'text-[var(--foreground)]'}`}>
+      <span className={`font-medium ${mono ? 'text-xs' : ''} ${valueClass ?? 'text-[var(--foreground)]'}`}>
         {value}
       </span>
     </div>

@@ -28,7 +28,7 @@ export default function AdminSidebar() {
           <BrainMascot size={28} />
           <div>
             <p className="text-sm font-bold text-[var(--foreground)]">Admin Panel</p>
-            <p className="text-[10px] text-[var(--muted-foreground)]">PsychSync</p>
+            <p className="text-[10px] text-[var(--muted-foreground)]">Tradia</p>
           </div>
         </div>
       </div>

@@ -21,8 +21,8 @@ export default function LandingNav() {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <BrainMascot size={30} />
-          <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            PsychSync
+          <span className="text-lg font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+            Tradia
           </span>
         </div>
 

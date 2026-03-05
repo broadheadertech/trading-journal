@@ -4,19 +4,19 @@
 @property --accent {
   syntax: "<color>";
   inherits: true;
-  initial-value: #6366f1;
+  initial-value: #2d9484;
 }
 
 @property --accent-glow {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(99, 102, 241, 0.15);
+  initial-value: rgba(45, 148, 132, 0.15);
 }
 
 @property --bg-tint {
   syntax: "<color>";
   inherits: true;
-  initial-value: #0b0e14;
+  initial-value: #060a12;
 }
 
 @property --brain-dimming {
@@ -32,49 +32,49 @@
 }
 
 :root {
-  --background: #0b0e14;
-  --foreground: #e2e8f0;
-  --card: #131720;
-  --card-hover: #1a1f2e;
-  --border: #1e2536;
-  --muted: #1e2536;
-  --muted-foreground: #64748b;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --bg-tint: #0b0e14;
-  --green: #22c55e;
-  --red: #ef4444;
-  --yellow: #eab308;
-  --blue: #3b82f6;
-  --purple: #8b5cf6;
-  --gain: #2dd4bf;
-  --loss: #fb923c;
-  --input-bg: #0f1219;
-  --input-border: #1e2536;
+  --background: #060a12;
+  --foreground: #e4eaf4;
+  --card: #0c1220;
+  --card-hover: #111a2e;
+  --border: #152038;
+  --muted: #152038;
+  --muted-foreground: #5a7194;
+  --accent: #2d9484;
+  --accent-hover: #3da89a;
+  --accent-glow: rgba(45, 148, 132, 0.15);
+  --bg-tint: #060a12;
+  --green: #00e68a;
+  --red: #ff4d6a;
+  --yellow: #ffc233;
+  --blue: #0099ff;
+  --purple: #7b61ff;
+  --gain: #00e68a;
+  --loss: #ff4d6a;
+  --input-bg: #080e1a;
+  --input-border: #152038;
 }
 
 .light {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f4f7fb;
+  --foreground: #0a1628;
   --card: #ffffff;
-  --card-hover: #f1f5f9;
-  --border: #e2e8f0;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --bg-tint: #f8fafc;
-  --green: #16a34a;
-  --red: #dc2626;
-  --yellow: #ca8a04;
-  --blue: #2563eb;
-  --purple: #7c3aed;
-  --gain: #0d9488;
-  --loss: #ea580c;
+  --card-hover: #edf2f9;
+  --border: #d4dde9;
+  --muted: #edf2f9;
+  --muted-foreground: #5a6d85;
+  --accent: #1b7a6a;
+  --accent-hover: #156b5c;
+  --accent-glow: rgba(27, 122, 106, 0.12);
+  --bg-tint: #f4f7fb;
+  --green: #00a86b;
+  --red: #e02850;
+  --yellow: #d4960a;
+  --blue: #0077cc;
+  --purple: #6246ea;
+  --gain: #00a86b;
+  --loss: #e02850;
   --input-bg: #ffffff;
-  --input-border: #e2e8f0;
+  --input-border: #d4dde9;
 }
 
 @theme inline {
@@ -98,7 +98,7 @@ body {
     transition: --brain-dimming 0s, --brain-pulse-speed 0s;
   }
 }
-/* Story 9.2 — app-level reduced motion (FR44) */
+/* Story 9.2 -- app-level reduced motion (FR44) */
 body[data-reduced-motion="true"] {
   transition: --brain-dimming 0s, --brain-pulse-speed 0s;
 }
@@ -161,7 +161,7 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, 
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus, textarea:focus, select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 input::placeholder, textarea::placeholder {
   color: var(--muted-foreground);
@@ -213,7 +213,7 @@ input::placeholder, textarea::placeholder {
 /* Brain dimension immersive background (Story 3.4) */
 .brain-dimension-bg {
   background-color: #020208;
-  background-image: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.03) 0%, #050510 50%, #020208 100%);
+  background-image: radial-gradient(ellipse at 50% 30%, rgba(45, 148, 132, 0.04) 0%, #050510 50%, #020208 100%);
   background-position: center;
   animation: dimension-bg 8s ease-in-out infinite;
 }

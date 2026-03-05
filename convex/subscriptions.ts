@@ -27,14 +27,15 @@ export const getUserSubscription = query({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .first();
 
-    // Auto-elevate admin to elite
+    // Auto-elevate admin to legend (highest tier with team access)
     const adminId = process.env.ADMIN_USER_ID;
     if (adminId && userId === adminId && (!existing || existing.planId === "free")) {
       const now = new Date().toISOString();
       return {
         userId,
         stripeCustomerId: "",
-        planId: "elite",
+        paymentProvider: undefined as "stripe" | "paymongo" | undefined,
+        planId: "legend",
         status: "active" as const,
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
@@ -104,6 +105,9 @@ export const upsertSubscription = mutation({
     userId: v.string(),
     stripeCustomerId: v.string(),
     stripeSubscriptionId: v.optional(v.string()),
+    paymongoCustomerId: v.optional(v.string()),
+    paymongoSubscriptionId: v.optional(v.string()),
+    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"))),
     planId: v.string(),
     status: subscriptionStatus,
     interval: v.optional(v.union(v.literal("month"), v.literal("year"))),
@@ -158,6 +162,14 @@ export const findPlanByStripePriceId = query({
     return plans.find(
       (p) => p.stripePriceIdMonthly === stripePriceId || p.stripePriceIdYearly === stripePriceId
     ) ?? null;
+  },
+});
+
+export const findPlanById = query({
+  args: { planId: v.string() },
+  handler: async (ctx, { planId }) => {
+    const plans = await ctx.db.query("subscriptionPlans").collect();
+    return plans.find((p) => p.planId === planId) ?? null;
   },
 });
 

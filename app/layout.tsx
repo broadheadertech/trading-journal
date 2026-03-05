@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PsychSync - Trading Journal & Analytics",
+  title: "Tradia - Trading Journal & Analytics",
   description: "Unlock the psychology behind every trade. AI-powered journal for crypto, stocks, and forex.",
 };
 
