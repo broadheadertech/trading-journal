@@ -47,8 +47,8 @@ export default function Footer() {
             <div className="flex items-center gap-6 text-xs text-[var(--muted-foreground)]">
               <a href="#features" className="hover:text-[var(--foreground)] transition-colors">Features</a>
               <a href="#pricing" className="hover:text-[var(--foreground)] transition-colors">Pricing</a>
-              <span className="opacity-50">Terms</span>
-              <span className="opacity-50">Privacy</span>
+              <Link href="/terms" className="hover:text-[var(--foreground)] transition-colors">Terms</Link>
+              <Link href="/privacy" className="hover:text-[var(--foreground)] transition-colors">Privacy</Link>
             </div>
 
             <p className="text-xs text-[var(--muted-foreground)]">

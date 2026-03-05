@@ -801,8 +801,8 @@ export default function PsychologyJournal({
                   <div key={h} className="text-center text-[8px] text-[var(--muted-foreground)]">{String(h).padStart(2, '0')}</div>
                 ))}
                 {DAYS.map(day => (
-                  <>
-                    <div key={`label-${day}`} className="text-xs text-[var(--muted-foreground)] flex items-center">{day}</div>
+                  <Fragment key={day}>
+                    <div className="text-xs text-[var(--muted-foreground)] flex items-center">{day}</div>
                     {HOURS.map(h => {
                       const cell = m.heatmap.get(`${day}-${h}`);
                       return (
@@ -815,7 +815,7 @@ export default function PsychologyJournal({
                         />
                       );
                     })}
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </div>
