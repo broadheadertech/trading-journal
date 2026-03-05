@@ -86,6 +86,14 @@ export interface Trade {
   direction?: Direction;
   // Leverage multiplier (null = no leverage / spot)
   leverage?: number | null;
+  // Fees paid on this trade
+  fees?: number | null;
+  // Funding cost (perpetual swaps)
+  funding?: number | null;
+  // Margin used for this trade
+  margin?: number | null;
+  // Whether the user followed their plan
+  followedPlan?: boolean | null;
   isOpen: boolean;
   createdAt: string;
 }
@@ -369,7 +377,7 @@ export type TabId =
   | 'dashboard'
   | 'playbook'
   | 'checklist'
-  | 'trades'
+  | 'journal'
   | 'analytics'
   | 'verdicts'
   | 'psychology'
@@ -377,7 +385,34 @@ export type TabId =
   | 'whatif'
   | 'reports'
   | 'news'
-  | 'brain';
+  | 'brain'
+  | 'leaderboard'
+  | 'tools';
+
+// ─── Universal time range ────────────────────────────────────────────
+export type TimeRange = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL';
+
+// ─── Team management types ────────────────────────────────────────────
+export type TeamTabId = 'overview' | 'members' | 'cohorts' | 'coach-desk' | 'reports' | 'leaderboard' | 'settings';
+
+export type TeamRole = 'owner' | 'admin' | 'coach' | 'member';
+
+export interface Workspace {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: string;
+}
+
+export interface WorkspaceMember {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  displayName: string;
+  email: string;
+  role: TeamRole;
+  joinedAt: string;
+}
 
 // ─── Admin back-office types ──────────────────────────────────────────
 export type AdminTabId = 'dashboard' | 'users' | 'revenue' | 'settings';

@@ -126,7 +126,7 @@ export default function AntiGamingFlagsPage() {
                   </span>
 
                   {/* User ID (truncated) */}
-                  <span className="text-xs text-[var(--foreground)] font-mono truncate" title={e.userId}>
+                  <span className="text-xs text-[var(--foreground)] truncate" title={e.userId}>
                     {e.userId.length > 12 ? e.userId.slice(0, 12) + '\u2026' : e.userId}
                   </span>
 

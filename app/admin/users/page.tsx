@@ -67,7 +67,7 @@ export default function AdminUsersPage() {
                     onClick={() => setSelectedUserId(u.userId)}
                     className="border-t border-[var(--border)] hover:bg-[var(--card-hover)] cursor-pointer transition-colors"
                   >
-                    <td className="px-4 py-2.5 font-mono text-xs text-[var(--foreground)]">
+                    <td className="px-4 py-2.5 text-xs text-[var(--foreground)]">
                       {u.userId.slice(0, 16)}...
                     </td>
                     <td className="px-4 py-2.5 text-center">

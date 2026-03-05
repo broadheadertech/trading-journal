@@ -4,7 +4,7 @@ import { TabId } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
@@ -32,7 +32,7 @@ const tabs: { id: TabId; label: string; shortLabel: string; icon: React.ReactNod
   { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: <LayoutDashboard size={20} /> },
   { id: 'playbook', label: 'Playbook', shortLabel: 'Playbook', icon: <BookOpen size={20} /> },
   { id: 'checklist', label: 'Market Context', shortLabel: 'Market', icon: <Map size={20} /> },
-  { id: 'trades', label: 'Trades', shortLabel: 'Trades', icon: <List size={20} /> },
+  { id: 'journal', label: 'Journal', shortLabel: 'Journal', icon: <List size={20} /> },
   { id: 'analytics', label: 'Analytics', shortLabel: 'Stats', icon: <BarChart3 size={20} /> },
   { id: 'verdicts', label: 'Verdicts', shortLabel: 'Verdicts', icon: <Scale size={20} /> },
   { id: 'psychology', label: 'Psychology', shortLabel: 'Psych', icon: <Brain size={20} /> },
@@ -41,11 +41,13 @@ const tabs: { id: TabId; label: string; shortLabel: string; icon: React.ReactNod
   { id: 'reports', label: 'Reports', shortLabel: 'Reports', icon: <FileText size={20} /> },
   { id: 'news', label: 'News', shortLabel: 'News', icon: <Newspaper size={20} /> },
   { id: 'brain', label: 'Brain', shortLabel: 'Brain', icon: <Orbit size={20} /> },
+  { id: 'leaderboard', label: 'Leaderboard', shortLabel: 'Board', icon: <Trophy size={20} /> },
+  { id: 'tools', label: 'Tools', shortLabel: 'Tools', icon: <Wrench size={20} /> },
 ];
 
 // Bottom nav shows these 5 tabs on mobile; the rest go in "More" or top bar
 const APP_VERSION = 'v1.0.0';
-const bottomTabs: TabId[] = ['dashboard', 'trades', 'analytics', 'psychology', 'reports'];
+const bottomTabs: TabId[] = ['dashboard', 'journal', 'analytics', 'psychology', 'reports'];
 
 export default function Navigation({
   activeTab, onTabChange, isDark, onThemeToggle, onExport, onImport, onAddTrade, onReseedDemo, children,
@@ -84,8 +86,8 @@ export default function Navigation({
         <div className="max-w-[1400px] mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <BrainMascot size={28} className="shrink-0" />
-            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              PsychSync
+            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+              Tradia
             </h1>
             <span className="hidden sm:inline text-[10px] font-medium text-[var(--muted-foreground)] opacity-60">{APP_VERSION}</span>
           </div>

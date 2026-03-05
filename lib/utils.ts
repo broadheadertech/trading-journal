@@ -1,5 +1,5 @@
-import { Trade, Verdict, RuleCompliance, EmotionState, JournalEntry, DailyReflection, Direction } from './types';
-import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
+import { Trade, Verdict, RuleCompliance, EmotionState, JournalEntry, DailyReflection, Direction, TimeRange } from './types';
+import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO, subDays, subMonths, subYears } from 'date-fns';
 
 export function calculatePnL(
   entryPrice: number,
@@ -64,6 +64,27 @@ const CURRENCY_LOCALES: Record<string, string> = {
 
 function getCurrencyLocale(code: string): string {
   return CURRENCY_LOCALES[code] ?? 'en-US';
+}
+
+/** Returns the cutoff Date for a given TimeRange, or null for 'ALL'. */
+export function getTimeRangeCutoff(range: TimeRange): Date | null {
+  const now = new Date();
+  switch (range) {
+    case '1D': return subDays(now, 1);
+    case '1W': return subDays(now, 7);
+    case '1M': return subMonths(now, 1);
+    case '3M': return subMonths(now, 3);
+    case '1Y': return subYears(now, 1);
+    case 'ALL': return null;
+  }
+}
+
+/** Filter trades by TimeRange. */
+export function filterTradesByTimeRange(trades: Trade[], range: TimeRange): Trade[] {
+  const cutoff = getTimeRangeCutoff(range);
+  if (!cutoff) return trades;
+  const cutoffStr = cutoff.toISOString();
+  return trades.filter(t => t.entryDate >= cutoffStr);
 }
 
 export function formatCurrency(value: number, currencyCode: string = 'USD'): string {

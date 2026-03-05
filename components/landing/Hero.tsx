@@ -10,8 +10,8 @@ export default function Hero() {
     <section className="relative overflow-hidden">
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-indigo-500 opacity-[0.07] rounded-full blur-[120px]" />
-        <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-purple-500 opacity-[0.05] rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-teal-700 opacity-[0.05] rounded-full blur-[100px]" />
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 sm:pb-24 text-center">
@@ -50,7 +50,7 @@ export default function Hero() {
         >
           Unlock the Psychology
           <br />
-          <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
             Behind Every Trade
           </span>
         </motion.h1>
@@ -62,7 +62,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed"
         >
-          PsychSync is the AI-powered trading journal that helps you master your emotions,
+          Tradia is the AI-powered trading journal that helps you master your emotions,
           build discipline, and find your edge — across crypto, stocks, and forex.
         </motion.p>
 
@@ -128,7 +128,7 @@ export default function Hero() {
             </div>
 
             {/* Chart placeholder */}
-            <div className="mt-6 h-24 sm:h-32 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 flex items-center justify-center relative overflow-hidden">
+            <div className="mt-6 h-24 sm:h-32 rounded-xl bg-gradient-to-r from-teal-500/10 via-teal-600/10 to-teal-500/10 flex items-center justify-center relative overflow-hidden">
               {/* Candlestick pattern decoration */}
               <div className="absolute inset-0 flex items-end justify-around px-4 opacity-20">
                 {[40, 65, 55, 80, 45, 70, 60, 85, 50, 75, 55, 90, 65, 80, 70].map((h, i) => (

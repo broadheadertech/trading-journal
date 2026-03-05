@@ -25,5 +25,9 @@ export function migrateTrade(t: any): Trade {
     marketType: t.marketType ?? 'crypto',
     direction: t.direction ?? 'long',
     leverage: t.leverage ?? null,
+    fees: t.fees ?? null,
+    funding: t.funding ?? null,
+    margin: t.margin ?? null,
+    followedPlan: t.followedPlan ?? null,
   };
 }

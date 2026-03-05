@@ -101,8 +101,8 @@ export default function News() {
               <ol className="text-sm text-[var(--muted-foreground)] space-y-1.5 list-decimal list-inside">
                 <li>Go to <a href="https://newsapi.org/register" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">newsapi.org/register</a> and create a free account</li>
                 <li>Copy your API key from the dashboard</li>
-                <li>Open <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs font-mono">.env.local</code> in your project root</li>
-                <li>Replace <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs font-mono">NEWS_API_KEY=your_key_here</code> with your actual key</li>
+                <li>Open <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs">.env.local</code> in your project root</li>
+                <li>Replace <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs">NEWS_API_KEY=your_key_here</code> with your actual key</li>
                 <li>Restart the dev server</li>
               </ol>
               <p className="text-xs text-[var(--muted-foreground)] mt-3 p-2 bg-[var(--muted)] rounded-lg">

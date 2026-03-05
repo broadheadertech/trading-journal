@@ -57,7 +57,7 @@ export function BrainMiniWidget({ onNavigate }: BrainMiniWidgetProps) {
           {...sharedAriaProps}
         >
           <span className="text-xs font-semibold text-[var(--accent)]">{stageShort}</span>
-          <span className="text-xs font-mono text-[var(--accent)]/70">{Math.round(score)}</span>
+          <span className="text-xs text-[var(--accent)]/70">{Math.round(score)}</span>
         </button>
       );
     }
@@ -74,7 +74,7 @@ export function BrainMiniWidget({ onNavigate }: BrainMiniWidgetProps) {
         {...sharedAriaProps}
       >
         <span className="text-xs font-semibold text-[var(--accent)]">{stageShort}</span>
-        <span className="text-xs font-mono text-[var(--accent)]/70">{Math.round(score)}</span>
+        <span className="text-xs text-[var(--accent)]/70">{Math.round(score)}</span>
       </motion.button>
     );
   }
@@ -112,7 +112,7 @@ export function BrainMiniWidget({ onNavigate }: BrainMiniWidgetProps) {
           {/* Story 9.3 — colorblind pattern overlay */}
           <circle cx="32" cy="33" r="22" fill={`url(#${STAGE_PATTERNS[stage].id})`} />
         </svg>
-        <span className="hidden sm:block text-[10px] font-mono text-[var(--accent)] font-bold leading-none">
+        <span className="hidden sm:block text-[10px] text-[var(--accent)] font-bold leading-none">
           {score}
         </span>
       </button>
@@ -155,7 +155,7 @@ export function BrainMiniWidget({ onNavigate }: BrainMiniWidgetProps) {
         {/* Story 9.3 — colorblind pattern overlay */}
         <circle cx="32" cy="33" r="22" fill={`url(#${STAGE_PATTERNS[stage].id})`} />
       </svg>
-      <span className="hidden sm:block text-[10px] font-mono text-[var(--accent)] font-bold leading-none">
+      <span className="hidden sm:block text-[10px] text-[var(--accent)] font-bold leading-none">
         {score}
       </span>
     </motion.button>

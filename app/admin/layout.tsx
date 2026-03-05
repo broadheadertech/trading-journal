@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import AdminShell from '@/components/admin/AdminShell';
 
 export const metadata: Metadata = {
-  title: 'PsychSync Admin',
-  description: 'Back-office administration for PsychSync',
+  title: 'Tradia Admin',
+  description: 'Back-office administration for Tradia',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

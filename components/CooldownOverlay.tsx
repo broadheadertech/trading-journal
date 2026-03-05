@@ -114,7 +114,7 @@ export default function CooldownOverlay({ expiresAt, breakerType, reason, onExpi
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Timer size={20} className="text-[var(--muted-foreground)] mb-1" />
-            <span className="text-3xl font-bold font-mono">
+            <span className="text-3xl font-bold">
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </span>
             <span className="text-xs text-[var(--muted-foreground)]">remaining</span>

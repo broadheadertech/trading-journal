@@ -118,6 +118,22 @@ export const seedPlans = mutation({
         isActive: true,
         sortOrder: 3,
       },
+      {
+        planId: "legend",
+        name: "Legend",
+        priceMonthly: 79,
+        priceYearly: 790,
+        features: [
+          "Everything in Elite",
+          "Team management workspace",
+          "Student risk monitoring",
+          "Cohort management",
+          "Coach desk & messaging",
+          "Team reports & leaderboard",
+        ],
+        isActive: true,
+        sortOrder: 4,
+      },
     ];
 
     for (const plan of plans) {

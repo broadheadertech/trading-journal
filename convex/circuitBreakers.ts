@@ -98,7 +98,8 @@ export const clearCooldown = mutation({
 
 export const cleanupExpiredCooldowns = mutation({
   handler: async (ctx) => {
-    const userId = await requireUser(ctx);
+    const userId = await getUser(ctx);
+    if (!userId) return;
     const now = new Date().toISOString();
     const all = await ctx.db
       .query("cooldowns")

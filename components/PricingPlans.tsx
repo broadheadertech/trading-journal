@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useSubscription } from '@/hooks/useSubscription';
-import { X, Check, Loader2 } from 'lucide-react';
+import { X, Check, Loader2, Crown } from 'lucide-react';
 
 interface PricingPlansProps {
   open: boolean;
@@ -22,15 +22,12 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   type Plan = NonNullable<typeof plans>[number];
 
   const handleSubscribe = async (plan: Plan) => {
-    const priceId = interval === 'year' ? plan.stripePriceIdYearly : plan.stripePriceIdMonthly;
-    if (!priceId) return;
-
     setLoading(plan.planId);
     try {
-      const res = await fetch('/api/stripe/checkout', {
+      const res = await fetch('/api/paymongo/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ planId: plan.planId, interval }),
       });
       const data = await res.json();
       if (data.url) {
@@ -42,8 +39,18 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   };
 
   const handleManage = async () => {
+    // PayMongo doesn't have a billing portal — use Stripe portal if available,
+    // otherwise show that management is via support
     setLoading('portal');
     try {
+      const provider = subscription?.paymentProvider;
+      if (provider === 'paymongo') {
+        // For PayMongo subscriptions, there's no self-service portal
+        // Open a mailto or support link instead
+        window.open('mailto:support@tradia.app?subject=Subscription%20Management', '_blank');
+        setLoading(null);
+        return;
+      }
       const res = await fetch('/api/stripe/portal', { method: 'POST' });
       const data = await res.json();
       if (data.url) {
@@ -58,7 +65,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl mx-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-4xl mx-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1 rounded-lg hover:bg-[var(--muted)] transition-colors"
@@ -107,7 +114,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
             No plans available yet. Check back soon!
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Free tier card */}
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col">
               <h3 className="text-sm font-bold text-[var(--foreground)]">Free</h3>
@@ -136,18 +143,31 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               const price = interval === 'year' ? plan.priceYearly : plan.priceMonthly;
               const priceLabel = interval === 'year' ? '/yr' : '/mo';
               const isCurrent = currentPlanId === plan.planId && isActive;
-              const hasPriceId = interval === 'year' ? plan.stripePriceIdYearly : plan.stripePriceIdMonthly;
+              const canSubscribe = price > 0;
+              const isLegend = plan.planId === 'legend';
 
               return (
-                <div key={plan._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col">
-                  <h3 className="text-sm font-bold text-[var(--foreground)]">{plan.name}</h3>
+                <div
+                  key={plan._id}
+                  className={`rounded-xl border p-5 flex flex-col ${
+                    isLegend
+                      ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-[var(--card)] ring-1 ring-amber-500/20'
+                      : 'border-[var(--border)] bg-[var(--card)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    {isLegend && <Crown size={16} className="text-amber-400" />}
+                    <h3 className={`text-sm font-bold ${isLegend ? 'text-amber-400' : 'text-[var(--foreground)]'}`}>
+                      {plan.name}
+                    </h3>
+                  </div>
                   <p className="text-2xl font-bold text-[var(--foreground)] mt-2">
                     ${price}<span className="text-xs font-normal text-[var(--muted-foreground)]">{priceLabel}</span>
                   </p>
                   <ul className="mt-4 space-y-2 flex-1">
                     {plan.features.map((f: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                        <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
+                        <Check size={14} className={`mt-0.5 shrink-0 ${isLegend ? 'text-amber-400' : 'text-[var(--green)]'}`} />
                         {f}
                       </li>
                     ))}
@@ -164,11 +184,15 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                   ) : (
                     <button
                       onClick={() => handleSubscribe(plan)}
-                      disabled={loading === plan.planId || !hasPriceId}
-                      className="mt-4 w-full py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                      disabled={loading === plan.planId || !canSubscribe}
+                      className={`mt-4 w-full py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${
+                        isLegend
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600'
+                          : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
+                      }`}
                     >
                       {loading === plan.planId && <Loader2 size={14} className="animate-spin" />}
-                      {hasPriceId ? 'Subscribe' : 'Coming Soon'}
+                      {canSubscribe ? 'Subscribe' : 'Coming Soon'}
                     </button>
                   )}
                 </div>

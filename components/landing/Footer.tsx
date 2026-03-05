@@ -16,7 +16,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[var(--accent)]/20 bg-gradient-to-br from-indigo-500/5 to-purple-600/5 p-10 sm:p-14 text-center"
+            className="rounded-2xl border border-[var(--accent)]/20 bg-gradient-to-br from-teal-500/5 to-teal-700/5 p-10 sm:p-14 text-center"
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)]">
               Ready to Level Up Your Trading?
@@ -41,7 +41,7 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <BrainMascot size={24} />
-              <span className="text-sm font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">PsychSync</span>
+              <span className="text-sm font-semibold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia</span>
             </div>
 
             <div className="flex items-center gap-6 text-xs text-[var(--muted-foreground)]">
@@ -52,7 +52,7 @@ export default function Footer() {
             </div>
 
             <p className="text-xs text-[var(--muted-foreground)]">
-              &copy; 2026 PsychSync. All rights reserved.
+              &copy; 2026 Tradia. All rights reserved.
             </p>
           </div>
         </div>

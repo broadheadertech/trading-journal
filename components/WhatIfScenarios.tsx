@@ -176,7 +176,7 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
         <button
           onClick={handleAnalyze}
           disabled={!coin}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-medium transition-all disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white rounded-xl font-medium transition-all disabled:opacity-50"
         >
           <Sparkles size={18} /> Analyze Trade
         </button>
