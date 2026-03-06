@@ -7,11 +7,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function SignUpPage() {
-  const [agreed, setAgreed] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [proceeded, setProceeded] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] px-4">
-      {!agreed ? (
+      {!proceeded ? (
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-8">
             <Image src="/logo.png" alt="Tradia" width={56} height={56} className="mb-4" />
@@ -38,8 +39,8 @@ export default function SignUpPage() {
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
+                  checked={checked}
+                  onChange={(e) => setChecked(e.target.checked)}
                   className="mt-0.5 w-4 h-4 shrink-0 rounded border-[var(--border)] accent-[var(--accent)] cursor-pointer"
                 />
                 <span className="text-xs text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors leading-relaxed">
@@ -53,8 +54,8 @@ export default function SignUpPage() {
             </div>
 
             <button
-              disabled={!agreed}
-              onClick={() => setAgreed(true)}
+              disabled={!checked}
+              onClick={() => setProceeded(true)}
               className="w-full py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Continue to Sign Up
@@ -70,7 +71,7 @@ export default function SignUpPage() {
         <div className="w-full max-w-md flex flex-col items-center">
           <SignUp appearance={{ baseTheme: dark }} />
           <button
-            onClick={() => setAgreed(false)}
+            onClick={() => { setProceeded(false); setChecked(false); }}
             className="mt-4 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
           >
             Back to consent
