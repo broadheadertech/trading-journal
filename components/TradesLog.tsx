@@ -169,10 +169,11 @@ export default function TradesLog({
   const handleDeleteConfirm = (id: string) => { onDelete(id); setDeleteConfirm(null); showToast('Trade deleted'); };
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 anim-fade-up">
+      <div className="hero-glow" />
 
       {/* ── Hero Section ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
+      <div className="glass rounded-2xl p-6">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">

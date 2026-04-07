@@ -304,7 +304,8 @@ export default function WhatIfSimulation({ trades }: Props) {
   ];
 
   return (
-    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6">
+    <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6 anim-fade-up">
+      <div className="hero-glow" />
 
       {/* ── Hero Card ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">

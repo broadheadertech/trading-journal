@@ -245,7 +245,8 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   }
 
   return (
-    <div className="space-y-5">
+    <div className="relative space-y-5 anim-fade-up">
+      <div className="hero-glow" />
       {/* ── Header ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">

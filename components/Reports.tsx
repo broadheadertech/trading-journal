@@ -263,11 +263,12 @@ export default function Reports({ trades, strategies }: Props) {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6">
+    <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6 anim-fade-up">
+      <div className="hero-glow" />
 
       {/* ── Title ── */}
       <div>
-        <h1 className="text-3xl sm:text-4xl font-black mb-1">Reports & Exports</h1>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-1">Reports <span className="gradient-text">& Exports</span></h1>
         <p className="text-sm text-[var(--muted-foreground)]">
           Generate PDF reports, export trade data, and download performance cards.
         </p>

@@ -441,7 +441,8 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   ], [strategies, metrics, formatCurrency]);
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 anim-fade-up">
+      <div className="hero-glow" />
 
       {/* ── Hero Section ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">

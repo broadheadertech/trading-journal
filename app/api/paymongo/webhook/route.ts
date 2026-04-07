@@ -57,6 +57,41 @@ export async function POST(req: NextRequest) {
         const attributes = eventData?.attributes;
         const metadata = attributes?.metadata;
         const userId = metadata?.userId;
+
+        // Course one-time purchase
+        if (metadata?.kind === "course") {
+          const courseId = metadata?.courseId;
+          if (!userId || !courseId) break;
+          const lineItem = attributes?.line_items?.[0];
+          const amountCentavos = lineItem?.amount ?? 0;
+          await convex.mutation(api.courses.recordPurchase, {
+            userId,
+            courseId,
+            paymentProvider: "paymongo",
+            paymentId: eventData?.id ?? "",
+            amount: amountCentavos / 100,
+            currency: "PHP",
+          });
+          break;
+        }
+
+        // Event paid registration
+        if (metadata?.kind === "event") {
+          const evId = metadata?.eventId;
+          if (!userId || !evId) break;
+          const lineItem = attributes?.line_items?.[0];
+          const amountCentavos = lineItem?.amount ?? 0;
+          await convex.mutation(api.events.recordPaidRegistration, {
+            userId,
+            eventId: evId,
+            paymentProvider: "paymongo",
+            paymentId: eventData?.id ?? "",
+            amount: amountCentavos / 100,
+            currency: "PHP",
+          });
+          break;
+        }
+
         const planId = metadata?.planId;
         const interval = metadata?.interval as "month" | "year" | undefined;
 

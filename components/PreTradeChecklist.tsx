@@ -260,7 +260,8 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
   const corrLabel = (v: number) => Math.abs(v) > 0.7 ? 'Strong' : Math.abs(v) > 0.3 ? 'Moderate' : 'Weak';
 
   return (
-    <div className="space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto">
+    <div className="relative space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto anim-fade-up">
+      <div className="hero-glow" />
       {/* ── Hero ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">

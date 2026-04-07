@@ -385,6 +385,180 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_user_unread", ["userId", "read"]),
 
+  // ─── Courses (paid per-course unlock) ──────────────────────────────
+  courses: defineTable({
+    id: v.string(),
+    slug: v.string(),
+    title: v.string(),
+    description: v.string(),
+    coverImage: v.optional(v.string()),
+    gallery: v.optional(v.array(v.string())),
+    priceUsd: v.number(),       // USD price for Stripe
+    pricePhp: v.number(),       // PHP price for PayMongo
+    externalUrl: v.optional(v.string()), // Mode A: link out
+    isPublished: v.boolean(),
+    createdBy: v.string(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_published", ["isPublished"]),
+
+  courseModules: defineTable({
+    id: v.string(),
+    courseId: v.string(),
+    title: v.string(),
+    order: v.number(),
+    createdAt: v.string(),
+  }).index("by_course", ["courseId"]),
+
+  courseLessons: defineTable({
+    id: v.string(),
+    moduleId: v.string(),
+    courseId: v.string(),
+    title: v.string(),
+    order: v.number(),
+    contentType: v.union(v.literal("text"), v.literal("video"), v.literal("link")),
+    body: v.string(),
+    videoUrl: v.optional(v.string()),
+    externalUrl: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_module", ["moduleId"])
+    .index("by_course", ["courseId"]),
+
+  coursePurchases: defineTable({
+    userId: v.string(),
+    courseId: v.string(),
+    paymentProvider: v.union(v.literal("stripe"), v.literal("paymongo")),
+    paymentId: v.string(),       // Stripe session id or PayMongo checkout id
+    amount: v.number(),
+    currency: v.string(),
+    purchasedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_course", ["userId", "courseId"])
+    .index("by_payment_id", ["paymentId"]),
+
+  lessonProgress: defineTable({
+    userId: v.string(),
+    lessonId: v.string(),
+    courseId: v.string(),
+    completedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_course", ["userId", "courseId"])
+    .index("by_user_lesson", ["userId", "lessonId"]),
+
+  // ─── Events / Trainings ────────────────────────────────────────────
+  events: defineTable({
+    id: v.string(),
+    slug: v.string(),
+    title: v.string(),
+    description: v.string(),
+    coverImage: v.optional(v.string()),
+    gallery: v.optional(v.array(v.string())),
+    mode: v.union(v.literal("online"), v.literal("in_person"), v.literal("hybrid")),
+    startsAt: v.string(),
+    endsAt: v.string(),
+    timezone: v.optional(v.string()),
+    // Online
+    meetingUrl: v.optional(v.string()),
+    platform: v.optional(v.string()),
+    // In-person
+    venueName: v.optional(v.string()),
+    address: v.optional(v.string()),
+    city: v.optional(v.string()),
+    country: v.optional(v.string()),
+    mapUrl: v.optional(v.string()),
+    // Common
+    capacity: v.optional(v.number()),
+    priceUsd: v.number(),
+    pricePhp: v.number(),
+    isPublished: v.boolean(),
+    createdBy: v.string(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_published", ["isPublished"]),
+
+  eventRegistrations: defineTable({
+    userId: v.string(),
+    eventId: v.string(),
+    status: v.union(v.literal("registered"), v.literal("paid")),
+    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"))),
+    paymentId: v.optional(v.string()),
+    amount: v.optional(v.number()),
+    currency: v.optional(v.string()),
+    registeredAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_event", ["eventId"])
+    .index("by_user_event", ["userId", "eventId"])
+    .index("by_payment_id", ["paymentId"]),
+
+  // ─── Community Forum ───────────────────────────────────────────────
+  forumCategories: defineTable({
+    id: v.string(),
+    slug: v.string(),
+    name: v.string(),
+    description: v.string(),
+    color: v.optional(v.string()),
+    order: v.number(),
+    createdAt: v.string(),
+  }).index("by_slug", ["slug"]),
+
+  forumPosts: defineTable({
+    id: v.string(),
+    categoryId: v.string(),
+    authorId: v.string(),
+    authorName: v.string(),
+    authorImage: v.optional(v.string()),
+    authorTier: v.optional(v.string()),
+    title: v.string(),
+    body: v.string(),
+    images: v.optional(v.array(v.string())),
+    isPinned: v.boolean(),
+    isLocked: v.boolean(),
+    upvotes: v.number(),
+    downvotes: v.number(),
+    score: v.number(),         // upvotes - downvotes (denormalized for sorting)
+    commentCount: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_category", ["categoryId"])
+    .index("by_author", ["authorId"])
+    .index("by_score", ["score"])
+    .index("by_created", ["createdAt"]),
+
+  forumComments: defineTable({
+    id: v.string(),
+    postId: v.string(),
+    parentCommentId: v.optional(v.string()), // for nesting
+    authorId: v.string(),
+    authorName: v.string(),
+    authorImage: v.optional(v.string()),
+    authorTier: v.optional(v.string()),
+    body: v.string(),
+    upvotes: v.number(),
+    downvotes: v.number(),
+    score: v.number(),
+    createdAt: v.string(),
+  })
+    .index("by_post", ["postId"])
+    .index("by_author", ["authorId"]),
+
+  forumVotes: defineTable({
+    userId: v.string(),
+    targetType: v.union(v.literal("post"), v.literal("comment")),
+    targetId: v.string(),
+    value: v.union(v.literal(1), v.literal(-1)),
+  })
+    .index("by_user_target", ["userId", "targetType", "targetId"])
+    .index("by_target", ["targetType", "targetId"]),
+
   // ─── User subscriptions ───────────────────────────────────────────
   userSubscriptions: defineTable({
     userId: v.string(),

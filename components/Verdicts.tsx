@@ -433,7 +433,8 @@ export default function Verdicts({ trades }: VerdictsProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 anim-fade-up">
+      <div className="hero-glow" />
 
       {/* ── Hero + At A Glance ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
