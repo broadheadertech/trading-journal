@@ -9,6 +9,7 @@ import {
   Globe, MapPin, Layers, Clock, Upload, Loader2, ExternalLink, ArrowRight,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import BrainMascot from '@/components/BrainMascot';
 
 type View = 'catalog' | 'detail' | 'admin';
 type Mode = 'online' | 'in_person' | 'hybrid';

@@ -9,6 +9,7 @@ import {
   ExternalLink, PlayCircle, FileText, Link as LinkIcon, Settings, Upload, Loader2,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import BrainMascot from '@/components/BrainMascot';
 
 type View = 'catalog' | 'detail' | 'admin';
 

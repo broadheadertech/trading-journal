@@ -559,6 +559,120 @@ export default defineSchema({
     .index("by_user_target", ["userId", "targetType", "targetId"])
     .index("by_target", ["targetType", "targetId"]),
 
+  // ─── Coaching ──────────────────────────────────────────────────────
+  coaches: defineTable({
+    id: v.string(),
+    userId: v.string(),                      // Clerk user id
+    slug: v.string(),
+    displayName: v.string(),
+    headline: v.string(),                    // short pitch
+    bio: v.string(),
+    photoUrl: v.optional(v.string()),
+    specialties: v.array(v.string()),        // tags
+    languages: v.optional(v.array(v.string())),
+    timezone: v.string(),
+    hourlyRateUsd: v.number(),
+    sessionDurationMin: v.number(),          // 30 / 60 / 90
+    status: v.union(
+      v.literal("pending"),                  // application submitted
+      v.literal("approved"),
+      v.literal("suspended"),
+      v.literal("rejected"),
+    ),
+    avgRating: v.optional(v.number()),
+    reviewCount: v.optional(v.number()),
+    totalSessions: v.optional(v.number()),
+    totalEarningsUsd: v.optional(v.number()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_slug", ["slug"])
+    .index("by_status", ["status"]),
+
+  // Coach defines bookable time slots; each slot is consumed by one session
+  coachSlots: defineTable({
+    id: v.string(),
+    coachId: v.string(),
+    startsAt: v.string(),                    // ISO
+    endsAt: v.string(),
+    isBooked: v.boolean(),
+    sessionId: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_coach", ["coachId"])
+    .index("by_coach_unbooked", ["coachId", "isBooked"]),
+
+  coachSessions: defineTable({
+    id: v.string(),
+    coachId: v.string(),
+    coachUserId: v.string(),
+    clientUserId: v.string(),
+    clientName: v.string(),
+    clientImage: v.optional(v.string()),
+    slotId: v.string(),
+    startsAt: v.string(),
+    endsAt: v.string(),
+    sessionDurationMin: v.number(),
+    pricePaidUsd: v.number(),
+    platformFeeUsd: v.number(),              // commission (15%)
+    coachPayoutUsd: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+      v.literal("cancelled"),
+      v.literal("disputed"),
+    ),
+    paymentStatus: v.union(
+      v.literal("stub_paid"),                // stub: marked paid in dev
+      v.literal("paid"),                     // real Stripe Connect later
+      v.literal("refunded"),
+      v.literal("released"),                 // funds released to coach
+    ),
+    paymentId: v.optional(v.string()),
+    meetingUrl: v.optional(v.string()),      // coach fills in or auto from Daily.co later
+    clientGoals: v.string(),                 // why they booked
+    coachNotes: v.optional(v.string()),      // post-session notes (private to coach)
+    cancelledAt: v.optional(v.string()),
+    cancelledBy: v.optional(v.string()),
+    completedAt: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_coach", ["coachId"])
+    .index("by_client", ["clientUserId"])
+    .index("by_coach_user", ["coachUserId"])
+    .index("by_status", ["status"])
+    .index("by_starts_at", ["startsAt"]),
+
+  // Real-time DMs scoped to a session pairing
+  coachMessages: defineTable({
+    id: v.string(),
+    sessionId: v.string(),
+    fromUserId: v.string(),
+    fromName: v.string(),
+    fromImage: v.optional(v.string()),
+    body: v.string(),
+    createdAt: v.string(),
+    readAt: v.optional(v.string()),
+  })
+    .index("by_session", ["sessionId"])
+    .index("by_session_created", ["sessionId", "createdAt"]),
+
+  coachReviews: defineTable({
+    id: v.string(),
+    coachId: v.string(),
+    sessionId: v.string(),
+    clientUserId: v.string(),
+    clientName: v.string(),
+    rating: v.number(),                      // 1..5
+    comment: v.string(),
+    createdAt: v.string(),
+  })
+    .index("by_coach", ["coachId"])
+    .index("by_session", ["sessionId"]),
+
   // ─── User subscriptions ───────────────────────────────────────────
   userSubscriptions: defineTable({
     userId: v.string(),

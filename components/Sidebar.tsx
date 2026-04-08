@@ -4,7 +4,7 @@ import { TabId, TimeRange } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones,
   ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
@@ -44,6 +44,7 @@ const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'courses', label: 'Courses', icon: <GraduationCap size={20} /> },
   { id: 'events', label: 'Events', icon: <CalendarDays size={20} /> },
   { id: 'community', label: 'Community', icon: <MessagesSquare size={20} /> },
+  { id: 'coaching', label: 'Coaching', icon: <Headphones size={20} /> },
   { id: 'news', label: 'News', icon: <Newspaper size={20} /> },
   { id: 'leaderboard', label: 'Leaderboard', icon: <Trophy size={20} /> },
   { id: 'tools', label: 'Tools', icon: <Wrench size={20} /> },

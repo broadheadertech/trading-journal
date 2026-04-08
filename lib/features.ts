@@ -12,19 +12,19 @@ export interface TierConfig {
 
 const ALL_TABS: TabId[] = [
   'dashboard', 'journal', 'playbook', 'analytics', 'psychology',
-  'goals', 'verdicts', 'checklist', 'brain', 'whatif', 'reports', 'news', 'leaderboard', 'tools', 'courses', 'events', 'community',
+  'goals', 'verdicts', 'checklist', 'brain', 'whatif', 'reports', 'news', 'leaderboard', 'tools', 'courses', 'events', 'community', 'coaching',
 ];
 
 export const TIERS: Record<TierName, TierConfig> = {
   free: {
-    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'courses', 'events', 'community'],
+    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'courses', 'events', 'community', 'coaching'],
     maxTrades: 50,
     maxStrategies: 3,
     hasTeam: false,
     label: 'Free',
   },
   essential: {
-    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'goals', 'verdicts', 'checklist', 'brain', 'courses', 'events', 'community'],
+    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'goals', 'verdicts', 'checklist', 'brain', 'courses', 'events', 'community', 'coaching'],
     maxTrades: 200,
     maxStrategies: 10,
     hasTeam: false,

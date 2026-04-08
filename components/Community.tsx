@@ -12,6 +12,7 @@ import {
 import { useToast } from '@/components/ui/Toast';
 import { useSubscription } from '@/hooks/useSubscription';
 import TierBadge from '@/components/TierBadge';
+import BrainMascot from '@/components/BrainMascot';
 
 type View = 'list' | 'detail' | 'admin';
 type SortMode = 'hot' | 'new' | 'top';
