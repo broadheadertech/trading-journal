@@ -5,6 +5,7 @@ import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import AdminSidebar from './AdminSidebar';
+import BrainMascot from '@/components/BrainMascot';
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useUser();
@@ -12,7 +13,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   if (!isLoaded) {
     return (
       <div className="h-dvh flex items-center justify-center bg-[var(--background)]">
-        <div className="animate-pulse text-[var(--muted-foreground)]">Loading...</div>
+        <BrainMascot size={48} glow beat />
       </div>
     );
   }

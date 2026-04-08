@@ -32,7 +32,39 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.metadata?.userId;
-        if (!userId || !session.subscription) break;
+        if (!userId) break;
+
+        // Course one-time purchase
+        if (session.metadata?.kind === "course") {
+          const courseId = session.metadata?.courseId;
+          if (!courseId) break;
+          await convex.mutation(api.courses.recordPurchase, {
+            userId,
+            courseId,
+            paymentProvider: "stripe",
+            paymentId: session.id,
+            amount: (session.amount_total ?? 0) / 100,
+            currency: session.currency ?? "usd",
+          });
+          break;
+        }
+
+        // Event paid registration
+        if (session.metadata?.kind === "event") {
+          const eventId = session.metadata?.eventId;
+          if (!eventId) break;
+          await convex.mutation(api.events.recordPaidRegistration, {
+            userId,
+            eventId,
+            paymentProvider: "stripe",
+            paymentId: session.id,
+            amount: (session.amount_total ?? 0) / 100,
+            currency: session.currency ?? "usd",
+          });
+          break;
+        }
+
+        if (!session.subscription) break;
 
         // Fetch the full subscription from Stripe
         const sub = await stripe.subscriptions.retrieve(session.subscription as string);

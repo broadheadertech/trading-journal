@@ -245,3 +245,60 @@ input::placeholder, textarea::placeholder {
 .recharts-tooltip-wrapper {
   font-size: 12px !important;
 }
+
+/* ─── Modern UI utilities ──────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.anim-fade-up {
+  animation: fadeUp 0.5s ease-out backwards;
+}
+
+.anim-fade-in {
+  animation: fadeIn 0.4s ease-out backwards;
+}
+
+/* Glass card preset */
+.glass {
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+/* Gradient text accent — uses brand teal */
+.gradient-text {
+  background: linear-gradient(135deg, #2dd4bf 0%, #2d9484 50%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hero ambient glow (place absolutely behind content) */
+.hero-glow {
+  position: absolute;
+  inset-inline: 0;
+  top: -5rem;
+  height: 18rem;
+  background: linear-gradient(to bottom, rgba(45,148,132,0.12), rgba(45,148,132,0.05), transparent);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Modern card hover lift */
+.card-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -20px rgba(45, 148, 132, 0.40);
+  border-color: rgba(45, 148, 132, 0.30);
+}

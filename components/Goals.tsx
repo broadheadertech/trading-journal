@@ -101,15 +101,15 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 anim-fade-up">
+      <div className="hero-glow" />
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <Target size={22} className="text-[var(--accent)]" />
-            Goals & Progress
-          </h2>
-          <p className="text-sm text-[var(--muted-foreground)]">Set monthly targets and track your performance</p>
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
+            Goals <span className="gradient-text">& Progress</span>
+          </h1>
+          <p className="text-sm text-[var(--muted-foreground)] mt-2">Set monthly targets and track your performance</p>
         </div>
         <button
           onClick={openForm}

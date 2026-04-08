@@ -4,7 +4,7 @@ import { TabId, TimeRange } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones,
   ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
@@ -40,22 +40,17 @@ const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-  { id: 'analytics', label: 'Performance', icon: <BarChart3 size={20} /> },
-  { id: 'psychology', label: 'Behavior', icon: <Brain size={20} /> },
-  { id: 'checklist', label: 'Market Context', icon: <Map size={20} /> },
-  { id: 'verdicts', label: 'Verdicts', icon: <Scale size={20} /> },
-  { id: 'playbook', label: 'Playbook', icon: <BookOpen size={20} /> },
-  { id: 'journal', label: 'Journal', icon: <List size={20} /> },
-  { id: 'goals', label: 'Goals', icon: <Target size={20} /> },
-  { id: 'whatif', label: 'What-If', icon: <Sparkles size={20} /> },
-  { id: 'reports', label: 'Reports', icon: <FileText size={20} /> },
+  { id: 'journal', label: 'Journaling', icon: <List size={20} /> },
+  { id: 'courses', label: 'Courses', icon: <GraduationCap size={20} /> },
+  { id: 'events', label: 'Events', icon: <CalendarDays size={20} /> },
+  { id: 'community', label: 'Community', icon: <MessagesSquare size={20} /> },
+  { id: 'coaching', label: 'Coaching', icon: <Headphones size={20} /> },
   { id: 'news', label: 'News', icon: <Newspaper size={20} /> },
-  { id: 'brain', label: 'Brain', icon: <Orbit size={20} /> },
   { id: 'leaderboard', label: 'Leaderboard', icon: <Trophy size={20} /> },
   { id: 'tools', label: 'Tools', icon: <Wrench size={20} /> },
 ];
 
-const bottomTabs: TabId[] = ['dashboard', 'journal', 'analytics', 'psychology', 'brain'];
+const bottomTabs: TabId[] = ['dashboard', 'journal', 'community', 'news'];
 
 export default function Sidebar({
   activeTab, onTabChange, isDark, onThemeToggle, onExport, onImport, onAddTrade, onReseedDemo, onTeamMode, hasTeam,
@@ -101,9 +96,11 @@ export default function Sidebar({
     <div className="h-dvh flex overflow-hidden">
       {/* Desktop Sidebar */}
       <aside className={cn(
-        'hidden md:flex flex-col shrink-0 border-r border-[var(--border)] bg-[var(--card)] transition-all duration-300',
+        'hidden md:flex flex-col shrink-0 border-r border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl transition-all duration-300 relative',
         collapsed ? 'w-[68px]' : 'w-[220px]'
       )}>
+        {/* Subtle ambient glow */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-teal-500/10 to-transparent" />
         {/* Logo */}
         <div className="shrink-0 h-14 flex items-center gap-2.5 px-4 border-b border-[var(--border)]">
           <BrainMascot size={28} className="shrink-0" />
@@ -121,11 +118,11 @@ export default function Sidebar({
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors',
+                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all relative',
                 collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
                 activeTab === tab.id
-                  ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
-                  : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]'
+                  ? 'bg-gradient-to-br from-teal-500/20 to-teal-600/10 text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full before:bg-gradient-to-b before:from-teal-400 before:to-teal-600'
+                  : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
               )}
               title={collapsed ? tab.label : undefined}
             >

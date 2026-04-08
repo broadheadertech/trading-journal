@@ -290,7 +290,8 @@ export default function Dashboard({
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-4">
+    <div className="relative space-y-4 anim-fade-up">
+      <div className="hero-glow" />
       {/* ── Hero Card + Execution Score ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-4">
         <div className={`rounded-2xl p-5 sm:p-6 ${isPositive
@@ -658,7 +659,7 @@ export default function Dashboard({
             </div>
 
             <button
-              onClick={() => onNavigate('verdicts')}
+              onClick={() => onNavigate('journal:verdicts')}
               className="mt-4 w-full py-2.5 bg-[var(--muted)] hover:bg-[var(--muted-foreground)]/10 border border-[var(--border)] rounded-xl text-sm font-medium text-[var(--foreground)] transition-colors flex items-center justify-center gap-2"
             >
               Open Verdicts <ArrowRight size={14} />

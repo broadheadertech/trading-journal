@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -21,26 +21,19 @@ import { ToastProvider, useToast } from '@/components/ui/Toast';
 import { CurrencyProvider } from '@/hooks/useCurrency';
 import { StageThemeProvider } from '@/components/brain/providers/StageThemeProvider';
 import { ReducedMotionProvider } from '@/components/brain/ReducedMotionProvider';
-import { BrainMiniWidget } from '@/components/brain/BrainMiniWidget';
 import Sidebar from '@/components/Sidebar';
 import Dashboard from '@/components/Dashboard';
-import Playbook from '@/components/Playbook';
-import PreTradeChecklist from '@/components/PreTradeChecklist';
-import TradesLog from '@/components/TradesLog';
-import Analytics from '@/components/Analytics';
-import Verdicts from '@/components/Verdicts';
-import PsychologyJournal from '@/components/PsychologyJournal';
-import WhatIfSimulation from '@/components/WhatIfSimulation';
-import Reports from '@/components/Reports';
-import Goals from '@/components/Goals';
+import JournalTab, { type JournalSubTab } from '@/components/JournalTab';
+import Courses from '@/components/Courses';
+import Events from '@/components/Events';
+import Community from '@/components/Community';
+import Coaching from '@/components/Coaching';
 import News from '@/components/News';
 import Leaderboard from '@/components/Leaderboard';
 import Tools from '@/components/Tools';
 import TeamLayout from '@/components/team/TeamLayout';
 import { Loader2 } from 'lucide-react';
 
-const LazyBrainTab = lazy(() => import('@/components/brain/BrainTab'));
-const LazyTextOnlyBrainTab = lazy(() => import('@/components/brain/TextOnlyBrainTab'));
 
 type MigrationState = 'checking' | 'show' | 'migrating' | 'done';
 
@@ -50,6 +43,7 @@ function AppContent() {
   const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
   const { canAccessTab, hasTeamAccess } = useSubscription();
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
+  const [journalSubTab, setJournalSubTab] = useState<JournalSubTab>('trades');
   const [isDark, setIsDark] = useLocalStorage('crypto-journal-theme-dark', true);
   const [showAddTrade, setShowAddTrade] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -77,7 +71,7 @@ function AppContent() {
   const { reviews, addReview, isLoaded: reviewsLoaded } = useWeeklyReviews();
   const { addRuleBreak, isLoaded: ruleBreaksLoaded } = useRuleBreakLogs();
   const { goals, addGoal, updateGoal, isLoaded: goalsLoaded } = useGoals();
-  const { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, onboardingComplete, completeOnboarding, textOnlyBrain } = useProfile();
+  const { initialCapital, setInitialCapital, dailyLossLimit, dailyProfitTarget, goalMode, setDailyGoal, onboardingComplete, completeOnboarding } = useProfile();
 
   useEffect(() => {
     setMounted(true);
@@ -208,6 +202,7 @@ function AppContent() {
   }, [importMutation, showToast]);
 
   const handleAddTrade = useCallback(() => {
+    setJournalSubTab('trades');
     setActiveTab('journal');
     setShowAddTrade(true);
   }, []);
@@ -221,14 +216,39 @@ function AppContent() {
         currency: data.currency,
       }).catch(() => {});
       await completeOnboarding(data);
-      setActiveTab('brain');
+      setActiveTab('dashboard');
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [initBrainState, completeOnboarding],
   );
 
+  // Map legacy top-level tab IDs to Journaling sub-tabs (so old onNavigate calls keep working)
+  const JOURNAL_SUB_REDIRECTS: Record<string, JournalSubTab> = {
+    psychology: 'psychology',
+    verdicts: 'verdicts',
+    analytics: 'performance',
+    reports: 'reports',
+    playbook: 'playbook',
+    checklist: 'checklist',
+    goals: 'goals',
+    whatif: 'whatif',
+  };
+
   const handleNavigate = useCallback((tab: string) => {
+    // Support explicit deep links like "journal:verdicts"
+    if (tab.startsWith('journal:')) {
+      setJournalSubTab(tab.slice('journal:'.length) as JournalSubTab);
+      setActiveTab('journal');
+      return;
+    }
+    // Legacy tab id → journaling sub-tab redirect
+    if (JOURNAL_SUB_REDIRECTS[tab]) {
+      setJournalSubTab(JOURNAL_SUB_REDIRECTS[tab]);
+      setActiveTab('journal');
+      return;
+    }
     setActiveTab(tab as TabId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Team mode — must be before any early returns to satisfy Rules of Hooks
@@ -273,7 +293,7 @@ function AppContent() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <div className="mx-auto mb-4">
-            <BrainMascot size={48} glow />
+            <BrainMascot size={48} glow beat />
           </div>
           <p className="text-[var(--muted-foreground)] text-sm">Loading Tradia...</p>
         </div>
@@ -313,7 +333,7 @@ function AppContent() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
         <div className="max-w-md w-full bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 text-center space-y-5">
           <div className="mx-auto">
-            <BrainMascot size={56} glow />
+            <BrainMascot size={56} glow beat />
           </div>
           <div>
             <h2 className="text-lg font-bold text-[var(--foreground)] mb-1">Welcome back!</h2>
@@ -369,7 +389,7 @@ function AppContent() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
           <div className="mx-auto mb-4">
-            <BrainMascot size={48} glow />
+            <BrainMascot size={48} glow beat />
           </div>
           <p className="text-[var(--muted-foreground)] text-sm">Setting up your team...</p>
         </div>
@@ -379,10 +399,6 @@ function AppContent() {
 
   return (
     <>
-      {activeTab !== 'brain' && (
-        <BrainMiniWidget onNavigate={() => setActiveTab('brain')} />
-      )}
-
       <input
         ref={importRef}
         type="file"
@@ -424,84 +440,54 @@ function AppContent() {
               onSetDailyGoal={setDailyGoal}
             />
           )}
-          {activeTab === 'playbook' && (
-            <Playbook
-              strategies={strategies}
-              trades={filteredTrades}
-              onAdd={addStrategy}
-              onUpdate={updateStrategy}
-              onDelete={deleteStrategy}
-            />
-          )}
-          {activeTab === 'checklist' && (
-            canAccessTab('checklist') ? (
-              <PreTradeChecklist
-                checklists={checklists}
-                strategies={strategies}
-                trades={filteredTrades}
-                onAdd={addChecklist}
-                onDelete={deleteChecklist}
-              />
-            ) : <UpgradePrompt requiredTier={getRequiredTier('checklist')} />
-          )}
           {activeTab === 'journal' && (
-            <TradesLog
+            <JournalTab
+              initialSubTab={journalSubTab}
               trades={filteredTrades}
               strategies={strategies}
-              onAdd={addTrade}
-              onUpdate={updateTrade}
-              onDelete={deleteTrade}
-              onBulkImport={bulkImportTrades}
-              showAddModal={showAddTrade}
+              addTrade={addTrade}
+              updateTrade={updateTrade}
+              deleteTrade={deleteTrade}
+              bulkImportTrades={bulkImportTrades}
+              showAddTrade={showAddTrade}
               onCloseAddModal={() => setShowAddTrade(false)}
               onRuleBreak={(ruleName, explanation) => addRuleBreak({ tradeId: '', ruleName, explanation, timestamp: new Date().toISOString() })}
               initialCapital={initialCapital}
-            />
-          )}
-          {activeTab === 'analytics' && (
-            <Analytics trades={filteredTrades} initialCapital={initialCapital} onAddTrade={handleAddTrade} />
-          )}
-          {activeTab === 'verdicts' && (
-            canAccessTab('verdicts') ? (
-              <Verdicts trades={filteredTrades} />
-            ) : <UpgradePrompt requiredTier={getRequiredTier('verdicts')} />
-          )}
-          {activeTab === 'psychology' && (
-            <PsychologyJournal
-              trades={filteredTrades}
+              onAddTrade={handleAddTrade}
               entries={entries}
-              onAddEntry={addEntry}
-              onUpdateEntry={updateEntry}
-              onDeleteEntry={deleteEntry}
+              addEntry={addEntry}
+              updateEntry={updateEntry}
+              deleteEntry={deleteEntry}
               breakerEvents={breakerEvents}
               triggers={triggers}
-              onAddTrigger={addTrigger}
-              onDeleteTrigger={deleteTrigger}
+              addTrigger={addTrigger}
+              deleteTrigger={deleteTrigger}
               reflections={reflections}
-              onAddReflection={addReflection}
+              addReflection={addReflection}
               reviews={reviews}
-              onAddReview={addReview}
+              addReview={addReview}
+              addStrategy={addStrategy}
+              updateStrategy={updateStrategy}
+              deleteStrategy={deleteStrategy}
+              checklists={checklists}
+              addChecklist={addChecklist}
+              deleteChecklist={deleteChecklist}
+              goals={goals}
+              addGoal={addGoal}
+              updateGoal={updateGoal}
             />
           )}
-          {activeTab === 'goals' && (
-            canAccessTab('goals') ? (
-              <Goals
-                goals={goals}
-                trades={filteredTrades}
-                onAdd={addGoal}
-                onUpdate={updateGoal}
-              />
-            ) : <UpgradePrompt requiredTier={getRequiredTier('goals')} />
+          {activeTab === 'courses' && (
+            canAccessTab('courses') ? <Courses /> : <UpgradePrompt requiredTier={getRequiredTier('courses')} />
           )}
-          {activeTab === 'whatif' && (
-            canAccessTab('whatif') ? (
-              <WhatIfSimulation trades={filteredTrades} />
-            ) : <UpgradePrompt requiredTier={getRequiredTier('whatif')} />
+          {activeTab === 'events' && (
+            canAccessTab('events') ? <Events /> : <UpgradePrompt requiredTier={getRequiredTier('events')} />
           )}
-          {activeTab === 'reports' && (
-            canAccessTab('reports') ? (
-              <Reports trades={filteredTrades} strategies={strategies} />
-            ) : <UpgradePrompt requiredTier={getRequiredTier('reports')} />
+          {activeTab === 'community' && (
+            canAccessTab('community') ? <Community /> : <UpgradePrompt requiredTier={getRequiredTier('community')} />
+          )}
+          {activeTab === 'coaching' && (
+            canAccessTab('coaching') ? <Coaching /> : <UpgradePrompt requiredTier={getRequiredTier('coaching')} />
           )}
           {activeTab === 'news' && (
             canAccessTab('news') ? (
@@ -521,22 +507,6 @@ function AppContent() {
         </main>
       </Sidebar>
 
-      {/* Brain dimension overlay — rendered outside Navigation for full-screen takeover */}
-      {/* Story 9.1 — conditionally render text-only or visual brain tab (FR43) */}
-      {activeTab === 'brain' && (
-        canAccessTab('brain') ? (
-          <Suspense fallback={
-            <div className="fixed inset-0 z-[60] flex items-center justify-center brain-dimension-bg">
-              <Loader2 className="animate-spin w-8 h-8 text-white/40" />
-            </div>
-          }>
-            {textOnlyBrain
-              ? <LazyTextOnlyBrainTab onBack={() => setActiveTab('dashboard')} />
-              : <LazyBrainTab onBack={() => setActiveTab('dashboard')} />
-            }
-          </Suspense>
-        ) : <UpgradePrompt requiredTier={getRequiredTier('brain')} />
-      )}
     </>
   );
 }
