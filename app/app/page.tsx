@@ -32,6 +32,8 @@ import Strategies from '@/components/Strategies';
 import Rewards from '@/components/Rewards';
 import Games from '@/components/Games';
 import Indicators from '@/components/Indicators';
+import EconomicCalendar from '@/components/EconomicCalendar';
+import WorldMonitoring from '@/components/WorldMonitoring';
 import News from '@/components/News';
 import Leaderboard from '@/components/Leaderboard';
 import Tools from '@/components/Tools';
@@ -504,6 +506,12 @@ function AppContent() {
           )}
           {activeTab === 'indicators' && (
             canAccessTab('indicators') ? <Indicators /> : <UpgradePrompt requiredTier={getRequiredTier('indicators')} />
+          )}
+          {activeTab === 'economic' && (
+            canAccessTab('economic') ? <EconomicCalendar /> : <UpgradePrompt requiredTier={getRequiredTier('economic')} />
+          )}
+          {activeTab === 'world' && (
+            canAccessTab('world') ? <WorldMonitoring /> : <UpgradePrompt requiredTier={getRequiredTier('world')} />
           )}
           {activeTab === 'news' && (
             canAccessTab('news') ? (
