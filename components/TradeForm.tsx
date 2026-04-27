@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Trade, EmotionState, TradeTag, Strategy, RuleCompliance, Verdict, MarketType, Direction } from '@/lib/types';
 import {
-  CRYPTO_SUGGESTIONS, STOCK_SUGGESTIONS, FOREX_SUGGESTIONS, EMOTION_OPTIONS, TAG_OPTIONS,
+  CRYPTO_SUGGESTIONS, STOCK_SUGGESTIONS, FOREX_SUGGESTIONS, METALS_SUGGESTIONS, OIL_SUGGESTIONS, EMOTION_OPTIONS, TAG_OPTIONS,
   getSimilarTrades, formatPercent,
 } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -119,7 +119,12 @@ export default function TradeForm({
   const hasRuleBreaks = ruleCompliances.some(c => c === 'no');
 
   const filteredSuggestions = useMemo(() => {
-    const list = marketType === 'stocks' ? STOCK_SUGGESTIONS : marketType === 'forex' ? FOREX_SUGGESTIONS : CRYPTO_SUGGESTIONS;
+    const list =
+      marketType === 'stocks' ? STOCK_SUGGESTIONS :
+      marketType === 'forex'  ? FOREX_SUGGESTIONS :
+      marketType === 'metals' ? METALS_SUGGESTIONS :
+      marketType === 'oil'    ? OIL_SUGGESTIONS :
+                                CRYPTO_SUGGESTIONS;
     return list.filter(c => c.toLowerCase().includes(coin.toLowerCase()));
   }, [coin, marketType]);
 
@@ -222,23 +227,25 @@ export default function TradeForm({
     <div className="space-y-5">
       {/* ── Market Type ── */}
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Market Type</label>
-        <div className="flex gap-2">
+        <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Asset Class</label>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           {([
-            { value: 'crypto', label: 'Crypto' },
-            { value: 'stocks', label: 'Stocks' },
-            { value: 'forex', label: 'Forex' },
+            { value: 'crypto', label: 'Crypto', icon: '₿' },
+            { value: 'stocks', label: 'Stocks', icon: '📈' },
+            { value: 'forex',  label: 'Forex',  icon: '💱' },
+            { value: 'metals', label: 'Metals', icon: '🥇' },
+            { value: 'oil',    label: 'Oil',    icon: '🛢️' },
           ] as const).map(opt => (
             <button
               key={opt.value}
               onClick={() => setMarketType(opt.value)}
-              className={`flex-1 py-2 text-sm rounded-lg border transition-colors font-medium ${
+              className={`flex items-center justify-center gap-1.5 py-2 text-sm rounded-lg border transition-colors font-medium ${
                 marketType === opt.value
                   ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
                   : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/40'
               }`}
             >
-              {opt.label}
+              <span>{opt.icon}</span>{opt.label}
             </button>
           ))}
         </div>
@@ -252,7 +259,13 @@ export default function TradeForm({
             value={coin}
             onChange={e => { setCoin(e.target.value); setShowSuggestions(true); }}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            placeholder={marketType === 'stocks' ? 'e.g., AAPL' : marketType === 'forex' ? 'e.g., EUR/USD' : 'e.g., BTC/USDT'}
+            placeholder={
+              marketType === 'stocks' ? 'e.g., AAPL' :
+              marketType === 'forex'  ? 'e.g., EUR/USD' :
+              marketType === 'metals' ? 'e.g., XAU/USD (Gold)' :
+              marketType === 'oil'    ? 'e.g., WTI / Brent' :
+                                        'e.g., BTC/USDT'
+            }
             className="w-full"
           />
           {showSuggestions && coin && filteredSuggestions.length > 0 && (

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Trade, Strategy, EmotionState } from '@/lib/types';
+import { Trade, Strategy, EmotionState, MarketType } from '@/lib/types';
+import { MARKET_TYPE_LIST, marketMeta } from '@/lib/market-types';
 import { formatPercent, getDisciplineScore } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
@@ -15,6 +16,7 @@ import TradeForm from './TradeForm';
 import TradeImport from './TradeImport';
 import PostTradeReview, { PostTradeSnapshot } from './PostTradeReview';
 import TradeDetailView from './TradeDetailView';
+import MarketTypeBadge from './MarketTypeBadge';
 import { useToast } from './ui/Toast';
 import UsageBar from './UsageBar';
 import { useUsage } from '@/hooks/useUsage';
@@ -49,6 +51,7 @@ export default function TradesLog({
   const [showImport, setShowImport] = useState(false);
   const [detailTrade, setDetailTrade] = useState<Trade | null>(null);
   const [postReviewSnapshot, setPostReviewSnapshot] = useState<PostTradeSnapshot | null>(null);
+  const [marketFilter, setMarketFilter] = useState<MarketType | 'all'>('all');
 
   // External add modal trigger
   useEffect(() => {
@@ -59,10 +62,16 @@ export default function TradesLog({
     if (!isAddOpen && onCloseAddModal) onCloseAddModal();
   }, [isAddOpen, onCloseAddModal]);
 
+  /* ── Asset-class filter applied across the whole tab ── */
+  const tradesScoped = useMemo(() => {
+    if (marketFilter === 'all') return trades;
+    return trades.filter(t => (t.marketType ?? 'crypto') === marketFilter);
+  }, [trades, marketFilter]);
+
   /* ── Closed trades (time filtering handled by universal top-bar filter) ── */
   const filtered = useMemo(() => {
-    return trades.filter(t => !t.isOpen && t.actualPnL !== null);
-  }, [trades]);
+    return tradesScoped.filter(t => !t.isOpen && t.actualPnL !== null);
+  }, [tradesScoped]);
 
   /* ── Metrics ──────────────────────────────────────── */
   const metrics = useMemo(() => {
@@ -94,7 +103,7 @@ export default function TradesLog({
     const days = eachDayOfInterval({ start: calStart, end: calEnd });
     return days.map(day => {
       const dateStr = format(day, 'yyyy-MM-dd');
-      const dayTrades = trades.filter(t => {
+      const dayTrades = tradesScoped.filter(t => {
         const d = t.exitDate ? format(parseISO(t.exitDate), 'yyyy-MM-dd') : format(new Date(t.createdAt), 'yyyy-MM-dd');
         return d === dateStr;
       });
@@ -359,6 +368,31 @@ export default function TradesLog({
                 )}
               </div>
             </div>
+            {/* Asset class filter */}
+            <div className="flex gap-1 mb-3 flex-wrap">
+              <button
+                onClick={() => setMarketFilter('all')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  marketFilter === 'all' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                }`}
+              >All Assets</button>
+              {MARKET_TYPE_LIST.map(mt => {
+                const m = marketMeta(mt);
+                const active = marketFilter === mt;
+                return (
+                  <button
+                    key={mt}
+                    onClick={() => setMarketFilter(mt)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      active ? 'bg-[var(--accent)] text-white' : `${m.colorClass} hover:opacity-80`
+                    }`}
+                  >
+                    <span>{m.icon}</span> {m.label}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* View toggle */}
             <div className="flex gap-1 mb-4">
               <button onClick={() => setJournalView('day-cards')}
@@ -408,8 +442,9 @@ export default function TradesLog({
                             <div key={trade.id} onClick={() => setDetailTrade(trade)}
                               className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 cursor-pointer hover:border-[var(--accent)]/30 transition-colors">
                               <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <p className="text-sm font-bold">{trade.coin.length > 6 ? trade.coin.slice(0, 6) + '...' : trade.coin}</p>
+                                  <MarketTypeBadge type={trade.marketType} />
                                   {trade.direction && (
                                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                                       trade.direction === 'long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'

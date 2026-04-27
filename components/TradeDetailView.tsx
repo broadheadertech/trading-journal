@@ -6,6 +6,7 @@ import { EMOTION_OPTIONS, getRMultiple, getVerdictColor } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { format } from 'date-fns';
 import { Edit2, TrendingUp, TrendingDown, Minus, Eye, Zap, RefreshCw, MessageSquare, Star, FlaskConical, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import MarketTypeBadge from './MarketTypeBadge';
 
 interface Props {
   trade: Trade;
@@ -93,6 +94,7 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-lg">{trade.coin}</span>
+            <MarketTypeBadge type={trade.marketType} size="sm" />
             {trade.strategy && (
               <span className="text-xs text-[var(--muted-foreground)] bg-[var(--muted)] px-2 py-0.5 rounded-full">
                 {trade.strategy}

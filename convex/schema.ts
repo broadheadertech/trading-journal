@@ -81,7 +81,7 @@ export default defineSchema({
     selfVerdict: v.union(v.null(), v.string()),
     lossHypothesis: v.union(v.null(), v.string()),
     stopLoss: v.union(v.null(), v.number()),
-    marketType: v.optional(v.union(v.literal("crypto"), v.literal("stocks"), v.literal("forex"))),
+    marketType: v.optional(v.union(v.literal("crypto"), v.literal("stocks"), v.literal("forex"), v.literal("metals"), v.literal("oil"))),
     direction: v.optional(v.union(v.literal("long"), v.literal("short"))),
     leverage: v.optional(v.union(v.null(), v.number())),
     fees: v.optional(v.union(v.null(), v.number())),

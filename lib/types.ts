@@ -31,7 +31,7 @@ export type RuleCompliance = 'yes' | 'partial' | 'no';
 
 export type MarketTrend = 'bullish' | 'bearish' | 'sideways';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'extreme';
-export type MarketType = 'crypto' | 'stocks' | 'forex';
+export type MarketType = 'crypto' | 'stocks' | 'forex' | 'metals' | 'oil';
 export type Direction = 'long' | 'short';
 export type StrategyType =
   | 'scalping'
@@ -391,7 +391,11 @@ export type TabId =
   | 'courses'
   | 'events'
   | 'community'
-  | 'coaching';
+  | 'coaching'
+  | 'strategies'
+  | 'rewards'
+  | 'games'
+  | 'indicators';
 
 // ─── Universal time range ────────────────────────────────────────────
 export type TimeRange = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL';
