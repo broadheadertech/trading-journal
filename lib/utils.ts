@@ -716,6 +716,29 @@ export const FOREX_SUGGESTIONS = [
   'XAU/USD', 'XAG/USD',
 ];
 
+export const METALS_SUGGESTIONS = [
+  'XAU/USD',  // Gold
+  'XAG/USD',  // Silver
+  'XPT/USD',  // Platinum
+  'XPD/USD',  // Palladium
+  'GLD',      // SPDR Gold Trust ETF
+  'SLV',      // iShares Silver Trust
+  'GC=F',     // Gold futures
+  'SI=F',     // Silver futures
+  'HG=F',     // Copper futures
+];
+
+export const OIL_SUGGESTIONS = [
+  'WTI',      // West Texas Intermediate
+  'Brent',
+  'CL=F',     // WTI futures
+  'BZ=F',     // Brent futures
+  'NG=F',     // Natural Gas futures
+  'USO',      // United States Oil Fund ETF
+  'BNO',      // Brent ETF
+  'XLE',      // Energy Select Sector SPDR
+];
+
 export const EMOTION_OPTIONS: { value: string; label: string; emoji: string }[] = [
   { value: 'Confident', label: 'Confident', emoji: '💪' },
   { value: 'Fearful', label: 'Fearful', emoji: '😰' },

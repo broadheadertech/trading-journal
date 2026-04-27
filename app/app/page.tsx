@@ -28,6 +28,10 @@ import Courses from '@/components/Courses';
 import Events from '@/components/Events';
 import Community from '@/components/Community';
 import Coaching from '@/components/Coaching';
+import Strategies from '@/components/Strategies';
+import Rewards from '@/components/Rewards';
+import Games from '@/components/Games';
+import Indicators from '@/components/Indicators';
 import News from '@/components/News';
 import Leaderboard from '@/components/Leaderboard';
 import Tools from '@/components/Tools';
@@ -488,6 +492,18 @@ function AppContent() {
           )}
           {activeTab === 'coaching' && (
             canAccessTab('coaching') ? <Coaching /> : <UpgradePrompt requiredTier={getRequiredTier('coaching')} />
+          )}
+          {activeTab === 'strategies' && (
+            canAccessTab('strategies') ? <Strategies /> : <UpgradePrompt requiredTier={getRequiredTier('strategies')} />
+          )}
+          {activeTab === 'rewards' && (
+            canAccessTab('rewards') ? <Rewards /> : <UpgradePrompt requiredTier={getRequiredTier('rewards')} />
+          )}
+          {activeTab === 'games' && (
+            canAccessTab('games') ? <Games /> : <UpgradePrompt requiredTier={getRequiredTier('games')} />
+          )}
+          {activeTab === 'indicators' && (
+            canAccessTab('indicators') ? <Indicators /> : <UpgradePrompt requiredTier={getRequiredTier('indicators')} />
           )}
           {activeTab === 'news' && (
             canAccessTab('news') ? (
