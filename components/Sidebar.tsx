@@ -4,7 +4,7 @@ import { TabId, TimeRange } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe,
   ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
@@ -47,6 +47,8 @@ const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={20} /> },
   { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={20} /> },
   { id: 'indicators',  label: 'Indicators',          icon: <Activity size={20} /> },
+  { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={20} /> },
+  { id: 'world',       label: 'World Monitoring',    icon: <Globe size={20} /> },
   { id: 'community',   label: 'Community',           icon: <MessagesSquare size={20} /> },
   { id: 'events',      label: 'Events',              icon: <CalendarDays size={20} /> },
   { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={20} /> },
