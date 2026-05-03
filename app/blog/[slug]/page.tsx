@@ -1,0 +1,128 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Tag } from 'lucide-react';
+import LandingNav from '@/components/landing/LandingNav';
+import Footer from '@/components/landing/Footer';
+import { BLOG_ARTICLES } from '@/lib/blog-articles';
+
+export function generateStaticParams() {
+  return BLOG_ARTICLES.map(a => ({ slug: a.slug }));
+}
+
+export default async function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = BLOG_ARTICLES.find(a => a.slug === slug);
+  if (!article) notFound();
+
+  const idx = BLOG_ARTICLES.findIndex(a => a.slug === slug);
+  const prev = idx > 0 ? BLOG_ARTICLES[idx - 1] : null;
+  const next = idx < BLOG_ARTICLES.length - 1 ? BLOG_ARTICLES[idx + 1] : null;
+  const related = BLOG_ARTICLES
+    .filter(a => a.category === article.category && a.slug !== article.slug)
+    .slice(0, 3);
+
+  return (
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <LandingNav />
+
+      <article className="relative">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-teal-500 opacity-[0.05] rounded-full blur-[120px]" />
+        </div>
+
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-16">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-teal-400 transition-colors mb-8"
+          >
+            <ArrowLeft size={12} /> Back to all articles
+          </Link>
+
+          <div className="mb-4">
+            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400">
+              {article.category}
+            </span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-5">
+            {article.title}
+          </h1>
+
+          <p className="text-lg text-[var(--muted-foreground)] mb-10">
+            {article.excerpt}
+          </p>
+
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
+            <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+              <strong className="text-[var(--foreground)]">In this article</strong> — we cover the data behind {article.title.toLowerCase()},
+              with real numbers, charts, and concrete recommendations you can apply to your own trading immediately.
+              The full editorial draft for this piece is being finalized; sign up to be notified when it goes live, or browse the related articles below to start now.
+            </p>
+
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+            >
+              Notify me when it’s ready
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {related.length > 0 && (
+            <div className="border-t border-[var(--border)] pt-8 mb-10">
+              <div className="flex items-center gap-2 mb-4">
+                <Tag size={12} className="text-teal-400" />
+                <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                  More on {article.category}
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {related.map(r => (
+                  <Link
+                    key={r.slug}
+                    href={`/blog/${r.slug}`}
+                    className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors group"
+                  >
+                    <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-teal-400 transition-colors">{r.title}</div>
+                    <div className="text-xs text-[var(--muted-foreground)] line-clamp-1 mt-1">{r.excerpt}</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="border-t border-[var(--border)] pt-6 grid grid-cols-2 gap-3">
+            {prev ? (
+              <Link
+                href={`/blog/${prev.slug}`}
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors"
+              >
+                <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-1 mb-1">
+                  <ArrowLeft size={10} /> Previous
+                </div>
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-teal-400 transition-colors">
+                  {prev.title}
+                </div>
+              </Link>
+            ) : <div />}
+            {next ? (
+              <Link
+                href={`/blog/${next.slug}`}
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors text-right"
+              >
+                <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center justify-end gap-1 mb-1">
+                  Next <ArrowRight size={10} />
+                </div>
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-teal-400 transition-colors">
+                  {next.title}
+                </div>
+              </Link>
+            ) : <div />}
+          </div>
+        </div>
+      </article>
+
+      <Footer />
+    </div>
+  );
+}
