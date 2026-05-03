@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowDown, TrendingUp, Target } from 'lucide-react';
+import { ArrowDown, TrendingUp, Target, Shield, Zap, Database } from 'lucide-react';
 import BrainMascot from '@/components/BrainMascot';
 
 export default function Hero() {
@@ -22,13 +22,11 @@ export default function Hero() {
           transition={{ duration: 0.5 }}
           className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--muted-foreground)] mb-8"
         >
-          <span className="flex gap-1.5">
-            <span className="text-[var(--yellow)]">Crypto</span>
-            <span className="opacity-40">&middot;</span>
-            <span className="text-[var(--green)]">Stocks</span>
-            <span className="opacity-40">&middot;</span>
-            <span className="text-[var(--blue)]">Forex</span>
+          <span className="flex h-2 w-2 relative">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
+          14-day free trial · No credit card · 60-second setup
         </motion.div>
 
         {/* Brain mascot */}
@@ -46,12 +44,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--foreground)] leading-tight"
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--foreground)] leading-tight tracking-tight"
         >
-          Unlock the Psychology
+          See What Your
           <br />
           <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
-            Behind Every Trade
+            Trading Mistakes Cost
           </span>
         </motion.h1>
 
@@ -62,8 +60,8 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto leading-relaxed"
         >
-          Tradia is the AI-powered trading journal that helps you master your emotions,
-          build discipline, and find your edge — across crypto, stocks, and forex.
+          Find the trading mistakes costing you thousands — and prove you fixed them.
+          Upload your trade history and get a dollar-ranked breakdown of every costly pattern.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -77,15 +75,29 @@ export default function Hero() {
             href="/sign-up"
             className="px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
           >
-            Start Free
+            Start Free Trial
           </Link>
           <a
             href="#features"
             className="flex items-center gap-2 px-6 py-3 border border-[var(--border)] text-[var(--foreground)] rounded-xl text-sm font-medium hover:bg-[var(--muted)] transition-colors"
           >
-            See Features
+            See Demo
             <ArrowDown size={16} />
           </a>
+        </motion.div>
+
+        {/* Trust indicators */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[var(--muted-foreground)]"
+        >
+          <span className="flex items-center gap-1.5"><Database size={12} className="text-teal-400" /> 67+ Brokers</span>
+          <span className="opacity-40">·</span>
+          <span className="flex items-center gap-1.5"><Zap size={12} className="text-teal-400" /> 28+ Detectors</span>
+          <span className="opacity-40">·</span>
+          <span className="flex items-center gap-1.5"><Shield size={12} className="text-teal-400" /> Read-Only & Secure</span>
         </motion.div>
 
         {/* Preview Card — Multi-market stats */}

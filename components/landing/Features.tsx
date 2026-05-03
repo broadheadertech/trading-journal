@@ -1,38 +1,38 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Brain, Scale, BookOpen, Target, Sparkles } from 'lucide-react';
+import { Search, Activity, BarChart3, Shield, LayoutDashboard, Sparkles } from 'lucide-react';
 
 const features = [
   {
+    icon: Search,
+    title: 'Leak Detection',
+    description: 'Identifies repeated trading mistakes and quantifies their financial impact. The system automatically ranks mistakes by P&L cost and links evidence to specific trades — revenge trading, oversized positions, session drift.',
+  },
+  {
+    icon: Activity,
+    title: 'Behavior Analysis',
+    description: 'A discipline score derived from actual trading data. Emotional pressure detection across sessions, with week-over-week trends to prove improvement.',
+  },
+  {
     icon: BarChart3,
-    title: 'Trade Logging & Analytics',
-    description: 'Log every trade across crypto, stocks, and forex. Visualize your P&L, win rates, and patterns with interactive charts.',
+    title: 'Performance Analytics',
+    description: '50+ automated metrics including win rate, profit factor, equity curve analysis, symbol breakdown, and time-of-day analysis — updated automatically on every trade import.',
   },
   {
-    icon: Brain,
-    title: 'AI Trading Coach',
-    description: 'Get personalized insights powered by your own trading data. Discipline streaks, emotion-rule correlations, and market-specific focus recommendations.',
+    icon: Shield,
+    title: 'Playbook Rules',
+    description: 'Define custom rules for position sizing, session limits, timing, and behavior. Generates a compliance score so you can verify adherence trade by trade.',
   },
   {
-    icon: Scale,
-    title: 'Discipline Scoring',
-    description: 'Quantified trading discipline. Track rule compliance, circuit breakers, and build consistent habits over time.',
-  },
-  {
-    icon: BookOpen,
-    title: 'Psychology Journal',
-    description: 'Daily reflections, trigger tracking, and emotion analytics. Understand the psychology behind your trading across all markets.',
-  },
-  {
-    icon: Target,
-    title: 'Goals & Accountability',
-    description: 'Set trading goals, track progress, and build streaks. Daily and session-based goal modes to keep you accountable.',
+    icon: LayoutDashboard,
+    title: 'Dashboard Overview',
+    description: 'Central command center: net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history — all updated automatically.',
   },
   {
     icon: Sparkles,
     title: 'What-If Scenarios',
-    description: 'Replay your trades with different parameters. See how adjusting stop losses or entries would have changed outcomes across any market.',
+    description: 'Replay your trades with different parameters. See how adjusting stop losses, entries, or rule compliance would have changed your outcomes.',
   },
 ];
 
@@ -59,12 +59,14 @@ export default function Features() {
           transition={{ duration: 0.5 }}
           className="text-center mb-14"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
-            Everything You Need to
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent"> Trade Better</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+            Find Your Leaks.{' '}
+            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Track Your Discipline.</span>{' '}
+            Measure Your Edge.
           </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            A complete trading toolkit for crypto, stock, and forex traders who want to master their psychology and grow their edge.
+          <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
+            Identifies costly patterns ranked by financial impact. Behavioral health scoring,
+            emotional pressure monitoring, and session-by-session discipline tracking — all in one platform.
           </p>
         </motion.div>
 

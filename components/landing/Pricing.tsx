@@ -34,11 +34,12 @@ export default function Pricing() {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
-            Simple, Transparent Pricing
+          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+            Pricing that scales with{' '}
+            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">your edge</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            Start free and upgrade as your trading grows. No hidden fees, cancel anytime.
+            14-day free trial on every plan. No credit card to start. Full access during the trial — cancel anytime.
           </p>
 
           {/* Interval toggle */}
