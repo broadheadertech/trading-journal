@@ -673,6 +673,72 @@ export default defineSchema({
     .index("by_coach", ["coachId"])
     .index("by_session", ["sessionId"]),
 
+  // ─── Articles / Content Publishing ─────────────────────────────────
+  articles: defineTable({
+    id: v.string(),
+    slug: v.string(),
+    title: v.string(),
+    excerpt: v.string(),
+    body: v.string(),                          // Markdown
+    coverImage: v.optional(v.string()),
+    tags: v.array(v.string()),
+    category: v.string(),                      // e.g. "Strategy", "Psychology", "Market Analysis"
+    authorUserId: v.string(),
+    authorName: v.string(),
+    authorImage: v.optional(v.string()),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("in_review"),
+      v.literal("published"),
+      v.literal("archived"),
+    ),
+    accessTier: v.union(                       // who can read
+      v.literal("public"),
+      v.literal("subscribers"),
+      v.literal("paid"),                       // requires essential+
+    ),
+    reviewerUserId: v.optional(v.string()),
+    reviewNotes: v.optional(v.string()),
+    publishedAt: v.optional(v.string()),
+    viewCount: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_status", ["status"])
+    .index("by_author", ["authorUserId"])
+    .index("by_category", ["category"]),
+
+  articleTags: defineTable({
+    name: v.string(),                          // canonical lowercase
+    label: v.string(),                         // display
+    count: v.number(),
+  }).index("by_name", ["name"]),
+
+  articleViews: defineTable({
+    articleId: v.string(),
+    userId: v.optional(v.string()),            // anonymous = undefined
+    viewedAt: v.string(),
+  })
+    .index("by_article", ["articleId"])
+    .index("by_user", ["userId"]),
+
+  newsletterSubscribers: defineTable({
+    email: v.string(),
+    userId: v.optional(v.string()),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("unsubscribed"),
+    ),
+    confirmToken: v.optional(v.string()),
+    subscribedAt: v.string(),
+    unsubscribedAt: v.optional(v.string()),
+    source: v.optional(v.string()),            // where the signup came from
+  })
+    .index("by_email", ["email"])
+    .index("by_status", ["status"]),
+
   // ─── User subscriptions ───────────────────────────────────────────
   userSubscriptions: defineTable({
     userId: v.string(),

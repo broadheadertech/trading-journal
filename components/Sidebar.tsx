@@ -49,6 +49,7 @@ const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'indicators',  label: 'Indicators',          icon: <Activity size={20} /> },
   { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={20} /> },
   { id: 'world',       label: 'World Monitoring',    icon: <Globe size={20} /> },
+  { id: 'articles',    label: 'Articles',            icon: <BookOpen size={20} /> },
   { id: 'community',   label: 'Community',           icon: <MessagesSquare size={20} /> },
   { id: 'events',      label: 'Events',              icon: <CalendarDays size={20} /> },
   { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={20} /> },

@@ -14,20 +14,21 @@
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 9.6s
+✓ Compiled successfully in 14.5s
   Running TypeScript ...
   Collecting page data using 7 workers ...
-  Generating static pages using 7 workers (0/41) ...
-  Generating static pages using 7 workers (10/41) 
-  Generating static pages using 7 workers (20/41) 
-  Generating static pages using 7 workers (30/41) 
-✓ Generating static pages using 7 workers (41/41) in 1221.5ms
+  Generating static pages using 7 workers (0/166) ...
+  Generating static pages using 7 workers (41/166) 
+  Generating static pages using 7 workers (82/166) 
+  Generating static pages using 7 workers (124/166) 
+✓ Generating static pages using 7 workers (166/166) in 2.5s
   Finalizing page optimization ...
 
-Route (app)                         Revalidate  Expire
+Route (app)                                  Revalidate  Expire
 ┌ ○ /
 ├ ○ /_not-found
 ├ ○ /admin
+├ ○ /admin/articles
 ├ ○ /admin/brain
 ├ ○ /admin/coaches
 ├ ○ /admin/community
@@ -55,13 +56,21 @@ Route (app)                         Revalidate  Expire
 ├ ƒ /api/stripe/checkout
 ├ ƒ /api/stripe/portal
 ├ ƒ /api/stripe/webhook
-├ ○ /api/world-monitor                      1m      1y
+├ ○ /api/world-monitor                               1m      1y
 ├ ○ /app
+├ ○ /blog
+├ ● /blog/[slug]
+│ ├ /blog/traderdynamiq-launch-announcement
+│ ├ /blog/tradezella-alternatives
+│ ├ /blog/overtrading-silent-account-killer
+│ └ [+118 more paths]
 ├ ○ /coach
 ├ ○ /coach/earnings
 ├ ○ /coach/messages
 ├ ○ /coach/sessions
 ├ ○ /coach/slots
+├ ○ /demo
+├ ○ /pricing
 ├ ○ /privacy
 ├ ƒ /sign-in/[[...sign-in]]
 ├ ƒ /sign-up/[[...sign-up]]
@@ -71,5 +80,6 @@ Route (app)                         Revalidate  Expire
 ƒ Proxy (Middleware)
 
 ○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
 ƒ  (Dynamic)  server-rendered on demand
 

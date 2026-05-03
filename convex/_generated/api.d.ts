@@ -10,6 +10,7 @@
 
 import type * as admin from "../admin.js";
 import type * as adminEvents from "../adminEvents.js";
+import type * as articles from "../articles.js";
 import type * as brain from "../brain.js";
 import type * as brainAdmin from "../brainAdmin.js";
 import type * as brainQueries from "../brainQueries.js";
@@ -30,6 +31,7 @@ import type * as lib_antiGaming from "../lib/antiGaming.js";
 import type * as lib_coachingTemplates from "../lib/coachingTemplates.js";
 import type * as lib_neuroScore from "../lib/neuroScore.js";
 import type * as migrations from "../migrations.js";
+import type * as newsletter from "../newsletter.js";
 import type * as notifications from "../notifications.js";
 import type * as profile from "../profile.js";
 import type * as reflections from "../reflections.js";
@@ -53,6 +55,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   adminEvents: typeof adminEvents;
+  articles: typeof articles;
   brain: typeof brain;
   brainAdmin: typeof brainAdmin;
   brainQueries: typeof brainQueries;
@@ -73,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "lib/coachingTemplates": typeof lib_coachingTemplates;
   "lib/neuroScore": typeof lib_neuroScore;
   migrations: typeof migrations;
+  newsletter: typeof newsletter;
   notifications: typeof notifications;
   profile: typeof profile;
   reflections: typeof reflections;

@@ -4,17 +4,18 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import BrainMascot from '@/components/BrainMascot';
+import NewsletterSignup from './NewsletterSignup';
 
 const COLS = [
   {
     heading: 'Product',
     links: [
-      { label: 'Features',         href: '#features' },
-      { label: 'How It Works',     href: '#how-it-works' },
-      { label: 'Pricing',          href: '#pricing' },
-      { label: 'Integrations',     href: '#features' },
-      { label: 'Use Cases',        href: '#features' },
-      { label: 'Interactive Demo', href: '/sign-up' },
+      { label: 'Features',         href: '/#features' },
+      { label: 'How It Works',     href: '/#how-it-works' },
+      { label: 'Pricing',          href: '/pricing' },
+      { label: 'Integrations',     href: '/#features' },
+      { label: 'Use Cases',        href: '/#features' },
+      { label: 'Interactive Demo', href: '/demo' },
     ],
   },
   {
@@ -23,7 +24,7 @@ const COLS = [
       { label: 'About',     href: '#' },
       { label: 'Security',  href: '#' },
       { label: 'Contact',   href: '#' },
-      { label: 'Blog',      href: '#' },
+      { label: 'Blog',      href: '/blog' },
       { label: 'Changelog', href: '#' },
     ],
   },
@@ -39,11 +40,12 @@ const COLS = [
   {
     heading: 'Popular Articles',
     links: [
-      { label: 'How revenge trading costs you thousands', href: '#' },
-      { label: 'The true cost of overtrading',            href: '#' },
-      { label: 'Worst trading hours by market',           href: '#' },
-      { label: 'Beyond the trading journal',              href: '#' },
-      { label: 'Metrics every trader must track',         href: '#' },
+      { label: 'What Is Revenge Trading?',         href: '/blog/revenge-trading-cost' },
+      { label: 'The Hidden Cost of Overtrading',   href: '/blog/overtrading-hidden-cost' },
+      { label: 'Find Your Worst Trading Hours',    href: '/blog/worst-trading-hours' },
+      { label: 'Journal vs Behavioral Analytics',  href: '/blog/trading-journal-vs-behavioral-analytics' },
+      { label: 'Best Trading Journal 2026',        href: '/blog/best-trading-journal-2026' },
+      { label: '50 Trading Metrics Guide',         href: '/blog/50-trading-metrics-every-trader-should-track' },
     ],
   },
 ];
@@ -90,14 +92,17 @@ export default function Footer() {
       <div className="border-t border-[var(--border)] py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
-            <div className="col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <BrainMascot size={24} />
-                <span className="text-sm font-semibold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia</span>
+            <div className="col-span-2 lg:col-span-1 space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <BrainMascot size={24} />
+                  <span className="text-sm font-semibold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia</span>
+                </div>
+                <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                  Find the trading mistakes costing you thousands — and prove you fixed them.
+                </p>
               </div>
-              <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                Find the trading mistakes costing you thousands — and prove you fixed them.
-              </p>
+              <NewsletterSignup />
             </div>
 
             {COLS.map((col) => (

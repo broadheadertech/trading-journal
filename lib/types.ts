@@ -397,7 +397,8 @@ export type TabId =
   | 'games'
   | 'indicators'
   | 'economic'
-  | 'world';
+  | 'world'
+  | 'articles';
 
 // ─── Universal time range ────────────────────────────────────────────
 export type TimeRange = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL';

@@ -7,8 +7,10 @@ import { Menu, X } from 'lucide-react';
 import BrainMascot from '@/components/BrainMascot';
 
 const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Features', href: '/#features' },
+  { label: 'Demo',     href: '/demo' },
+  { label: 'Pricing',  href: '/pricing' },
+  { label: 'Blog',     href: '/blog' },
 ];
 
 export default function LandingNav() {
@@ -29,13 +31,13 @@ export default function LandingNav() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map(link => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           {isSignedIn ? (
             <Link
@@ -75,14 +77,14 @@ export default function LandingNav() {
       {menuOpen && (
         <div className="md:hidden border-t border-[var(--border)] bg-[var(--background)] px-4 py-4 space-y-3">
           {navLinks.map(link => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="block text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors py-2"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <div className="pt-2 border-t border-[var(--border)] flex flex-col gap-2">
             {isSignedIn ? (

@@ -33,6 +33,7 @@ import Rewards from '@/components/Rewards';
 import Games from '@/components/Games';
 import Indicators from '@/components/Indicators';
 import EconomicCalendar from '@/components/EconomicCalendar';
+import Articles from '@/components/Articles';
 import WorldMonitoring from '@/components/WorldMonitoring';
 import News from '@/components/News';
 import Leaderboard from '@/components/Leaderboard';
@@ -512,6 +513,9 @@ function AppContent() {
           )}
           {activeTab === 'world' && (
             canAccessTab('world') ? <WorldMonitoring /> : <UpgradePrompt requiredTier={getRequiredTier('world')} />
+          )}
+          {activeTab === 'articles' && (
+            canAccessTab('articles') ? <Articles /> : <UpgradePrompt requiredTier={getRequiredTier('articles')} />
           )}
           {activeTab === 'news' && (
             canAccessTab('news') ? (
