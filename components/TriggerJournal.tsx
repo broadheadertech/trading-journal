@@ -129,7 +129,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
                 <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} width={100} />
                 <Tooltip
                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                  formatter={(value: number | undefined, name: string | undefined) => [value ?? 0, name === 'count' ? 'Occurrences' : 'Led to Trade']}
+                  formatter={(value, name) => [typeof value === 'number' ? value : 0, name === 'count' ? 'Occurrences' : 'Led to Trade']}
                 />
                 <Bar dataKey="count" name="Occurrences" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
                 <Bar dataKey="traded" name="Led to Trade" radius={[0, 4, 4, 0]}>

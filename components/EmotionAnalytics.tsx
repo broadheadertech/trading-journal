@@ -355,7 +355,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
                 <YAxis tick={{ fontSize: 10 }} width={45} />
                 <Tooltip
                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                  formatter={(value: number | undefined) => [`${value ?? 0}%`, 'Avg P&L']}
+                  formatter={(value) => [`${typeof value === 'number' ? value : 0}%`, 'Avg P&L']}
                 />
                 <Bar dataKey="avgPnl" name="Avg P&L %" radius={[4, 4, 0, 0]}>
                   {emotionPnlChart.map((entry, index) => (
@@ -464,7 +464,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} width={32} tickFormatter={v => `${v}%`} />
                 <Tooltip
                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
-                  formatter={(v: number | undefined) => [`${v ?? 0}%`, 'Win Rate']}
+                  formatter={(v) => [`${typeof v === 'number' ? v : 0}%`, 'Win Rate']}
                 />
                 <Bar dataKey="winRate" name="Win Rate" radius={[4, 4, 0, 0]}>
                   {confidenceCalibration.data.map((d, i) => (

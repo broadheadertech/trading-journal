@@ -1,0 +1,75 @@
+
+> crypto-journal@1.0.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\JENZEN\Documents\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\JENZEN\Documents\Broadheader\psysync\crypto-journal\package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.6s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/41) ...
+  Generating static pages using 7 workers (10/41) 
+  Generating static pages using 7 workers (20/41) 
+  Generating static pages using 7 workers (30/41) 
+✓ Generating static pages using 7 workers (41/41) in 1221.5ms
+  Finalizing page optimization ...
+
+Route (app)                         Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin/brain
+├ ○ /admin/coaches
+├ ○ /admin/community
+├ ○ /admin/courses
+├ ○ /admin/events
+├ ○ /admin/flags
+├ ○ /admin/inspect
+├ ○ /admin/revenue
+├ ○ /admin/settings
+├ ○ /admin/thresholds
+├ ○ /admin/trends
+├ ○ /admin/users
+├ ƒ /api/clerk/search-users
+├ ƒ /api/coaches/resolve-storage
+├ ƒ /api/courses/checkout/paymongo
+├ ƒ /api/courses/checkout/stripe
+├ ƒ /api/courses/resolve-storage
+├ ƒ /api/events/checkout/paymongo
+├ ƒ /api/events/checkout/stripe
+├ ƒ /api/events/resolve-storage
+├ ƒ /api/forum/resolve-storage
+├ ƒ /api/news
+├ ƒ /api/paymongo/checkout
+├ ƒ /api/paymongo/webhook
+├ ƒ /api/stripe/checkout
+├ ƒ /api/stripe/portal
+├ ƒ /api/stripe/webhook
+├ ○ /api/world-monitor                      1m      1y
+├ ○ /app
+├ ○ /coach
+├ ○ /coach/earnings
+├ ○ /coach/messages
+├ ○ /coach/sessions
+├ ○ /coach/slots
+├ ○ /privacy
+├ ƒ /sign-in/[[...sign-in]]
+├ ƒ /sign-up/[[...sign-up]]
+└ ○ /terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
