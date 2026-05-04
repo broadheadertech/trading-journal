@@ -7,10 +7,12 @@ import { Menu, X } from 'lucide-react';
 import BrainMascot from '@/components/BrainMascot';
 
 const navLinks = [
-  { label: 'Features', href: '/#features' },
-  { label: 'Demo',     href: '/demo' },
-  { label: 'Pricing',  href: '/pricing' },
-  { label: 'Blog',     href: '/blog' },
+  { label: 'Features',  href: '/#features' },
+  { label: 'Demo',      href: '/demo' },
+  { label: 'Pricing',   href: '/pricing' },
+  { label: 'Brokers',   href: '/brokers' },
+  { label: 'Affiliate', href: '/affiliate' },
+  { label: 'Blog',      href: '/blog' },
 ];
 
 export default function LandingNav() {

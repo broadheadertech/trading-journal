@@ -25,6 +25,8 @@ const COLS = [
       { label: 'Security',  href: '#' },
       { label: 'Contact',   href: '#' },
       { label: 'Blog',      href: '/blog' },
+      { label: 'Brokers',   href: '/brokers' },
+      { label: 'Affiliate', href: '/affiliate' },
       { label: 'Changelog', href: '#' },
     ],
   },
