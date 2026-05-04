@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { TrendingUp } from 'lucide-react';
+import Image from 'next/image';
 import NewsletterSignup from './NewsletterSignup';
 
 const COLS = [
@@ -69,10 +69,8 @@ export default function Footer() {
             <div className="col-span-2 lg:col-span-1 space-y-4">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-3 group">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-teal-400/20 to-emerald-500/10 border border-teal-500/30 flex items-center justify-center">
-                    <TrendingUp size={14} className="text-teal-400" />
-                  </div>
-                  <span className="text-sm font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
+                  <Image src="/logo.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain" />
+                  <span className="text-base font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
                 </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
                   Find the trading mistakes costing you thousands — and prove you fixed them.

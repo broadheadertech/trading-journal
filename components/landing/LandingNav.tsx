@@ -3,8 +3,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  Menu, X, Zap, TrendingUp, ChevronDown,
+  Menu, X, Zap, ChevronDown,
   Sparkles, Workflow, Plug, Users,
   Database, Gift, Calculator, Scale,
   Shield, FileText, Mail, GitBranch, Lock, ScrollText,
@@ -101,17 +102,17 @@ export default function LandingNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-teal-400/20 to-emerald-500/10 border border-teal-500/30 flex items-center justify-center">
-            <TrendingUp size={18} className="text-teal-400" />
-          </div>
-          <div className="leading-tight">
-            <div className="text-lg font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">
-              Tradia
-            </div>
-            <div className="text-[8px] font-bold tracking-[0.2em] uppercase text-[var(--muted-foreground)]/70 -mt-0.5">
-              Behavioral OS
-            </div>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Tradia"
+            width={36}
+            height={36}
+            priority
+            className="w-9 h-9 object-contain"
+          />
+          <span className="text-xl font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">
+            Tradia
+          </span>
         </Link>
 
         {/* Desktop nav */}

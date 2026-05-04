@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Zap, Database, Shield, LayoutDashboard, TrendingUp, GraduationCap, List, Headphones, Trophy, Activity, BookOpen, Gift, Newspaper, Wrench, MessagesSquare } from 'lucide-react';
 
 export default function Hero() {
@@ -143,10 +144,8 @@ function TradiaDashboardMock() {
         {/* Sidebar */}
         <div className="border-r border-[var(--border)] bg-black/20 p-2 space-y-0.5">
           <div className="flex items-center gap-1.5 px-2 py-1 mb-2">
-            <div className="w-5 h-5 rounded bg-gradient-to-br from-teal-400/30 to-emerald-500/20 border border-teal-500/30 flex items-center justify-center">
-              <TrendingUp size={10} className="text-teal-400" />
-            </div>
-            <span className="text-[10px] font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
+            <Image src="/logo.png" alt="Tradia" width={20} height={20} className="w-5 h-5 object-contain" />
+            <span className="text-[11px] font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
           </div>
           {tabs.map(t => (
             <div
