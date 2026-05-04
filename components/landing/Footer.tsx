@@ -1,9 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import BrainMascot from '@/components/BrainMascot';
+import Image from 'next/image';
 import NewsletterSignup from './NewsletterSignup';
 
 const COLS = [
@@ -13,19 +11,21 @@ const COLS = [
       { label: 'Features',         href: '/#features' },
       { label: 'How It Works',     href: '/#how-it-works' },
       { label: 'Pricing',          href: '/pricing' },
-      { label: 'Integrations',     href: '/#features' },
-      { label: 'Use Cases',        href: '/#features' },
+      { label: 'Integrations',     href: '/integrations' },
+      { label: 'Use Cases',        href: '/use-cases' },
       { label: 'Interactive Demo', href: '/demo' },
     ],
   },
   {
     heading: 'Company',
     links: [
-      { label: 'About',     href: '#' },
-      { label: 'Security',  href: '#' },
-      { label: 'Contact',   href: '#' },
+      { label: 'About',     href: '/about' },
+      { label: 'Security',  href: '/security' },
+      { label: 'Contact',   href: '/contact' },
       { label: 'Blog',      href: '/blog' },
-      { label: 'Changelog', href: '#' },
+      { label: 'Brokers',   href: '/brokers' },
+      { label: 'Affiliate', href: '/affiliate' },
+      { label: 'Changelog', href: '/changelog' },
     ],
   },
   {
@@ -59,34 +59,8 @@ const LEGAL = [
 
 export default function Footer() {
   return (
-    <footer>
-      {/* CTA Banner */}
-      <section className="py-20 sm:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[var(--accent)]/20 bg-gradient-to-br from-teal-500/5 to-teal-700/5 p-10 sm:p-14 text-center"
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] tracking-tight">
-              See what your trading mistakes are{' '}
-              <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">really costing you</span>
-            </h2>
-            <p className="mt-3 text-[var(--muted-foreground)] max-w-md mx-auto">
-              14-day free trial. No credit card. Setup in 60 seconds.
-            </p>
-            <Link
-              href="/sign-up"
-              className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
-            >
-              Start Free Trial
-              <ArrowRight size={16} />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+    <footer className="border-t border-[var(--border)]">
+      {/* Footer link columns */}
 
       {/* Footer link columns */}
       <div className="border-t border-[var(--border)] py-12">
@@ -94,10 +68,10 @@ export default function Footer() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
             <div className="col-span-2 lg:col-span-1 space-y-4">
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <BrainMascot size={24} />
-                  <span className="text-sm font-semibold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia</span>
-                </div>
+                <Link href="/" className="flex items-center gap-2 mb-3 group">
+                  <Image src="/logo.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain" />
+                  <span className="text-base font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
+                </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
                   Find the trading mistakes costing you thousands — and prove you fixed them.
                 </p>

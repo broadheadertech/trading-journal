@@ -1,9 +1,19 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Tag } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from 'lucide-react';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 import { BLOG_ARTICLES } from '@/lib/blog-articles';
+
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  'Psychology':  'from-violet-500 via-fuchsia-500 to-purple-500',
+  'Mistakes':    'from-rose-500 via-orange-500 to-red-500',
+  'Performance': 'from-emerald-500 via-teal-500 to-cyan-500',
+  'Tools':       'from-cyan-500 via-blue-500 to-indigo-500',
+  'Comparison':  'from-amber-500 via-yellow-500 to-orange-500',
+  'Education':   'from-teal-500 via-emerald-500 to-green-500',
+  'default':     'from-teal-500 via-cyan-500 to-emerald-500',
+};
 
 export function generateStaticParams() {
   return BLOG_ARTICLES.map(a => ({ slug: a.slug }));
@@ -20,17 +30,35 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
   const related = BLOG_ARTICLES
     .filter(a => a.category === article.category && a.slug !== article.slug)
     .slice(0, 3);
+  const grad = CATEGORY_GRADIENTS[article.category] ?? CATEGORY_GRADIENTS.default;
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <LandingNav />
+
+      {/* Cover */}
+      <div className={`relative h-56 sm:h-72 bg-gradient-to-br ${grad} overflow-hidden`}>
+        <div className="absolute inset-0 opacity-[0.08]" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }} />
+        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 100" preserveAspectRatio="none">
+          <polyline fill="none" stroke="white" strokeWidth="1.5" points="0,80 25,72 50,75 75,60 100,65 125,48 150,52 175,32 200,28" />
+        </svg>
+        <div className="absolute -bottom-12 -right-12 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 h-full flex items-end pb-6">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-white/90 bg-black/30 px-2.5 py-1 rounded-full backdrop-blur-sm">
+            <BookOpen size={10} /> {article.category}
+          </span>
+        </div>
+      </div>
 
       <article className="relative">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-teal-500 opacity-[0.05] rounded-full blur-[120px]" />
         </div>
 
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-16">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-16">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-teal-400 transition-colors mb-8"
@@ -38,10 +66,10 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             <ArrowLeft size={12} /> Back to all articles
           </Link>
 
-          <div className="mb-4">
-            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400">
-              {article.category}
-            </span>
+          <div className="mb-4 flex items-center gap-3">
+            <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={11} /> 8 min read</span>
+            <span className="text-[10px] text-[var(--muted-foreground)]">·</span>
+            <span className="text-[10px] text-[var(--muted-foreground)]">Updated 2026</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight mb-5">

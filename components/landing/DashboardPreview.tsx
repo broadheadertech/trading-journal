@@ -2,84 +2,51 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Search, Activity, BarChart3, ArrowRight } from 'lucide-react';
-
-const PILLARS = [
-  {
-    icon: Search,
-    title: 'Find Your Leaks',
-    desc: 'Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.',
-  },
-  {
-    icon: Activity,
-    title: 'Track Your Discipline',
-    desc: 'Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Measure Your Edge',
-    desc: 'Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.',
-  },
-];
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
+import { Search, Activity, BarChart3, ArrowRight, AlertTriangle, TrendingUp, Flame } from 'lucide-react';
 
 export default function DashboardPreview() {
   return (
-    <section id="dashboard-preview" className="py-20 sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="dashboard-preview" className="relative py-20 sm:py-28 border-t border-[var(--border)]">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal-500 opacity-[0.04] rounded-full blur-[140px]" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+            What You Get
+          </span>
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
             Your dashboard after one{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">CSV upload</span>
+            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">CSV upload</span>
           </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            Three core dashboards, each one purpose-built to surface what's draining your account and what's working.
+          <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
+            Three core dashboards, each one purpose-built to surface what&apos;s draining your account and what&apos;s working.
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10"
-        >
-          {PILLARS.map((p) => {
-            const Icon = p.icon;
-            return (
-              <motion.div
-                key={p.title}
-                variants={itemVariants}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 hover:border-teal-500/30 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/20 to-teal-700/10 border border-teal-500/20 flex items-center justify-center mb-4">
-                  <Icon size={20} className="text-teal-400" />
-                </div>
-                <h3 className="text-base font-bold text-[var(--foreground)] mb-2">{p.title}</h3>
-                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-10">
+          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.">
+            <LeaksMock />
+          </PillarCard>
+          <PillarCard delay={0.1} icon={Activity} accent="from-teal-400 to-cyan-400" title="Track Your Discipline" desc="Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.">
+            <DisciplineMock />
+          </PillarCard>
+          <PillarCard delay={0.2} icon={BarChart3} accent="from-emerald-400 to-lime-400" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.">
+            <EdgeMock />
+          </PillarCard>
+        </div>
 
         <div className="flex justify-center">
           <Link
             href="/sign-up"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_30px_-4px_rgba(45,212,191,0.5)] transition-all"
           >
             Start Free — See Your Own Dashboard
             <ArrowRight size={16} />
@@ -87,5 +54,155 @@ export default function DashboardPreview() {
         </div>
       </div>
     </section>
+  );
+}
+
+function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  accent: string; title: string; desc: string; children: React.ReactNode; delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.5, delay }}
+      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-teal-500/30 transition-colors"
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} bg-opacity-20 flex items-center justify-center`}>
+          <Icon size={18} className="text-slate-900" />
+        </div>
+        <h3 className="text-base font-bold text-[var(--foreground)]">{title}</h3>
+      </div>
+      <div className="rounded-xl border border-[var(--border)] bg-black/30 p-4 mb-4 min-h-[200px]">{children}</div>
+      <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{desc}</p>
+    </motion.div>
+  );
+}
+
+function LeaksMock() {
+  const leaks = [
+    { name: 'Revenge Trading',  cost: '−$1,420', sev: 'high',   pct: 100 },
+    { name: 'Oversized Position', cost: '−$890',  sev: 'high',   pct: 63 },
+    { name: 'FOMO Entries',     cost: '−$540',  sev: 'med',    pct: 38 },
+    { name: 'Late Session Drift', cost: '−$280', sev: 'med',    pct: 20 },
+    { name: 'No Stop Loss',     cost: '−$140',  sev: 'low',    pct: 10 },
+  ];
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-rose-400/80 mb-2">
+        <Flame size={10} /> Leaks ranked by $ impact
+      </div>
+      {leaks.map((l, i) => (
+        <div key={l.name} className="space-y-1">
+          <div className="flex items-center justify-between text-[10px]">
+            <span className="text-[var(--foreground)] font-medium">{l.name}</span>
+            <span className={`tabular-nums font-bold ${l.sev === 'high' ? 'text-rose-400' : l.sev === 'med' ? 'text-amber-400' : 'text-[var(--muted-foreground)]'}`}>
+              {l.cost}
+            </span>
+          </div>
+          <div className="h-1 rounded-full bg-white/5 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${l.pct}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 * i }}
+              className={`h-full ${l.sev === 'high' ? 'bg-gradient-to-r from-rose-500 to-orange-400' : l.sev === 'med' ? 'bg-gradient-to-r from-amber-500 to-yellow-400' : 'bg-[var(--muted-foreground)]/40'}`}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DisciplineMock() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-teal-400/80">
+        <Activity size={10} /> 30-day discipline score
+      </div>
+      <div className="flex items-center justify-center py-2">
+        <div className="relative">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+            <motion.circle
+              cx="60" cy="60" r="50"
+              fill="none"
+              stroke="url(#discGrad)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={`${(78 / 100) * 314} 314`}
+              transform="rotate(-90 60 60)"
+              initial={{ strokeDasharray: '0 314' }}
+              whileInView={{ strokeDasharray: `${(78 / 100) * 314} 314` }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+            />
+            <defs>
+              <linearGradient id="discGrad">
+                <stop offset="0%" stopColor="#5eead4" />
+                <stop offset="100%" stopColor="#22d3ee" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent tabular-nums">78</span>
+            <span className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]">/ 100</span>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {[0.6, 0.4, 0.7, 0.85, 0.3, 0.9, 0.78].map((v, i) => (
+          <div key={i} className="text-center">
+            <div className="h-10 flex items-end justify-center">
+              <div className="w-full rounded-sm bg-gradient-to-t from-teal-500 to-cyan-400" style={{ height: `${v * 100}%` }} />
+            </div>
+            <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">{['M','T','W','T','F','S','S'][i]}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EdgeMock() {
+  const points = [10, 18, 14, 22, 28, 24, 32, 30, 38, 42, 46, 44, 52, 56, 54, 62];
+  const max = Math.max(...points);
+  const path = points.map((p, i) => `${(i / (points.length - 1)) * 100},${100 - (p / max) * 100}`).join(' ');
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-emerald-400/80">
+        <TrendingUp size={10} /> Equity curve · 30d
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
+          <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Win Rate</div>
+          <div className="text-lg font-bold text-emerald-300 tabular-nums">62%</div>
+        </div>
+        <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
+          <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Profit Factor</div>
+          <div className="text-lg font-bold text-emerald-300 tabular-nums">2.14</div>
+        </div>
+      </div>
+      <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
+        <svg className="w-full h-20" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="edgeFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#34d399" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <polygon fill="url(#edgeFill)" points={`0,100 ${path} 100,100`} />
+          <polyline fill="none" stroke="#34d399" strokeWidth="1.2" points={path} />
+        </svg>
+      </div>
+      <div className="flex items-center justify-between text-[9px]">
+        <span className="text-[var(--muted-foreground)]">Sharpe 1.84</span>
+        <span className="text-[var(--muted-foreground)]">Max DD 8.2%</span>
+        <span className="text-emerald-400">+$4,230</span>
+      </div>
+    </div>
   );
 }
