@@ -1,19 +1,23 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Database, Zap, BarChart3, Search } from 'lucide-react';
+import { Database, Zap, BarChart3, Clock } from 'lucide-react';
 
 const STATS = [
-  { icon: Database,  value: '67+',   label: 'Supported Brokers' },
-  { icon: Zap,       value: '28+',   label: 'Verdict Detectors' },
-  { icon: BarChart3, value: '50+',   label: 'Performance Metrics' },
-  { icon: Search,    value: '60s',   label: 'Setup Time' },
+  { icon: Database,  value: '67+', label: 'Supported Brokers',  sub: 'CSV, XLSX, and live API' },
+  { icon: Zap,       value: '28+', label: 'Verdict Detectors',  sub: 'Behavioral patterns scored' },
+  { icon: BarChart3, value: '50+', label: 'Performance Metrics', sub: 'Auto-computed every import' },
+  { icon: Clock,     value: '60s', label: 'Setup Time',         sub: 'Upload, normalize, analyze' },
 ];
 
 export default function PlatformStats() {
   return (
-    <section id="stats" className="py-20 sm:py-24 bg-[var(--card)]/30 border-y border-[var(--border)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="stats" className="relative py-20 sm:py-24 border-t border-[var(--border)]">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-emerald-500 opacity-[0.03] rounded-full blur-[140px]" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -21,37 +25,41 @@ export default function PlatformStats() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+            By The Numbers
+          </span>
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
             Real numbers from{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">the platform</span>
+            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">the platform</span>
           </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            Trades analyzed, leaks detected, brokers integrated. Live platform numbers — not marketing fluff.
+          <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
+            Brokers integrated, detectors shipped, metrics computed. Live platform numbers — not marketing fluff.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-          {STATS.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-teal-700/10 border border-teal-500/20 flex items-center justify-center mx-auto mb-3">
-                  <Icon size={18} className="text-teal-400" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {STATS.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
+              className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-teal-500/30 transition-colors overflow-hidden group"
+            >
+              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-teal-500/5 blur-2xl group-hover:bg-teal-500/10 transition-colors" />
+              <div className="relative">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400/20 to-cyan-500/10 border border-teal-500/20 flex items-center justify-center mb-3">
+                  <s.icon size={16} className="text-teal-400" />
                 </div>
-                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent tabular-nums">
+                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent tabular-nums leading-none">
                   {s.value}
                 </div>
-                <div className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider mt-1">{s.label}</div>
-              </motion.div>
-            );
-          })}
+                <div className="mt-2 text-[10px] font-bold uppercase tracking-widest text-[var(--foreground)]">{s.label}</div>
+                <div className="mt-0.5 text-[10px] text-[var(--muted-foreground)]">{s.sub}</div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

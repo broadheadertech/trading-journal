@@ -2,31 +2,70 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { Check, ArrowRight, Zap, Users } from 'lucide-react';
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
+type Tier = {
+  name: string;
+  tagline: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  accent: string;
+  features: string[];
+  meta?: string;
+  highlighted?: boolean;
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
+const TIERS: Tier[] = [
+  {
+    name: 'Pro',
+    tagline: 'For individual traders',
+    monthlyPrice: 20,
+    yearlyPrice: 200,
+    icon: Zap,
+    accent: 'from-teal-400 to-cyan-400',
+    features: [
+      'Unlimited trades',
+      'Full verdict engine with 28+ detectors',
+      'Playbook rules',
+      'Performance analytics with 50+ metrics',
+      'API sync for 5 exchanges',
+      'Priority support',
+      '14-day free trial included',
+    ],
+    highlighted: true,
+  },
+  {
+    name: 'Team',
+    tagline: 'For coaches, prop firms, and trading groups',
+    monthlyPrice: 49,
+    yearlyPrice: 490,
+    icon: Users,
+    accent: 'from-emerald-400 to-lime-400',
+    meta: 'Includes 3 seats · Additional seats $15/mo each',
+    features: [
+      'Everything in Pro',
+      'Shared workspace',
+      'Team member management',
+      'Cohort analytics',
+      'Audit logs',
+      'Aggregated reports',
+      'Email invites',
+    ],
+  },
+];
 
 export default function Pricing() {
-  const plans = useQuery(api.subscriptions.getActivePlans);
   const [interval, setInterval] = useState<'month' | 'year'>('month');
 
-  type Plan = NonNullable<typeof plans>[number];
-  const sorted = plans ? [...plans].sort((a: Plan, b: Plan) => a.sortOrder - b.sortOrder) : [];
-
   return (
-    <section id="pricing" className="py-20 sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="pricing" className="relative py-20 sm:py-24">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-teal-500 opacity-[0.04] rounded-full blur-[140px]" />
+      </div>
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -34,131 +73,145 @@ export default function Pricing() {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
-            Pricing that scales with{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">your edge</span>
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+            Pricing
+          </span>
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
+            Plans for{' '}
+            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">solo traders and teams</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            14-day free trial on every plan. No credit card to start. Full access during the trial — cancel anytime.
+            14-day free trial on every plan. No credit card to start.
           </p>
 
-          {/* Interval toggle */}
-          <div className="flex items-center justify-center gap-2 mt-6">
+          {/* Billing toggle */}
+          <div className="inline-flex items-center gap-1 mt-7 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
             <button
               onClick={() => setInterval('month')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 interval === 'month'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                  ? 'bg-gradient-to-r from-teal-300 to-cyan-300 text-slate-900 shadow-[0_0_20px_-4px_rgba(45,212,191,0.5)]'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setInterval('year')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 interval === 'year'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                  ? 'bg-gradient-to-r from-teal-300 to-cyan-300 text-slate-900 shadow-[0_0_20px_-4px_rgba(45,212,191,0.5)]'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
               }`}
             >
-              Yearly
-              <span className="ml-1.5 text-xs opacity-75">Save ~17%</span>
+              Annual
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                interval === 'year' ? 'bg-slate-900/20 text-slate-900' : 'bg-emerald-500/15 text-emerald-400'
+              }`}>
+                Save 17%
+              </span>
             </button>
           </div>
         </motion.div>
 
-        {!plans ? (
-          <div className="flex justify-center py-12">
-            <Loader2 size={24} className="animate-spin text-[var(--muted-foreground)]" />
-          </div>
-        ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto"
-          >
-            {/* Free tier */}
-            <motion.div variants={itemVariants} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 flex flex-col">
-              <h3 className="text-sm font-bold text-[var(--foreground)]">Free</h3>
-              <p className="text-3xl font-bold text-[var(--foreground)] mt-3">
-                $0<span className="text-sm font-normal text-[var(--muted-foreground)]">/mo</span>
-              </p>
-              <ul className="mt-5 space-y-2.5 flex-1">
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  Basic trade journal
-                </li>
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  Up to 50 trades
-                </li>
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  3 strategies
-                </li>
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  5 core tabs
-                </li>
-              </ul>
-              <Link
-                href="/sign-up"
-                className="mt-5 w-full py-2.5 text-center rounded-lg border border-[var(--border)] text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors block"
-              >
-                Get Started
-              </Link>
-            </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+          {TIERS.map((t, i) => <TierCard key={t.name} tier={t} interval={interval} idx={i} />)}
+        </div>
 
-            {/* Paid plans */}
-            {sorted.map((plan: Plan, i: number) => {
-              const price = interval === 'year' ? plan.priceYearly : plan.priceMonthly;
-              const priceLabel = interval === 'year' ? '/yr' : '/mo';
-              const isPopular = i === Math.floor(sorted.length / 2);
-
-              return (
-                <motion.div
-                  key={plan._id}
-                  variants={itemVariants}
-                  className={`rounded-xl border bg-[var(--card)] p-6 flex flex-col relative ${
-                    isPopular ? 'border-[var(--accent)] ring-1 ring-[var(--accent)]' : 'border-[var(--border)]'
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-[var(--accent)] text-white text-[10px] font-semibold rounded-full">
-                      Most Popular
-                    </div>
-                  )}
-                  <h3 className="text-sm font-bold text-[var(--foreground)]">{plan.name}</h3>
-                  <p className="text-3xl font-bold text-[var(--foreground)] mt-3">
-                    ${price}<span className="text-sm font-normal text-[var(--muted-foreground)]">{priceLabel}</span>
-                  </p>
-                  <ul className="mt-5 space-y-2.5 flex-1">
-                    {plan.features.map((f: string, fi: number) => (
-                      <li key={fi} className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                        <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href="/sign-up"
-                    className={`mt-5 w-full py-2.5 text-center rounded-lg text-sm font-medium transition-colors block ${
-                      isPopular
-                        ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
-                        : 'border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--muted)]'
-                    }`}
-                  >
-                    Get Started
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
+        {/* Footnote */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--muted-foreground)]">
+          <span className="flex items-center gap-1.5"><Check size={12} className="text-emerald-400" /> No credit card required</span>
+          <span className="opacity-30">·</span>
+          <span className="flex items-center gap-1.5"><Check size={12} className="text-emerald-400" /> Cancel anytime</span>
+          <span className="opacity-30">·</span>
+          <span className="flex items-center gap-1.5"><Check size={12} className="text-emerald-400" /> Full access during trial</span>
+        </div>
       </div>
     </section>
+  );
+}
+
+function TierCard({ tier, interval, idx }: { tier: Tier; interval: 'month' | 'year'; idx: number }) {
+  const price = interval === 'year' ? tier.yearlyPrice : tier.monthlyPrice;
+  const periodLabel = interval === 'year' ? '/year' : '/month';
+  const effectiveMonthly = interval === 'year' ? (tier.yearlyPrice / 12).toFixed(0) : null;
+  const Icon = tier.icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-100px' }}
+      transition={{ duration: 0.4, delay: idx * 0.08 }}
+      className={`relative rounded-2xl p-6 sm:p-7 flex flex-col overflow-hidden ${
+        tier.highlighted
+          ? 'border border-teal-500/40 bg-gradient-to-br from-teal-500/10 via-cyan-500/5 to-transparent'
+          : 'border border-[var(--border)] bg-[var(--card)]'
+      }`}
+    >
+      {tier.highlighted && (
+        <>
+          <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-teal-400/10 blur-3xl" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/50 to-transparent" />
+        </>
+      )}
+
+      <div className="relative flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${tier.accent} bg-opacity-20 flex items-center justify-center`}>
+            <Icon size={16} className="text-slate-900" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-[var(--foreground)]">{tier.name}</h3>
+            <p className="text-[11px] text-[var(--muted-foreground)] leading-tight">{tier.tagline}</p>
+          </div>
+        </div>
+        {tier.highlighted && (
+          <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+            Most popular
+          </span>
+        )}
+      </div>
+
+      <div className="relative mt-2 flex items-baseline gap-1">
+        <span className="text-5xl font-bold tabular-nums text-[var(--foreground)]">${price}</span>
+        <span className="text-sm text-[var(--muted-foreground)]">{periodLabel}</span>
+      </div>
+      {effectiveMonthly && (
+        <p className="relative text-[11px] text-emerald-400 mt-1 tabular-nums">
+          ${effectiveMonthly}/mo effective · 2 months free
+        </p>
+      )}
+      {!effectiveMonthly && (
+        <p className="relative text-[11px] text-[var(--muted-foreground)] mt-1">Billed monthly</p>
+      )}
+
+      <ul className="relative mt-6 space-y-2.5 flex-1">
+        {tier.features.map(f => (
+          <li key={f} className="flex items-start gap-2 text-xs text-[var(--foreground)]">
+            <Check size={13} className="mt-0.5 text-teal-400 shrink-0" />
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      {tier.meta && (
+        <p className="relative mt-4 text-[10px] text-[var(--muted-foreground)] border-t border-[var(--border)] pt-3 leading-relaxed">
+          {tier.meta}
+        </p>
+      )}
+
+      <Link
+        href="/sign-up"
+        className={`relative mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all ${
+          tier.highlighted
+            ? 'text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_30px_-4px_rgba(45,212,191,0.5)]'
+            : 'text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50'
+        }`}
+      >
+        Start 14-Day Free Trial
+        <ArrowRight size={14} />
+      </Link>
+      <p className="relative text-center text-[10px] text-[var(--muted-foreground)] mt-2">No credit card required</p>
+    </motion.div>
   );
 }
