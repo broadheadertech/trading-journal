@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { PreTradeChecklist as ChecklistType, Strategy, Trade } from '@/lib/types';
@@ -262,11 +262,11 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
   return (
     <div className="relative space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto anim-fade-up">
       <div className="hero-glow" />
-      {/* ── Hero ── */}
+      {/* â”€â”€ Hero â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-semibold flex items-center gap-1.5">
+            <span className="px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-400 text-xs font-semibold flex items-center gap-1.5">
               <Globe size={14} /> MARKET CONTEXT COMMAND
             </span>
           </div>
@@ -291,7 +291,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
             <span className="text-xs text-[var(--muted-foreground)]">{m.regimeStability}% stable in last 10 sessions</span>
           </div>
           <div className="text-sm text-[var(--foreground)] mb-1">
-            Best regime: <span className="font-semibold text-cyan-400">{m.bestRegime[0]}</span>
+            Best regime: <span className="font-semibold text-fuchsia-400">{m.bestRegime[0]}</span>
           </div>
           <div className="text-xs text-[var(--muted-foreground)] mb-4">
             Best session: <span className="font-semibold text-[var(--foreground)]">{m.bestSession?.label}</span> &bull;
@@ -303,14 +303,14 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* ── 4 Stat Cards ── */}
+      {/* â”€â”€ 4 Stat Cards â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Current Regime</span>
             <Globe size={16} className="text-[var(--muted-foreground)]" />
           </div>
-          <div className="text-xl font-bold text-cyan-400">{m.currentRegime}</div>
+          <div className="text-xl font-bold text-fuchsia-400">{m.currentRegime}</div>
           <div className="text-[10px] text-[var(--muted-foreground)] mt-1">100% confidence</div>
         </div>
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
@@ -339,7 +339,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* ── Regime Navigator ── */}
+      {/* â”€â”€ Regime Navigator â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Regime Navigator</h2>
         <p className="text-xs text-[var(--muted-foreground)] mb-4">Click a regime to inspect isolated performance and context fit.</p>
@@ -369,7 +369,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${regime === 'Trending Up' ? 'bg-emerald-400' : regime === 'Trending Down' ? 'bg-red-400' : 'bg-cyan-400'}`} />
+                      <div className={`w-2 h-2 rounded-full ${regime === 'Trending Up' ? 'bg-emerald-400' : regime === 'Trending Down' ? 'bg-red-400' : 'bg-fuchsia-400'}`} />
                       <span className="text-sm font-medium text-[var(--foreground)]">{regime}</span>
                     </div>
                     <span className={`text-sm font-semibold ${pnlColor(data.pnl)}`}>{fmtPnl(data.pnl)}</span>
@@ -439,7 +439,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* ── Session Compatibility + Volatility Pressure ── */}
+      {/* â”€â”€ Session Compatibility + Volatility Pressure â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">
@@ -498,7 +498,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* ── Context Correlations + Action Blueprint ── */}
+      {/* â”€â”€ Context Correlations + Action Blueprint â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">
@@ -520,7 +520,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                   </div>
                 </div>
                 <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden mt-2">
-                  <div className="h-full rounded-full bg-cyan-500 transition-all" style={{ width: `${Math.abs(c.value) * 100}%` }} />
+                  <div className="h-full rounded-full bg-fuchsia-500 transition-all" style={{ width: `${Math.abs(c.value) * 100}%` }} />
                 </div>
               </div>
             ))}
@@ -550,7 +550,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* ── Weekday Bias Map + High-Impact Days ── */}
+      {/* â”€â”€ Weekday Bias Map + High-Impact Days â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">

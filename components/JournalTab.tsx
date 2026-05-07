@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import {
@@ -100,7 +100,7 @@ export default function JournalTab(props: Props) {
               onClick={() => setSub(t.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 active
-                  ? 'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-lg shadow-teal-500/30'
+                  ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg shadow-teal-500/30'
                   : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40'
               }`}
             >

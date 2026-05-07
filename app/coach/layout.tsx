@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
@@ -34,7 +34,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
       <aside className="w-56 shrink-0 border-r border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl flex flex-col">
         <div className="p-4 border-b border-[var(--border)]">
           <p className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
-            <Headphones size={18} className="text-teal-400" /> Coach Hub
+            <Headphones size={18} className="text-pink-400" /> Coach Hub
           </p>
         </div>
         <nav className="flex-1 p-2 space-y-1">
@@ -47,7 +47,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
                   active
-                    ? 'bg-gradient-to-br from-teal-500/20 to-teal-600/10 text-[var(--foreground)]'
+                    ? 'bg-gradient-to-br from-pink-500/20 to-pink-600/10 text-[var(--foreground)]'
                     : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
                 }`}
               >

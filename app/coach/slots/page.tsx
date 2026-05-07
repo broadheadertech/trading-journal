@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -53,7 +53,7 @@ export default function CoachSlotsPage() {
           <button
             disabled={!startsAt}
             onClick={handleAdd}
-            className="px-4 py-2 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-medium flex items-center gap-1 disabled:opacity-50"
           >
             <Plus size={14} /> Add
           </button>
@@ -64,7 +64,7 @@ export default function CoachSlotsPage() {
         {slots.length === 0 && <p className="text-sm text-[var(--muted-foreground)]">No upcoming slots.</p>}
         {slots.map((s: any) => (
           <div key={s.id} className="glass rounded-2xl p-4 flex items-center gap-3">
-            <Calendar size={16} className="text-teal-400" />
+            <Calendar size={16} className="text-pink-400" />
             <div className="flex-1 min-w-0">
               <div className="font-medium text-[var(--foreground)] text-sm">{new Date(s.startsAt).toLocaleString()}</div>
               <div className="text-xs text-[var(--muted-foreground)]">{s.isBooked ? 'Booked' : 'Open'}</div>

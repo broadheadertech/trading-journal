@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -62,14 +62,14 @@ export default function ChangelogPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs font-medium text-teal-400 mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
           >
             <Sparkles size={12} /> Tradia ships fast
           </motion.div>
@@ -87,7 +87,7 @@ export default function ChangelogPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            What we&apos;ve shipped recently — features, fixes, and platform improvements.
+            What we&apos;ve shipped recently â€” features, fixes, and platform improvements.
           </motion.p>
         </div>
       </section>
@@ -107,7 +107,7 @@ export default function ChangelogPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-xs font-mono text-[var(--muted-foreground)]">{e.date}</span>
                   {e.badge && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400">
                       {e.badge}
                     </span>
                   )}
@@ -116,7 +116,7 @@ export default function ChangelogPage() {
                 <ul className="space-y-2">
                   {e.items.map(item => (
                     <li key={item} className="flex items-start gap-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
-                      <span className="text-teal-400 mt-0.5 flex-shrink-0">·</span>
+                      <span className="text-pink-400 mt-0.5 flex-shrink-0">Â·</span>
                       <span>{item}</span>
                     </li>
                   ))}

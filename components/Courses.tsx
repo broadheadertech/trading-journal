@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -81,11 +81,11 @@ export default function Courses() {
 
       {courses.length === 0 ? (
         <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-teal-600/10 flex items-center justify-center">
-            <GraduationCap size={28} className="text-teal-400" />
+          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
+            <GraduationCap size={28} className="text-pink-400" />
           </div>
           <p className="text-[var(--foreground)] font-medium">No courses yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — new content drops monthly.</p>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon â€” new content drops monthly.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -108,7 +108,7 @@ export default function Courses() {
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-teal-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
                       <GraduationCap size={56} className="text-white/40" />
                     </div>
                   )}
@@ -125,8 +125,8 @@ export default function Courses() {
                   {/* Floating price chip */}
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
                     <span>${c.priceUsd}</span>
-                    <span className="text-white/60">·</span>
-                    <span className="text-white/80">₱{c.pricePhp}</span>
+                    <span className="text-white/60">Â·</span>
+                    <span className="text-white/80">â‚±{c.pricePhp}</span>
                   </div>
                 </div>
 
@@ -142,10 +142,10 @@ export default function Courses() {
                   {/* CTA row */}
                   <div className="mt-auto pt-4 flex items-center justify-between">
                     <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-pink-400" />
                       Lifetime access
                     </div>
-                    <div className="flex items-center gap-1 text-sm font-medium text-teal-400 group-hover:gap-2 transition-all">
+                    <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
                       {owned ? 'Continue' : 'View course'}
                       <ArrowRight size={14} />
                     </div>
@@ -153,7 +153,7 @@ export default function Courses() {
                 </div>
 
                 {/* Hover sheen */}
-                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-tr from-teal-500/0 via-teal-500/0 to-emerald-500/0 group-hover:from-teal-500/[0.05] group-hover:via-teal-500/[0.03] group-hover:to-emerald-500/[0.05] transition-all duration-500" />
+                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-tr from-pink-500/0 via-teal-500/0 to-emerald-500/0 group-hover:from-pink-500/[0.05] group-hover:via-teal-500/[0.03] group-hover:to-emerald-500/[0.05] transition-all duration-500" />
               </article>
             );
           })}
@@ -164,9 +164,9 @@ export default function Courses() {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Course Detail
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CourseDetail({
   courseId, purchased, onBack, onBuy,
 }: {
@@ -239,7 +239,7 @@ function CourseDetail({
                   onClick={() => onBuy('paymongo')}
                   className="px-5 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--muted)]"
                 >
-                  Pay ₱{course.pricePhp} with GCash/Card (PayMongo)
+                  Pay â‚±{course.pricePhp} with GCash/Card (PayMongo)
                 </button>
               </div>
               {course.externalUrl && (
@@ -259,7 +259,7 @@ function CourseDetail({
     );
   }
 
-  // Purchased — show learning view
+  // Purchased â€” show learning view
   return (
     <div className="space-y-4">
       <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
@@ -367,9 +367,9 @@ function CourseDetail({
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Admin Authoring
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function AdminCourses({ onBack }: { onBack?: () => void }) {
   const { showToast } = useToast();
   const courses = useQuery(api.courses.listAll) ?? [];
@@ -410,7 +410,7 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-[var(--foreground)] truncate">{c.title}</div>
               <div className="text-xs text-[var(--muted-foreground)]">
-                ${c.priceUsd} · ₱{c.pricePhp} · {c.isPublished ? 'Published' : 'Draft'}
+                ${c.priceUsd} Â· â‚±{c.pricePhp} Â· {c.isPublished ? 'Published' : 'Draft'}
               </div>
             </div>
             <button
@@ -516,7 +516,7 @@ function NewCourseModal({
             }}
             className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
           >
-            {busy ? 'Creating…' : 'Create'}
+            {busy ? 'Creatingâ€¦' : 'Create'}
           </button>
         </div>
       </div>
@@ -718,9 +718,9 @@ function Field({
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// Course Editor — modules + lessons
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Course Editor â€” modules + lessons
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void }) {
   const { showToast } = useToast();
   const structure = useQuery(api.courses.getStructure, { courseId: course.id });

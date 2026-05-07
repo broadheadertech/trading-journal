@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery } from 'convex/react';
@@ -30,8 +30,8 @@ export default function CoachMessagesPage() {
               onClick={() => setActiveId(s.id)}
               className="w-full glass rounded-2xl p-4 flex items-center gap-3 card-lift text-left"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-                <MessageSquare size={16} className="text-teal-400" />
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+                <MessageSquare size={16} className="text-pink-400" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-[var(--foreground)]">{s.clientName}</div>

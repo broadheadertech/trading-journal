@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -70,10 +70,10 @@ export default function Footer() {
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-3 group">
                   <Image src="/logo.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain" />
-                  <span className="text-base font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">Tradia</span>
+                  <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
                 </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                  Find the trading mistakes costing you thousands — and prove you fixed them.
+                  Find the trading mistakes costing you thousands â€” and prove you fixed them.
                 </p>
               </div>
               <NewsletterSignup />
@@ -85,7 +85,7 @@ export default function Footer() {
                 <ul className="space-y-2">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link href={l.href} className="text-xs text-[var(--muted-foreground)] hover:text-teal-400 transition-colors">
+                      <Link href={l.href} className="text-xs text-[var(--muted-foreground)] hover:text-pink-400 transition-colors">
                         {l.label}
                       </Link>
                     </li>
@@ -102,7 +102,7 @@ export default function Footer() {
             </p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--muted-foreground)]">
               {LEGAL.map((l) => (
-                <Link key={l.label} href={l.href} className="hover:text-teal-400 transition-colors">
+                <Link key={l.label} href={l.href} className="hover:text-pink-400 transition-colors">
                   {l.label}
                 </Link>
               ))}

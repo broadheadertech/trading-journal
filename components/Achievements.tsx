@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from 'react';
 import { Trophy, Lock } from 'lucide-react';
@@ -34,7 +34,7 @@ export default function Achievements({ trades, reflections }: Props) {
     <div className="space-y-6">
       {/* Header / progress summary */}
       <div className="glass rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-gradient-to-br from-teal-500/20 to-emerald-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-gradient-to-br from-pink-500/20 to-emerald-500/10 blur-3xl pointer-events-none" />
 
         <div className="flex items-start justify-between flex-wrap gap-4 relative">
           <div>
@@ -86,7 +86,7 @@ export default function Achievements({ trades, reflections }: Props) {
             onClick={() => setFilter(cat)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               filter === cat
-                ? 'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-lg shadow-teal-500/30'
+                ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg shadow-teal-500/30'
                 : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
             }`}
           >

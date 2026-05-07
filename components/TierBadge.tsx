@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Crown, Sparkles, Zap, Star, Gem } from 'lucide-react';
 
@@ -25,14 +25,14 @@ const TIERS: Record<TierName, {
   },
   essential: {
     label: 'Essential',
-    gradient: 'from-emerald-500 to-teal-600',
+    gradient: 'from-emerald-500 to-pink-600',
     text: 'text-white',
     icon: <Sparkles size={9} strokeWidth={3} />,
     shimmer: false,
   },
   pro: {
     label: 'Pro',
-    gradient: 'from-teal-500 to-teal-700',
+    gradient: 'from-pink-500 to-pink-700',
     text: 'text-white',
     icon: <Zap size={9} strokeWidth={3} />,
     shimmer: true,
@@ -46,7 +46,7 @@ const TIERS: Record<TierName, {
   },
   legend: {
     label: 'Legend',
-    gradient: 'from-cyan-300 via-teal-400 to-emerald-400',
+    gradient: 'from-fuchsia-300 via-teal-400 to-emerald-400',
     text: 'text-white',
     icon: <Crown size={9} strokeWidth={3} />,
     shimmer: true,

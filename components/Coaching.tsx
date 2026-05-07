@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -87,7 +87,7 @@ export default function Coaching() {
           {user && (
             <Link
               href="/coach"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 flex items-center gap-2"
             >
               <UserPlus size={16} />
               {myCoachProfile ? 'Coach Hub' : 'Become a coach'}
@@ -98,11 +98,11 @@ export default function Coaching() {
 
       {coaches.length === 0 ? (
         <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-            <Headphones size={28} className="text-teal-400" />
+          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+            <Headphones size={28} className="text-pink-400" />
           </div>
           <p className="text-[var(--foreground)] font-medium">No coaches available yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — we&apos;re onboarding the first cohort.</p>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon â€” we&apos;re onboarding the first cohort.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -118,7 +118,7 @@ export default function Coaching() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={c.photoUrl} alt={c.displayName} className="w-16 h-16 rounded-2xl object-cover border border-[var(--border)]" />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/30 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-white">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-white">
                     {c.displayName.charAt(0)}
                   </div>
                 )}
@@ -137,16 +137,16 @@ export default function Coaching() {
 
               <div className="px-6 pb-4 flex flex-wrap gap-1.5">
                 {(c.specialties as string[]).slice(0, 3).map((s) => (
-                  <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 font-medium">{s}</span>
+                  <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{s}</span>
                 ))}
               </div>
 
               <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between">
                 <div className="text-sm">
                   <span className="font-bold text-[var(--foreground)]">${c.hourlyRateUsd}</span>
-                  <span className="text-[var(--muted-foreground)]"> / hr · {c.sessionDurationMin}min</span>
+                  <span className="text-[var(--muted-foreground)]"> / hr Â· {c.sessionDurationMin}min</span>
                 </div>
-                <div className="flex items-center gap-1 text-sm font-medium text-teal-400 group-hover:gap-2 transition-all">
+                <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
                   Book <ArrowRight size={14} />
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function Coaching() {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CoachDetail({
   coachId, onBack, onBooked,
 }: {
@@ -223,7 +223,7 @@ function CoachDetail({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={coach.photoUrl} alt={coach.displayName} className="w-28 h-28 rounded-3xl object-cover border border-[var(--border)]" />
           ) : (
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-teal-500/30 to-emerald-500/10 flex items-center justify-center text-4xl font-bold text-white">
+            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-4xl font-bold text-white">
               {coach.displayName.charAt(0)}
             </div>
           )}
@@ -234,12 +234,12 @@ function CoachDetail({
               <div className="flex items-center gap-1.5 text-sm">
                 <Star size={14} className="text-amber-400 fill-amber-400" />
                 <span className="font-bold text-[var(--foreground)]">{coach.avgRating?.toFixed(1)}</span>
-                <span className="text-[var(--muted-foreground)]">· {coach.reviewCount} reviews · {coach.totalSessions ?? 0} sessions</span>
+                <span className="text-[var(--muted-foreground)]">Â· {coach.reviewCount} reviews Â· {coach.totalSessions ?? 0} sessions</span>
               </div>
             )}
             <div className="flex flex-wrap gap-1.5 pt-1">
               {(coach.specialties as string[]).map((s) => (
-                <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 font-medium">{s}</span>
+                <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{s}</span>
               ))}
             </div>
           </div>
@@ -258,7 +258,7 @@ function CoachDetail({
       <div className="glass rounded-3xl p-6 anim-fade-up" style={{ animationDelay: '80ms' }}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
-            <Calendar size={18} className="text-teal-400" /> Available slots
+            <Calendar size={18} className="text-pink-400" /> Available slots
           </h2>
           <span className="text-xs text-[var(--muted-foreground)]">{coach.timezone}</span>
         </div>
@@ -270,7 +270,7 @@ function CoachDetail({
               <button
                 key={s.id}
                 onClick={() => { setSelectedSlot(s); setShowBooking(true); }}
-                className="px-3 py-2 rounded-xl border border-[var(--border)] hover:border-teal-400/50 hover:bg-teal-500/5 text-sm text-[var(--foreground)] text-left transition-all"
+                className="px-3 py-2 rounded-xl border border-[var(--border)] hover:border-pink-400/50 hover:bg-pink-500/5 text-sm text-[var(--foreground)] text-left transition-all"
               >
                 <div className="font-medium">{new Date(s.startsAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                 <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
@@ -310,7 +310,7 @@ function CoachDetail({
             </div>
             <div className="text-sm">
               <div className="text-[var(--muted-foreground)]">When</div>
-              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} â€“ {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
             </div>
             <div className="text-sm">
               <div className="text-[var(--muted-foreground)]">Total</div>
@@ -329,9 +329,9 @@ function CoachDetail({
             <button
               disabled={busy || !goals.trim()}
               onClick={handleBook}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+              className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
             >
-              {busy ? 'Booking…' : `Confirm & pay $${totalPrice.toFixed(2)}`}
+              {busy ? 'Bookingâ€¦' : `Confirm & pay $${totalPrice.toFixed(2)}`}
             </button>
             <p className="text-[10px] text-[var(--muted-foreground)] text-center">
               Stub mode: payment is recorded automatically. Real Stripe Connect to be wired later.
@@ -343,7 +343,7 @@ function CoachDetail({
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function MySessionsView({
   sessions, onBack, onOpen,
 }: {
@@ -370,7 +370,7 @@ export function MySessionsView({
 
 export function SessionRow({ session, onOpen }: { session: any; onOpen: () => void }) {
   const STATUS_COLORS: Record<string, string> = {
-    confirmed:   'bg-teal-500/15 text-teal-400',
+    confirmed:   'bg-pink-500/15 text-pink-400',
     in_progress: 'bg-blue-500/15 text-blue-400',
     completed:   'bg-emerald-500/15 text-emerald-400',
     cancelled:   'bg-[var(--muted)]/40 text-[var(--muted-foreground)]',
@@ -382,12 +382,12 @@ export function SessionRow({ session, onOpen }: { session: any; onOpen: () => vo
       onClick={onOpen}
       className="w-full text-left glass rounded-2xl p-4 flex items-center gap-3 card-lift"
     >
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-        <Calendar size={20} className="text-teal-400" />
+      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+        <Calendar size={20} className="text-pink-400" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-[var(--foreground)]">{fmt(session.startsAt)}</div>
-        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
+        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min Â· ${session.pricePaidUsd.toFixed(2)}</div>
       </div>
       <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[session.status]}`}>
         {session.status.replace('_', ' ')}
@@ -396,7 +396,7 @@ export function SessionRow({ session, onOpen }: { session: any; onOpen: () => vo
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function SessionView({
   sessionId, role, onBack,
 }: {
@@ -467,7 +467,7 @@ export function SessionView({
             <div className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] mb-1">Session</div>
             <h1 className="text-2xl font-bold text-[var(--foreground)]">{fmt(session.startsAt)}</h1>
             <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              {session.sessionDurationMin} minutes · ${session.pricePaidUsd.toFixed(2)} ·{' '}
+              {session.sessionDurationMin} minutes Â· ${session.pricePaidUsd.toFixed(2)} Â·{' '}
               <span className="capitalize">{session.status.replace('_', ' ')}</span>
             </p>
           </div>
@@ -477,7 +477,7 @@ export function SessionView({
                 href={session.meetingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30"
               >
                 <Video size={16} /> Join call
               </a>
@@ -520,7 +520,7 @@ export function SessionView({
                     setMeetingUrlInput('');
                     showToast('Meeting URL set', 'success');
                   }}
-                  className="px-4 py-2 rounded-lg bg-teal-500 text-white text-sm font-medium"
+                  className="px-4 py-2 rounded-lg bg-pink-500 text-white text-sm font-medium"
                 >
                   Save
                 </button>
@@ -546,7 +546,7 @@ export function SessionView({
                 <button
                   onClick={async () => {
                     await completeSession({ id: sessionId, coachNotes });
-                    showToast('Session completed — funds released', 'success');
+                    showToast('Session completed â€” funds released', 'success');
                   }}
                   className="w-full py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium"
                 >
@@ -564,7 +564,7 @@ export function SessionView({
           onClick={() => setShowReviewForm(true)}
           className="w-full py-3 glass rounded-2xl text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)]/40"
         >
-          Leave a review →
+          Leave a review â†’
         </button>
       )}
       {canReview && showReviewForm && (
@@ -597,7 +597,7 @@ export function SessionView({
               showToast('Review submitted!', 'success');
               setShowReviewForm(false);
             }}
-            className="w-full py-2 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold disabled:opacity-50"
+            className="w-full py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold disabled:opacity-50"
           >
             Submit review
           </button>
@@ -618,7 +618,7 @@ export function SessionView({
               return (
                 <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                    mine ? 'bg-gradient-to-br from-teal-500 to-teal-700 text-white' : 'bg-[var(--muted)]/40 text-[var(--foreground)]'
+                    mine ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white' : 'bg-[var(--muted)]/40 text-[var(--foreground)]'
                   }`}>
                     {!mine && <div className="text-[10px] font-medium opacity-70 mb-0.5">{m.fromName}</div>}
                     <div className="text-sm whitespace-pre-wrap">{m.body}</div>
@@ -640,7 +640,7 @@ export function SessionView({
           <button
             onClick={handleSend}
             disabled={!body.trim()}
-            className="px-4 py-2 rounded-xl bg-teal-500 text-white disabled:opacity-50"
+            className="px-4 py-2 rounded-xl bg-pink-500 text-white disabled:opacity-50"
           >
             <Send size={16} />
           </button>

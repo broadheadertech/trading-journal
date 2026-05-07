@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
 import { Globe, ExternalLink, TrendingUp, Flame, Swords, Plane, Ship, Zap, Radio, BarChart3 } from 'lucide-react';
 
-// SSR-safe dynamic import — react-simple-maps reads window during init
+// SSR-safe dynamic import â€” react-simple-maps reads window during init
 const WorldMap = dynamic(() => import('./WorldMap'), { ssr: false });
 const WorldMonitorLive = dynamic(() => import('./WorldMonitorLive'), { ssr: false });
 
@@ -42,7 +42,7 @@ const PRIMARY: MonitorLink[] = [
 const CONTEXT: MonitorLink[] = [
   {
     title: 'Conflict Tracker',
-    desc: 'Live geopolitical conflict map — events that move oil, defense, and FX.',
+    desc: 'Live geopolitical conflict map â€” events that move oil, defense, and FX.',
     url: 'https://www.worldmonitor.app',
     icon: Swords,
     tag: 'Geopolitics',
@@ -56,7 +56,7 @@ const CONTEXT: MonitorLink[] = [
   },
   {
     title: 'Maritime (AIS)',
-    desc: 'Ship tracking — tankers, container traffic, choke-point activity.',
+    desc: 'Ship tracking â€” tankers, container traffic, choke-point activity.',
     url: 'https://www.worldmonitor.app',
     icon: Ship,
     tag: 'Maritime',
@@ -96,18 +96,18 @@ export default function WorldMonitoring() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
-          Powered by World Monitor · 190+ countries · 435+ sources
+          Powered by World Monitor Â· 190+ countries Â· 435+ sources
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
           World <span className="gradient-text">monitoring</span>
         </h1>
         <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-          Real-time global intelligence — financial centers, central banks, trade routes, undersea cables, and pipelines.
+          Real-time global intelligence â€” financial centers, central banks, trade routes, undersea cables, and pipelines.
           Toggle layers to explore.
         </p>
       </header>
 
-      {/* 1. Layers — interactive world map */}
+      {/* 1. Layers â€” interactive world map */}
       <div className="anim-fade-up">
         <WorldMap />
       </div>
@@ -143,8 +143,8 @@ export default function WorldMonitoring() {
 
       {/* Footer attribution */}
       <div className="glass rounded-3xl p-6 flex items-center gap-4 flex-wrap">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-          <Globe size={20} className="text-teal-400" />
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+          <Globe size={20} className="text-pink-400" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-[var(--foreground)]">Open intelligence by World Monitor</div>
@@ -156,7 +156,7 @@ export default function WorldMonitoring() {
           href="https://www.worldmonitor.app"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5"
         >
           Open World Monitor <ExternalLink size={14} />
         </a>
@@ -176,15 +176,15 @@ function Card({ m, idx }: { m: MonitorLink; idx: number }) {
       className="group glass rounded-3xl p-6 card-lift anim-fade-up flex flex-col"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-          <Icon size={20} className="text-teal-400" />
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+          <Icon size={20} className="text-pink-400" />
         </div>
-        <ExternalLink size={14} className="text-[var(--muted-foreground)] group-hover:text-teal-400 transition-colors" />
+        <ExternalLink size={14} className="text-[var(--muted-foreground)] group-hover:text-pink-400 transition-colors" />
       </div>
-      <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-400 font-medium self-start">{m.tag}</span>
+      <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium self-start">{m.tag}</span>
       <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight mt-2">{m.title}</h3>
       <p className="text-sm text-[var(--muted-foreground)] mt-1 flex-1">{m.desc}</p>
-      <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center gap-1 text-sm font-medium text-teal-400 group-hover:gap-2 transition-all">
+      <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
         Open dashboard <ExternalLink size={12} />
       </div>
     </a>

@@ -4,13 +4,13 @@
 @property --accent {
   syntax: "<color>";
   inherits: true;
-  initial-value: #2d9484;
+  initial-value: #ff2eb3;
 }
 
 @property --accent-glow {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(45, 148, 132, 0.15);
+  initial-value: rgba(255, 46, 179, 0.18);
 }
 
 @property --bg-tint {
@@ -39,9 +39,9 @@
   --border: #152038;
   --muted: #152038;
   --muted-foreground: #5a7194;
-  --accent: #2d9484;
-  --accent-hover: #3da89a;
-  --accent-glow: rgba(45, 148, 132, 0.15);
+  --accent: #ff2eb3;
+  --accent-hover: #ff52c3;
+  --accent-glow: rgba(255, 46, 179, 0.18);
   --bg-tint: #060a12;
   --green: #00e68a;
   --red: #ff4d6a;
@@ -62,9 +62,9 @@
   --border: #d4dde9;
   --muted: #edf2f9;
   --muted-foreground: #5a6d85;
-  --accent: #1b7a6a;
-  --accent-hover: #156b5c;
-  --accent-glow: rgba(27, 122, 106, 0.12);
+  --accent: #d6248c;
+  --accent-hover: #b81c75;
+  --accent-glow: rgba(214, 36, 140, 0.14);
   --bg-tint: #f4f7fb;
   --green: #00a86b;
   --red: #e02850;
@@ -273,9 +273,9 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--border);
 }
 
-/* Gradient text accent — uses brand teal */
+/* Gradient text accent — uses brand neon pink */
 .gradient-text {
-  background: linear-gradient(135deg, #2dd4bf 0%, #2d9484 50%, #14b8a6 100%);
+  background: linear-gradient(135deg, #ff52c3 0%, #ff2eb3 50%, #ec4899 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -287,7 +287,7 @@ input::placeholder, textarea::placeholder {
   inset-inline: 0;
   top: -5rem;
   height: 18rem;
-  background: linear-gradient(to bottom, rgba(45,148,132,0.12), rgba(45,148,132,0.05), transparent);
+  background: linear-gradient(to bottom, rgba(255,46,179,0.14), rgba(255,46,179,0.06), transparent);
   filter: blur(60px);
   pointer-events: none;
   z-index: -1;
@@ -299,6 +299,6 @@ input::placeholder, textarea::placeholder {
 }
 .card-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -20px rgba(45, 148, 132, 0.40);
-  border-color: rgba(45, 148, 132, 0.30);
+  box-shadow: 0 20px 40px -20px rgba(255, 46, 179, 0.40);
+  border-color: rgba(255, 46, 179, 0.30);
 }

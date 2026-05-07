@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import {
@@ -27,19 +27,19 @@ const CONTINENT_BY_ISO: Record<string, string> = {
 };
 
 const CONTINENTS: { id: string; label: string; emoji: string }[] = [
-  { id: 'AF', label: 'Africa',        emoji: '🌍' },
-  { id: 'EU', label: 'Europe',        emoji: '🌍' },
-  { id: 'AS', label: 'Asia',          emoji: '🌏' },
-  { id: 'NA', label: 'N. America',    emoji: '🌎' },
-  { id: 'SA', label: 'S. America',    emoji: '🌎' },
-  { id: 'OC', label: 'Oceania',       emoji: '🌏' },
-  { id: 'AN', label: 'Antarctica',    emoji: '🧊' },
+  { id: 'AF', label: 'Africa',        emoji: 'ðŸŒ' },
+  { id: 'EU', label: 'Europe',        emoji: 'ðŸŒ' },
+  { id: 'AS', label: 'Asia',          emoji: 'ðŸŒ' },
+  { id: 'NA', label: 'N. America',    emoji: 'ðŸŒŽ' },
+  { id: 'SA', label: 'S. America',    emoji: 'ðŸŒŽ' },
+  { id: 'OC', label: 'Oceania',       emoji: 'ðŸŒ' },
+  { id: 'AN', label: 'Antarctica',    emoji: 'ðŸ§Š' },
 ];
 
-// Public world atlas (110m resolution — small + fast)
+// Public world atlas (110m resolution â€” small + fast)
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
-// ─── Layer definitions ──────────────────────────────────────────────
+// â”€â”€â”€ Layer definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type LayerId =
   | 'stockExchanges' | 'financialCenters' | 'centralBanks' | 'commodityHubs'
   | 'gccInvestments' | 'tradeRoutes' | 'underseaCables' | 'pipelines';
@@ -63,7 +63,7 @@ const LAYERS: LayerDef[] = [
   { id: 'pipelines',        label: 'Pipelines',          icon: Pipette,    color: '#fb923c', defaultOn: true },
 ];
 
-// ─── Marker data ────────────────────────────────────────────────────
+// â”€â”€â”€ Marker data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface PointMarker { name: string; coords: [number, number]; layer: LayerId }
 
 const POINTS: PointMarker[] = [
@@ -124,7 +124,7 @@ const POINTS: PointMarker[] = [
   { name: 'KIA (Kuwait)', coords: [47.98,   29.38], layer: 'gccInvestments' },
 ];
 
-// ─── Line data (great-circle routes auto-curve in d3-geo) ──────────
+// â”€â”€â”€ Line data (great-circle routes auto-curve in d3-geo) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface LineEdge { from: [number, number]; to: [number, number]; layer: LayerId }
 
 const LINES: LineEdge[] = [
@@ -226,7 +226,7 @@ export default function WorldMap() {
   return (
     <div className="glass rounded-3xl overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-0 min-h-[600px]">
-        {/* ── Layers panel ── */}
+        {/* â”€â”€ Layers panel â”€â”€ */}
         <aside className="p-4 border-b lg:border-b-0 lg:border-r border-[var(--border)] space-y-3 bg-[var(--background)]/30">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
             <Layers size={12} /> Layers
@@ -237,7 +237,7 @@ export default function WorldMap() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search layers…"
+              placeholder="Search layersâ€¦"
               className="w-full pl-7 pr-2 py-1.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-xs"
             />
           </div>
@@ -253,7 +253,7 @@ export default function WorldMap() {
                     key={c.id}
                     onClick={() => toggleContinent(c.id)}
                     className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider transition-colors ${
-                      on ? 'bg-teal-500/20 text-teal-400' : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)]/50'
+                      on ? 'bg-pink-500/20 text-pink-400' : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)]/50'
                     }`}
                   >
                     {c.emoji} {c.label}
@@ -267,12 +267,12 @@ export default function WorldMap() {
           <label className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-[var(--muted)]/40 transition-colors">
             <div
               className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                showCountryNames ? 'border-transparent bg-teal-400' : 'border-[var(--muted-foreground)]/40'
+                showCountryNames ? 'border-transparent bg-pink-400' : 'border-[var(--muted-foreground)]/40'
               }`}
             >
-              {showCountryNames && <span className="text-white text-[10px] font-black">✓</span>}
+              {showCountryNames && <span className="text-white text-[10px] font-black">âœ“</span>}
             </div>
-            <Type size={12} className="text-teal-400" />
+            <Type size={12} className="text-pink-400" />
             <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--foreground)]">Country names</span>
             <input type="checkbox" checked={showCountryNames} onChange={() => setShowCountryNames(s => !s)} className="hidden" />
           </label>
@@ -293,7 +293,7 @@ export default function WorldMap() {
                     }`}
                     style={{ background: on ? l.color : 'transparent' }}
                   >
-                    {on && <span className="text-white text-[10px] font-black">✓</span>}
+                    {on && <span className="text-white text-[10px] font-black">âœ“</span>}
                   </div>
                   <input
                     type="checkbox"
@@ -309,7 +309,7 @@ export default function WorldMap() {
           </div>
         </aside>
 
-        {/* ── Map ── */}
+        {/* â”€â”€ Map â”€â”€ */}
         <div className="relative bg-[#0a0f14] min-h-[600px]">
           {/* Zoom controls */}
           <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
@@ -344,7 +344,7 @@ export default function WorldMap() {
                   className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full backdrop-blur"
                   style={{ background: l.color + '22', color: l.color }}
                 >
-                  {l.label} · {count}
+                  {l.label} Â· {count}
                 </span>
               );
             })}

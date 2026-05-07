@@ -1,20 +1,21 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
-import { Database, Zap, BarChart3, Clock } from 'lucide-react';
+import { Database, Zap, BarChart3, Activity, DollarSign } from 'lucide-react';
 
 const STATS = [
-  { icon: Database,  value: '67+', label: 'Supported Brokers',  sub: 'CSV, XLSX, and live API' },
-  { icon: Zap,       value: '28+', label: 'Verdict Detectors',  sub: 'Behavioral patterns scored' },
-  { icon: BarChart3, value: '50+', label: 'Performance Metrics', sub: 'Auto-computed every import' },
-  { icon: Clock,     value: '60s', label: 'Setup Time',         sub: 'Upload, normalize, analyze' },
+  { icon: BarChart3,  value: '100,800+', label: 'Trades Analyzed',    sub: 'Across every connected account' },
+  { icon: Activity,   value: '16,760+',  label: 'Leaks Detected',     sub: 'Costly patterns surfaced' },
+  { icon: DollarSign, value: '$547K+',   label: 'In Losses Found',    sub: 'Recoverable behavioral leaks' },
+  { icon: Database,   value: '70+',      label: 'Supported Brokers',  sub: 'CSV, XLSX, and live API' },
+  { icon: Zap,        value: '30+',      label: 'Verdict Detectors',  sub: 'Behavioral patterns scored' },
 ];
 
 export default function PlatformStats() {
   return (
     <section id="stats" className="relative py-20 sm:py-24 border-t border-[var(--border)]">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-emerald-500 opacity-[0.03] rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-pink-500 opacity-[0.03] rounded-full blur-[140px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
@@ -25,19 +26,19 @@ export default function PlatformStats() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
             By The Numbers
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
             Real numbers from{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">the platform</span>
+            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">the platform</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Brokers integrated, detectors shipped, metrics computed. Live platform numbers — not marketing fluff.
+            Brokers integrated, detectors shipped, metrics computed. Live platform numbers â€” not marketing fluff.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           {STATS.map((s, i) => (
             <motion.div
               key={s.label}
@@ -45,14 +46,14 @@ export default function PlatformStats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
-              className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-teal-500/30 transition-colors overflow-hidden group"
+              className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-pink-500/30 transition-colors overflow-hidden group"
             >
-              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-teal-500/5 blur-2xl group-hover:bg-teal-500/10 transition-colors" />
+              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-pink-500/5 blur-2xl group-hover:bg-pink-500/10 transition-colors" />
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400/20 to-cyan-500/10 border border-teal-500/20 flex items-center justify-center mb-3">
-                  <s.icon size={16} className="text-teal-400" />
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400/20 to-fuchsia-500/10 border border-pink-500/20 flex items-center justify-center mb-3">
+                  <s.icon size={16} className="text-pink-400" />
                 </div>
-                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent tabular-nums leading-none">
+                <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent tabular-nums leading-none">
                   {s.value}
                 </div>
                 <div className="mt-2 text-[10px] font-bold uppercase tracking-widest text-[var(--foreground)]">{s.label}</div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Gift, Calendar, DollarSign, Sparkles, Ticket } from 'lucide-react';
 
@@ -15,7 +15,7 @@ export default function Rewards() {
           Rewards & <span className="gradient-text">Bonuses</span>
         </h1>
         <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-          Earn perks for being active — free subscription extensions, funded account raffles, and more.
+          Earn perks for being active â€” free subscription extensions, funded account raffles, and more.
         </p>
       </header>
 
@@ -23,8 +23,8 @@ export default function Rewards() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass rounded-3xl p-6 card-lift anim-fade-up">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-teal-500/10 flex items-center justify-center text-2xl">
-              🎁
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-pink-500/10 flex items-center justify-center text-2xl">
+              ðŸŽ
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -32,12 +32,12 @@ export default function Rewards() {
                 <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold">Active</span>
               </div>
               <p className="text-sm text-[var(--muted-foreground)] mb-3">
-                Hit 30 trades logged + 7-day reflection streak this month → automatic next-month free extension.
+                Hit 30 trades logged + 7-day reflection streak this month â†’ automatic next-month free extension.
               </p>
               <div className="h-2 rounded-full bg-[var(--muted)]/40 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500" style={{ width: '0%' }} />
+                <div className="h-full bg-gradient-to-r from-emerald-500 to-pink-500" style={{ width: '0%' }} />
               </div>
-              <div className="text-[10px] text-[var(--muted-foreground)] mt-1">0 / 30 trades · 0 / 7 reflection days</div>
+              <div className="text-[10px] text-[var(--muted-foreground)] mt-1">0 / 30 trades Â· 0 / 7 reflection days</div>
             </div>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function Rewards() {
         <div className="glass rounded-3xl p-6 card-lift anim-fade-up" style={{ animationDelay: '60ms' }}>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/30 to-orange-500/10 flex items-center justify-center text-2xl">
-              🎰
+              ðŸŽ°
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -58,7 +58,7 @@ export default function Rewards() {
               <div className="flex items-center gap-2 text-sm">
                 <Ticket size={14} className="text-amber-400" />
                 <span className="font-bold text-[var(--foreground)]">0 tickets</span>
-                <span className="text-[var(--muted-foreground)] text-xs">· next draw on the 1st</span>
+                <span className="text-[var(--muted-foreground)] text-xs">Â· next draw on the 1st</span>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function Rewards() {
       {/* How to earn */}
       <div className="glass rounded-3xl p-6 anim-fade-up" style={{ animationDelay: '120ms' }}>
         <h2 className="text-lg font-bold text-[var(--foreground)] mb-4 flex items-center gap-2">
-          <Sparkles size={16} className="text-teal-400" /> Ways to earn
+          <Sparkles size={16} className="text-pink-400" /> Ways to earn
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
@@ -78,7 +78,7 @@ export default function Rewards() {
             { icon: Ticket,   label: 'Complete a course', reward: '+3 raffle tickets' },
           ].map(({ icon: Icon, label, reward }) => (
             <div key={label} className="flex items-center gap-3 p-3 rounded-2xl bg-[var(--background)]/50 border border-[var(--border)]">
-              <Icon size={16} className="text-teal-400" />
+              <Icon size={16} className="text-pink-400" />
               <div className="flex-1 text-sm font-medium text-[var(--foreground)]">{label}</div>
               <div className="text-xs text-[var(--muted-foreground)]">{reward}</div>
             </div>
@@ -87,7 +87,7 @@ export default function Rewards() {
       </div>
 
       <p className="text-xs text-[var(--muted-foreground)] text-center">
-        Tracking system in development — rewards will be auto-credited once activity tracking is live.
+        Tracking system in development â€” rewards will be auto-credited once activity tracking is live.
       </p>
     </div>
   );

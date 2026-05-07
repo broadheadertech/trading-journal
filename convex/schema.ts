@@ -313,6 +313,10 @@ export default defineSchema({
     features: v.array(v.string()),
     isActive: v.boolean(),
     sortOrder: v.number(),
+    // Landing-page presentation fields (added 2026-05-07 for Tradia tier rollout)
+    tagline: v.optional(v.string()),
+    goal: v.optional(v.string()),
+    isHighlighted: v.optional(v.boolean()),
   }).index("by_active", ["isActive"]),
 
   // ─── Admin activity events ──────────────────────────────────────────

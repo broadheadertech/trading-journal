@@ -63,82 +63,100 @@ export const forceReseed = mutation({
   },
 });
 
-// Seed subscription plans — idempotent, can be run from CLI or by admin
+// Seed subscription plans — UPSERT semantics so re-running picks up edits
+// to prices, features, or copy. Old plans not in this list are deactivated
+// (kept in the table so existing user subscriptions don't break, but hidden
+// from the landing page).
 export const seedPlans = mutation({
   handler: async (ctx) => {
-    const existing = await ctx.db.query("subscriptionPlans").collect();
-    const existingIds = new Set(existing.map((p) => p.planId));
-
     const plans = [
       {
-        planId: "essential",
-        name: "Essential",
-        priceMonthly: 9,
-        priceYearly: 90,
+        planId: "core",
+        name: "Tradia Core",
+        tagline: "For beginner to intermediate solo traders",
+        priceMonthly: 29,
+        priceYearly: 290,
         features: [
-          "Everything in Free",
-          "Up to 200 trades",
-          "10 strategies",
-          "Goals & milestones",
-          "Trade verdicts",
-          "Pre-trade checklists",
-          "Brain insights",
+          "Unlimited trade journaling",
+          "Basic performance analytics (PnL, win rate, equity curve)",
+          "Trading journal + notes system",
+          "Basic playbook rules",
+          "Manual trade entry",
+          "Dashboard insights (Net PnL, trades, win rate)",
+          "Access to trading tools (calculator, session tracker)",
+          "Economic calendar access",
         ],
+        goal: "Get traders consistent & disciplined",
         isActive: true,
+        isHighlighted: false,
         sortOrder: 1,
       },
       {
         planId: "pro",
-        name: "Pro",
-        priceMonthly: 19,
-        priceYearly: 190,
+        name: "Tradia Pro",
+        tagline: "For serious traders leveling up performance",
+        priceMonthly: 39,
+        priceYearly: 390,
         features: [
-          "Everything in Essential",
-          "Unlimited trades & strategies",
-          "What-If scenarios",
-          "Advanced reports",
-          "Market news feed",
-          "Full brain visualization",
+          "Everything in Core",
+          "Advanced analytics (50+ metrics)",
+          "AI trade insights / mistake detection",
+          "Playbook automation & rule tracking",
+          "Trade tagging & strategy breakdown",
+          "Equity curve + drawdown analytics",
+          "Session & activity heatmap",
+          "API sync (MT4/MT5 / supported brokers)",
+          "Performance reports & export",
+          "Priority support",
         ],
+        goal: "Turn traders into data-driven performers",
         isActive: true,
+        isHighlighted: true,
         sortOrder: 2,
       },
       {
         planId: "elite",
-        name: "Elite",
-        priceMonthly: 39,
-        priceYearly: 390,
+        name: "Tradia Elite",
+        tagline: "For mentors, funded traders, and trading communities",
+        priceMonthly: 59,
+        priceYearly: 590,
         features: [
           "Everything in Pro",
-          "Priority support",
+          "Team / student management system",
+          "Shared workspace (Discord / community integration)",
+          "Cohort analytics (track students or members)",
+          "Trade review & coaching tools",
+          "Leaderboards & performance rankings",
+          "Audit logs (track member activity)",
+          "Aggregated reports (group performance)",
+          "Invite system (build your academy inside Tradia)",
           "Early access to new features",
-          "Custom coaching insights",
-          "Export & API access",
+          "VIP support",
         ],
+        goal: "Build your Tradia Trading Academy ecosystem",
         isActive: true,
+        isHighlighted: false,
         sortOrder: 3,
-      },
-      {
-        planId: "legend",
-        name: "Legend",
-        priceMonthly: 79,
-        priceYearly: 790,
-        features: [
-          "Everything in Elite",
-          "Team management workspace",
-          "Student risk monitoring",
-          "Cohort management",
-          "Coach desk & messaging",
-          "Team reports & leaderboard",
-        ],
-        isActive: true,
-        sortOrder: 4,
       },
     ];
 
+    const wantedIds = new Set(plans.map((p) => p.planId));
+    const existing = await ctx.db.query("subscriptionPlans").collect();
+    const byPlanId = new Map(existing.map((p) => [p.planId, p]));
+
     for (const plan of plans) {
-      if (!existingIds.has(plan.planId)) {
+      const found = byPlanId.get(plan.planId);
+      if (found) {
+        await ctx.db.patch(found._id, plan);
+      } else {
         await ctx.db.insert("subscriptionPlans", plan);
+      }
+    }
+
+    // Deactivate any legacy plans not in the new lineup (essential/legend/etc.)
+    for (const old of existing) {
+      if (!wantedIds.has(old.planId) && old.isActive) {
+        await ctx.db.patch(old._id, { isActive: false });
       }
     }
   },

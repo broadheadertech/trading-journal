@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Trade, EmotionState, TradeTag, Strategy, RuleCompliance, Verdict, MarketType, Direction } from '@/lib/types';
@@ -59,7 +59,7 @@ const EMOTION_TAGS: { value: EmotionState; label: string; color: string }[] = [
   { value: 'Neutral', label: 'Boredom', color: 'bg-gray-500/15 text-gray-400 border-gray-500/30' },
   { value: 'Confident', label: 'Confident', color: 'bg-green-500/15 text-green-400 border-green-500/30' },
   { value: 'Anxious', label: 'Anxious', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
-  { value: 'Calm', label: 'Flow State', color: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' },
+  { value: 'Calm', label: 'Flow State', color: 'bg-fuchsia-500/15 text-fuchsia-400 border-cyan-500/30' },
   { value: 'Greedy', label: 'Greedy', color: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
   { value: 'Fearful', label: 'Fearful', color: 'bg-purple-500/15 text-purple-400 border-purple-500/30' },
 ];
@@ -225,16 +225,16 @@ export default function TradeForm({
 
   return (
     <div className="space-y-5">
-      {/* ── Market Type ── */}
+      {/* â”€â”€ Market Type â”€â”€ */}
       <div>
         <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Asset Class</label>
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           {([
-            { value: 'crypto', label: 'Crypto', icon: '₿' },
-            { value: 'stocks', label: 'Stocks', icon: '📈' },
-            { value: 'forex',  label: 'Forex',  icon: '💱' },
-            { value: 'metals', label: 'Metals', icon: '🥇' },
-            { value: 'oil',    label: 'Oil',    icon: '🛢️' },
+            { value: 'crypto', label: 'Crypto', icon: 'â‚¿' },
+            { value: 'stocks', label: 'Stocks', icon: 'ðŸ“ˆ' },
+            { value: 'forex',  label: 'Forex',  icon: 'ðŸ’±' },
+            { value: 'metals', label: 'Metals', icon: 'ðŸ¥‡' },
+            { value: 'oil',    label: 'Oil',    icon: 'ðŸ›¢ï¸' },
           ] as const).map(opt => (
             <button
               key={opt.value}
@@ -251,7 +251,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Symbol + Side ── */}
+      {/* â”€â”€ Symbol + Side â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="relative">
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Symbol</label>
@@ -309,7 +309,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Open Time / Close Time ── */}
+      {/* â”€â”€ Open Time / Close Time â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Open Time</label>
@@ -325,7 +325,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Entry Price / Exit Price ── */}
+      {/* â”€â”€ Entry Price / Exit Price â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Entry Price</label>
@@ -337,7 +337,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Lots/Qty/Size, Realized P&L, Fees ── */}
+      {/* â”€â”€ Lots/Qty/Size, Realized P&L, Fees â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">
@@ -367,7 +367,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Funding, Leverage, Margin ── */}
+      {/* â”€â”€ Funding, Leverage, Margin â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Funding</label>
@@ -387,7 +387,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Strategy + Stop Loss + Target ── */}
+      {/* â”€â”€ Strategy + Stop Loss + Target â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Strategy</label>
@@ -406,12 +406,12 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Per-Rule Compliance Panel ── */}
+      {/* â”€â”€ Per-Rule Compliance Panel â”€â”€ */}
       {selectedStrategy && selectedStrategy.rules.length > 0 && (
         <div className={`rounded-xl p-3 sm:p-4 border space-y-2 ${hasRuleBreaks ? 'border-amber-500/30 bg-amber-500/5' : 'border-[var(--border)] bg-[var(--muted)]/30'}`}>
           <div className="flex items-center gap-2 text-sm font-medium">
             {hasRuleBreaks ? <AlertTriangle size={14} className="text-amber-400" /> : <CheckCircle size={14} className="text-green-400" />}
-            <span>Rule Check — {selectedStrategy.name}</span>
+            <span>Rule Check â€” {selectedStrategy.name}</span>
           </div>
           <div className="space-y-2">
             {selectedStrategy.rules.map((rule, i) => (
@@ -428,7 +428,7 @@ export default function TradeForm({
         </div>
       )}
 
-      {/* ── REVIEW Section ── */}
+      {/* â”€â”€ REVIEW Section â”€â”€ */}
       <div className="border-t border-[var(--border)] pt-5 space-y-5">
         <div className="inline-flex px-3 py-1 rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-semibold uppercase tracking-widest">
           Review
@@ -667,7 +667,7 @@ export default function TradeForm({
         </div>
       </div>
 
-      {/* ── Validation Errors ── */}
+      {/* â”€â”€ Validation Errors â”€â”€ */}
       {errors.length > 0 && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 space-y-1">
           {errors.map((err, i) => (
@@ -678,7 +678,7 @@ export default function TradeForm({
         </div>
       )}
 
-      {/* ── Actions ── */}
+      {/* â”€â”€ Actions â”€â”€ */}
       <div className="flex justify-end gap-3 pt-3 border-t border-[var(--border)]">
         <button onClick={onCancel} className="px-5 py-2.5 text-sm rounded-lg hover:bg-[var(--muted)] transition-colors font-medium">
           Cancel

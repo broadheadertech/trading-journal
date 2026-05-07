@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -47,7 +47,7 @@ export default function AdminArticlesPage() {
         <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Manage Articles</h1>
         <button
           onClick={() => setCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-teal-500 to-teal-700 text-white rounded-xl text-sm font-semibold"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-xl text-sm font-semibold"
         >
           <Plus size={16} /> New Article
         </button>
@@ -59,7 +59,7 @@ export default function AdminArticlesPage() {
           <Stat label="Articles"         value={analytics.totalArticles} icon={BookOpen} />
           <Stat label="Published"        value={analytics.published}     icon={CheckCircle} accent="text-emerald-400" />
           <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} />
-          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={Mail} accent="text-cyan-400" />
+          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={Mail} accent="text-fuchsia-400" />
         </div>
       )}
 
@@ -86,7 +86,7 @@ export default function AdminArticlesPage() {
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
               filter === f
-                ? 'bg-teal-500 text-white'
+                ? 'bg-pink-500 text-white'
                 : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60'
             }`}
           >
@@ -105,21 +105,21 @@ export default function AdminArticlesPage() {
             const Icon = meta.icon;
             return (
               <div key={a.id} className="glass rounded-2xl p-4 flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center shrink-0">
-                  <BookOpen size={16} className="text-teal-400" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center shrink-0">
+                  <BookOpen size={16} className="text-pink-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${meta.color}`}>
                       <Icon size={10} /> {meta.label}
                     </span>
-                    <span className="text-[10px] text-[var(--muted-foreground)]">{a.category} · {a.accessTier}</span>
+                    <span className="text-[10px] text-[var(--muted-foreground)]">{a.category} Â· {a.accessTier}</span>
                   </div>
                   <div className="font-semibold text-[var(--foreground)]">{a.title}</div>
                   <div className="text-xs text-[var(--muted-foreground)] line-clamp-1">{a.excerpt}</div>
                   <div className="flex items-center gap-3 mt-1 text-[10px] text-[var(--muted-foreground)]">
                     <span>by {a.authorName}</span>
-                    <span>·</span>
+                    <span>Â·</span>
                     <span className="flex items-center gap-1"><Eye size={10} /> {a.viewCount}</span>
                   </div>
                   {a.reviewNotes && (
@@ -174,7 +174,7 @@ export default function AdminArticlesPage() {
       {/* Newsletter subscribers section */}
       <section className="space-y-3">
         <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center gap-2">
-          <Mail size={14} className="text-cyan-400" /> Newsletter ({subscribers.length})
+          <Mail size={14} className="text-fuchsia-400" /> Newsletter ({subscribers.length})
         </h2>
         {subscribers.length === 0 ? (
           <p className="text-sm text-[var(--muted-foreground)]">No subscribers yet.</p>
@@ -182,7 +182,7 @@ export default function AdminArticlesPage() {
           <div className="glass rounded-2xl divide-y divide-[var(--border)] max-h-80 overflow-y-auto">
             {subscribers.map((s: any) => (
               <div key={s._id} className="p-3 flex items-center gap-3 text-sm">
-                <Mail size={12} className="text-cyan-400" />
+                <Mail size={12} className="text-fuchsia-400" />
                 <span className="flex-1 text-[var(--foreground)] truncate">{s.email}</span>
                 <span className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">{s.status}</span>
                 <button
@@ -214,7 +214,7 @@ function Stat({ label, value, icon: Icon, accent }: { label: string; value: numb
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void }) {
   const { user } = useUser();
   const { showToast } = useToast();
@@ -269,7 +269,7 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
 
   return (
     <div className="max-w-3xl space-y-5">
-      <button onClick={onBack} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">← Back</button>
+      <button onClick={onBack} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">â† Back</button>
 
       <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">{article ? 'Edit' : 'New'} Article</h1>
 
@@ -292,9 +292,9 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
           <button
             disabled={busy}
             onClick={submit}
-            className="flex-1 py-2 bg-gradient-to-br from-teal-500 to-teal-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex-1 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {busy ? 'Saving…' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
+            {busy ? 'Savingâ€¦' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
           </button>
         </div>
       </div>

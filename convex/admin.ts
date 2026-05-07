@@ -207,6 +207,9 @@ export const upsertPlan = mutation({
     features: v.array(v.string()),
     isActive: v.boolean(),
     sortOrder: v.number(),
+    tagline: v.optional(v.string()),
+    goal: v.optional(v.string()),
+    isHighlighted: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);

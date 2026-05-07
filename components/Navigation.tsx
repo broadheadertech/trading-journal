@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { TabId } from '@/lib/types';
 import {
@@ -86,7 +86,7 @@ export default function Navigation({
         <div className="max-w-[1400px] mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <BrainMascot size={28} className="shrink-0" />
-            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
               Tradia
             </h1>
             <span className="hidden sm:inline text-[10px] font-medium text-[var(--muted-foreground)] opacity-60">{APP_VERSION}</span>
@@ -161,7 +161,7 @@ export default function Navigation({
             </button>
             <SubscriptionBadge />
             <UserButton afterSignOutUrl="/sign-in" />
-            {/* Menu button — visible on mobile only (desktop uses bottom bar for all tabs) */}
+            {/* Menu button â€” visible on mobile only (desktop uses bottom bar for all tabs) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors"
@@ -172,7 +172,7 @@ export default function Navigation({
         </div>
       </header>
 
-      {/* Desktop tab bar — below header */}
+      {/* Desktop tab bar â€” below header */}
       <nav className="hidden md:block shrink-0 border-b border-[var(--border)] bg-[var(--card)]">
         <div className="max-w-[1400px] mx-auto flex items-stretch">
           {allowedTabs.map(tab => (
@@ -235,7 +235,7 @@ export default function Navigation({
                 className="w-full text-xs"
               >
                 {SUPPORTED_CURRENCIES.map(c => (
-                  <option key={c.code} value={c.code}>{c.symbol} — {c.label}</option>
+                  <option key={c.code} value={c.code}>{c.symbol} â€” {c.label}</option>
                 ))}
               </select>
             </div>
@@ -251,7 +251,7 @@ export default function Navigation({
       {/* Pricing modal */}
       <PricingPlans open={pricingOpen} onClose={() => setPricingOpen(false)} />
 
-      {/* Bottom navigation — mobile only */}
+      {/* Bottom navigation â€” mobile only */}
       <nav className="md:hidden shrink-0 z-40 border-t border-[var(--border)] bg-[var(--card)] safe-bottom">
         <div className="flex items-stretch">
           {allowedBottomTabs.map(tabId => {

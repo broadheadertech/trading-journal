@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { Trade } from '@/lib/types';
@@ -30,7 +30,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   // Trades are already filtered by the universal top-bar time range
   const windowedTrades = trades;
 
-  // ─── All computed metrics ─────────────────────────────────────────────────
+  // â”€â”€â”€ All computed metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const m = useMemo(() => {
     const closed = windowedTrades.filter(t => !t.isOpen && t.actualPnL !== null);
     const wins = closed.filter(t => t.actualPnL! > 0);
@@ -191,7 +191,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
     };
   }, [windowedTrades, initialCapital, formatCurrency]);
 
-  // ─── Calendar data ────────────────────────────────────────────────────────
+  // â”€â”€â”€ Calendar data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const calendarData = useMemo(() => {
     const start = startOfMonth(calMonth);
     const end = endOfMonth(calMonth);
@@ -228,7 +228,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
 
   const selectedDayData = selectedDay ? calendarData.dayMap.get(selectedDay) : null;
 
-  // ─── Helpers ──────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fmtPnl = (v: number) => { const s = formatCurrency(Math.abs(v)); return v < 0 ? `-${s}` : s; };
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
   const barMaxAbs = Math.max(...m.sessionData.map(s => Math.abs(s.pnl)), 1);
@@ -247,7 +247,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   return (
     <div className="relative space-y-5 anim-fade-up">
       <div className="hero-glow" />
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div className="flex items-start gap-4">
@@ -270,14 +270,14 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
       </div>
 
-      {/* ── Metrics shortcut ── */}
+      {/* â”€â”€ Metrics shortcut â”€â”€ */}
       <div className="flex items-center justify-end gap-2">
         <button onClick={() => setShowMetrics(true)} className="flex items-center gap-1 text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium shrink-0">
           <BarChart3 size={14} /> <span className="hidden sm:inline">50+ Metrics</span> <ArrowRight size={12} />
         </button>
       </div>
 
-      {/* ── Outcome Snapshot + Action Priority ── */}
+      {/* â”€â”€ Outcome Snapshot + Action Priority â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4">
@@ -329,19 +329,19 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
               </div>
             ))}
           </div>
-          <button className="mt-4 w-full py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+          <button className="mt-4 w-full py-2.5 bg-fuchsia-500 hover:bg-fuchsia-400 text-black rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2">
             Open Detailed Verdicts <ChevronRight size={14} />
           </button>
         </div>
       </div>
 
-      {/* ── Stat Cards Row ── */}
+      {/* â”€â”€ Stat Cards Row â”€â”€ */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {[
           { label: 'Net P&L', icon: '$', value: fmtPnl(m.totalPnL), sub: 'Realized outcome', color: pnlColor(m.totalPnL) },
           { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--foreground)]' },
           { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-emerald-400' : 'text-red-400' },
-          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400' },
+          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? 'âˆž' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400' },
           { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-red-400' },
           { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--foreground)]' },
         ].map(card => (
@@ -356,7 +356,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         ))}
       </div>
 
-      {/* ── Equity Trajectory & Fix Projection ── */}
+      {/* â”€â”€ Equity Trajectory & Fix Projection â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-1">
@@ -410,7 +410,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
       </div>
 
-      {/* ── Symbol Leaders & Session Diagnostics ── */}
+      {/* â”€â”€ Symbol Leaders & Session Diagnostics â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* Symbol Leaders & Drags */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
@@ -507,7 +507,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
       </div>
 
-      {/* ── Hold Profile + Size & Cost ── */}
+      {/* â”€â”€ Hold Profile + Size & Cost â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4">
@@ -565,7 +565,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
       </div>
 
-      {/* ── Bottom Cards: Loss Streak, Revenge, Process, Direction ── */}
+      {/* â”€â”€ Bottom Cards: Loss Streak, Revenge, Process, Direction â”€â”€ */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
@@ -653,7 +653,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
       </div>
 
-      {/* ── Daily Execution Calendar ── */}
+      {/* â”€â”€ Daily Execution Calendar â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
@@ -798,7 +798,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   );
 }
 
-// ─── Leak amount helper ───────────────────────────────────────────────────────
+// â”€â”€â”€ Leak amount helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function computeLeakAmount(closed: Trade[]) {
   const losses = closed.filter(t => t.actualPnL! < 0);
   const grossLoss = Math.abs(losses.reduce((s, t) => s + t.actualPnL!, 0));

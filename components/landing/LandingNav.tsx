@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -9,6 +9,7 @@ import {
   Sparkles, Workflow, Plug, Users,
   Database, Gift, Calculator, Scale,
   Shield, FileText, Mail, GitBranch, Lock, ScrollText,
+  Search, Activity, BarChart3, LayoutDashboard,
 } from 'lucide-react';
 
 type NavItem = { label: string; href: string };
@@ -25,6 +26,22 @@ const TOP_LINKS: NavItem[] = [
 ];
 
 const DROPDOWNS: Dropdown[] = [
+  {
+    label: 'Features',
+    groups: [
+      {
+        heading: 'What you get',
+        items: [
+          { icon: Search,          label: 'Leak Detection',        desc: 'Costly trading mistakes ranked by $ impact',     href: '/#features' },
+          { icon: Activity,        label: 'Behavior Analysis',     desc: 'Discipline score + emotional pressure tracking', href: '/#features' },
+          { icon: BarChart3,       label: 'Performance Analytics', desc: '50+ metrics computed automatically every import', href: '/#features' },
+          { icon: Shield,          label: 'Playbook Rules',        desc: 'Custom rules scored compliance trade-by-trade',  href: '/#features' },
+          { icon: LayoutDashboard, label: 'Dashboard Overview',    desc: 'Net P&L, equity curve, heatmap, recent trades',  href: '/#features' },
+          { icon: Sparkles,        label: 'What-If Scenarios',     desc: 'Replay trades with adjusted stops or rules',     href: '/#features' },
+        ],
+      },
+    ],
+  },
   {
     label: 'Platform',
     groups: [
@@ -45,7 +62,7 @@ const DROPDOWNS: Dropdown[] = [
         heading: 'Browse',
         items: [
           { icon: Database,   label: 'Brokers',   desc: 'All 67+ supported brokers and exchanges',  href: '/brokers' },
-          { icon: Gift,       label: 'Affiliate', desc: 'Earn 30–50% recurring commission',         href: '/affiliate' },
+          { icon: Gift,       label: 'Affiliate', desc: 'Earn 30â€“50% recurring commission',         href: '/affiliate' },
         ],
       },
       {
@@ -110,7 +127,7 @@ export default function LandingNav() {
             priority
             className="w-9 h-9 object-contain"
           />
-          <span className="text-xl font-bold bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">
+          <span className="text-xl font-bold bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
             Tradia
           </span>
         </Link>
@@ -121,7 +138,7 @@ export default function LandingNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-teal-400 transition-colors"
+              className="px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-pink-400 transition-colors"
             >
               {link.label}
             </Link>
@@ -135,7 +152,7 @@ export default function LandingNav() {
             >
               <button
                 className={`px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1 ${
-                  openDropdown === d.label ? 'text-teal-400' : 'text-[var(--muted-foreground)] hover:text-teal-400'
+                  openDropdown === d.label ? 'text-pink-400' : 'text-[var(--muted-foreground)] hover:text-pink-400'
                 }`}
               >
                 {d.label}
@@ -153,7 +170,7 @@ export default function LandingNav() {
           {isSignedIn ? (
             <Link
               href="/app"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_20px_-4px_rgba(45,212,191,0.5)] transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all"
             >
               <Zap size={14} className="fill-current" />
               Go to Dashboard
@@ -168,7 +185,7 @@ export default function LandingNav() {
               </Link>
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_20px_-4px_rgba(45,212,191,0.5)] transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all"
               >
                 <Zap size={14} className="fill-current" />
                 Start Free Trial
@@ -195,7 +212,7 @@ export default function LandingNav() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="block px-3 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:text-teal-400 hover:bg-[var(--muted)]/30 rounded-lg transition-colors"
+                className="block px-3 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:text-pink-400 hover:bg-[var(--muted)]/30 rounded-lg transition-colors"
               >
                 {link.label}
               </Link>
@@ -207,7 +224,7 @@ export default function LandingNav() {
                   <button
                     onClick={() => setOpenMobileGroup(isOpen ? null : d.label)}
                     className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                      isOpen ? 'bg-[var(--muted)]/30 text-teal-400' : 'text-[var(--muted-foreground)] hover:text-teal-400 hover:bg-[var(--muted)]/30'
+                      isOpen ? 'bg-[var(--muted)]/30 text-pink-400' : 'text-[var(--muted-foreground)] hover:text-pink-400 hover:bg-[var(--muted)]/30'
                     }`}
                   >
                     {d.label}
@@ -229,7 +246,7 @@ export default function LandingNav() {
                               onClick={() => setMenuOpen(false)}
                               className="flex items-start gap-2.5 px-2 py-2 rounded-md hover:bg-[var(--muted)]/30 transition-colors group"
                             >
-                              <it.icon size={14} className="mt-0.5 text-teal-400 shrink-0" />
+                              <it.icon size={14} className="mt-0.5 text-pink-400 shrink-0" />
                               <div>
                                 <div className="text-xs font-bold text-[var(--foreground)]">{it.label}</div>
                                 <div className="text-[10px] text-[var(--muted-foreground)] leading-snug">{it.desc}</div>
@@ -249,7 +266,7 @@ export default function LandingNav() {
               <Link
                 href="/app"
                 onClick={() => setMenuOpen(false)}
-                className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300"
+                className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400"
               >
                 <Zap size={14} className="fill-current" /> Go to Dashboard
               </Link>
@@ -265,7 +282,7 @@ export default function LandingNav() {
                 <Link
                   href="/sign-up"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300"
+                  className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400"
                 >
                   <Zap size={14} className="fill-current" /> Start Free Trial
                 </Link>
@@ -286,7 +303,7 @@ function DropdownPanel({ dropdown, onClose }: { dropdown: Dropdown; onClose: () 
     >
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl overflow-hidden backdrop-blur-xl">
         {/* Top accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-teal-400/50 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-pink-400/50 to-transparent" />
         <div className={`p-2 ${wide ? 'grid grid-cols-2 gap-1' : ''}`}>
           {dropdown.groups.map(g => (
             <div key={g.heading || 'group'} className="space-y-0.5">
@@ -300,13 +317,13 @@ function DropdownPanel({ dropdown, onClose }: { dropdown: Dropdown; onClose: () 
                   key={it.label}
                   href={it.href}
                   onClick={onClose}
-                  className="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-teal-500/10 transition-colors group"
+                  className="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-pink-500/10 transition-colors group"
                 >
-                  <div className="w-8 h-8 rounded-md bg-gradient-to-br from-teal-500/15 to-cyan-500/10 border border-teal-500/20 flex items-center justify-center shrink-0 group-hover:border-teal-500/40 transition-colors">
-                    <it.icon size={14} className="text-teal-400" />
+                  <div className="w-8 h-8 rounded-md bg-gradient-to-br from-pink-500/15 to-fuchsia-500/10 border border-pink-500/20 flex items-center justify-center shrink-0 group-hover:border-pink-500/40 transition-colors">
+                    <it.icon size={14} className="text-pink-400" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs font-bold text-[var(--foreground)] group-hover:text-teal-400 transition-colors">{it.label}</div>
+                    <div className="text-xs font-bold text-[var(--foreground)] group-hover:text-pink-400 transition-colors">{it.label}</div>
                     <div className="text-[10px] text-[var(--muted-foreground)] leading-snug mt-0.5">{it.desc}</div>
                   </div>
                 </Link>

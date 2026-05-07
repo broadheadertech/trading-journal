@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -62,13 +62,13 @@ export default function AdminCoachesPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={c.photoUrl} alt={c.displayName} className="w-12 h-12 rounded-xl object-cover" />
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/30 to-emerald-500/10 flex items-center justify-center text-white font-bold">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-white font-bold">
                   {c.displayName.charAt(0)}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-[var(--foreground)]">{c.displayName}</div>
-                <div className="text-xs text-[var(--muted-foreground)] truncate">{c.headline} · ${c.hourlyRateUsd}/hr</div>
+                <div className="text-xs text-[var(--muted-foreground)] truncate">{c.headline} Â· ${c.hourlyRateUsd}/hr</div>
               </div>
               <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${STATUS[c.status]}`}>{c.status}</span>
               <div className="flex items-center gap-1">
@@ -113,10 +113,10 @@ export default function AdminCoachesPage() {
           <div className="glass rounded-2xl divide-y divide-[var(--border)]">
             {sessions.map((s: any) => (
               <div key={s.id} className="p-3 flex items-center gap-3 text-sm">
-                <Headphones size={14} className="text-teal-400" />
+                <Headphones size={14} className="text-pink-400" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-[var(--foreground)]">{s.clientName}</div>
-                  <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleString()} · ${s.pricePaidUsd}</div>
+                  <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleString()} Â· ${s.pricePaidUsd}</div>
                 </div>
                 <span className="text-[10px] uppercase font-bold text-[var(--muted-foreground)]">{s.status}</span>
               </div>

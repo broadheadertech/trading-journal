@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: 'Can I request a new broker integration?',
-    a: 'Yes — email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
+    a: 'Yes â€” email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
   },
 ];
 
@@ -56,7 +56,7 @@ export default function ContactPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.h1
@@ -66,7 +66,7 @@ export default function ContactPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Talk to the{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia team</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Tradia team</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -80,9 +80,9 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400"
+            className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs text-pink-400"
           >
-            <Clock size={12} /> Mon–Fri, UTC business hours · Priority response for Pro subscribers
+            <Clock size={12} /> Monâ€“Fri, UTC business hours Â· Priority response for Pro subscribers
           </motion.div>
         </div>
       </section>
@@ -98,15 +98,15 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 hover:border-teal-500/30 transition-colors group"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 hover:border-pink-500/30 transition-colors group"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center flex-shrink-0">
-                    <Mail size={16} className="text-teal-400" />
+                  <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center flex-shrink-0">
+                    <Mail size={16} className="text-pink-400" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">{r.label}</h3>
-                    <span className="text-xs text-teal-400 group-hover:text-teal-300 transition-colors break-all">{r.email}</span>
+                    <span className="text-xs text-pink-400 group-hover:text-pink-300 transition-colors break-all">{r.email}</span>
                   </div>
                 </div>
               </motion.a>
@@ -119,13 +119,13 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Check size={16} className="text-teal-400" />
+              <Check size={16} className="text-pink-400" />
               <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">What we can help with</h2>
             </div>
             <ul className="space-y-2">
               {SCOPE.map(s => (
                 <li key={s} className="flex items-start gap-2 text-sm text-[var(--foreground)]">
-                  <Check size={14} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                  <Check size={14} className="text-pink-400 mt-0.5 flex-shrink-0" />
                   {s}
                 </li>
               ))}
