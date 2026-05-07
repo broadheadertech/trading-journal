@@ -1,14 +1,14 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Search, Activity, BarChart3, ArrowRight, AlertTriangle, TrendingUp, Flame } from 'lucide-react';
+import { Search, Activity, BarChart3, AlertTriangle, TrendingUp, Flame } from 'lucide-react';
 
 export default function DashboardPreview() {
   return (
     <section id="dashboard-preview" className="relative py-20 sm:py-28 border-t border-[var(--border)]">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal-500 opacity-[0.04] rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-pink-500 opacity-[0.04] rounded-full blur-[140px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
@@ -19,12 +19,9 @@ export default function DashboardPreview() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-            What You Get
-          </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Your dashboard after one{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">CSV upload</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Your dashboard after</span>{' '}
+            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">one CSV upload</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Three core dashboards, each one purpose-built to surface what&apos;s draining your account and what&apos;s working.
@@ -32,13 +29,13 @@ export default function DashboardPreview() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-10">
-          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.">
+          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO â€” each measured in real money lost.">
             <LeaksMock />
           </PillarCard>
-          <PillarCard delay={0.1} icon={Activity} accent="from-teal-400 to-cyan-400" title="Track Your Discipline" desc="Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.">
+          <PillarCard delay={0.1} icon={Activity} accent="from-pink-400 to-fuchsia-400" title="Track Your Discipline" desc="Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.">
             <DisciplineMock />
           </PillarCard>
-          <PillarCard delay={0.2} icon={BarChart3} accent="from-emerald-400 to-lime-400" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.">
+          <PillarCard delay={0.2} icon={BarChart3} accent="from-fuchsia-400 to-pink-500" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown â€” all the metrics that matter, computed automatically.">
             <EdgeMock />
           </PillarCard>
         </div>
@@ -46,10 +43,9 @@ export default function DashboardPreview() {
         <div className="flex justify-center">
           <Link
             href="/sign-up"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_30px_-4px_rgba(45,212,191,0.5)] transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
           >
-            Start Free — See Your Own Dashboard
-            <ArrowRight size={16} />
+            Start Free â€” See Your Own Dashboard
           </Link>
         </div>
       </div>
@@ -67,7 +63,7 @@ function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.5, delay }}
-      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-teal-500/30 transition-colors"
+      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-pink-500/30 transition-colors"
     >
       <div className="flex items-center gap-3 mb-4">
         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} bg-opacity-20 flex items-center justify-center`}>
@@ -83,11 +79,11 @@ function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
 
 function LeaksMock() {
   const leaks = [
-    { name: 'Revenge Trading',  cost: '−$1,420', sev: 'high',   pct: 100 },
-    { name: 'Oversized Position', cost: '−$890',  sev: 'high',   pct: 63 },
-    { name: 'FOMO Entries',     cost: '−$540',  sev: 'med',    pct: 38 },
-    { name: 'Late Session Drift', cost: '−$280', sev: 'med',    pct: 20 },
-    { name: 'No Stop Loss',     cost: '−$140',  sev: 'low',    pct: 10 },
+    { name: 'Revenge Trading',  cost: 'âˆ’$1,420', sev: 'high',   pct: 100 },
+    { name: 'Oversized Position', cost: 'âˆ’$890',  sev: 'high',   pct: 63 },
+    { name: 'FOMO Entries',     cost: 'âˆ’$540',  sev: 'med',    pct: 38 },
+    { name: 'Late Session Drift', cost: 'âˆ’$280', sev: 'med',    pct: 20 },
+    { name: 'No Stop Loss',     cost: 'âˆ’$140',  sev: 'low',    pct: 10 },
   ];
   return (
     <div className="space-y-2">
@@ -120,7 +116,7 @@ function LeaksMock() {
 function DisciplineMock() {
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-teal-400/80">
+      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-pink-400/80">
         <Activity size={10} /> 30-day discipline score
       </div>
       <div className="flex items-center justify-center py-2">
@@ -148,7 +144,7 @@ function DisciplineMock() {
             </defs>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent tabular-nums">78</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent tabular-nums">78</span>
             <span className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]">/ 100</span>
           </div>
         </div>
@@ -157,7 +153,7 @@ function DisciplineMock() {
         {[0.6, 0.4, 0.7, 0.85, 0.3, 0.9, 0.78].map((v, i) => (
           <div key={i} className="text-center">
             <div className="h-10 flex items-end justify-center">
-              <div className="w-full rounded-sm bg-gradient-to-t from-teal-500 to-cyan-400" style={{ height: `${v * 100}%` }} />
+              <div className="w-full rounded-sm bg-gradient-to-t from-pink-500 to-fuchsia-400" style={{ height: `${v * 100}%` }} />
             </div>
             <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">{['M','T','W','T','F','S','S'][i]}</div>
           </div>
@@ -173,17 +169,17 @@ function EdgeMock() {
   const path = points.map((p, i) => `${(i / (points.length - 1)) * 100},${100 - (p / max) * 100}`).join(' ');
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-emerald-400/80">
-        <TrendingUp size={10} /> Equity curve · 30d
+      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-pink-400/80">
+        <TrendingUp size={10} /> Equity curve Â· 30d
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
           <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Win Rate</div>
-          <div className="text-lg font-bold text-emerald-300 tabular-nums">62%</div>
+          <div className="text-lg font-bold text-pink-300 tabular-nums">62%</div>
         </div>
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
           <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Profit Factor</div>
-          <div className="text-lg font-bold text-emerald-300 tabular-nums">2.14</div>
+          <div className="text-lg font-bold text-pink-300 tabular-nums">2.14</div>
         </div>
       </div>
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
@@ -201,7 +197,7 @@ function EdgeMock() {
       <div className="flex items-center justify-between text-[9px]">
         <span className="text-[var(--muted-foreground)]">Sharpe 1.84</span>
         <span className="text-[var(--muted-foreground)]">Max DD 8.2%</span>
-        <span className="text-emerald-400">+$4,230</span>
+        <span className="text-pink-400">+$4,230</span>
       </div>
     </div>
   );

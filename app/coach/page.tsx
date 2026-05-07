@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -21,7 +21,7 @@ export default function CoachProfilePage() {
     return (
       <div className="max-w-xl">
         <div className="glass rounded-3xl p-8 text-center space-y-3">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-[var(--muted)]/40 flex items-center justify-center text-3xl">🚫</div>
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-[var(--muted)]/40 flex items-center justify-center text-3xl">ðŸš«</div>
           <h1 className="text-2xl font-bold text-[var(--foreground)]">Applications are closed</h1>
           <p className="text-sm text-[var(--muted-foreground)]">
             We&apos;re not accepting new coach applications right now. Check back soon.
@@ -94,9 +94,9 @@ function ApplyForm({ onSubmit }: { onSubmit: (d: any) => Promise<void> }) {
               });
             } finally { setBusy(false); }
           }}
-          className="w-full py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold disabled:opacity-50"
+          className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold disabled:opacity-50"
         >
-          {busy ? 'Submitting…' : 'Submit application'}
+          {busy ? 'Submittingâ€¦' : 'Submit application'}
         </button>
       </div>
     </div>
@@ -113,7 +113,7 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
 
   const STATUS: Record<string, { label: string; color: string }> = {
     pending:   { label: 'Pending review', color: 'bg-amber-500/15 text-amber-400' },
-    approved:  { label: 'Approved · Live', color: 'bg-emerald-500/15 text-emerald-400' },
+    approved:  { label: 'Approved Â· Live', color: 'bg-emerald-500/15 text-emerald-400' },
     suspended: { label: 'Suspended', color: 'bg-[var(--red)]/15 text-[var(--red)]' },
     rejected:  { label: 'Rejected', color: 'bg-[var(--red)]/15 text-[var(--red)]' },
   };
@@ -130,7 +130,7 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
       <div className="grid grid-cols-3 gap-3">
         <div className="glass rounded-2xl p-4">
           <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1"><Star size={11} /> Rating</div>
-          <div className="text-2xl font-bold text-[var(--foreground)]">{profile.avgRating?.toFixed(1) ?? '—'}</div>
+          <div className="text-2xl font-bold text-[var(--foreground)]">{profile.avgRating?.toFixed(1) ?? 'â€”'}</div>
         </div>
         <div className="glass rounded-2xl p-4">
           <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1"><ShieldCheck size={11} /> Reviews</div>
@@ -159,7 +159,7 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
             hourlyRateUsd: Number(hourlyRateUsd),
             sessionDurationMin: Number(sessionDurationMin),
           })}
-          className="px-5 py-2 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold"
+          className="px-5 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold"
         >
           Save changes
         </button>

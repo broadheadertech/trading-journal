@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Activity, AlertTriangle, RefreshCw, DollarSign, Bitcoin, Flame, Newspaper, MessageCircle, ArrowUp, ExternalLink, PlayCircle, Youtube } from 'lucide-react';
@@ -107,7 +107,7 @@ export default function WorldMonitorLive() {
         <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center gap-2">
           <Activity size={14} className="text-emerald-400 animate-pulse" />
           Live Data
-          {data && <span className="font-normal normal-case text-[10px]">· updated {timeAgo(new Date(data.fetchedAt).getTime())}</span>}
+          {data && <span className="font-normal normal-case text-[10px]">Â· updated {timeAgo(new Date(data.fetchedAt).getTime())}</span>}
         </h2>
         <button
           onClick={load}
@@ -120,7 +120,7 @@ export default function WorldMonitorLive() {
 
       {error && (
         <div className="glass rounded-2xl p-4 text-sm text-amber-400 flex items-center gap-2">
-          <AlertTriangle size={14} /> {error} — sources may be rate-limiting.
+          <AlertTriangle size={14} /> {error} â€” sources may be rate-limiting.
         </div>
       )}
 
@@ -157,7 +157,7 @@ export default function WorldMonitorLive() {
 
           {/* World News */}
           {data.news && data.news.length > 0 && (
-            <Section title="World News (live)" icon={<Newspaper size={14} className="text-cyan-400" />}>
+            <Section title="World News (live)" icon={<Newspaper size={14} className="text-fuchsia-400" />}>
               <div className="glass rounded-2xl divide-y divide-[var(--border)] overflow-hidden">
                 {data.news.map((n, i) => (
                   <a
@@ -176,21 +176,21 @@ export default function WorldMonitorLive() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-0.5">
                         {n.flair && (
-                          <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 font-bold">
+                          <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-fuchsia-500/15 text-fuchsia-400 font-bold">
                             {n.flair}
                           </span>
                         )}
                         <span className="text-[10px] text-[var(--muted-foreground)]">{n.source}</span>
-                        <span className="text-[10px] text-[var(--muted-foreground)]">· {timeAgo(n.publishedAt)}</span>
+                        <span className="text-[10px] text-[var(--muted-foreground)]">Â· {timeAgo(n.publishedAt)}</span>
                       </div>
-                      <div className="text-sm text-[var(--foreground)] group-hover:text-cyan-400 transition-colors line-clamp-2">
+                      <div className="text-sm text-[var(--foreground)] group-hover:text-fuchsia-400 transition-colors line-clamp-2">
                         {n.title}
                       </div>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
                           <MessageCircle size={10} /> {n.comments}
                         </span>
-                        <span className="text-[10px] text-[var(--muted-foreground)]">·</span>
+                        <span className="text-[10px] text-[var(--muted-foreground)]">Â·</span>
                         <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1">
                           <Youtube size={10} className="text-red-500" /> Watch on
                         </span>
@@ -215,7 +215,7 @@ export default function WorldMonitorLive() {
             </Section>
           )}
 
-          {/* Latest video coverage — top of each major news network's YouTube */}
+          {/* Latest video coverage â€” top of each major news network's YouTube */}
           {data.videos && data.videos.length > 0 && (
             <Section title="Latest Video Coverage" icon={<PlayCircle size={14} className="text-red-500" />}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -274,7 +274,7 @@ export default function WorldMonitorLive() {
             )}
 
             {/* Earthquakes */}
-            <Section title="Recent Earthquakes (M ≥ 4.5, 24h)" icon={<AlertTriangle size={14} className="text-amber-400" />}>
+            <Section title="Recent Earthquakes (M â‰¥ 4.5, 24h)" icon={<AlertTriangle size={14} className="text-amber-400" />}>
               <div className="glass rounded-2xl p-3">
                 {data.earthquakes.length === 0 ? (
                   <p className="text-sm text-[var(--muted-foreground)] text-center py-3">No significant events in the last 24h.</p>
@@ -297,7 +297,7 @@ export default function WorldMonitorLive() {
           </div>
 
           <p className="text-[10px] text-[var(--muted-foreground)] text-center">
-            Sources: Yahoo Finance · USGS · open.er-api.com · Reddit r/worldnews · YouTube RSS (CNN, BBC, Reuters, Al Jazeera, Bloomberg). Refreshed every 60s.
+            Sources: Yahoo Finance Â· USGS Â· open.er-api.com Â· Reddit r/worldnews Â· YouTube RSS (CNN, BBC, Reuters, Al Jazeera, Bloomberg). Refreshed every 60s.
           </p>
         </>
       )}

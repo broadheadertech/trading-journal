@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -45,7 +45,7 @@ const TIERS = [
 
 const HOW = [
   { icon: Link2,     title: 'Get your link',    body: 'Sign up free, grab your unique referral link from the affiliate dashboard.' },
-  { icon: Users,     title: 'Share with traders', body: 'Drop the link in Twitter, YouTube, Discord, blogs — anywhere traders gather.' },
+  { icon: Users,     title: 'Share with traders', body: 'Drop the link in Twitter, YouTube, Discord, blogs â€” anywhere traders gather.' },
   { icon: DollarSign, title: 'Earn recurring',   body: 'Get paid every month they stay subscribed. Lifetime commissions, no caps.' },
 ];
 
@@ -80,14 +80,14 @@ export default function AffiliatePage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs font-medium text-teal-400 mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
           >
             <Gift size={12} /> Lifetime recurring commissions
           </motion.div>
@@ -98,7 +98,7 @@ export default function AffiliatePage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Get paid to share{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Tradia</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Tradia</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -106,7 +106,7 @@ export default function AffiliatePage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Earn 30–50% recurring commission on every trader you refer. Lifetime. No caps. Monthly payouts.
+            Earn 30â€“50% recurring commission on every trader you refer. Lifetime. No caps. Monthly payouts.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -137,7 +137,7 @@ export default function AffiliatePage() {
             {[
               { v: '50%', l: 'Top commission' },
               { v: '90d', l: 'Cookie window' },
-              { v: '∞',   l: 'Lifetime payouts' },
+              { v: 'âˆž',   l: 'Lifetime payouts' },
               { v: '$50', l: 'Minimum payout' },
             ].map((s, i) => (
               <motion.div
@@ -148,7 +148,7 @@ export default function AffiliatePage() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="text-center rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
               >
-                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
                   {s.v}
                 </div>
                 <div className="mt-1 text-xs text-[var(--muted-foreground)]">{s.l}</div>
@@ -176,8 +176,8 @@ export default function AffiliatePage() {
                 className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-lg bg-teal-500/10 flex items-center justify-center">
-                    <h.icon size={16} className="text-teal-400" />
+                  <div className="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center">
+                    <h.icon size={16} className="text-pink-400" />
                   </div>
                   <span className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Step {i + 1}</span>
                 </div>
@@ -205,12 +205,12 @@ export default function AffiliatePage() {
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className={`rounded-2xl border p-6 ${
-                  t.highlighted ? 'border-teal-500/40 bg-teal-500/5' : 'border-[var(--border)] bg-[var(--card)]'
+                  t.highlighted ? 'border-pink-500/40 bg-pink-500/5' : 'border-[var(--border)] bg-[var(--card)]'
                 }`}
               >
                 <div className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">{t.name}</div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
                     {t.commission}
                   </span>
                   <span className="text-xs text-[var(--muted-foreground)]">/ referral / month</span>
@@ -219,7 +219,7 @@ export default function AffiliatePage() {
                 <ul className="mt-5 space-y-2">
                   {t.perks.map(p => (
                     <li key={p} className="flex items-start gap-2 text-xs text-[var(--foreground)]">
-                      <BarChart3 size={12} className="text-teal-400 mt-0.5 flex-shrink-0" />
+                      <BarChart3 size={12} className="text-pink-400 mt-0.5 flex-shrink-0" />
                       <span>{p}</span>
                     </li>
                   ))}
@@ -261,7 +261,7 @@ export default function AffiliatePage() {
             Ready to start earning?
           </h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Free to join. Get your link in 60 seconds. Questions? <a href="mailto:affiliates@tradia.app" className="text-teal-400 hover:text-teal-300 transition-colors inline-flex items-center gap-1"><Mail size={12} /> affiliates@tradia.app</a>
+            Free to join. Get your link in 60 seconds. Questions? <a href="mailto:affiliates@tradia.app" className="text-pink-400 hover:text-pink-300 transition-colors inline-flex items-center gap-1"><Mail size={12} /> affiliates@tradia.app</a>
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -10,13 +10,13 @@ const FEATURES = [
   {
     icon: LayoutDashboard,
     title: 'Dashboard',
-    desc: 'Your main command center — portfolio equity curve, net P&L, win rate, profit factor, activity heatmap, and trade history at a glance. All metrics update automatically as you import trades.',
+    desc: 'Your main command center â€” portfolio equity curve, net P&L, win rate, profit factor, activity heatmap, and trade history at a glance. All metrics update automatically as you import trades.',
     Mock: DashboardMock,
   },
   {
     icon: Search,
     title: 'Leak Detection',
-    desc: 'The verdict engine ranks every costly pattern by dollar impact — revenge trading, overtrading, bad session hours, FOMO entries — with evidence clusters and recovery estimates for each.',
+    desc: 'The verdict engine ranks every costly pattern by dollar impact â€” revenge trading, overtrading, bad session hours, FOMO entries â€” with evidence clusters and recovery estimates for each.',
     Mock: LeakMock,
   },
   {
@@ -28,13 +28,13 @@ const FEATURES = [
   {
     icon: BarChart3,
     title: 'Performance Analytics',
-    desc: 'Deep performance analytics — breakdown by symbol, time of day, session, and trade type. 50+ metrics to find exactly which setups make money and which ones bleed.',
+    desc: 'Deep performance analytics â€” breakdown by symbol, time of day, session, and trade type. 50+ metrics to find exactly which setups make money and which ones bleed.',
     Mock: PerformanceMock,
   },
   {
     icon: Shield,
     title: 'Playbook',
-    desc: 'Define your trading rules once — max trades per session, risk limits, session hours — and track compliance automatically on every trade you import. No self-grading, no bias.',
+    desc: 'Define your trading rules once â€” max trades per session, risk limits, session hours â€” and track compliance automatically on every trade you import. No self-grading, no bias.',
     Mock: PlaybookMock,
   },
 ];
@@ -46,7 +46,7 @@ export default function DemoPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-10 text-center">
@@ -57,10 +57,10 @@ export default function DemoPage() {
             className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--card)] text-xs text-[var(--muted-foreground)] mb-6"
           >
             <span className="flex h-2 w-2 relative">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
             </span>
-            Live Demo · Trading Analytics in Action
+            Live Demo Â· Trading Analytics in Action
           </motion.div>
 
           <motion.h1
@@ -70,7 +70,7 @@ export default function DemoPage() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--foreground)] tracking-tight"
           >
             This is what your{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">dashboard looks like</span>
+            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">dashboard looks like</span>
           </motion.h1>
 
           <motion.p
@@ -100,7 +100,7 @@ export default function DemoPage() {
                 className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${reverse ? 'lg:[direction:rtl]' : ''}`}
               >
                 <div className={reverse ? '[direction:ltr]' : ''}>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal-500/20 bg-teal-500/10 text-[10px] font-bold uppercase tracking-widest text-teal-400 mb-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-500/20 bg-pink-500/10 text-[10px] font-bold uppercase tracking-widest text-pink-400 mb-4">
                     <Icon size={12} /> {f.title}
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] tracking-tight mb-3">{f.title}</h2>
@@ -112,7 +112,7 @@ export default function DemoPage() {
                     <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--border)] bg-black/40">
                       <span className="w-2 h-2 rounded-full bg-red-500/50" />
                       <span className="w-2 h-2 rounded-full bg-amber-500/50" />
-                      <span className="w-2 h-2 rounded-full bg-emerald-500/50" />
+                      <span className="w-2 h-2 rounded-full bg-pink-500/50" />
                       <div className="flex-1 mx-2 px-2 py-0.5 rounded bg-black/40 text-[9px] text-[var(--muted-foreground)] text-center font-mono">
                         tradia.app/app
                       </div>
@@ -121,7 +121,7 @@ export default function DemoPage() {
                       <Mock />
                     </div>
                   </div>
-                  <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded bg-emerald-500 text-[9px] font-bold uppercase tracking-wider text-slate-900">
+                  <div className="absolute -bottom-2 -right-2 px-2 py-0.5 rounded bg-pink-500 text-[9px] font-bold uppercase tracking-wider text-slate-900">
                     Sample data
                   </div>
                 </div>
@@ -138,23 +138,23 @@ export default function DemoPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
-            className="rounded-3xl border border-teal-500/20 bg-gradient-to-br from-teal-500/5 to-emerald-500/5 p-10 sm:p-14 text-center"
+            className="rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-500/5 to-fuchsia-500/5 p-10 sm:p-14 text-center"
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] tracking-tight">
-              Ready to see your <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">own numbers?</span>
+              Ready to see your <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">own numbers?</span>
             </h2>
             <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-              Upload your first CSV and get your real dashboard — with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.
+              Upload your first CSV and get your real dashboard â€” with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.
             </p>
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 mt-6 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_30px_-4px_rgba(45,212,191,0.5)] transition-all"
+              className="inline-flex items-center gap-2 mt-6 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
             >
               Start with Your Own Trades
               <ArrowRight size={16} />
             </Link>
             <p className="mt-4 text-xs text-[var(--muted-foreground)]">
-              No credit card · 14-day full Pro access · 67+ broker formats
+              No credit card Â· 14-day full Pro access Â· 67+ broker formats
             </p>
           </motion.div>
         </div>
@@ -165,7 +165,7 @@ export default function DemoPage() {
   );
 }
 
-/* ──────────────── Dashboard Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Dashboard Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function DashboardMock() {
   const ranges = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
   const heatmap = Array.from({ length: 28 }, (_, i) => Math.random() * 100 - 30);
@@ -179,7 +179,7 @@ function DashboardMock() {
         </div>
         <div className="flex items-center gap-0.5 rounded-md bg-black/30 border border-[var(--border)] p-0.5">
           {ranges.map(r => (
-            <span key={r} className={`text-[8px] font-bold px-2 py-1 rounded ${r === '1M' ? 'bg-teal-500/20 text-teal-300' : 'text-[var(--muted-foreground)]'}`}>{r}</span>
+            <span key={r} className={`text-[8px] font-bold px-2 py-1 rounded ${r === '1M' ? 'bg-pink-500/20 text-pink-300' : 'text-[var(--muted-foreground)]'}`}>{r}</span>
           ))}
         </div>
       </div>
@@ -194,7 +194,7 @@ function DashboardMock() {
         ].map(s => (
           <div key={s.l} className="rounded-lg border border-[var(--border)] bg-black/30 p-2.5">
             <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">{s.l}</div>
-            <div className="text-base font-bold text-emerald-300 tabular-nums leading-tight mt-0.5">{s.v}</div>
+            <div className="text-base font-bold text-pink-300 tabular-nums leading-tight mt-0.5">{s.v}</div>
             <div className="text-[8px] text-[var(--muted-foreground)] tabular-nums">{s.sub}</div>
           </div>
         ))}
@@ -203,8 +203,8 @@ function DashboardMock() {
       {/* Equity curve */}
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Equity Curve · 30d</span>
-          <span className="text-[9px] text-emerald-400 tabular-nums">↑ +$4,230</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Equity Curve Â· 30d</span>
+          <span className="text-[9px] text-pink-400 tabular-nums">â†‘ +$4,230</span>
         </div>
         <svg className="w-full h-24" viewBox="0 0 300 80" preserveAspectRatio="none">
           <defs>
@@ -246,27 +246,27 @@ function DashboardMock() {
   );
 }
 
-/* ──────────────── Leak Detection Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Leak Detection Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function LeakMock() {
   const leaks = [
-    { name: 'Revenge Trading',  evidence: '14 trades', cost: '−$1,420', recovery: '+$840 if fixed',  pct: 100, sev: 'high' },
-    { name: 'Oversized Position', evidence: '8 trades',  cost: '−$890',  recovery: '+$520 if fixed',  pct: 63, sev: 'high' },
-    { name: 'FOMO Entries',     evidence: '11 trades', cost: '−$540',  recovery: '+$310 if fixed',  pct: 38, sev: 'med' },
-    { name: 'Late Session Drift', evidence: '6 trades',  cost: '−$280',  recovery: '+$180 if fixed',  pct: 20, sev: 'med' },
-    { name: 'No Stop Loss',     evidence: '4 trades',  cost: '−$140',  recovery: '+$95 if fixed',   pct: 10, sev: 'low' },
+    { name: 'Revenge Trading',  evidence: '14 trades', cost: 'âˆ’$1,420', recovery: '+$840 if fixed',  pct: 100, sev: 'high' },
+    { name: 'Oversized Position', evidence: '8 trades',  cost: 'âˆ’$890',  recovery: '+$520 if fixed',  pct: 63, sev: 'high' },
+    { name: 'FOMO Entries',     evidence: '11 trades', cost: 'âˆ’$540',  recovery: '+$310 if fixed',  pct: 38, sev: 'med' },
+    { name: 'Late Session Drift', evidence: '6 trades',  cost: 'âˆ’$280',  recovery: '+$180 if fixed',  pct: 20, sev: 'med' },
+    { name: 'No Stop Loss',     evidence: '4 trades',  cost: 'âˆ’$140',  recovery: '+$95 if fixed',   pct: 10, sev: 'low' },
   ];
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-rose-400/80 flex items-center gap-1.5">
-            <Flame size={11} /> Verdicts · ranked by $ impact
+            <Flame size={11} /> Verdicts Â· ranked by $ impact
           </div>
           <div className="text-xl font-bold text-[var(--foreground)] mt-0.5">5 patterns detected</div>
         </div>
         <div className="text-right">
           <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Total cost</div>
-          <div className="text-lg font-bold text-rose-400 tabular-nums">−$3,270</div>
+          <div className="text-lg font-bold text-rose-400 tabular-nums">âˆ’$3,270</div>
         </div>
       </div>
       <div className="space-y-2">
@@ -281,7 +281,7 @@ function LeakMock() {
                     {l.sev}
                   </span>
                 </div>
-                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">{l.evidence} · {l.recovery}</div>
+                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">{l.evidence} Â· {l.recovery}</div>
               </div>
               <div className={`tabular-nums font-bold text-sm ${l.sev === 'high' ? 'text-rose-400' : l.sev === 'med' ? 'text-amber-400' : 'text-[var(--muted-foreground)]'}`}>{l.cost}</div>
             </div>
@@ -301,7 +301,7 @@ function LeakMock() {
   );
 }
 
-/* ──────────────── Behavior Analysis Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Behavior Analysis Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BehaviorMock() {
   const emotions = [
     { l: 'Calm',       v: 78, c: 'emerald' },
@@ -312,8 +312,8 @@ function BehaviorMock() {
   ];
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-teal-400/80 flex items-center gap-1.5">
-        <Activity size={11} /> Behavioral Health · 30d
+      <div className="text-[10px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1.5">
+        <Activity size={11} /> Behavioral Health Â· 30d
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -343,13 +343,13 @@ function BehaviorMock() {
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xl font-bold bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent tabular-nums">78</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent tabular-nums">78</span>
               <span className="text-[7px] uppercase tracking-widest text-[var(--muted-foreground)]">/ 100</span>
             </div>
           </div>
           <div>
             <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Discipline Score</div>
-            <div className="text-[10px] text-emerald-400 tabular-nums mt-1">↑ +14 vs last month</div>
+            <div className="text-[10px] text-pink-400 tabular-nums mt-1">â†‘ +14 vs last month</div>
             <div className="text-[9px] text-[var(--muted-foreground)] mt-1">Above your 90-day avg</div>
           </div>
         </div>
@@ -358,12 +358,12 @@ function BehaviorMock() {
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
           <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Compliance Streak</div>
           <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="text-2xl font-bold text-emerald-300 tabular-nums">12</span>
+            <span className="text-2xl font-bold text-pink-300 tabular-nums">12</span>
             <span className="text-[9px] text-[var(--muted-foreground)]">days following plan</span>
           </div>
           <div className="grid grid-cols-14 gap-0.5 mt-2" style={{ gridTemplateColumns: 'repeat(14,1fr)' }}>
             {Array.from({ length: 14 }, (_, i) => (
-              <div key={i} className={`h-3 rounded-sm ${i < 12 ? 'bg-gradient-to-t from-emerald-500 to-teal-400' : 'bg-white/5'}`} />
+              <div key={i} className={`h-3 rounded-sm ${i < 12 ? 'bg-gradient-to-t from-pink-500 to-pink-400' : 'bg-white/5'}`} />
             ))}
           </div>
         </div>
@@ -372,8 +372,8 @@ function BehaviorMock() {
       {/* Emotional pressure */}
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Emotional Pressure · session avg</span>
-          <span className="text-[9px] text-emerald-400">Net positive 7/10</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Emotional Pressure Â· session avg</span>
+          <span className="text-[9px] text-pink-400">Net positive 7/10</span>
         </div>
         <div className="space-y-1.5">
           {emotions.map(e => (
@@ -386,7 +386,7 @@ function BehaviorMock() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.7 }}
                   className={`h-full ${
-                    e.c === 'emerald' ? 'bg-gradient-to-r from-emerald-500 to-teal-400' :
+                    e.c === 'emerald' ? 'bg-gradient-to-r from-pink-500 to-pink-400' :
                     e.c === 'amber'   ? 'bg-gradient-to-r from-amber-500 to-yellow-400' :
                                         'bg-gradient-to-r from-rose-500 to-orange-400'
                   }`}
@@ -401,14 +401,14 @@ function BehaviorMock() {
   );
 }
 
-/* ──────────────── Performance Analytics Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Performance Analytics Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PerformanceMock() {
   const symbols = [
     { s: 'SOL/USDT',  pnl: '+$1,240', wr: 82, n: 14 },
     { s: 'BTC/USDT',  pnl: '+$890',  wr: 68, n: 22 },
     { s: 'ETH/USDT',  pnl: '+$420',  wr: 61, n: 18 },
-    { s: 'AVAX/USDT', pnl: '−$180',  wr: 41, n: 9  },
-    { s: 'BNB/USDT',  pnl: '−$340',  wr: 29, n: 7  },
+    { s: 'AVAX/USDT', pnl: 'âˆ’$180',  wr: 41, n: 9  },
+    { s: 'BNB/USDT',  pnl: 'âˆ’$340',  wr: 29, n: 7  },
   ];
   const hours = Array.from({ length: 24 }, (_, h) => {
     const v = Math.sin((h - 6) / 6) * 80 + (h >= 9 && h <= 16 ? 40 : 0);
@@ -416,8 +416,8 @@ function PerformanceMock() {
   });
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80 flex items-center gap-1.5">
-        <BarChart3 size={11} /> Performance · 50+ metrics
+      <div className="text-[10px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1.5">
+        <BarChart3 size={11} /> Performance Â· 50+ metrics
       </div>
 
       {/* Symbol breakdown */}
@@ -436,10 +436,10 @@ function PerformanceMock() {
                   whileInView={{ width: `${s.wr}%` }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.7 }}
-                  className={`h-full ${s.wr >= 60 ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : s.wr >= 45 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                  className={`h-full ${s.wr >= 60 ? 'bg-gradient-to-r from-pink-500 to-pink-400' : s.wr >= 45 ? 'bg-amber-500' : 'bg-rose-500'}`}
                 />
               </div>
-              <span className={`text-[10px] font-bold tabular-nums text-right ${s.pnl.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>{s.pnl}</span>
+              <span className={`text-[10px] font-bold tabular-nums text-right ${s.pnl.startsWith('+') ? 'text-pink-400' : 'text-rose-400'}`}>{s.pnl}</span>
               <span className="text-[9px] tabular-nums text-[var(--muted-foreground)] text-right">{s.n}t</span>
             </div>
           ))}
@@ -450,7 +450,7 @@ function PerformanceMock() {
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Hourly P&L distribution</span>
-          <span className="text-[9px] text-emerald-400 flex items-center gap-1"><Clock size={9} /> Peak: 13:00</span>
+          <span className="text-[9px] text-pink-400 flex items-center gap-1"><Clock size={9} /> Peak: 13:00</span>
         </div>
         <div className="h-20 flex items-end gap-0.5">
           {hours.map((v, i) => (
@@ -460,7 +460,7 @@ function PerformanceMock() {
               whileInView={{ height: `${Math.abs(v) * 0.7}%` }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.02 * i }}
-              className={`flex-1 rounded-t-sm ${v > 0 ? 'bg-gradient-to-t from-emerald-500 to-teal-400' : 'bg-gradient-to-t from-rose-500 to-orange-400'}`}
+              className={`flex-1 rounded-t-sm ${v > 0 ? 'bg-gradient-to-t from-pink-500 to-pink-400' : 'bg-gradient-to-t from-rose-500 to-orange-400'}`}
               style={{ minHeight: '2px', alignSelf: v >= 0 ? 'flex-end' : 'flex-start' }}
             />
           ))}
@@ -479,7 +479,7 @@ function PerformanceMock() {
         ].map(s => (
           <div key={s.l} className="rounded-md border border-[var(--border)] bg-black/30 p-2 text-center">
             <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">{s.l}</div>
-            <div className="text-sm font-bold text-emerald-300 tabular-nums">{s.v}</div>
+            <div className="text-sm font-bold text-pink-300 tabular-nums">{s.v}</div>
           </div>
         ))}
       </div>
@@ -487,32 +487,32 @@ function PerformanceMock() {
   );
 }
 
-/* ──────────────── Playbook Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Playbook Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function PlaybookMock() {
   const rules = [
     { r: 'Max 3 trades per session',       comp: 92, status: 'pass'   },
-    { r: 'Risk ≤ 1.5% per trade',          comp: 88, status: 'pass'   },
-    { r: 'No trading 21:00–06:00 UTC',     comp: 78, status: 'warn'   },
+    { r: 'Risk â‰¤ 1.5% per trade',          comp: 88, status: 'pass'   },
+    { r: 'No trading 21:00â€“06:00 UTC',     comp: 78, status: 'warn'   },
     { r: 'Stop loss within 0.8% of entry', comp: 95, status: 'pass'   },
-    { r: 'No revenge trade after −2R loss', comp: 64, status: 'fail'   },
+    { r: 'No revenge trade after âˆ’2R loss', comp: 64, status: 'fail'   },
     { r: 'Avoid first 15min after news',   comp: 100, status: 'pass'  },
   ];
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80 flex items-center gap-1.5">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-fuchsia-400/80 flex items-center gap-1.5">
           <Shield size={11} /> Playbook compliance
         </div>
-        <div className="text-[10px] text-emerald-400 tabular-nums font-bold">86% overall</div>
+        <div className="text-[10px] text-pink-400 tabular-nums font-bold">86% overall</div>
       </div>
 
       {/* Score block */}
-      <div className="rounded-lg border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 p-3">
+      <div className="rounded-lg border border-pink-500/20 bg-gradient-to-br from-pink-500/10 to-pink-500/5 p-3">
         <div className="flex items-center gap-3">
-          <div className="text-3xl font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent tabular-nums">86</div>
+          <div className="text-3xl font-bold bg-gradient-to-r from-pink-300 to-pink-300 bg-clip-text text-transparent tabular-nums">86</div>
           <div>
-            <div className="text-[10px] font-bold text-emerald-300">Compliance Score</div>
-            <div className="text-[9px] text-[var(--muted-foreground)]">5 of 6 rules followed · up from 64% last month</div>
+            <div className="text-[10px] font-bold text-pink-300">Compliance Score</div>
+            <div className="text-[9px] text-[var(--muted-foreground)]">5 of 6 rules followed Â· up from 64% last month</div>
           </div>
         </div>
         <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -521,7 +521,7 @@ function PlaybookMock() {
             whileInView={{ width: '86%' }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            className="h-full bg-gradient-to-r from-emerald-400 to-teal-400"
+            className="h-full bg-gradient-to-r from-fuchsia-400 to-pink-400"
           />
         </div>
       </div>
@@ -537,12 +537,12 @@ function PlaybookMock() {
             transition={{ duration: 0.3, delay: 0.05 * i }}
             className="rounded-md border border-[var(--border)] bg-black/30 p-2 flex items-center gap-2"
           >
-            <CheckCircle2 size={12} className={r.status === 'pass' ? 'text-emerald-400' : r.status === 'warn' ? 'text-amber-400' : 'text-rose-400'} />
+            <CheckCircle2 size={12} className={r.status === 'pass' ? 'text-pink-400' : r.status === 'warn' ? 'text-amber-400' : 'text-rose-400'} />
             <span className="text-[10px] text-[var(--foreground)] flex-1">{r.r}</span>
             <div className="w-16 h-1 rounded-full bg-white/5 overflow-hidden">
-              <div className={`h-full ${r.status === 'pass' ? 'bg-emerald-400' : r.status === 'warn' ? 'bg-amber-400' : 'bg-rose-400'}`} style={{ width: `${r.comp}%` }} />
+              <div className={`h-full ${r.status === 'pass' ? 'bg-pink-400' : r.status === 'warn' ? 'bg-amber-400' : 'bg-rose-400'}`} style={{ width: `${r.comp}%` }} />
             </div>
-            <span className={`text-[9px] tabular-nums font-bold w-8 text-right ${r.status === 'pass' ? 'text-emerald-400' : r.status === 'warn' ? 'text-amber-400' : 'text-rose-400'}`}>
+            <span className={`text-[9px] tabular-nums font-bold w-8 text-right ${r.status === 'pass' ? 'text-pink-400' : r.status === 'warn' ? 'text-amber-400' : 'text-rose-400'}`}>
               {r.comp}%
             </span>
           </motion.div>

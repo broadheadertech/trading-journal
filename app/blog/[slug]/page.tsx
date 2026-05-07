@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from 'lucide-react';
 import LandingNav from '@/components/landing/LandingNav';
@@ -8,11 +8,11 @@ import { BLOG_ARTICLES } from '@/lib/blog-articles';
 const CATEGORY_GRADIENTS: Record<string, string> = {
   'Psychology':  'from-violet-500 via-fuchsia-500 to-purple-500',
   'Mistakes':    'from-rose-500 via-orange-500 to-red-500',
-  'Performance': 'from-emerald-500 via-teal-500 to-cyan-500',
-  'Tools':       'from-cyan-500 via-blue-500 to-indigo-500',
+  'Performance': 'from-emerald-500 via-teal-500 to-fuchsia-500',
+  'Tools':       'from-fuchsia-500 via-blue-500 to-indigo-500',
   'Comparison':  'from-amber-500 via-yellow-500 to-orange-500',
-  'Education':   'from-teal-500 via-emerald-500 to-green-500',
-  'default':     'from-teal-500 via-cyan-500 to-emerald-500',
+  'Education':   'from-pink-500 via-emerald-500 to-green-500',
+  'default':     'from-pink-500 via-cyan-500 to-emerald-500',
 };
 
 export function generateStaticParams() {
@@ -55,20 +55,20 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
       <article className="relative">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-teal-500 opacity-[0.05] rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-pink-500 opacity-[0.05] rounded-full blur-[120px]" />
         </div>
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-16">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-teal-400 transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-pink-400 transition-colors mb-8"
           >
             <ArrowLeft size={12} /> Back to all articles
           </Link>
 
           <div className="mb-4 flex items-center gap-3">
             <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={11} /> 8 min read</span>
-            <span className="text-[10px] text-[var(--muted-foreground)]">·</span>
+            <span className="text-[10px] text-[var(--muted-foreground)]">Â·</span>
             <span className="text-[10px] text-[var(--muted-foreground)]">Updated 2026</span>
           </div>
 
@@ -82,7 +82,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
             <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-              <strong className="text-[var(--foreground)]">In this article</strong> — we cover the data behind {article.title.toLowerCase()},
+              <strong className="text-[var(--foreground)]">In this article</strong> â€” we cover the data behind {article.title.toLowerCase()},
               with real numbers, charts, and concrete recommendations you can apply to your own trading immediately.
               The full editorial draft for this piece is being finalized; sign up to be notified when it goes live, or browse the related articles below to start now.
             </p>
@@ -91,7 +91,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
               href="/sign-up"
               className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
             >
-              Notify me when it’s ready
+              Notify me when itâ€™s ready
               <ArrowRight size={14} />
             </Link>
           </div>
@@ -99,7 +99,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
           {related.length > 0 && (
             <div className="border-t border-[var(--border)] pt-8 mb-10">
               <div className="flex items-center gap-2 mb-4">
-                <Tag size={12} className="text-teal-400" />
+                <Tag size={12} className="text-pink-400" />
                 <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
                   More on {article.category}
                 </h2>
@@ -109,9 +109,9 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
                   <Link
                     key={r.slug}
                     href={`/blog/${r.slug}`}
-                    className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors group"
+                    className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors group"
                   >
-                    <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-teal-400 transition-colors">{r.title}</div>
+                    <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-pink-400 transition-colors">{r.title}</div>
                     <div className="text-xs text-[var(--muted-foreground)] line-clamp-1 mt-1">{r.excerpt}</div>
                   </Link>
                 ))}
@@ -123,12 +123,12 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             {prev ? (
               <Link
                 href={`/blog/${prev.slug}`}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors"
               >
                 <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-1 mb-1">
                   <ArrowLeft size={10} /> Previous
                 </div>
-                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-teal-400 transition-colors">
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-pink-400 transition-colors">
                   {prev.title}
                 </div>
               </Link>
@@ -136,12 +136,12 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             {next ? (
               <Link
                 href={`/blog/${next.slug}`}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-teal-500/30 transition-colors text-right"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors text-right"
               >
                 <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center justify-end gap-1 mb-1">
                   Next <ArrowRight size={10} />
                 </div>
-                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-teal-400 transition-colors">
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-pink-400 transition-colors">
                   {next.title}
                 </div>
               </Link>

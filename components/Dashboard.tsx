@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface DashboardProps {
   trades: Trade[];
   strategies: Strategy[];
@@ -35,7 +35,7 @@ interface DashboardProps {
   onSetDailyGoal?: (args: { dailyLossLimit?: number; dailyProfitTarget?: number; goalMode?: 'daily' | 'session' }) => void;
 }
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function Dashboard({
   trades, strategies, onAddTrade, onNavigate,
   initialCapital = 0, dailyLossLimit, dailyProfitTarget,
@@ -46,7 +46,7 @@ export default function Dashboard({
   // Trades are already filtered by the universal top-bar time range
   const windowedTrades = trades;
 
-  // ─── All computed metrics ───────────────────────────────────────────────────
+  // â”€â”€â”€ All computed metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const metrics = useMemo(() => {
     const all = windowedTrades;
     const closed = all.filter(t => !t.isOpen && t.actualPnL !== null);
@@ -97,7 +97,7 @@ export default function Dashboard({
     const topPerformers = coinStats.filter(c => c.pnl > 0).slice(0, 5);
     const biggestLeaks = [...coinStats].sort((a, b) => a.pnl - b.pnl).filter(c => c.pnl < 0).slice(0, 5);
 
-    // Activity heatmap: weekday × session
+    // Activity heatmap: weekday Ã— session
     const sessions = [
       { label: 'Night (00-06)', range: [0, 5] },
       { label: 'Morning (06-12)', range: [6, 11] },
@@ -182,7 +182,7 @@ export default function Dashboard({
     const top3Profit = greenDays.slice(0, 3).reduce((s, [, v]) => s + v, 0);
     const edgeConcentration = grossProfit > 0 ? Math.round((top3Profit / grossProfit) * 100) : null;
 
-    // Next Best Actions — leak analysis
+    // Next Best Actions â€” leak analysis
     const leaks: { title: string; description: string; amount: number; severity: 'high' | 'medium' | 'low' }[] = [];
     // Leak 1: Worst coin
     if (biggestLeaks.length > 0) {
@@ -246,7 +246,7 @@ export default function Dashboard({
     };
   }, [windowedTrades, initialCapital]);
 
-  // ─── Equity curve data ──────────────────────────────────────────────────────
+  // â”€â”€â”€ Equity curve data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const equityData = useMemo(() => {
     const data = getEquityCurveData(windowedTrades);
     if (equityMode === 'drawdown') {
@@ -259,10 +259,10 @@ export default function Dashboard({
     return data;
   }, [windowedTrades, equityMode]);
 
-  // ─── Streak ────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Streak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const streak = useMemo(() => getCurrentStreak(windowedTrades), [windowedTrades]);
 
-  // ─── Recent trades ─────────────────────────────────────────────────────────
+  // â”€â”€â”€ Recent trades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const recentTrades = useMemo(() => {
     return [...windowedTrades]
       .filter(t => !t.isOpen && t.actualPnL !== null)
@@ -270,7 +270,7 @@ export default function Dashboard({
       .slice(0, 5);
   }, [windowedTrades]);
 
-  // ─── Helpers ────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fmtPnl = (v: number) => {
     const s = formatCurrency(Math.abs(v));
     return v < 0 ? `-${s}` : s;
@@ -288,14 +288,14 @@ export default function Dashboard({
     return `bg-red-500/${Math.round(20 + intensity * 60)}`;
   };
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
     <div className="relative space-y-4 anim-fade-up">
       <div className="hero-glow" />
-      {/* ── Hero Card + Execution Score ── */}
+      {/* â”€â”€ Hero Card + Execution Score â”€â”€ */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-4">
         <div className={`rounded-2xl p-5 sm:p-6 ${isPositive
-          ? 'bg-gradient-to-br from-emerald-900/60 via-emerald-800/40 to-teal-900/30 border border-emerald-700/30'
+          ? 'bg-gradient-to-br from-emerald-900/60 via-emerald-800/40 to-pink-900/30 border border-emerald-700/30'
           : 'bg-gradient-to-br from-red-900/60 via-rose-800/40 to-red-900/30 border border-red-700/30'
         }`}>
           <div className="flex items-center gap-2 mb-1">
@@ -382,13 +382,13 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* ── Summary Stat Cards ── */}
+      {/* â”€â”€ Summary Stat Cards â”€â”€ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Net P&L', icon: <TrendingUp size={18} />, value: fmtPnl(metrics.totalPnL), color: pnlColor(metrics.totalPnL), borderColor: 'border-t-red-500' },
           { label: 'Total Trades', icon: <Activity size={18} />, value: String(metrics.closed.length), color: 'text-[var(--foreground)]', borderColor: 'border-t-blue-500' },
           { label: 'Win Rate', icon: <Target size={18} />, value: `${metrics.winRate.toFixed(1)}%`, color: metrics.winRate >= 50 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-emerald-500' },
-          { label: 'Profit Factor', icon: <Zap size={18} />, value: metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2), color: metrics.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-cyan-500' },
+          { label: 'Profit Factor', icon: <Zap size={18} />, value: metrics.profitFactor === Infinity ? 'âˆž' : metrics.profitFactor.toFixed(2), color: metrics.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-cyan-500' },
         ].map(card => (
           <div key={card.label} className={`bg-[var(--card)] border border-[var(--border)] border-t-2 ${card.borderColor} rounded-xl p-4`}>
             <div className="flex items-center justify-between mb-2">
@@ -400,7 +400,7 @@ export default function Dashboard({
         ))}
       </div>
 
-      {/* ── Main Content: Left (Charts) + Right (Sidebar Cards) ── */}
+      {/* â”€â”€ Main Content: Left (Charts) + Right (Sidebar Cards) â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
         {/* Left column */}
         <div className="space-y-4">
@@ -667,7 +667,7 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* ── Right Sidebar Cards ── */}
+        {/* â”€â”€ Right Sidebar Cards â”€â”€ */}
         <div className="space-y-4">
           {/* Top vs Worst Symbols */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
@@ -784,7 +784,7 @@ export default function Dashboard({
                     <span className="font-semibold text-[var(--foreground)]">{metrics.focusPercent}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
-                    <div className="h-full rounded-full bg-cyan-400" style={{ width: `${metrics.focusPercent}%` }} />
+                    <div className="h-full rounded-full bg-fuchsia-400" style={{ width: `${metrics.focusPercent}%` }} />
                   </div>
                 </div>
               )}

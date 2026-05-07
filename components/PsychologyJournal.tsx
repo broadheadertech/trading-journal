@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, Fragment } from 'react';
 import { Trade, JournalEntry, EmotionState, CircuitBreakerEvent, TriggerEntry, DailyReflection as DailyReflectionType, WeeklyReview } from '@/lib/types';
@@ -61,7 +61,7 @@ export default function PsychologyJournal({
     return trades.filter(t => !t.isOpen && t.actualPnL !== null);
   }, [trades]);
 
-  // ── Core Metrics ──
+  // â”€â”€ Core Metrics â”€â”€
   const m = useMemo(() => {
     const closed = windowedTrades;
     const sorted = [...closed].sort((a, b) => new Date(a.exitDate ?? a.entryDate).getTime() - new Date(b.exitDate ?? b.entryDate).getTime());
@@ -221,7 +221,7 @@ export default function PsychologyJournal({
       return { ...s, pressure, state: dominantState, sessionNum: i + 1 };
     }).sort((a, b) => a.date.localeCompare(b.date));
 
-    // Session heatmap: day × hour
+    // Session heatmap: day Ã— hour
     const heatmap = new Map<string, { pnl: number; trades: number }>();
     const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     closed.forEach(t => {
@@ -377,11 +377,11 @@ export default function PsychologyJournal({
 
   return (
     <div className="space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto">
-      {/* ── Hero ── */}
+      {/* â”€â”€ Hero â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-semibold flex items-center gap-1.5">
+            <span className="px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-400 text-xs font-semibold flex items-center gap-1.5">
               <Brain size={14} /> BEHAVIOR COMMAND CENTER
             </span>
           </div>
@@ -443,11 +443,11 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── 4 Stat Cards ── */}
+      {/* â”€â”€ 4 Stat Cards â”€â”€ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         {[
           { label: 'HEALTH SCORE', icon: <Shield size={16} />, desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
-            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? '↑' : '0'}%`, color: m.healthScore >= 60 ? 'text-emerald-400' : m.healthScore >= 40 ? 'text-amber-400' : 'text-red-400' },
+            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? 'â†‘' : '0'}%`, color: m.healthScore >= 60 ? 'text-emerald-400' : m.healthScore >= 40 ? 'text-amber-400' : 'text-red-400' },
           { label: 'TILT PRESSURE', icon: <Zap size={16} />, desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
             value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'text-emerald-400' : m.tiltPressure < 70 ? 'text-amber-400' : 'text-red-400' },
           { label: 'REVENGE CLUSTERS', icon: <AlertTriangle size={16} />, desc: 'Loss-driven cascades detected from executed trades in this date range.',
@@ -467,7 +467,7 @@ export default function PsychologyJournal({
         ))}
       </div>
 
-      {/* ── Behavioral Health Score Gauge + Breakdown ── */}
+      {/* â”€â”€ Behavioral Health Score Gauge + Breakdown â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
           {/* SVG Gauge */}
@@ -532,7 +532,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── Signal Snapshot + Action Queue ── */}
+      {/* â”€â”€ Signal Snapshot + Action Queue â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -580,7 +580,7 @@ export default function PsychologyJournal({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-[var(--muted-foreground)]">P{i + 1}</span>
-                    <ChevronRight size={14} className="text-cyan-400" />
+                    <ChevronRight size={14} className="text-fuchsia-400" />
                     <span className="text-sm font-semibold text-[var(--foreground)]">{action.split('.')[0]}</span>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${m.revengeClusterCount === 0 && m.overtradeDays === 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
@@ -600,7 +600,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── Emotional State Flow ── */}
+      {/* â”€â”€ Emotional State Flow â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-1">
           <div>
@@ -680,7 +680,7 @@ export default function PsychologyJournal({
         )}
       </div>
 
-      {/* ── Selected Session + State Distribution ── */}
+      {/* â”€â”€ Selected Session + State Distribution â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-4">
         {/* Selected session */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
@@ -770,7 +770,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── Revenge Trade Cascade + Session Heatmap ── */}
+      {/* â”€â”€ Revenge Trade Cascade + Session Heatmap â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Revenge Trade Cascade</h2>
@@ -866,7 +866,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── Discipline Tracker + Cognitive Bias Profile ── */}
+      {/* â”€â”€ Discipline Tracker + Cognitive Bias Profile â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Discipline Tracker</h2>
@@ -943,10 +943,10 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* ── Behavior Edge Context ── */}
+      {/* â”€â”€ Behavior Edge Context â”€â”€ */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-1">
-          <RefreshCw size={16} className="text-cyan-400" />
+          <RefreshCw size={16} className="text-fuchsia-400" />
           <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Behavior Edge Context</span>
         </div>
         <p className="text-xs text-[var(--muted-foreground)] mb-4">Highest-confidence strength and highest-risk loop with direct narrative context.</p>

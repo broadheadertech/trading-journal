@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -73,7 +73,7 @@ export default function Community() {
         {user && (
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5"
           >
             <Plus size={16} /> New Post
           </button>
@@ -126,8 +126,8 @@ export default function Community() {
 
           {posts.length === 0 ? (
             <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-teal-600/10 flex items-center justify-center">
-                <MessagesSquare size={28} className="text-teal-400" />
+              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
+                <MessagesSquare size={28} className="text-pink-400" />
               </div>
               <p className="text-[var(--foreground)] font-medium">No posts yet</p>
               <p className="text-sm text-[var(--muted-foreground)] mt-1">Be the first to start the conversation.</p>
@@ -175,7 +175,7 @@ export default function Community() {
                       )}
                       <span>by <span className="font-medium text-[var(--foreground)]">{p.authorName}</span></span>
                       <TierBadge tier={p.authorTier} />
-                      <span>·</span>
+                      <span>Â·</span>
                       <span>{timeAgo(p.createdAt)}</span>
                       {p.isPinned && <span className="flex items-center gap-1 text-amber-500"><Pin size={11} /> Pinned</span>}
                       {p.isLocked && <span className="flex items-center gap-1 text-[var(--muted-foreground)]"><Lock size={11} /> Locked</span>}
@@ -207,7 +207,7 @@ export default function Community() {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function NewPostModal({
   categories, defaultCategoryId, onClose,
 }: {
@@ -237,7 +237,7 @@ function NewPostModal({
             onChange={(e) => setCategoryId(e.target.value)}
             className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
           >
-            <option value="">Select category…</option>
+            <option value="">Select categoryâ€¦</option>
             {categories.map((c: any) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -292,7 +292,7 @@ function NewPostModal({
             }}
             className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
           >
-            {busy ? 'Posting…' : 'Post'}
+            {busy ? 'Postingâ€¦' : 'Post'}
           </button>
         </div>
       </div>
@@ -300,7 +300,7 @@ function NewPostModal({
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) {
   const { user } = useUser();
   const { tierName } = useSubscription();
@@ -351,7 +351,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
           <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mb-1">
             <span className="font-medium text-[var(--foreground)]">{c.authorName}</span>
             <TierBadge tier={c.authorTier} />
-            <span>·</span>
+            <span>Â·</span>
             <span>{timeAgo(c.createdAt)}</span>
           </div>
           <p className="text-sm text-[var(--foreground)] whitespace-pre-wrap mb-2">{c.body}</p>
@@ -432,7 +432,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
             <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mb-2 flex-wrap">
               <span>by <span className="font-medium text-[var(--foreground)]">{post.authorName}</span></span>
               <TierBadge tier={post.authorTier} />
-              <span>·</span>
+              <span>Â·</span>
               <span>{timeAgo(post.createdAt)}</span>
               {post.isPinned && <span className="flex items-center gap-1 text-amber-500"><Pin size={11} /> Pinned</span>}
               {post.isLocked && <span className="flex items-center gap-1"><Lock size={11} /> Locked</span>}
@@ -488,7 +488,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
             <textarea
               value={replyBody}
               onChange={(e) => setReplyBody(e.target.value)}
-              placeholder="Write a comment…"
+              placeholder="Write a commentâ€¦"
               rows={3}
               className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
             />
@@ -528,7 +528,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function AdminCommunity({ onBack }: { onBack?: () => void }) {
   const { showToast } = useToast();
   const categories = useQuery(api.forum.listCategories) ?? [];
@@ -614,7 +614,7 @@ export function AdminCommunity({ onBack }: { onBack?: () => void }) {
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ImageUploader({ images, onChange }: { images: string[]; onChange: (urls: string[]) => void }) {
   const generateUploadUrl = useMutation(api.forum.generateUploadUrl);
   const { showToast } = useToast();

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { Trade, Strategy, EmotionState } from '@/lib/types';
@@ -129,7 +129,7 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold">What-If Scenarios</h2>
-        <p className="text-sm text-[var(--muted-foreground)]">AI trade assistant — analyze planned trades before execution</p>
+        <p className="text-sm text-[var(--muted-foreground)]">AI trade assistant â€” analyze planned trades before execution</p>
       </div>
 
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-5">
@@ -176,7 +176,7 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
         <button
           onClick={handleAnalyze}
           disabled={!coin}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white rounded-xl font-medium transition-all disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 text-white rounded-xl font-medium transition-all disabled:opacity-50"
         >
           <Sparkles size={18} /> Analyze Trade
         </button>

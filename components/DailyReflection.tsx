@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { DailyReflection as DailyReflectionType, WeeklyReview, DisciplineGrade, Trade } from '@/lib/types';
@@ -117,7 +117,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           </button>
           <button
             onClick={() => setActiveForm(activeForm === 'weekly' ? 'none' : 'weekly')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-cyan-400 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-fuchsia-400 rounded-lg text-sm font-medium transition-colors"
           >
             <Moon size={14} /> Weekly
           </button>
@@ -129,7 +129,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
         <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-sm">
           <CheckCircle size={16} className="text-[var(--green)]" />
           <span className="text-[var(--green)] font-medium">Today&apos;s reflection completed</span>
-          <span className="text-[var(--muted-foreground)]">— Rating: {todayReflection.overallRating}/10</span>
+          <span className="text-[var(--muted-foreground)]">â€” Rating: {todayReflection.overallRating}/10</span>
         </div>
       )}
 
@@ -258,9 +258,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <span>
                   <span className="font-semibold text-[var(--foreground)]">{weeklyData.summary.total}</span>
-                  <span className="text-[var(--muted-foreground)]"> trades · </span>
+                  <span className="text-[var(--muted-foreground)]"> trades Â· </span>
                   <span className="text-[var(--gain)] font-semibold">{weeklyData.summary.wins}W</span>
-                  <span className="text-[var(--muted-foreground)]"> · </span>
+                  <span className="text-[var(--muted-foreground)]"> Â· </span>
                   <span className="text-[var(--loss)] font-semibold">{weeklyData.summary.losses}L</span>
                 </span>
                 {weeklyData.summary.total > 0 && (
@@ -278,7 +278,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                 <p className="text-xs text-[var(--muted-foreground)]">
                   Top emotion: <span className="text-[var(--foreground)] font-medium">{weeklyData.summary.topEmotion}</span>
                   {weeklyData.summary.avgConfidenceOnLoss !== null && (
-                    <span> · avg confidence on losses: <span className="font-medium">{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
+                    <span> Â· avg confidence on losses: <span className="font-medium">{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
                   )}
                 </p>
               )}
@@ -408,7 +408,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                 )}
                 {r.biggestLesson && (
                   <div>
-                    <span className="text-xs font-medium text-cyan-400">Lesson:</span>
+                    <span className="text-xs font-medium text-fuchsia-400">Lesson:</span>
                     <p className="text-sm">{r.biggestLesson}</p>
                   </div>
                 )}
@@ -428,7 +428,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
       {reviews.length > 0 && (
         <div className="space-y-2">
           <h4 className="text-sm font-semibold flex items-center gap-2">
-            <Moon size={14} className="text-cyan-400" /> Weekly Reviews
+            <Moon size={14} className="text-fuchsia-400" /> Weekly Reviews
           </h4>
           {reviews.slice(0, 5).map(review => (
             <div key={review.id} className="bg-[var(--card)] border border-blue-500/20 rounded-xl p-3.5 space-y-2">

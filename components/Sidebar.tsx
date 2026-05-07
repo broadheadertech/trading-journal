@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { TabId, TimeRange } from '@/lib/types';
 import {
@@ -107,12 +107,12 @@ export default function Sidebar({
         collapsed ? 'w-[68px]' : 'w-[220px]'
       )}>
         {/* Subtle ambient glow */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-teal-500/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-pink-500/10 to-transparent" />
         {/* Logo */}
         <div className="shrink-0 h-14 flex items-center gap-2.5 px-4 border-b border-[var(--border)]">
           <BrainMascot size={28} className="shrink-0" />
           {!collapsed && (
-            <h1 className="text-base font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent truncate">
+            <h1 className="text-base font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent truncate">
               Tradia
             </h1>
           )}
@@ -128,7 +128,7 @@ export default function Sidebar({
                 'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all relative',
                 collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
                 activeTab === tab.id
-                  ? 'bg-gradient-to-br from-teal-500/20 to-teal-600/10 text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full before:bg-gradient-to-b before:from-teal-400 before:to-teal-600'
+                  ? 'bg-gradient-to-br from-pink-500/20 to-pink-600/10 text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full before:bg-gradient-to-b before:from-pink-400 before:to-pink-600'
                   : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
               )}
               title={collapsed ? tab.label : undefined}
@@ -256,7 +256,7 @@ export default function Sidebar({
               {/* Mobile logo */}
               <div className="md:hidden flex items-center gap-2">
                 <BrainMascot size={24} className="shrink-0" />
-                <span className="text-sm font-bold bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
+                <span className="text-sm font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
                   Tradia
                 </span>
               </div>

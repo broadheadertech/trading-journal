@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -11,7 +11,7 @@ const PILLARS = [
   {
     icon: Eye,
     title: 'Make trading review measurable',
-    body: 'Tradia turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
+    body: 'Tradia turns raw trade history into evidence â€” costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
   },
   {
     icon: Target,
@@ -26,12 +26,12 @@ const PILLARS = [
   {
     icon: Globe,
     title: 'Privacy-first infrastructure',
-    body: 'Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks — engineered to be the safest place your trade history can live.',
+    body: 'Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks â€” engineered to be the safest place your trade history can live.',
   },
 ];
 
 const FOR = [
-  'Active traders — crypto, futures, forex, stocks, options',
+  'Active traders â€” crypto, futures, forex, stocks, options',
   'Prop firm traders working toward funded accounts',
   'Trading coaches reviewing student performance',
   'Trading teams enforcing playbook discipline at scale',
@@ -59,7 +59,7 @@ const FAQ = [
   },
   {
     q: 'What markets do you support?',
-    a: 'Crypto spot, crypto perp futures, forex, equities, options, and futures — across 67+ brokers via CSV, XLSX, or live API.',
+    a: 'Crypto spot, crypto perp futures, forex, equities, options, and futures â€” across 67+ brokers via CSV, XLSX, or live API.',
   },
 ];
 
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.h1
@@ -80,7 +80,7 @@ export default function AboutPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Built to make trading review{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">measurable</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">measurable</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -88,7 +88,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Tradia exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.
+            Tradia exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that â€” and to make discipline something you can prove, not something you hope you have.
           </motion.p>
         </div>
       </section>
@@ -105,8 +105,8 @@ export default function AboutPage() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
               >
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-3">
-                  <p.icon size={18} className="text-teal-400" />
+                <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center mb-3">
+                  <p.icon size={18} className="text-pink-400" />
                 </div>
                 <h3 className="text-base font-bold text-[var(--foreground)] mb-2">{p.title}</h3>
                 <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{p.body}</p>
@@ -120,26 +120,26 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Users size={16} className="text-teal-400" />
+              <Users size={16} className="text-pink-400" />
               <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Who Tradia is for</h2>
             </div>
             <ul className="space-y-2">
               {FOR.map(item => (
                 <li key={item} className="text-sm text-[var(--foreground)] flex items-start gap-2">
-                  <span className="text-teal-400 mt-0.5">·</span>{item}
+                  <span className="text-pink-400 mt-0.5">Â·</span>{item}
                 </li>
               ))}
             </ul>
           </div>
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Target size={16} className="text-teal-400" />
+              <Target size={16} className="text-pink-400" />
               <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Outside our scope</h2>
             </div>
             <ul className="space-y-2">
               {NOT_FOR.map(item => (
                 <li key={item} className="text-sm text-[var(--muted-foreground)] flex items-start gap-2">
-                  <span className="text-[var(--muted-foreground)] mt-0.5">·</span>{item}
+                  <span className="text-[var(--muted-foreground)] mt-0.5">Â·</span>{item}
                 </li>
               ))}
             </ul>

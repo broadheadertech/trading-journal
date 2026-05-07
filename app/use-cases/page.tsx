@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -22,7 +22,7 @@ const CASES = [
     icon: Users,
     persona: 'Prop firm & team coaching',
     headline: 'Review every trader on one shared dashboard',
-    body: 'Coaches and team managers review trader profiles side-by-side, surface common desk problems, and verify playbook adherence — especially critical for funded traders working under firm rules.',
+    body: 'Coaches and team managers review trader profiles side-by-side, surface common desk problems, and verify playbook adherence â€” especially critical for funded traders working under firm rules.',
     bullets: [
       'Multi-trader dashboards with role-based access',
       'Per-trader playbook compliance scoring',
@@ -60,7 +60,7 @@ export default function UseCasesPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.h1
@@ -70,7 +70,7 @@ export default function UseCasesPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Use{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">cases</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">cases</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -95,8 +95,8 @@ export default function UseCasesPage() {
               className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               <div className="md:col-span-1">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center mb-3">
-                  <c.icon size={18} className="text-teal-400" />
+                <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center mb-3">
+                  <c.icon size={18} className="text-pink-400" />
                 </div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">{c.persona}</div>
                 <h3 className="text-xl font-bold text-[var(--foreground)] leading-tight">{c.headline}</h3>
@@ -106,7 +106,7 @@ export default function UseCasesPage() {
                 <ul className="space-y-2">
                   {c.bullets.map(b => (
                     <li key={b} className="flex items-start gap-2 text-sm text-[var(--foreground)]">
-                      <span className="text-teal-400 mt-0.5">·</span>{b}
+                      <span className="text-pink-400 mt-0.5">Â·</span>{b}
                     </li>
                   ))}
                 </ul>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ const FEATURES = [
   {
     icon: Zap,
     title: 'Live API sync',
-    body: 'Five direct connectors stream trades into Tradia within seconds of close. Read-only keys only — no withdrawal, no execution.',
+    body: 'Five direct connectors stream trades into Tradia within seconds of close. Read-only keys only â€” no withdrawal, no execution.',
   },
   {
     icon: FileSpreadsheet,
@@ -39,7 +39,7 @@ const FEATURES = [
   {
     icon: Globe2,
     title: 'Cross-market normalization',
-    body: 'Every trade — crypto, forex, stocks, options — lands in the same unified schema. Run analytics across portfolios, not silos.',
+    body: 'Every trade â€” crypto, forex, stocks, options â€” lands in the same unified schema. Run analytics across portfolios, not silos.',
   },
   {
     icon: ShieldCheck,
@@ -55,14 +55,14 @@ export default function IntegrationsPage() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs font-medium text-teal-400 mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
           >
             <Plug size={12} /> 67+ broker & exchange integrations
           </motion.div>
@@ -73,7 +73,7 @@ export default function IntegrationsPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Connect every broker.{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">Read-only, instant.</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Read-only, instant.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -81,7 +81,7 @@ export default function IntegrationsPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Five live API connectors plus 67+ broker CSV/XLSX formats — auto-detected and normalized into a single trade structure.
+            Five live API connectors plus 67+ broker CSV/XLSX formats â€” auto-detected and normalized into a single trade structure.
           </motion.p>
         </div>
       </section>
@@ -98,8 +98,8 @@ export default function IntegrationsPage() {
                 transition={{ duration: 0.4, delay: i * 0.04 }}
                 className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
               >
-                <div className="w-9 h-9 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
-                  <f.icon size={16} className="text-teal-400" />
+                <div className="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center mb-3">
+                  <f.icon size={16} className="text-pink-400" />
                 </div>
                 <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">{f.title}</h3>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{f.body}</p>
@@ -123,7 +123,7 @@ export default function IntegrationsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.35, delay: i * 0.03 }}
-                className="rounded-xl border border-teal-500/30 bg-teal-500/5 p-4 text-center"
+                className="rounded-xl border border-pink-500/30 bg-pink-500/5 p-4 text-center"
               >
                 <div className="text-sm font-bold text-[var(--foreground)]">{c.name}</div>
                 <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">{c.scope}</div>
@@ -155,7 +155,7 @@ export default function IntegrationsPage() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <Link href="/brokers" className="inline-flex items-center gap-2 text-sm text-teal-400 hover:text-teal-300 transition-colors">
+            <Link href="/brokers" className="inline-flex items-center gap-2 text-sm text-pink-400 hover:text-pink-300 transition-colors">
               See all 67+ supported brokers <ArrowRight size={14} />
             </Link>
           </div>
@@ -166,7 +166,7 @@ export default function IntegrationsPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Don&apos;t see your broker?</h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Email <a href="mailto:ops@tradia.app" className="text-teal-400 hover:text-teal-300">ops@tradia.app</a> with a sample export. We aim to add new formats within 48 hours.
+            Email <a href="mailto:ops@tradia.app" className="text-pink-400 hover:text-pink-300">ops@tradia.app</a> with a sample export. We aim to add new formats within 48 hours.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/sign-up" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors">

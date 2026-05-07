@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -49,9 +49,9 @@ const COMPARISON = {
 
 const FAQ = [
   { q: 'Do I need a credit card to start the trial?', a: 'No. The 14-day free trial is genuinely no-card. You only enter payment details if you decide to continue after the trial ends.' },
-  { q: 'What happens after my trial?',                a: 'You drop to the Free plan automatically — no surprise charges. Your data is preserved. You can upgrade any time.' },
-  { q: 'Can I cancel anytime?',                       a: 'Yes. One click in Settings → Subscription. No retention calls, no questions asked. You keep access until the end of the billing period.' },
-  { q: 'Do you support my broker?',                   a: 'Probably yes — we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@tradia.app and we add new formats within 48 hours.' },
+  { q: 'What happens after my trial?',                a: 'You drop to the Free plan automatically â€” no surprise charges. Your data is preserved. You can upgrade any time.' },
+  { q: 'Can I cancel anytime?',                       a: 'Yes. One click in Settings â†’ Subscription. No retention calls, no questions asked. You keep access until the end of the billing period.' },
+  { q: 'Do you support my broker?',                   a: 'Probably yes â€” we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@tradia.app and we add new formats within 48 hours.' },
   { q: 'Is my trade data safe?',                      a: 'API keys are read-only by design. Tradia never holds funds, never executes orders. Hosted in Europe under GDPR with isolated background tasks.' },
   { q: 'Do you offer refunds?',                       a: 'If you cancel within 7 days of your first paid charge, we refund in full. After that, we prorate to the end of the billing period.' },
 ];
@@ -73,10 +73,10 @@ export default function PricingPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">Compare</span>
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Compare</span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
               What&apos;s included on{' '}
-              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">each tier</span>
+              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">each tier</span>
             </h2>
           </motion.div>
 
@@ -94,12 +94,12 @@ export default function PricingPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--card)] text-[10px] font-bold uppercase tracking-widest text-teal-400 mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--card)] text-[10px] font-bold uppercase tracking-widest text-pink-400 mb-3">
               <Calendar size={12} /> Your first week
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
               From signup to{' '}
-              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">measurable improvement</span>
+              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">measurable improvement</span>
             </h2>
             <p className="mt-3 text-[var(--muted-foreground)] max-w-xl mx-auto">
               The fastest path from &quot;I just signed up&quot; to &quot;I know exactly what&apos;s costing me money.&quot;
@@ -118,7 +118,7 @@ export default function PricingPage() {
                   transition={{ duration: 0.4, delay: i * 0.1 }}
                   className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5"
                 >
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-teal-400 mb-2">{t.day}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-pink-400 mb-2">{t.day}</div>
                   <h3 className="text-base font-bold mb-2">{t.title}</h3>
                   <p className="text-xs text-[var(--muted-foreground)] leading-relaxed mb-4">{t.desc}</p>
                   <div className="rounded-xl border border-[var(--border)] bg-black/30 p-3 min-h-[200px]">
@@ -141,7 +141,7 @@ export default function PricingPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">FAQ</span>
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">FAQ</span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Pricing questions</h2>
           </motion.div>
           <div className="space-y-3">
@@ -158,23 +158,23 @@ export default function PricingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
-            className="rounded-3xl border border-teal-500/20 bg-gradient-to-br from-teal-500/5 via-emerald-500/5 to-cyan-500/5 p-10 sm:p-14 text-center"
+            className="rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-500/5 via-emerald-500/5 to-fuchsia-500/5 p-10 sm:p-14 text-center"
           >
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
               14-day free trial on{' '}
-              <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">every plan</span>
+              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">every plan</span>
             </h2>
             <ul className="mt-6 space-y-2 max-w-md mx-auto text-left">
-              {['No credit card required', 'Full Pro access for 14 days', 'Cancel anytime — one click'].map(item => (
+              {['No credit card required', 'Full Pro access for 14 days', 'Cancel anytime â€” one click'].map(item => (
                 <li key={item} className="flex items-center gap-2 text-sm">
-                  <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+                  <CheckCircle size={16} className="text-pink-400 shrink-0" />
                   {item}
                 </li>
               ))}
             </ul>
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 mt-8 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-teal-300 to-cyan-300 hover:from-teal-200 hover:to-cyan-200 shadow-[0_0_30px_-4px_rgba(45,212,191,0.5)] transition-all"
+              className="inline-flex items-center gap-2 mt-8 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
             >
               Start Free Trial
               <ArrowRight size={16} />
@@ -188,13 +188,13 @@ export default function PricingPage() {
   );
 }
 
-/* ──────────────── Comparison Matrix ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Comparison Matrix â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function ComparisonMatrix() {
   const tiers = ['Free', 'Pro', 'Team', 'Elite'] as const;
   type Tier = typeof tiers[number];
   const tierKey = { Free: 'free', Pro: 'pro', Team: 'team', Elite: 'elite' } as const;
   const cell = (v: string | boolean) => {
-    if (v === true) return <Check size={14} className="text-emerald-400 mx-auto" />;
+    if (v === true) return <Check size={14} className="text-pink-400 mx-auto" />;
     if (v === false) return <X size={14} className="text-[var(--muted-foreground)]/40 mx-auto" />;
     return <span className="text-xs text-[var(--foreground)] tabular-nums">{v}</span>;
   };
@@ -205,7 +205,7 @@ function ComparisonMatrix() {
         <div className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Feature</div>
         {tiers.map(t => (
           <div key={t} className={`px-4 py-3 text-center text-[10px] font-bold uppercase tracking-widest ${
-            t === 'Pro' ? 'text-teal-400 bg-teal-500/5' : 'text-[var(--muted-foreground)]'
+            t === 'Pro' ? 'text-pink-400 bg-pink-500/5' : 'text-[var(--muted-foreground)]'
           }`}>{t}</div>
         ))}
       </div>
@@ -220,7 +220,7 @@ function ComparisonMatrix() {
               {tiers.map(t => {
                 const k = tierKey[t];
                 return (
-                  <div key={t} className={`px-4 py-2.5 text-center ${t === 'Pro' ? 'bg-teal-500/[0.03]' : ''}`}>
+                  <div key={t} className={`px-4 py-2.5 text-center ${t === 'Pro' ? 'bg-pink-500/[0.03]' : ''}`}>
                     {cell(f[k as keyof typeof f] as string | boolean)}
                   </div>
                 );
@@ -233,22 +233,22 @@ function ComparisonMatrix() {
   );
 }
 
-/* ──────────────── Day 1 Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 1 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Day1Mock() {
   return (
     <div className="space-y-2">
-      <div className="text-[8px] font-bold uppercase tracking-widest text-teal-400/80 flex items-center gap-1">
+      <div className="text-[8px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1">
         <Upload size={9} /> Importing
       </div>
-      <div className="rounded-md border-2 border-dashed border-teal-500/30 bg-teal-500/5 p-3 text-center">
-        <Upload size={16} className="text-teal-400 mx-auto mb-1" />
+      <div className="rounded-md border-2 border-dashed border-pink-500/30 bg-pink-500/5 p-3 text-center">
+        <Upload size={16} className="text-pink-400 mx-auto mb-1" />
         <div className="text-[9px] font-bold text-[var(--foreground)]">trades_q4.csv</div>
-        <div className="text-[7px] text-[var(--muted-foreground)]">2.4 MB · 386 trades</div>
+        <div className="text-[7px] text-[var(--muted-foreground)]">2.4 MB Â· 386 trades</div>
       </div>
       <div className="space-y-1">
         {['Detected: Binance Futures', 'Normalizing 386 fills', 'Computing metrics', 'Dashboard ready'].map((s, i) => (
           <div key={s} className="flex items-center gap-1.5 text-[8px]">
-            <CheckCircle size={9} className="text-emerald-400" />
+            <CheckCircle size={9} className="text-pink-400" />
             <span className="text-[var(--foreground)]">{s}</span>
           </div>
         ))}
@@ -257,13 +257,13 @@ function Day1Mock() {
   );
 }
 
-/* ──────────────── Day 3 Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 3 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Day3Mock() {
   const leaks = [
-    { n: 'Revenge Trading',    c: '−$1,420', p: 100 },
-    { n: 'Oversized Position', c: '−$890',  p: 63 },
-    { n: 'FOMO Entries',       c: '−$540',  p: 38 },
-    { n: 'Late Session',       c: '−$280',  p: 20 },
+    { n: 'Revenge Trading',    c: 'âˆ’$1,420', p: 100 },
+    { n: 'Oversized Position', c: 'âˆ’$890',  p: 63 },
+    { n: 'FOMO Entries',       c: 'âˆ’$540',  p: 38 },
+    { n: 'Late Session',       c: 'âˆ’$280',  p: 20 },
   ];
   return (
     <div className="space-y-2">
@@ -291,11 +291,11 @@ function Day3Mock() {
   );
 }
 
-/* ──────────────── Day 7 Mock ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 7 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Day7Mock() {
   return (
     <div className="space-y-2.5">
-      <div className="text-[8px] font-bold uppercase tracking-widest text-emerald-400/80 flex items-center gap-1">
+      <div className="text-[8px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1">
         <TrendingUp size={9} /> Discipline trend
       </div>
       <div className="grid grid-cols-4 gap-1">
@@ -307,16 +307,16 @@ function Day7Mock() {
                 whileInView={{ height: `${v}%` }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 * i }}
-                className="w-full rounded-sm bg-gradient-to-t from-emerald-500 to-teal-400"
+                className="w-full rounded-sm bg-gradient-to-t from-pink-500 to-pink-400"
               />
             </div>
             <div className="text-[7px] text-[var(--muted-foreground)] mt-0.5">W{i+1}</div>
-            <div className="text-[8px] font-bold text-emerald-300 tabular-nums">{v}</div>
+            <div className="text-[8px] font-bold text-pink-300 tabular-nums">{v}</div>
           </div>
         ))}
       </div>
-      <div className="rounded bg-emerald-500/10 border border-emerald-500/20 p-1.5">
-        <div className="flex items-center gap-1 text-[9px] font-bold text-emerald-300">
+      <div className="rounded bg-pink-500/10 border border-pink-500/20 p-1.5">
+        <div className="flex items-center gap-1 text-[9px] font-bold text-pink-300">
           <Activity size={9} /> Compliance: 92%
         </div>
         <div className="text-[7px] text-[var(--muted-foreground)]">Up from 64% last month</div>
@@ -325,7 +325,7 @@ function Day7Mock() {
   );
 }
 
-/* ──────────────── FAQ Item ──────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FAQ Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FAQItem({ q, a, idx }: { q: string; a: string; idx: number }) {
   const [open, setOpen] = useState(idx === 0);
   return (

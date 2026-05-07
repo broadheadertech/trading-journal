@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
@@ -30,7 +30,7 @@ export default function NewsletterSignup() {
 
   if (done) {
     return (
-      <div className="flex items-center gap-2 text-sm text-emerald-400">
+      <div className="flex items-center gap-2 text-sm text-pink-400">
         <Check size={16} /> You&apos;re in. Watch your inbox.
       </div>
     );
@@ -57,7 +57,7 @@ export default function NewsletterSignup() {
         <button
           type="submit"
           disabled={busy}
-          className="px-3 py-2 bg-gradient-to-br from-teal-500 to-teal-700 text-white rounded-lg text-xs font-semibold disabled:opacity-50 flex items-center gap-1"
+          className="px-3 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-lg text-xs font-semibold disabled:opacity-50 flex items-center gap-1"
         >
           {busy ? <Loader2 size={12} className="animate-spin" /> : 'Subscribe'}
         </button>

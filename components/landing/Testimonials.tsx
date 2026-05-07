@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 
@@ -8,10 +8,10 @@ const testimonials = [
     author: 'Alex M.',
     role: 'Forex Swing Trader',
     initials: 'AM',
-    color: 'from-teal-500 to-teal-700',
+    color: 'from-pink-500 to-pink-700',
   },
   {
-    quote: 'I trade both crypto and stocks. Tradia\'s AI Coach caught patterns across both markets I never noticed — my win rate improved 15% in two months.',
+    quote: 'I trade both crypto and stocks. Tradia\'s AI Coach caught patterns across both markets I never noticed â€” my win rate improved 15% in two months.',
     author: 'Sarah K.',
     role: 'Multi-Market Day Trader',
     initials: 'SK',
@@ -22,7 +22,7 @@ const testimonials = [
     author: 'David L.',
     role: 'Crypto Scalper',
     initials: 'DL',
-    color: 'from-green-500 to-teal-500',
+    color: 'from-green-500 to-pink-500',
   },
 ];
 

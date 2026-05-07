@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -55,12 +55,12 @@ export default function Articles() {
           Read, learn, <span className="gradient-text">level up</span>
         </h1>
         <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-          Long-form articles from senior traders and coaches — strategy breakdowns, psychology deep-dives, and market analysis.
+          Long-form articles from senior traders and coaches â€” strategy breakdowns, psychology deep-dives, and market analysis.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
-        {/* Sidebar — categories + tags */}
+        {/* Sidebar â€” categories + tags */}
         <aside className="glass rounded-2xl p-4 space-y-4 h-fit anim-fade-up" style={{ animationDelay: '60ms' }}>
           <div className="relative">
             <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
@@ -81,7 +81,7 @@ export default function Articles() {
                   onClick={() => { setCategory(c); setTag(null); }}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs ${
                     category === c
-                      ? 'bg-teal-500/15 text-teal-400 font-medium'
+                      ? 'bg-pink-500/15 text-pink-400 font-medium'
                       : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/40'
                   }`}
                 >
@@ -101,7 +101,7 @@ export default function Articles() {
                     onClick={() => setTag(tag === t.name ? null : t.name)}
                     className={`text-[10px] px-2 py-0.5 rounded-full ${
                       tag === t.name
-                        ? 'bg-teal-500 text-white'
+                        ? 'bg-pink-500 text-white'
                         : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60'
                     }`}
                   >
@@ -110,7 +110,7 @@ export default function Articles() {
                 ))}
               </div>
               {tag && (
-                <button onClick={() => setTag(null)} className="mt-2 text-[10px] text-teal-400 hover:underline">
+                <button onClick={() => setTag(null)} className="mt-2 text-[10px] text-pink-400 hover:underline">
                   Clear tag filter
                 </button>
               )}
@@ -122,8 +122,8 @@ export default function Articles() {
         <div className="space-y-4">
           {filtered.length === 0 ? (
             <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 flex items-center justify-center">
-                <BookOpen size={28} className="text-teal-400" />
+              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
+                <BookOpen size={28} className="text-pink-400" />
               </div>
               <p className="text-[var(--foreground)] font-medium">No articles yet</p>
               <p className="text-sm text-[var(--muted-foreground)] mt-1">New content drops weekly. Stay tuned.</p>
@@ -158,7 +158,7 @@ function ArticleCard({ article: a, idx, onOpen }: { article: any; idx: number; o
           // eslint-disable-next-line @next/next/no-img-element
           <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-teal-500/30 via-emerald-500/20 to-teal-700/10 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-emerald-500/20 to-pink-700/10 flex items-center justify-center">
             <BookOpen size={40} className="text-white/40" />
           </div>
         )}
@@ -206,7 +206,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
   }, [article, tierName]);
 
   if (!article) {
-    return <div className="text-[var(--muted-foreground)] text-sm">Loading…</div>;
+    return <div className="text-[var(--muted-foreground)] text-sm">Loadingâ€¦</div>;
   }
 
   return (
@@ -224,12 +224,12 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
 
       <header className="space-y-3">
         <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--muted-foreground)]">
-          <span className="px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400 font-bold uppercase tracking-wider">{article.category}</span>
-          <span>·</span>
+          <span className="px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400 font-bold uppercase tracking-wider">{article.category}</span>
+          <span>Â·</span>
           <span>by {article.authorName}</span>
-          <span>·</span>
+          <span>Â·</span>
           <span>{timeAgo(article.publishedAt ?? article.createdAt)}</span>
-          <span>·</span>
+          <span>Â·</span>
           <span className="flex items-center gap-1"><Eye size={11} /> {article.viewCount} views</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--foreground)] leading-tight">{article.title}</h1>
@@ -245,7 +245,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
           <p className="text-sm text-[var(--muted-foreground)] max-w-md mx-auto">
             Upgrade to read the full piece plus everything else in our archive.
           </p>
-          <button className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white text-sm font-semibold flex items-center gap-2 mx-auto">
+          <button className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold flex items-center gap-2 mx-auto">
             See plans <ArrowRight size={14} />
           </button>
         </div>

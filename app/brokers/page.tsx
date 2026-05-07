@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -52,7 +52,7 @@ const FEATURES = [
   {
     icon: CheckCircle2,
     title: 'CSV fallback',
-    body: 'No API? Upload a CSV from any broker — Tradia auto-detects the format.',
+    body: 'No API? Upload a CSV from any broker â€” Tradia auto-detects the format.',
   },
 ];
 
@@ -64,14 +64,14 @@ export default function BrokersPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-teal-500 opacity-[0.07] rounded-full blur-[120px]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-xs font-medium text-teal-400 mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
           >
             <ShieldCheck size={12} /> 67+ supported brokers & exchanges
           </motion.div>
@@ -82,7 +82,7 @@ export default function BrokersPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Connect every broker you{' '}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">already trade on</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">already trade on</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -90,7 +90,7 @@ export default function BrokersPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Crypto, forex, stocks, futures, prop firms — Tradia speaks the language of every major broker. Read-only, secure, and instant.
+            Crypto, forex, stocks, futures, prop firms â€” Tradia speaks the language of every major broker. Read-only, secure, and instant.
           </motion.p>
         </div>
       </section>
@@ -108,8 +108,8 @@ export default function BrokersPage() {
                 transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
               >
-                <div className="w-9 h-9 rounded-lg bg-teal-500/10 flex items-center justify-center mb-3">
-                  <f.icon size={16} className="text-teal-400" />
+                <div className="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center mb-3">
+                  <f.icon size={16} className="text-pink-400" />
                 </div>
                 <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">{f.title}</h3>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{f.body}</p>
@@ -137,7 +137,7 @@ export default function BrokersPage() {
                 {group.items.map(name => (
                   <div
                     key={name}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:border-teal-500/30 transition-colors"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:border-pink-500/30 transition-colors"
                   >
                     {name}
                   </div>
@@ -155,7 +155,7 @@ export default function BrokersPage() {
             Don&apos;t see your broker?
           </h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            CSV import works with any broker. We add new native integrations every month — request yours.
+            CSV import works with any broker. We add new native integrations every month â€” request yours.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
