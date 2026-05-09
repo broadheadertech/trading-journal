@@ -229,11 +229,16 @@ export default function MTConnect() {
 
             <ol className="space-y-3 text-sm">
               <Step n={1} title="Download the EA">
-                <a href="/tradia-sync.ex5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300 transition-all">
-                  <Download size={12} /> Download tradia-sync.ex5
-                </a>
-                <p className="text-xs text-[var(--muted-foreground)] mt-2">
-                  If you only see <code>tradia-sync.mq5</code> (source), open it in MetaEditor (F4 in MT5) and press Compile (F7) to produce the <code>.ex5</code>.
+                <div className="flex flex-wrap items-center gap-2">
+                  <a href="/tradia-sync.mq5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300 transition-all">
+                    <Download size={12} /> Download tradia-sync.mq5
+                  </a>
+                  <a href="/tradia-sync.ex5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors">
+                    <Download size={12} /> tradia-sync.ex5 <span className="text-[10px] text-[var(--muted-foreground)]">(if compiled)</span>
+                  </a>
+                </div>
+                <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed">
+                  Most users want the <strong className="text-pink-400">.mq5</strong> source. Drop it in MT5's <code>MQL5/Experts</code> folder, then in MT5 right-click <code>tradia-sync</code> in Navigator → <strong>Modify</strong> → <strong>Compile (F7)</strong>. MT5 will produce the <code>.ex5</code> automatically. The <code>.ex5</code> button above is for cases where the developer pre-compiled and uploaded it.
                 </p>
               </Step>
 
