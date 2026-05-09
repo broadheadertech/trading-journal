@@ -88,10 +88,11 @@ export const post = mutation({
       v.literal("commodities"),
     ),
     direction: v.union(v.literal("long"), v.literal("short")),
-    entry: v.number(),
+    entryLow: v.number(),
+    entryHigh: v.number(),
     stopLoss: v.number(),
-    takeProfit: v.number(),
-    strength: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    takeProfits: v.array(v.number()),
+    riskLevel: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
     rationale: v.string(),
     expiresAt: v.optional(v.string()),
   },
@@ -103,18 +104,44 @@ export const post = mutation({
       throw new Error("Posting signals requires a Pro, Elite, or Legend subscription.");
     }
 
-    // Validate stop/target are on the correct side of entry
-    const isLong = args.direction === "long";
-    if (isLong) {
-      if (args.stopLoss >= args.entry) throw new Error("Long stop must be below entry.");
-      if (args.takeProfit <= args.entry) throw new Error("Long target must be above entry.");
-    } else {
-      if (args.stopLoss <= args.entry) throw new Error("Short stop must be above entry.");
-      if (args.takeProfit >= args.entry) throw new Error("Short target must be below entry.");
+    if (args.entryLow > args.entryHigh) {
+      throw new Error("Entry low must be ≤ entry high.");
+    }
+    if (args.takeProfits.length === 0) {
+      throw new Error("At least one take-profit level is required.");
+    }
+    if (args.takeProfits.length > 10) {
+      throw new Error("Up to 10 take-profit levels supported.");
     }
 
-    const risk = Math.abs(args.entry - args.stopLoss);
-    const reward = Math.abs(args.takeProfit - args.entry);
+    const isLong = args.direction === "long";
+    const entryMid = (args.entryLow + args.entryHigh) / 2;
+
+    // SL must be on opposite side of entry zone from TPs
+    if (isLong) {
+      if (args.stopLoss >= args.entryLow) throw new Error("Long stop must be below entry zone.");
+      for (let i = 0; i < args.takeProfits.length; i++) {
+        if (args.takeProfits[i] <= args.entryHigh) {
+          throw new Error(`TP${i + 1} must be above entry zone for long.`);
+        }
+        if (i > 0 && args.takeProfits[i] <= args.takeProfits[i - 1]) {
+          throw new Error(`TP${i + 1} must be greater than TP${i} for long.`);
+        }
+      }
+    } else {
+      if (args.stopLoss <= args.entryHigh) throw new Error("Short stop must be above entry zone.");
+      for (let i = 0; i < args.takeProfits.length; i++) {
+        if (args.takeProfits[i] >= args.entryLow) {
+          throw new Error(`TP${i + 1} must be below entry zone for short.`);
+        }
+        if (i > 0 && args.takeProfits[i] >= args.takeProfits[i - 1]) {
+          throw new Error(`TP${i + 1} must be less than TP${i} for short.`);
+        }
+      }
+    }
+
+    const risk = Math.abs(entryMid - args.stopLoss);
+    const reward = Math.abs(args.takeProfits[0] - entryMid);
     const rrRatio = risk > 0 ? reward / risk : 0;
 
     const now = new Date();
@@ -127,11 +154,12 @@ export const post = mutation({
       symbol: args.symbol.toUpperCase(),
       market: args.market,
       direction: args.direction,
-      entry: args.entry,
+      entryLow: args.entryLow,
+      entryHigh: args.entryHigh,
       stopLoss: args.stopLoss,
-      takeProfit: args.takeProfit,
+      takeProfits: args.takeProfits,
       rrRatio,
-      strength: args.strength,
+      riskLevel: args.riskLevel,
       rationale: args.rationale,
       status: "pending",
       postedAt: now.toISOString(),
@@ -152,6 +180,7 @@ export const updateStatus = mutation({
       v.literal("cancelled"),
       v.literal("expired"),
     ),
+    tpHit: v.optional(v.number()),  // 1-based; required when status=won and >1 TP
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
@@ -163,15 +192,25 @@ export const updateStatus = mutation({
       throw new Error("Only the poster (or admin) can update this signal.");
     }
 
-    const patch: { status: typeof args.status; closedAt?: string; actualR?: number } = {
-      status: args.status,
-    };
+    const patch: {
+      status: typeof args.status;
+      closedAt?: string;
+      actualR?: number;
+      tpHit?: number;
+    } = { status: args.status };
 
     if (TERMINAL_STATUSES.has(args.status) && !signal.closedAt) {
       patch.closedAt = new Date().toISOString();
-      // Compute realized R based on outcome
+
       if (args.status === "won") {
-        patch.actualR = signal.rrRatio;
+        // Compute realized R based on which TP hit
+        const tpIndex = args.tpHit ? args.tpHit - 1 : 0;
+        const tp = signal.takeProfits[tpIndex] ?? signal.takeProfits[0];
+        const entryMid = (signal.entryLow + signal.entryHigh) / 2;
+        const risk = Math.abs(entryMid - signal.stopLoss);
+        const reward = Math.abs(tp - entryMid);
+        patch.actualR = risk > 0 ? reward / risk : 0;
+        patch.tpHit = args.tpHit ?? 1;
       } else if (args.status === "lost") {
         patch.actualR = -1;
       } else {
