@@ -6,10 +6,10 @@ import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Radio, TrendingUp, TrendingDown, Clock, Target, ShieldAlert, Star, Filter, Plus, Lock, X, Award, Flame } from 'lucide-react';
+import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, CheckCircle2, XCircle, Ban } from 'lucide-react';
 
 type Direction = 'long' | 'short';
-type Strength = 'high' | 'medium' | 'low';
+type RiskLevel = 'high' | 'medium' | 'low';
 type Status = 'pending' | 'active' | 'won' | 'lost' | 'cancelled' | 'expired';
 type Market = 'crypto' | 'forex' | 'stocks' | 'commodities';
 
@@ -21,13 +21,15 @@ type Signal = {
   symbol: string;
   market: Market;
   direction: Direction;
-  entry: number;
+  entryLow: number;
+  entryHigh: number;
   stopLoss: number;
-  takeProfit: number;
+  takeProfits: number[];
   rrRatio: number;
-  strength: Strength;
+  riskLevel: RiskLevel;
   rationale: string;
   status: Status;
+  tpHit?: number;
   postedAt: string;
   expiresAt?: string;
   closedAt?: string;
@@ -35,6 +37,29 @@ type Signal = {
 };
 
 const PRO_PLUS = new Set(['pro', 'elite', 'legend']);
+
+// ─── Pip / point conversion per market & symbol ───────────────────────
+function pipSize(market: Market, symbol: string): number {
+  const sym = symbol.toUpperCase();
+  if (market === 'forex') return sym.includes('JPY') ? 0.01 : 0.0001;
+  if (market === 'commodities') {
+    if (sym.startsWith('XAU')) return 0.1;       // gold: 0.1 = 1 pip
+    if (sym.startsWith('XAG')) return 0.001;     // silver
+    return 0.01;
+  }
+  if (market === 'stocks') return 0.01;
+  return 1;  // crypto: per-dollar
+}
+
+function fmtPips(market: Market, symbol: string, from: number, to: number): string {
+  const size = pipSize(market, symbol);
+  const diff = (to - from) / size;
+  const abs = Math.round(Math.abs(diff));
+  const sign = diff >= 0 ? '+' : '−';
+  if (market === 'crypto') return `${sign}$${abs.toLocaleString()}`;
+  if (market === 'stocks') return `${sign}${abs}¢`;
+  return `${sign}${abs}pips`;
+}
 
 export default function TradingSignals() {
   const { user } = useUser();
@@ -62,7 +87,6 @@ export default function TradingSignals() {
     <div className="relative space-y-6 anim-fade-up">
       <div className="hero-glow" />
 
-      {/* Header */}
       <header className="space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
           <span className="relative flex h-2 w-2">
@@ -77,8 +101,8 @@ export default function TradingSignals() {
               Trading <span className="gradient-text">signals</span>
             </h1>
             <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-              High-conviction trade ideas from analysts and Pro+ subscribers. Each signal carries entry, stop, target, and
-              the poster's lifetime hit-rate — use them as a starting point, never a substitute for your own playbook.
+              Telegram-style trade ideas from analysts and Pro+ subscribers — entry zone, single SL, and laddered take-profits.
+              Each signal carries the poster's lifetime hit-rate.
             </p>
           </div>
 
@@ -110,10 +134,8 @@ export default function TradingSignals() {
         </div>
       </header>
 
-      {/* Leaderboard */}
       {showLeaderboard && <Leaderboard rows={leaderboard} />}
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
           <Filter size={11} /> Market
@@ -154,7 +176,6 @@ export default function TradingSignals() {
         </div>
       </div>
 
-      {/* Cards */}
       {signals === undefined ? (
         <SignalsSkeleton />
       ) : list.length === 0 ? (
@@ -162,29 +183,27 @@ export default function TradingSignals() {
           No signals match your filters. {canPost && 'Be the first to post one.'}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {list.map(s => (
             <SignalCard
               key={s._id}
               signal={s}
               isOwn={s.posterId === user?.id}
-              onUpdate={(status) => updateStatus({ id: s._id, status })}
+              onUpdate={(status, tpHit) => updateStatus({ id: s._id, status, tpHit })}
             />
           ))}
         </div>
       )}
 
-      {/* Disclaimer */}
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex items-start gap-3">
         <ShieldAlert size={18} className="text-amber-400 mt-0.5 shrink-0" />
         <div className="text-xs text-[var(--muted-foreground)] leading-relaxed">
           <span className="font-semibold text-[var(--foreground)]">Not financial advice. </span>
           Signals are user-posted research-driven trade ideas, not recommendations from Tradia. Run every signal through
-          your playbook, your risk model, and your discipline check before sizing in. Posting requires a Pro+ subscription.
+          your playbook, your risk model, and your discipline check before sizing in.
         </div>
       </div>
 
-      {/* Post modal */}
       {showPostModal && canPost && (
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
@@ -197,15 +216,14 @@ export default function TradingSignals() {
 
 function SignalsSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {[0, 1, 2, 3, 4, 5].map(i => (
-        <div key={i} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 animate-pulse h-64">
-          <div className="h-10 w-32 rounded bg-[var(--muted)]/40 mb-3" />
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            {[0, 1, 2].map(j => <div key={j} className="h-12 rounded bg-[var(--muted)]/30" />)}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {[0, 1, 2, 3].map(i => (
+        <div key={i} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 animate-pulse h-80">
+          <div className="h-10 w-40 rounded bg-[var(--muted)]/40 mb-3" />
+          <div className="h-3 rounded bg-[var(--muted)]/30 mb-2 w-2/3" />
+          <div className="space-y-2 mt-4">
+            {[0, 1, 2, 3].map(j => <div key={j} className="h-3 rounded bg-[var(--muted)]/20" />)}
           </div>
-          <div className="h-3 rounded bg-[var(--muted)]/30 mb-2" />
-          <div className="h-3 rounded bg-[var(--muted)]/30 w-3/4" />
         </div>
       ))}
     </div>
@@ -263,16 +281,17 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
   );
 }
 
-function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boolean; onUpdate: (status: Status) => Promise<unknown> }) {
+// ─── Telegram-style signal card ───────────────────────────────────────
+function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boolean; onUpdate: (status: Status, tpHit?: number) => Promise<unknown> }) {
   const isLong = s.direction === 'long';
-  const DirIcon = isLong ? TrendingUp : TrendingDown;
+  const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
   const dirColor = isLong ? 'text-emerald-400' : 'text-red-400';
-  const dirBg = isLong ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-red-500/10 border-red-500/30';
+  const action = isLong ? 'BUY' : 'SELL';
 
-  const strengthColor =
-    s.strength === 'high' ? 'text-pink-300 border-pink-500/40 bg-pink-500/10' :
-    s.strength === 'medium' ? 'text-amber-300 border-amber-500/40 bg-amber-500/10' :
-    'text-[var(--muted-foreground)] border-[var(--border)] bg-[var(--muted)]/30';
+  const riskBadge =
+    s.riskLevel === 'high' ? { color: 'text-red-300 bg-red-500/15 border-red-500/40', label: '⚠️ High Risk ⚠️' } :
+    s.riskLevel === 'medium' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: 'Medium Risk' } :
+    { color: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/40', label: 'Low Risk' };
 
   const statusColor =
     s.status === 'active' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
@@ -283,125 +302,209 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
 
   const posterStats = useQuery(api.signals.posterStats, { posterId: s.posterId });
 
+  const entryLabel = s.entryLow === s.entryHigh ? fmt(s.entryLow) : `${fmt(s.entryLow)}–${fmt(s.entryHigh)}`;
+  const entryMid = (s.entryLow + s.entryHigh) / 2;
+
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-pink-500/30 transition-colors flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-3">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col hover:border-pink-500/30 transition-colors">
+      {/* Header: date + risk badge */}
+      <div className="px-5 py-3 border-b border-[var(--border)] bg-black/20 flex items-center justify-between gap-3">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+          {new Date(s.postedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+        </span>
+        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${riskBadge.color}`}>
+          {s.riskLevel === 'high' && <AlertTriangle size={10} />}
+          {riskBadge.label}
+        </span>
+      </div>
+
+      {/* Symbol + action */}
+      <div className="px-5 pt-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl border ${dirBg} flex items-center justify-center`}>
-            <DirIcon size={18} className={dirColor} />
-          </div>
+          <DirIcon size={22} className={dirColor} />
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[var(--foreground)] tabular-nums">{s.symbol}</h3>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">{s.market}</span>
+            <div className="flex items-baseline gap-2">
+              <h3 className="text-2xl font-bold text-[var(--foreground)] tabular-nums tracking-tight">{s.symbol}</h3>
+              <span className={`text-base font-bold tracking-widest ${dirColor}`}>{action}S</span>
             </div>
-            <div className={`text-[11px] font-bold uppercase tracking-widest ${dirColor}`}>
-              {s.direction}
-            </div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-0.5">{s.market}</div>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${statusColor}`}>
-            {s.status}
-          </span>
-          <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${strengthColor}`}>
-            <Star size={9} />{s.strength}
-          </span>
+        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${statusColor}`}>
+          {s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}
+        </span>
+      </div>
+
+      {/* Levels */}
+      <div className="px-5 py-4 space-y-1.5 font-mono text-sm">
+        <div className="flex items-center gap-3">
+          <span className="text-[var(--muted-foreground)] w-14 shrink-0">ENTRY:</span>
+          <span className="text-[var(--foreground)] font-bold tabular-nums">{entryLabel}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-[var(--muted-foreground)] w-14 shrink-0">SL:</span>
+          <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
+          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryMid, s.stopLoss)}</span>
+        </div>
+
+        <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
+          {s.takeProfits.map((tp, i) => {
+            const hit = s.tpHit && i + 1 <= s.tpHit;
+            return (
+              <div key={i} className={`flex items-center gap-3 ${hit ? 'text-emerald-300' : ''}`}>
+                <span className={`w-14 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
+                  TP{i + 1}:
+                </span>
+                <span className={`font-bold tabular-nums ${hit ? 'text-emerald-300' : 'text-emerald-300/90'}`}>
+                  {fmt(tp)}
+                </span>
+                <span className="text-[10px] text-emerald-400/60 tabular-nums">
+                  🎯 {fmtPips(s.market, s.symbol, entryMid, tp)}
+                </span>
+                {hit && <CheckCircle2 size={11} className="text-emerald-400 ml-auto" />}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        <Level label="Entry"  value={fmt(s.entry)}      tone="default" />
-        <Level label="Stop"   value={fmt(s.stopLoss)}   tone="loss" />
-        <Level label="Target" value={fmt(s.takeProfit)} tone="gain" />
-      </div>
-
-      <div className="flex items-center justify-between text-[11px]">
-        <div className="flex items-center gap-1.5">
-          <Target size={11} className="text-pink-400" />
-          <span className="text-[var(--muted-foreground)]">R:R</span>
-          <span className="font-bold text-[var(--foreground)] tabular-nums">{s.rrRatio.toFixed(1)}</span>
-          {s.actualR !== undefined && (
-            <span className={`tabular-nums ml-1 ${s.actualR > 0 ? 'text-emerald-400' : s.actualR < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
-              ({s.actualR >= 0 ? '+' : ''}{s.actualR.toFixed(1)}R realized)
-            </span>
-          )}
+      {/* Rationale */}
+      {s.rationale && (
+        <div className="px-5 pb-3 text-xs text-[var(--muted-foreground)] leading-relaxed border-t border-[var(--border)] pt-3">
+          {s.rationale}
         </div>
-        <div className="flex items-center gap-1.5 text-[var(--muted-foreground)]">
-          <Clock size={11} />
-          <span>{timeAgo(s.postedAt)}</span>
-        </div>
-      </div>
+      )}
 
-      <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{s.rationale}</p>
-
-      <div className="flex items-center justify-between pt-3 border-t border-[var(--border)] text-[10px]">
-        <div className="flex items-center gap-1.5 text-[var(--muted-foreground)]">
-          <Radio size={10} />
-          <span className="font-medium text-[var(--foreground)]">{s.posterName}</span>
-          {posterStats && posterStats.total > 0 && (
-            <span className={`ml-1 ${posterStats.hitRate >= 0.6 ? 'text-emerald-400' : posterStats.hitRate >= 0.4 ? 'text-amber-400' : 'text-red-400'}`}>
-              · {(posterStats.hitRate * 100).toFixed(0)}% on {posterStats.total}
-            </span>
-          )}
-        </div>
-        {isOwn && (s.status === 'pending' || s.status === 'active') ? (
-          <div className="flex items-center gap-1">
-            {s.status === 'pending' && (
-              <button onClick={() => onUpdate('active')}    className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors">Activate</button>
+      {/* Footer */}
+      <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-between text-[10px] mt-auto bg-black/10">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-[var(--muted-foreground)]">
+            <Radio size={10} />
+            <span className="font-medium text-[var(--foreground)]">{s.posterName}</span>
+            {posterStats && posterStats.total > 0 && (
+              <span className={`ml-1 ${posterStats.hitRate >= 0.6 ? 'text-emerald-400' : posterStats.hitRate >= 0.4 ? 'text-amber-400' : 'text-red-400'}`}>
+                · {(posterStats.hitRate * 100).toFixed(0)}% on {posterStats.total}
+              </span>
             )}
-            <button onClick={() => onUpdate('won')}        className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors">TP hit</button>
-            <button onClick={() => onUpdate('lost')}       className="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors">SL hit</button>
-            <button onClick={() => onUpdate('cancelled')}  className="px-2 py-0.5 rounded text-[10px] bg-[var(--muted)]/40 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 transition-colors">Cancel</button>
           </div>
-        ) : null}
+          <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
+            <Target size={10} className="text-pink-400" />
+            <span className="tabular-nums">R:R {s.rrRatio.toFixed(1)}</span>
+            {s.actualR !== undefined && (
+              <span className={`tabular-nums ml-1 ${s.actualR > 0 ? 'text-emerald-400' : s.actualR < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
+                ({s.actualR >= 0 ? '+' : ''}{s.actualR.toFixed(1)}R)
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
+            <Clock size={10} />
+            <span>{timeAgo(s.postedAt)}</span>
+          </div>
+        </div>
+
+        {isOwn && (s.status === 'pending' || s.status === 'active') && (
+          <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} />
+        )}
       </div>
     </div>
   );
 }
 
-function Level({ label, value, tone }: { label: string; value: string; tone: 'default' | 'gain' | 'loss' }) {
-  const color =
-    tone === 'gain' ? 'text-emerald-300' :
-    tone === 'loss' ? 'text-red-300' :
-    'text-[var(--foreground)]';
+function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status }) {
+  const [tpPickerOpen, setTpPickerOpen] = useState(false);
+
   return (
-    <div className="rounded-md border border-[var(--border)] bg-black/20 p-2">
-      <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">{label}</div>
-      <div className={`text-sm font-bold tabular-nums ${color}`}>{value}</div>
+    <div className="flex items-center gap-1 relative">
+      {status === 'pending' && (
+        <button onClick={() => onUpdate('active')} title="Mark active" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors">
+          Activate
+        </button>
+      )}
+
+      {takeProfits.length > 1 ? (
+        <>
+          <button onClick={() => setTpPickerOpen(v => !v)} title="Mark TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+            <CheckCircle2 size={10} /> TP hit
+          </button>
+          {tpPickerOpen && (
+            <div className="absolute bottom-full right-0 mb-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg p-1 flex flex-col z-10">
+              {takeProfits.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { onUpdate('won', i + 1); setTpPickerOpen(false); }}
+                  className="px-3 py-1 text-[10px] text-emerald-300 hover:bg-emerald-500/15 rounded transition-colors text-left"
+                >
+                  TP{i + 1} hit
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <button onClick={() => onUpdate('won', 1)} title="TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+          <CheckCircle2 size={10} /> TP hit
+        </button>
+      )}
+
+      <button onClick={() => onUpdate('lost')} title="SL hit" className="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors inline-flex items-center gap-1">
+        <XCircle size={10} /> SL
+      </button>
+      <button onClick={() => onUpdate('cancelled')} title="Cancel signal" className="px-2 py-0.5 rounded text-[10px] bg-[var(--muted)]/40 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 transition-colors inline-flex items-center gap-1">
+        <Ban size={10} />
+      </button>
     </div>
   );
 }
 
+// ─── Post modal ───────────────────────────────────────────────────────
 function PostSignalModal({ posterName, onClose }: { posterName: string; onClose: () => void }) {
   const post = useMutation(api.signals.post);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [symbol, setSymbol] = useState('');
-  const [market, setMarket] = useState<Market>('crypto');
+  const [market, setMarket] = useState<Market>('commodities');
   const [direction, setDirection] = useState<Direction>('long');
-  const [entry, setEntry] = useState('');
+  const [entryLow, setEntryLow] = useState('');
+  const [entryHigh, setEntryHigh] = useState('');
   const [stopLoss, setStopLoss] = useState('');
-  const [takeProfit, setTakeProfit] = useState('');
-  const [strength, setStrength] = useState<Strength>('medium');
+  const [tpInputs, setTpInputs] = useState<string[]>(['']);
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>('high');
   const [rationale, setRationale] = useState('');
 
-  const entryNum = parseFloat(entry);
+  const entryLowNum = parseFloat(entryLow);
+  const entryHighNum = parseFloat(entryHigh || entryLow);
   const slNum = parseFloat(stopLoss);
-  const tpNum = parseFloat(takeProfit);
-  const validNumbers = [entryNum, slNum, tpNum].every(n => Number.isFinite(n) && n > 0);
+  const tpNums = tpInputs.map(t => parseFloat(t)).filter(n => Number.isFinite(n) && n > 0);
 
-  const risk = validNumbers ? Math.abs(entryNum - slNum) : 0;
-  const reward = validNumbers ? Math.abs(tpNum - entryNum) : 0;
-  const previewRR = risk > 0 ? reward / risk : 0;
+  const allBaseValid = [entryLowNum, entryHighNum, slNum].every(n => Number.isFinite(n) && n > 0);
+  const entryMid = allBaseValid ? (entryLowNum + entryHighNum) / 2 : 0;
+  const previewRR = allBaseValid && tpNums[0]
+    ? Math.abs(tpNums[0] - entryMid) / Math.max(0.0000001, Math.abs(entryMid - slNum))
+    : 0;
+
+  function addTp() {
+    if (tpInputs.length >= 10) return;
+    setTpInputs([...tpInputs, '']);
+  }
+  function removeTp(i: number) {
+    if (tpInputs.length === 1) return;
+    setTpInputs(tpInputs.filter((_, idx) => idx !== i));
+  }
+  function setTp(i: number, v: string) {
+    const next = [...tpInputs];
+    next[i] = v;
+    setTpInputs(next);
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!symbol.trim()) { setError('Symbol is required.'); return; }
-    if (!validNumbers) { setError('Entry, stop, and target must be positive numbers.'); return; }
-    if (!rationale.trim() || rationale.trim().length < 10) { setError('Rationale must be at least 10 characters.'); return; }
+    if (!allBaseValid) { setError('Entry, stop, and at least one TP must be positive numbers.'); return; }
+    if (entryLowNum > entryHighNum) { setError('Entry low must be ≤ entry high.'); return; }
+    if (tpNums.length === 0) { setError('At least one take-profit is required.'); return; }
+    if (rationale.trim().length < 10) { setError('Rationale must be at least 10 characters.'); return; }
 
     setSubmitting(true);
     try {
@@ -410,10 +513,11 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
         symbol: symbol.trim(),
         market,
         direction,
-        entry: entryNum,
+        entryLow: entryLowNum,
+        entryHigh: entryHighNum,
         stopLoss: slNum,
-        takeProfit: tpNum,
-        strength,
+        takeProfits: tpNums,
+        riskLevel,
         rationale: rationale.trim(),
       });
       onClose();
@@ -440,59 +544,107 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Symbol">
-              <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())} placeholder="BTCUSDT" maxLength={20} />
+              <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())} placeholder="XAUUSD" maxLength={20} />
             </Field>
             <Field label="Market">
               <select value={market} onChange={e => setMarket(e.target.value as Market)}>
-                <option value="crypto">Crypto</option>
-                <option value="forex">Forex</option>
-                <option value="stocks">Stocks</option>
                 <option value="commodities">Commodities</option>
+                <option value="forex">Forex</option>
+                <option value="crypto">Crypto</option>
+                <option value="stocks">Stocks</option>
               </select>
             </Field>
           </div>
 
-          <Field label="Direction">
-            <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
-              <button type="button" onClick={() => setDirection('long')}
-                className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-[var(--muted-foreground)]'}`}>
-                Long
-              </button>
-              <button type="button" onClick={() => setDirection('short')}
-                className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'short' ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'text-[var(--muted-foreground)]'}`}>
-                Short
-              </button>
-            </div>
-          </Field>
-
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Entry">
-              <input type="number" step="any" value={entry} onChange={e => setEntry(e.target.value)} placeholder="67240" />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Direction">
+              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
+                <button type="button" onClick={() => setDirection('long')}
+                  className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-[var(--muted-foreground)]'}`}>
+                  BUY (Long)
+                </button>
+                <button type="button" onClick={() => setDirection('short')}
+                  className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'short' ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'text-[var(--muted-foreground)]'}`}>
+                  SELL (Short)
+                </button>
+              </div>
             </Field>
-            <Field label="Stop">
-              <input type="number" step="any" value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="65800" />
-            </Field>
-            <Field label="Target">
-              <input type="number" step="any" value={takeProfit} onChange={e => setTakeProfit(e.target.value)} placeholder="71100" />
+            <Field label="Risk Level">
+              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
+                {(['low', 'medium', 'high'] as RiskLevel[]).map(r => (
+                  <button key={r} type="button" onClick={() => setRiskLevel(r)}
+                    className={`flex-1 px-2 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
+                      riskLevel === r
+                        ? r === 'high' ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                          : r === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'text-[var(--muted-foreground)]'
+                    }`}>
+                    {r}
+                  </button>
+                ))}
+              </div>
             </Field>
           </div>
 
-          {validNumbers && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Entry Low">
+              <input type="number" step="any" value={entryLow} onChange={e => setEntryLow(e.target.value)} placeholder="4685" />
+            </Field>
+            <Field label="Entry High (optional)">
+              <input type="number" step="any" value={entryHigh} onChange={e => setEntryHigh(e.target.value)} placeholder="4700 (leave blank for single price)" />
+            </Field>
+          </div>
+
+          <Field label="Stop Loss">
+            <input type="number" step="any" value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="4675" />
+          </Field>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                Take Profits ({tpInputs.length}/10)
+              </div>
+              <button type="button" onClick={addTp} disabled={tpInputs.length >= 10}
+                className="inline-flex items-center gap-1 text-[10px] text-pink-400 hover:text-pink-300 transition-colors disabled:opacity-40">
+                <Plus size={10} /> Add TP
+              </button>
+            </div>
+            <div className="space-y-1.5">
+              {tpInputs.map((v, i) => {
+                const tpNum = parseFloat(v);
+                const showPips = Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
+                return (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-10 shrink-0 tabular-nums">TP{i + 1}</span>
+                    <input
+                      type="number"
+                      step="any"
+                      value={v}
+                      onChange={e => setTp(i, e.target.value)}
+                      placeholder={`Target ${i + 1}`}
+                      className="flex-1"
+                    />
+                    {showPips && (
+                      <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
+                        {fmtPips(market, symbol || 'X', entryMid, tpNum)}
+                      </span>
+                    )}
+                    <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
+                      className="p-1 rounded text-[var(--muted-foreground)] hover:text-red-400 transition-colors disabled:opacity-30">
+                      {tpInputs.length === 1 ? <Minus size={12} /> : <Trash2 size={12} />}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {previewRR > 0 && (
             <div className="text-xs text-[var(--muted-foreground)] tabular-nums">
-              Computed R:R: <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-red-400'}`}>{previewRR.toFixed(2)}</span>
+              R:R (vs TP1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-red-400'}`}>{previewRR.toFixed(2)}</span>
             </div>
           )}
-
-          <Field label="Conviction">
-            <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
-              {(['low', 'medium', 'high'] as Strength[]).map(s => (
-                <button key={s} type="button" onClick={() => setStrength(s)}
-                  className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${strength === s ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40' : 'text-[var(--muted-foreground)]'}`}>
-                  {s}
-                </button>
-              ))}
-            </div>
-          </Field>
 
           <Field label="Rationale (≥10 chars)">
             <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={3} placeholder="Why this trade? Levels, catalysts, invalidation..." maxLength={500} />
@@ -526,7 +678,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function fmt(n: number) {
-  if (n >= 1000) return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (n >= 1000) return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
   if (n < 10)   return n.toFixed(4);
   return n.toFixed(2);
 }

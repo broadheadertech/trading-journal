@@ -324,7 +324,7 @@ export default defineSchema({
     posterId: v.string(),               // Clerk user ID
     posterName: v.string(),             // display name at post-time
     posterTier: v.string(),             // tier at post-time (pro/elite/legend)
-    symbol: v.string(),                 // e.g. "BTCUSDT", "EURUSD"
+    symbol: v.string(),                 // e.g. "BTCUSDT", "EURUSD", "XAUUSD"
     market: v.union(
       v.literal("crypto"),
       v.literal("forex"),
@@ -332,11 +332,12 @@ export default defineSchema({
       v.literal("commodities"),
     ),
     direction: v.union(v.literal("long"), v.literal("short")),
-    entry: v.number(),
+    entryLow: v.number(),               // bottom of entry zone (= entryHigh if single price)
+    entryHigh: v.number(),              // top of entry zone
     stopLoss: v.number(),
-    takeProfit: v.number(),
-    rrRatio: v.number(),                // computed at post-time
-    strength: v.union(
+    takeProfits: v.array(v.number()),   // TP1, TP2, ... up to 10 levels
+    rrRatio: v.number(),                // computed: TP1 vs SL using entry midpoint
+    riskLevel: v.union(
       v.literal("high"),
       v.literal("medium"),
       v.literal("low"),
@@ -350,6 +351,7 @@ export default defineSchema({
       v.literal("cancelled"),   // poster cancelled
       v.literal("expired"),     // timed out
     ),
+    tpHit: v.optional(v.number()),      // which TP level hit (1-based) when status=won
     postedAt: v.string(),               // ISO
     expiresAt: v.optional(v.string()),  // ISO (default: +24h)
     closedAt: v.optional(v.string()),   // ISO when status moved to terminal
