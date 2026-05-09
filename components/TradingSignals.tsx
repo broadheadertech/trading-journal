@@ -92,7 +92,7 @@ export default function TradingSignals() {
   const canPost = PRO_PLUS.has(planId);
 
   const [marketFilter, setMarketFilter] = useState<Market | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('active');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
@@ -233,7 +233,7 @@ export default function TradingSignals() {
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
           onClose={() => setShowPostModal(false)}
-          onPosted={() => { setStatusFilter('pending'); setMarketFilter('all'); }}
+          onPosted={() => { setStatusFilter('active'); setMarketFilter('all'); }}
         />
       )}
     </div>
