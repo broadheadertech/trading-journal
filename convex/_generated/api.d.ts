@@ -38,6 +38,7 @@ import type * as reflections from "../reflections.js";
 import type * as ruleBreaks from "../ruleBreaks.js";
 import type * as scoreEvents from "../scoreEvents.js";
 import type * as seed from "../seed.js";
+import type * as signals from "../signals.js";
 import type * as strategies from "../strategies.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as tierLimits from "../tierLimits.js";
@@ -83,6 +84,7 @@ declare const fullApi: ApiFromModules<{
   ruleBreaks: typeof ruleBreaks;
   scoreEvents: typeof scoreEvents;
   seed: typeof seed;
+  signals: typeof signals;
   strategies: typeof strategies;
   subscriptions: typeof subscriptions;
   tierLimits: typeof tierLimits;
