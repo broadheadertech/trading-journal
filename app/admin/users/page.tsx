@@ -1,20 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { useAdminUsers, useAdminUserActions } from '@/hooks/useAdminStore';
 import AdminUserDetail from '@/components/admin/AdminUserDetail';
+
+type ClerkInfo = { firstName: string; lastName: string; email: string };
 
 export default function AdminUsersPage() {
   const users = useAdminUsers();
   const { banUser, unbanUser, overridePlan, resetUserData } = useAdminUserActions();
   const [search, setSearch] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [clerkById, setClerkById] = useState<Record<string, ClerkInfo>>({});
 
   type User = NonNullable<typeof users>[number];
-  const filtered = users?.filter((u: User) =>
-    u.userId.toLowerCase().includes(search.toLowerCase())
-  );
+
+  // Fetch Clerk profile data (name + email) for the loaded users
+  useEffect(() => {
+    if (!users || users.length === 0) return;
+    const ids = users.map((u: User) => u.userId);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/clerk/users-by-ids', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userIds: ids }),
+        });
+        if (!res.ok) return;
+        const data = await res.json() as { users: { id: string; firstName: string; lastName: string; email: string }[] };
+        if (cancelled) return;
+        const map: Record<string, ClerkInfo> = {};
+        for (const u of data.users) map[u.id] = { firstName: u.firstName, lastName: u.lastName, email: u.email };
+        setClerkById(map);
+      } catch {
+        // silent — name column will fall back to "—"
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [users]);
+
+  const displayName = useMemo(() => (uid: string): string => {
+    const info = clerkById[uid];
+    if (!info) return '';
+    const full = `${info.firstName} ${info.lastName}`.trim();
+    return full || info.email || '';
+  }, [clerkById]);
+
+  const filtered = users?.filter((u: User) => {
+    const q = search.toLowerCase();
+    if (!q) return true;
+    if (u.userId.toLowerCase().includes(q)) return true;
+    const name = displayName(u.userId).toLowerCase();
+    if (name.includes(q)) return true;
+    const email = clerkById[u.userId]?.email?.toLowerCase() ?? '';
+    if (email.includes(q)) return true;
+    return false;
+  });
 
   return (
     <div className="space-y-6 max-w-6xl">
@@ -30,7 +73,7 @@ export default function AdminUsersPage() {
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
         <input
           type="text"
-          placeholder="Search by user ID..."
+          placeholder="Search by name, email, or user ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-9 pr-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
@@ -52,6 +95,7 @@ export default function AdminUsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[var(--muted)]">
+                  <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Name</th>
                   <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">User ID</th>
                   <th className="text-center px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Status</th>
                   <th className="text-right px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Trades</th>
@@ -61,12 +105,25 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((u: User) => (
+                {filtered.map((u: User) => {
+                  const info = clerkById[u.userId];
+                  const fullName = info ? `${info.firstName} ${info.lastName}`.trim() : '';
+                  return (
                   <tr
                     key={u.userId}
                     onClick={() => setSelectedUserId(u.userId)}
                     className="border-t border-[var(--border)] hover:bg-[var(--card-hover)] cursor-pointer transition-colors"
                   >
+                    <td className="px-4 py-2.5 text-[var(--foreground)]">
+                      {info ? (
+                        <div className="flex flex-col">
+                          <span className="text-xs font-medium">{fullName || '—'}</span>
+                          {info.email && <span className="text-[10px] text-[var(--muted-foreground)]">{info.email}</span>}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-[var(--muted-foreground)]">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-2.5 text-xs text-[var(--foreground)]">
                       {u.userId.slice(0, 16)}...
                     </td>
@@ -92,7 +149,8 @@ export default function AdminUsersPage() {
                       {new Date(u.signedUp).toLocaleDateString()}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
