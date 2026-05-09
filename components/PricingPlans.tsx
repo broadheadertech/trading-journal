@@ -144,20 +144,20 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               const priceLabel = interval === 'year' ? '/yr' : '/mo';
               const isCurrent = currentPlanId === plan.planId && isActive;
               const canSubscribe = price > 0;
-              const isLegend = plan.planId === 'legend';
+              const isElite = plan.planId === 'elite';
 
               return (
                 <div
                   key={plan._id}
                   className={`rounded-xl border p-5 flex flex-col ${
-                    isLegend
+                    isElite
                       ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-[var(--card)] ring-1 ring-amber-500/20'
                       : 'border-[var(--border)] bg-[var(--card)]'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    {isLegend && <Crown size={16} className="text-amber-400" />}
-                    <h3 className={`text-sm font-bold ${isLegend ? 'text-amber-400' : 'text-[var(--foreground)]'}`}>
+                    {isElite && <Crown size={16} className="text-amber-400" />}
+                    <h3 className={`text-sm font-bold ${isElite ? 'text-amber-400' : 'text-[var(--foreground)]'}`}>
                       {plan.name}
                     </h3>
                   </div>
@@ -167,7 +167,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                   <ul className="mt-4 space-y-2 flex-1">
                     {plan.features.map((f: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                        <Check size={14} className={`mt-0.5 shrink-0 ${isLegend ? 'text-amber-400' : 'text-[var(--green)]'}`} />
+                        <Check size={14} className={`mt-0.5 shrink-0 ${isElite ? 'text-amber-400' : 'text-[var(--green)]'}`} />
                         {f}
                       </li>
                     ))}
@@ -186,7 +186,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                       onClick={() => handleSubscribe(plan)}
                       disabled={loading === plan.planId || !canSubscribe}
                       className={`mt-4 w-full py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${
-                        isLegend
+                        isElite
                           ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600'
                           : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
                       }`}

@@ -201,7 +201,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
     if (!article) return false;
     if (article.accessTier === 'public') return true;
     if (article.accessTier === 'subscribers') return tierName !== 'free';
-    if (article.accessTier === 'paid') return tierName === 'pro' || tierName === 'elite' || tierName === 'legend';
+    if (article.accessTier === 'paid') return tierName === 'pro' || tierName === 'elite';
     return true;
   }, [article, tierName]);
 

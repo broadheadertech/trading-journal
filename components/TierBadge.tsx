@@ -1,8 +1,8 @@
 ﻿'use client';
 
-import { Crown, Sparkles, Zap, Star, Gem } from 'lucide-react';
+import { Sparkles, Zap, Star } from 'lucide-react';
 
-export type TierName = 'free' | 'essential' | 'pro' | 'elite' | 'legend';
+export type TierName = 'free' | 'core' | 'pro' | 'elite';
 
 interface Props {
   tier?: string | null;
@@ -23,9 +23,9 @@ const TIERS: Record<TierName, {
     icon: null,
     shimmer: false,
   },
-  essential: {
-    label: 'Essential',
-    gradient: 'from-emerald-500 to-pink-600',
+  core: {
+    label: 'Core',
+    gradient: 'from-pink-400 to-fuchsia-500',
     text: 'text-white',
     icon: <Sparkles size={9} strokeWidth={3} />,
     shimmer: false,
@@ -42,13 +42,6 @@ const TIERS: Record<TierName, {
     gradient: 'from-amber-400 via-orange-500 to-pink-500',
     text: 'text-white',
     icon: <Star size={9} strokeWidth={3} />,
-    shimmer: true,
-  },
-  legend: {
-    label: 'Legend',
-    gradient: 'from-fuchsia-300 via-teal-400 to-emerald-400',
-    text: 'text-white',
-    icon: <Crown size={9} strokeWidth={3} />,
     shimmer: true,
   },
 };

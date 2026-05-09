@@ -38,7 +38,7 @@ type Signal = {
   lotSize?: number;
 };
 
-const PRO_PLUS = new Set(['pro', 'elite', 'legend']);
+const PRO_PLUS = new Set(['pro', 'elite']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
 // Defaults follow MT4/MT5 broker convention. Gold default: 1 pip = $0.01

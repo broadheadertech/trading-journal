@@ -1,6 +1,6 @@
 import { TabId } from './types';
 
-export type TierName = 'free' | 'essential' | 'pro' | 'elite' | 'legend';
+export type TierName = 'free' | 'core' | 'pro' | 'elite';
 
 export interface TierConfig {
   tabs: TabId[];
@@ -17,39 +17,32 @@ const ALL_TABS: TabId[] = [
 
 export const TIERS: Record<TierName, TierConfig> = {
   free: {
-    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'courses', 'events', 'community', 'coaching', 'strategies', 'rewards', 'games', 'indicators', 'economic', 'world', 'articles'],
+    tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'courses', 'events', 'community', 'coaching', 'strategies', 'rewards', 'games', 'indicators', 'economic', 'world', 'articles', 'signals', 'brokers'],
     maxTrades: 50,
     maxStrategies: 3,
     hasTeam: false,
     label: 'Free',
   },
-  essential: {
+  core: {
     tabs: ['dashboard', 'journal', 'playbook', 'analytics', 'psychology', 'goals', 'verdicts', 'checklist', 'brain', 'courses', 'events', 'community', 'coaching', 'strategies', 'rewards', 'games', 'indicators', 'economic', 'world', 'articles', 'signals', 'brokers'],
     maxTrades: 200,
     maxStrategies: 10,
     hasTeam: false,
-    label: 'Essential',
+    label: 'Tradia Core',
   },
   pro: {
     tabs: ALL_TABS,
     maxTrades: -1,
     maxStrategies: -1,
     hasTeam: false,
-    label: 'Pro',
+    label: 'Tradia Pro',
   },
   elite: {
     tabs: ALL_TABS,
     maxTrades: -1,
     maxStrategies: -1,
-    hasTeam: false,
-    label: 'Elite',
-  },
-  legend: {
-    tabs: ALL_TABS,
-    maxTrades: -1,
-    maxStrategies: -1,
     hasTeam: true,
-    label: 'Legend',
+    label: 'Tradia Elite',
   },
 };
 
@@ -58,7 +51,7 @@ export function getTierForPlan(planId: string): TierName {
   return 'free';
 }
 
-const TIER_ORDER: TierName[] = ['free', 'essential', 'pro', 'elite', 'legend'];
+const TIER_ORDER: TierName[] = ['free', 'core', 'pro', 'elite'];
 
 /** Returns the lowest tier that includes this tab. */
 export function getRequiredTier(tabId: TabId): TierName {
