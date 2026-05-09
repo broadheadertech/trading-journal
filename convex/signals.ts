@@ -1,19 +1,17 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { getUser, requireUser } from "./helpers";
 
 const PRO_PLUS_TIERS = new Set(["pro", "elite", "legend"]);
 const TERMINAL_STATUSES = new Set(["won", "lost", "cancelled", "expired"]);
 
-async function currentUserPlanId(ctx: { auth: { getUserIdentity: () => Promise<{ subject: string } | null> }; db: { query: (t: string) => { withIndex: (i: string, f: (q: { eq: (k: string, v: string) => unknown }) => unknown) => { first: () => Promise<{ planId?: string } | null> } } } }): Promise<string> {
-  const userId = await getUser(ctx);
-  if (!userId) return "free";
-  // Admin auto-elevation handled in subscriptions.ts; here we read raw plan
+async function currentUserPlanId(ctx: MutationCtx, userId: string): Promise<string> {
+  // Admin auto-elevation: matches the rule in subscriptions.ts:getUserSubscription
   const adminId = process.env.ADMIN_USER_ID;
   if (adminId && userId === adminId) return "legend";
   const sub = await ctx.db
     .query("userSubscriptions")
-    .withIndex("by_user", (q: { eq: (k: string, v: string) => unknown }) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("userId", userId))
     .first();
   return sub?.planId ?? "free";
 }
@@ -99,7 +97,7 @@ export const post = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
-    const planId = await currentUserPlanId(ctx);
+    const planId = await currentUserPlanId(ctx, userId);
 
     if (!PRO_PLUS_TIERS.has(planId)) {
       throw new Error("Posting signals requires a Pro, Elite, or Legend subscription.");
