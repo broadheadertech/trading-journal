@@ -92,7 +92,7 @@ export default function TradingSignals() {
   const canPost = PRO_PLUS.has(planId);
 
   const [marketFilter, setMarketFilter] = useState<Market | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('active');
+  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
@@ -233,6 +233,7 @@ export default function TradingSignals() {
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
           onClose={() => setShowPostModal(false)}
+          onPosted={() => { setStatusFilter('pending'); setMarketFilter('all'); }}
         />
       )}
     </div>
@@ -491,7 +492,7 @@ function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]
 }
 
 // ─── Post modal ───────────────────────────────────────────────────────
-function PostSignalModal({ posterName, onClose }: { posterName: string; onClose: () => void }) {
+function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string; onClose: () => void; onPosted?: () => void }) {
   const post = useMutation(api.signals.post);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -569,6 +570,7 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
         pipSize: Number.isFinite(customPip) ? customPip : undefined,
         lotSize: Number.isFinite(customLot) ? customLot : undefined,
       });
+      onPosted?.();
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to post signal.');
