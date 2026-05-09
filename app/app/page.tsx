@@ -30,6 +30,7 @@ import Community from '@/components/Community';
 import Coaching from '@/components/Coaching';
 import Strategies from '@/components/Strategies';
 import TradingSignals from '@/components/TradingSignals';
+import MTConnect from '@/components/MTConnect';
 import Rewards from '@/components/Rewards';
 import Games from '@/components/Games';
 import Indicators from '@/components/Indicators';
@@ -502,6 +503,9 @@ function AppContent() {
           )}
           {activeTab === 'signals' && (
             canAccessTab('signals') ? <TradingSignals /> : <UpgradePrompt requiredTier={getRequiredTier('signals')} />
+          )}
+          {activeTab === 'brokers' && (
+            canAccessTab('brokers') ? <MTConnect /> : <UpgradePrompt requiredTier={getRequiredTier('brokers')} />
           )}
           {activeTab === 'rewards' && (
             canAccessTab('rewards') ? <Rewards /> : <UpgradePrompt requiredTier={getRequiredTier('rewards')} />
