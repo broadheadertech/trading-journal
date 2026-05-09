@@ -319,6 +319,46 @@ export default defineSchema({
     isHighlighted: v.optional(v.boolean()),
   }).index("by_active", ["isActive"]),
 
+  // ─── User-posted trading signals (Pro+ tier feature) ────────────────
+  signals: defineTable({
+    posterId: v.string(),               // Clerk user ID
+    posterName: v.string(),             // display name at post-time
+    posterTier: v.string(),             // tier at post-time (pro/elite/legend)
+    symbol: v.string(),                 // e.g. "BTCUSDT", "EURUSD"
+    market: v.union(
+      v.literal("crypto"),
+      v.literal("forex"),
+      v.literal("stocks"),
+      v.literal("commodities"),
+    ),
+    direction: v.union(v.literal("long"), v.literal("short")),
+    entry: v.number(),
+    stopLoss: v.number(),
+    takeProfit: v.number(),
+    rrRatio: v.number(),                // computed at post-time
+    strength: v.union(
+      v.literal("high"),
+      v.literal("medium"),
+      v.literal("low"),
+    ),
+    rationale: v.string(),
+    status: v.union(
+      v.literal("pending"),     // awaiting entry trigger
+      v.literal("active"),      // entry hit, in trade
+      v.literal("won"),         // closed at TP
+      v.literal("lost"),        // closed at SL
+      v.literal("cancelled"),   // poster cancelled
+      v.literal("expired"),     // timed out
+    ),
+    postedAt: v.string(),               // ISO
+    expiresAt: v.optional(v.string()),  // ISO (default: +24h)
+    closedAt: v.optional(v.string()),   // ISO when status moved to terminal
+    actualR: v.optional(v.number()),    // realized R-multiple after close
+  })
+    .index("by_poster", ["posterId"])
+    .index("by_status", ["status"])
+    .index("by_market_status", ["market", "status"]),
+
   // ─── Admin activity events ──────────────────────────────────────────
   adminEvents: defineTable({
     type: v.string(),
