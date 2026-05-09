@@ -4,7 +4,7 @@ import { TabId, TimeRange } from '@/lib/types';
 import {
   LayoutDashboard, BookOpen, Map, List,
   BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe,
+  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe, Radio,
   ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
 } from 'lucide-react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
@@ -41,6 +41,7 @@ const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={20} /> },
   { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={20} /> },
+  { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={20} /> },
   { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={20} /> },
   { id: 'journal',     label: 'Journal & Analytics', icon: <List size={20} /> },
   { id: 'coaching',    label: 'Call a Coach',        icon: <Headphones size={20} /> },

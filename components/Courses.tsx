@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -85,7 +85,7 @@ export default function Courses() {
             <GraduationCap size={28} className="text-pink-400" />
           </div>
           <p className="text-[var(--foreground)] font-medium">No courses yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon â€” new content drops monthly.</p>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — new content drops monthly.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -125,8 +125,8 @@ export default function Courses() {
                   {/* Floating price chip */}
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
                     <span>${c.priceUsd}</span>
-                    <span className="text-white/60">Â·</span>
-                    <span className="text-white/80">â‚±{c.pricePhp}</span>
+                    <span className="text-white/60">·</span>
+                    <span className="text-white/80">₱{c.pricePhp}</span>
                   </div>
                 </div>
 
@@ -164,9 +164,9 @@ export default function Courses() {
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 // Course Detail
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 function CourseDetail({
   courseId, purchased, onBack, onBuy,
 }: {
@@ -239,7 +239,7 @@ function CourseDetail({
                   onClick={() => onBuy('paymongo')}
                   className="px-5 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--muted)]"
                 >
-                  Pay â‚±{course.pricePhp} with GCash/Card (PayMongo)
+                  Pay ₱{course.pricePhp} with GCash/Card (PayMongo)
                 </button>
               </div>
               {course.externalUrl && (
@@ -259,7 +259,7 @@ function CourseDetail({
     );
   }
 
-  // Purchased â€” show learning view
+  // Purchased — show learning view
   return (
     <div className="space-y-4">
       <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
@@ -367,9 +367,9 @@ function CourseDetail({
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 // Admin Authoring
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 export function AdminCourses({ onBack }: { onBack?: () => void }) {
   const { showToast } = useToast();
   const courses = useQuery(api.courses.listAll) ?? [];
@@ -410,7 +410,7 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-[var(--foreground)] truncate">{c.title}</div>
               <div className="text-xs text-[var(--muted-foreground)]">
-                ${c.priceUsd} Â· â‚±{c.pricePhp} Â· {c.isPublished ? 'Published' : 'Draft'}
+                ${c.priceUsd} · ₱{c.pricePhp} · {c.isPublished ? 'Published' : 'Draft'}
               </div>
             </div>
             <button
@@ -516,7 +516,7 @@ function NewCourseModal({
             }}
             className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
           >
-            {busy ? 'Creatingâ€¦' : 'Create'}
+            {busy ? 'Creating…' : 'Create'}
           </button>
         </div>
       </div>
@@ -718,9 +718,9 @@ function Field({
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Course Editor â€” modules + lessons
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
+// Course Editor — modules + lessons
+// ──────────────────────────────────────────────────────────────────────
 function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void }) {
   const { showToast } = useToast();
   const structure = useQuery(api.courses.getStructure, { courseId: course.id });

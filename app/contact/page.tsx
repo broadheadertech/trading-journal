@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: 'Can I request a new broker integration?',
-    a: 'Yes â€” email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
+    a: 'Yes — email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
   },
 ];
 
@@ -82,7 +82,7 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs text-pink-400"
           >
-            <Clock size={12} /> Monâ€“Fri, UTC business hours Â· Priority response for Pro subscribers
+            <Clock size={12} /> Mon–Fri, UTC business hours · Priority response for Pro subscribers
           </motion.div>
         </div>
       </section>

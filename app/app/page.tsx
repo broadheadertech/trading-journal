@@ -29,6 +29,7 @@ import Events from '@/components/Events';
 import Community from '@/components/Community';
 import Coaching from '@/components/Coaching';
 import Strategies from '@/components/Strategies';
+import TradingSignals from '@/components/TradingSignals';
 import Rewards from '@/components/Rewards';
 import Games from '@/components/Games';
 import Indicators from '@/components/Indicators';
@@ -498,6 +499,9 @@ function AppContent() {
           )}
           {activeTab === 'strategies' && (
             canAccessTab('strategies') ? <Strategies /> : <UpgradePrompt requiredTier={getRequiredTier('strategies')} />
+          )}
+          {activeTab === 'signals' && (
+            canAccessTab('signals') ? <TradingSignals /> : <UpgradePrompt requiredTier={getRequiredTier('signals')} />
           )}
           {activeTab === 'rewards' && (
             canAccessTab('rewards') ? <Rewards /> : <UpgradePrompt requiredTier={getRequiredTier('rewards')} />

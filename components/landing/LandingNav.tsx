@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -62,7 +62,7 @@ const DROPDOWNS: Dropdown[] = [
         heading: 'Browse',
         items: [
           { icon: Database,   label: 'Brokers',   desc: 'All 67+ supported brokers and exchanges',  href: '/brokers' },
-          { icon: Gift,       label: 'Affiliate', desc: 'Earn 30â€“50% recurring commission',         href: '/affiliate' },
+          { icon: Gift,       label: 'Affiliate', desc: 'Earn 30–50% recurring commission',         href: '/affiliate' },
         ],
       },
       {

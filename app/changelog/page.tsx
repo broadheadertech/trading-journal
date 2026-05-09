@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -87,7 +87,7 @@ export default function ChangelogPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            What we&apos;ve shipped recently â€” features, fixes, and platform improvements.
+            What we&apos;ve shipped recently — features, fixes, and platform improvements.
           </motion.p>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function ChangelogPage() {
                 <ul className="space-y-2">
                   {e.items.map(item => (
                     <li key={item} className="flex items-start gap-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
-                      <span className="text-pink-400 mt-0.5 flex-shrink-0">Â·</span>
+                      <span className="text-pink-400 mt-0.5 flex-shrink-0">·</span>
                       <span>{item}</span>
                     </li>
                   ))}

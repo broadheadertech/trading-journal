@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ export default function Hero() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-12 sm:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
-          {/* LEFT â€” Copy column */}
+          {/* LEFT — Copy column */}
           <div className="text-left">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -45,7 +45,7 @@ export default function Hero() {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight"
             >
               <span className="text-[var(--foreground)]">Find the trading mistakes costing you thousands </span>
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">â€” and prove </span>
+              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">— and prove </span>
               <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">you fixed them</span>
             </motion.h1>
 
@@ -55,7 +55,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="mt-4 text-sm sm:text-base text-[var(--muted-foreground)] max-w-xl leading-relaxed"
             >
-              Upload your trade history and get a dollar-ranked breakdown of every costly pattern â€” then track whether your fixes stick.
+              Upload your trade history and get a dollar-ranked breakdown of every costly pattern — then track whether your fixes stick.
             </motion.p>
 
             <motion.div
@@ -94,12 +94,12 @@ export default function Hero() {
               className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[var(--muted-foreground)]"
             >
               <span className="flex items-center gap-1.5"><Database size={11} className="text-pink-400" /> 70+ Brokers</span>
-              <span className="opacity-30">Â·</span>
+              <span className="opacity-30">·</span>
               <span className="flex items-center gap-1.5"><Zap size={11} className="text-pink-400" /> 30+ Detectors</span>
             </motion.div>
           </div>
 
-          {/* RIGHT â€” Tradia dashboard mock (mirrors our real app structure) */}
+          {/* RIGHT — Tradia dashboard mock (mirrors our real app structure) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96, x: 16 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -182,7 +182,7 @@ function TradiaDashboardMock() {
             </div>
           </div>
 
-          {/* KPI grid â€” matches Dashboard.tsx metrics */}
+          {/* KPI grid — matches Dashboard.tsx metrics */}
           <div className="grid grid-cols-3 gap-1.5">
             {[
               { l: 'Total P&L',     v: '+$4,230', sub: '+18.3%',    valColor: 'text-emerald-300', borderColor: 'border-emerald-500/30', bgColor: 'bg-emerald-500/5' },
@@ -201,7 +201,7 @@ function TradiaDashboardMock() {
           <div className="rounded-md border border-[var(--border)] bg-black/30 p-2">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Equity Curve</span>
-              <span className="text-[8px] text-pink-400 tabular-nums">â†‘ +$4,230</span>
+              <span className="text-[8px] text-pink-400 tabular-nums">↑ +$4,230</span>
             </div>
             <svg className="w-full h-14" viewBox="0 0 200 50" preserveAspectRatio="none">
               <defs>

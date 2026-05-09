@@ -1,11 +1,15 @@
-﻿'use client';
+'use client';
 
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Globe, ExternalLink, TrendingUp, Flame, Swords, Plane, Ship, Zap, Radio, BarChart3 } from 'lucide-react';
+import { Globe, ExternalLink, TrendingUp, Flame, Swords, Plane, Ship, Zap, Radio, BarChart3, Map as MapIcon } from 'lucide-react';
 
-// SSR-safe dynamic import â€” react-simple-maps reads window during init
+// SSR-safe dynamic imports — these touch window during init
 const WorldMap = dynamic(() => import('./WorldMap'), { ssr: false });
+const WorldGlobe = dynamic(() => import('./WorldGlobe'), { ssr: false });
 const WorldMonitorLive = dynamic(() => import('./WorldMonitorLive'), { ssr: false });
+
+type MapView = 'globe' | 'flat';
 
 interface MonitorLink {
   title: string;
@@ -42,7 +46,7 @@ const PRIMARY: MonitorLink[] = [
 const CONTEXT: MonitorLink[] = [
   {
     title: 'Conflict Tracker',
-    desc: 'Live geopolitical conflict map â€” events that move oil, defense, and FX.',
+    desc: 'Live geopolitical conflict map — events that move oil, defense, and FX.',
     url: 'https://www.worldmonitor.app',
     icon: Swords,
     tag: 'Geopolitics',
@@ -56,7 +60,7 @@ const CONTEXT: MonitorLink[] = [
   },
   {
     title: 'Maritime (AIS)',
-    desc: 'Ship tracking â€” tankers, container traffic, choke-point activity.',
+    desc: 'Ship tracking — tankers, container traffic, choke-point activity.',
     url: 'https://www.worldmonitor.app',
     icon: Ship,
     tag: 'Maritime',
@@ -85,6 +89,7 @@ const CONTEXT: MonitorLink[] = [
 ];
 
 export default function WorldMonitoring() {
+  const [view, setView] = useState<MapView>('globe');
   return (
     <div className="relative space-y-10">
       <div className="hero-glow" />
@@ -96,20 +101,44 @@ export default function WorldMonitoring() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
-          Powered by World Monitor Â· 190+ countries Â· 435+ sources
+          Powered by World Monitor · 190+ countries · 435+ sources
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
           World <span className="gradient-text">monitoring</span>
         </h1>
         <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-          Real-time global intelligence â€” financial centers, central banks, trade routes, undersea cables, and pipelines.
+          Real-time global intelligence — financial centers, central banks, trade routes, undersea cables, and pipelines.
           Toggle layers to explore.
         </p>
       </header>
 
-      {/* 1. Layers â€” interactive world map */}
-      <div className="anim-fade-up">
-        <WorldMap />
+      {/* 1. Layers — interactive world map / 3D globe */}
+      <div className="anim-fade-up space-y-3">
+        <div className="flex items-center justify-end">
+          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
+            <button
+              onClick={() => setView('globe')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                view === 'globe'
+                  ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              <Globe size={13} /> 3D Globe
+            </button>
+            <button
+              onClick={() => setView('flat')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                view === 'flat'
+                  ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              <MapIcon size={13} /> Flat Map
+            </button>
+          </div>
+        </div>
+        {view === 'globe' ? <WorldGlobe /> : <WorldMap />}
       </div>
 
       {/* 2. Live data widgets */}

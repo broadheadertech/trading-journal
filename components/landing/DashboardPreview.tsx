@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -29,13 +29,13 @@ export default function DashboardPreview() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-10">
-          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO â€” each measured in real money lost.">
+          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.">
             <LeaksMock />
           </PillarCard>
           <PillarCard delay={0.1} icon={Activity} accent="from-pink-400 to-fuchsia-400" title="Track Your Discipline" desc="Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.">
             <DisciplineMock />
           </PillarCard>
-          <PillarCard delay={0.2} icon={BarChart3} accent="from-fuchsia-400 to-pink-500" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown â€” all the metrics that matter, computed automatically.">
+          <PillarCard delay={0.2} icon={BarChart3} accent="from-fuchsia-400 to-pink-500" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.">
             <EdgeMock />
           </PillarCard>
         </div>
@@ -45,7 +45,7 @@ export default function DashboardPreview() {
             href="/sign-up"
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
           >
-            Start Free â€” See Your Own Dashboard
+            Start Free — See Your Own Dashboard
           </Link>
         </div>
       </div>
@@ -79,11 +79,11 @@ function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
 
 function LeaksMock() {
   const leaks = [
-    { name: 'Revenge Trading',  cost: 'âˆ’$1,420', sev: 'high',   pct: 100 },
-    { name: 'Oversized Position', cost: 'âˆ’$890',  sev: 'high',   pct: 63 },
-    { name: 'FOMO Entries',     cost: 'âˆ’$540',  sev: 'med',    pct: 38 },
-    { name: 'Late Session Drift', cost: 'âˆ’$280', sev: 'med',    pct: 20 },
-    { name: 'No Stop Loss',     cost: 'âˆ’$140',  sev: 'low',    pct: 10 },
+    { name: 'Revenge Trading',  cost: '−$1,420', sev: 'high',   pct: 100 },
+    { name: 'Oversized Position', cost: '−$890',  sev: 'high',   pct: 63 },
+    { name: 'FOMO Entries',     cost: '−$540',  sev: 'med',    pct: 38 },
+    { name: 'Late Session Drift', cost: '−$280', sev: 'med',    pct: 20 },
+    { name: 'No Stop Loss',     cost: '−$140',  sev: 'low',    pct: 10 },
   ];
   return (
     <div className="space-y-2">
@@ -170,7 +170,7 @@ function EdgeMock() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-pink-400/80">
-        <TrendingUp size={10} /> Equity curve Â· 30d
+        <TrendingUp size={10} /> Equity curve · 30d
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">

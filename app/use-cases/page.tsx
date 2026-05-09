@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -22,7 +22,7 @@ const CASES = [
     icon: Users,
     persona: 'Prop firm & team coaching',
     headline: 'Review every trader on one shared dashboard',
-    body: 'Coaches and team managers review trader profiles side-by-side, surface common desk problems, and verify playbook adherence â€” especially critical for funded traders working under firm rules.',
+    body: 'Coaches and team managers review trader profiles side-by-side, surface common desk problems, and verify playbook adherence — especially critical for funded traders working under firm rules.',
     bullets: [
       'Multi-trader dashboards with role-based access',
       'Per-trader playbook compliance scoring',
@@ -106,7 +106,7 @@ export default function UseCasesPage() {
                 <ul className="space-y-2">
                   {c.bullets.map(b => (
                     <li key={b} className="flex items-start gap-2 text-sm text-[var(--foreground)]">
-                      <span className="text-pink-400 mt-0.5">Â·</span>{b}
+                      <span className="text-pink-400 mt-0.5">·</span>{b}
                     </li>
                   ))}
                 </ul>

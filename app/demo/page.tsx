@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -10,13 +10,13 @@ const FEATURES = [
   {
     icon: LayoutDashboard,
     title: 'Dashboard',
-    desc: 'Your main command center â€” portfolio equity curve, net P&L, win rate, profit factor, activity heatmap, and trade history at a glance. All metrics update automatically as you import trades.',
+    desc: 'Your main command center — portfolio equity curve, net P&L, win rate, profit factor, activity heatmap, and trade history at a glance. All metrics update automatically as you import trades.',
     Mock: DashboardMock,
   },
   {
     icon: Search,
     title: 'Leak Detection',
-    desc: 'The verdict engine ranks every costly pattern by dollar impact â€” revenge trading, overtrading, bad session hours, FOMO entries â€” with evidence clusters and recovery estimates for each.',
+    desc: 'The verdict engine ranks every costly pattern by dollar impact — revenge trading, overtrading, bad session hours, FOMO entries — with evidence clusters and recovery estimates for each.',
     Mock: LeakMock,
   },
   {
@@ -28,13 +28,13 @@ const FEATURES = [
   {
     icon: BarChart3,
     title: 'Performance Analytics',
-    desc: 'Deep performance analytics â€” breakdown by symbol, time of day, session, and trade type. 50+ metrics to find exactly which setups make money and which ones bleed.',
+    desc: 'Deep performance analytics — breakdown by symbol, time of day, session, and trade type. 50+ metrics to find exactly which setups make money and which ones bleed.',
     Mock: PerformanceMock,
   },
   {
     icon: Shield,
     title: 'Playbook',
-    desc: 'Define your trading rules once â€” max trades per session, risk limits, session hours â€” and track compliance automatically on every trade you import. No self-grading, no bias.',
+    desc: 'Define your trading rules once — max trades per session, risk limits, session hours — and track compliance automatically on every trade you import. No self-grading, no bias.',
     Mock: PlaybookMock,
   },
 ];
@@ -60,7 +60,7 @@ export default function DemoPage() {
               <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
             </span>
-            Live Demo Â· Trading Analytics in Action
+            Live Demo · Trading Analytics in Action
           </motion.div>
 
           <motion.h1
@@ -144,7 +144,7 @@ export default function DemoPage() {
               Ready to see your <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">own numbers?</span>
             </h2>
             <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-              Upload your first CSV and get your real dashboard â€” with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.
+              Upload your first CSV and get your real dashboard — with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.
             </p>
             <Link
               href="/sign-up"
@@ -154,7 +154,7 @@ export default function DemoPage() {
               <ArrowRight size={16} />
             </Link>
             <p className="mt-4 text-xs text-[var(--muted-foreground)]">
-              No credit card Â· 14-day full Pro access Â· 67+ broker formats
+              No credit card · 14-day full Pro access · 67+ broker formats
             </p>
           </motion.div>
         </div>
@@ -165,7 +165,7 @@ export default function DemoPage() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Dashboard Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Dashboard Mock ──────────────── */
 function DashboardMock() {
   const ranges = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
   const heatmap = Array.from({ length: 28 }, (_, i) => Math.random() * 100 - 30);
@@ -203,8 +203,8 @@ function DashboardMock() {
       {/* Equity curve */}
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Equity Curve Â· 30d</span>
-          <span className="text-[9px] text-pink-400 tabular-nums">â†‘ +$4,230</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Equity Curve · 30d</span>
+          <span className="text-[9px] text-pink-400 tabular-nums">↑ +$4,230</span>
         </div>
         <svg className="w-full h-24" viewBox="0 0 300 80" preserveAspectRatio="none">
           <defs>
@@ -246,27 +246,27 @@ function DashboardMock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Leak Detection Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Leak Detection Mock ──────────────── */
 function LeakMock() {
   const leaks = [
-    { name: 'Revenge Trading',  evidence: '14 trades', cost: 'âˆ’$1,420', recovery: '+$840 if fixed',  pct: 100, sev: 'high' },
-    { name: 'Oversized Position', evidence: '8 trades',  cost: 'âˆ’$890',  recovery: '+$520 if fixed',  pct: 63, sev: 'high' },
-    { name: 'FOMO Entries',     evidence: '11 trades', cost: 'âˆ’$540',  recovery: '+$310 if fixed',  pct: 38, sev: 'med' },
-    { name: 'Late Session Drift', evidence: '6 trades',  cost: 'âˆ’$280',  recovery: '+$180 if fixed',  pct: 20, sev: 'med' },
-    { name: 'No Stop Loss',     evidence: '4 trades',  cost: 'âˆ’$140',  recovery: '+$95 if fixed',   pct: 10, sev: 'low' },
+    { name: 'Revenge Trading',  evidence: '14 trades', cost: '−$1,420', recovery: '+$840 if fixed',  pct: 100, sev: 'high' },
+    { name: 'Oversized Position', evidence: '8 trades',  cost: '−$890',  recovery: '+$520 if fixed',  pct: 63, sev: 'high' },
+    { name: 'FOMO Entries',     evidence: '11 trades', cost: '−$540',  recovery: '+$310 if fixed',  pct: 38, sev: 'med' },
+    { name: 'Late Session Drift', evidence: '6 trades',  cost: '−$280',  recovery: '+$180 if fixed',  pct: 20, sev: 'med' },
+    { name: 'No Stop Loss',     evidence: '4 trades',  cost: '−$140',  recovery: '+$95 if fixed',   pct: 10, sev: 'low' },
   ];
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-rose-400/80 flex items-center gap-1.5">
-            <Flame size={11} /> Verdicts Â· ranked by $ impact
+            <Flame size={11} /> Verdicts · ranked by $ impact
           </div>
           <div className="text-xl font-bold text-[var(--foreground)] mt-0.5">5 patterns detected</div>
         </div>
         <div className="text-right">
           <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Total cost</div>
-          <div className="text-lg font-bold text-rose-400 tabular-nums">âˆ’$3,270</div>
+          <div className="text-lg font-bold text-rose-400 tabular-nums">−$3,270</div>
         </div>
       </div>
       <div className="space-y-2">
@@ -281,7 +281,7 @@ function LeakMock() {
                     {l.sev}
                   </span>
                 </div>
-                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">{l.evidence} Â· {l.recovery}</div>
+                <div className="text-[9px] text-[var(--muted-foreground)] mt-0.5">{l.evidence} · {l.recovery}</div>
               </div>
               <div className={`tabular-nums font-bold text-sm ${l.sev === 'high' ? 'text-rose-400' : l.sev === 'med' ? 'text-amber-400' : 'text-[var(--muted-foreground)]'}`}>{l.cost}</div>
             </div>
@@ -301,7 +301,7 @@ function LeakMock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Behavior Analysis Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Behavior Analysis Mock ──────────────── */
 function BehaviorMock() {
   const emotions = [
     { l: 'Calm',       v: 78, c: 'emerald' },
@@ -313,7 +313,7 @@ function BehaviorMock() {
   return (
     <div className="space-y-3">
       <div className="text-[10px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1.5">
-        <Activity size={11} /> Behavioral Health Â· 30d
+        <Activity size={11} /> Behavioral Health · 30d
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -349,7 +349,7 @@ function BehaviorMock() {
           </div>
           <div>
             <div className="text-[8px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Discipline Score</div>
-            <div className="text-[10px] text-pink-400 tabular-nums mt-1">â†‘ +14 vs last month</div>
+            <div className="text-[10px] text-pink-400 tabular-nums mt-1">↑ +14 vs last month</div>
             <div className="text-[9px] text-[var(--muted-foreground)] mt-1">Above your 90-day avg</div>
           </div>
         </div>
@@ -372,7 +372,7 @@ function BehaviorMock() {
       {/* Emotional pressure */}
       <div className="rounded-lg border border-[var(--border)] bg-black/30 p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Emotional Pressure Â· session avg</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/70">Emotional Pressure · session avg</span>
           <span className="text-[9px] text-pink-400">Net positive 7/10</span>
         </div>
         <div className="space-y-1.5">
@@ -401,14 +401,14 @@ function BehaviorMock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Performance Analytics Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Performance Analytics Mock ──────────────── */
 function PerformanceMock() {
   const symbols = [
     { s: 'SOL/USDT',  pnl: '+$1,240', wr: 82, n: 14 },
     { s: 'BTC/USDT',  pnl: '+$890',  wr: 68, n: 22 },
     { s: 'ETH/USDT',  pnl: '+$420',  wr: 61, n: 18 },
-    { s: 'AVAX/USDT', pnl: 'âˆ’$180',  wr: 41, n: 9  },
-    { s: 'BNB/USDT',  pnl: 'âˆ’$340',  wr: 29, n: 7  },
+    { s: 'AVAX/USDT', pnl: '−$180',  wr: 41, n: 9  },
+    { s: 'BNB/USDT',  pnl: '−$340',  wr: 29, n: 7  },
   ];
   const hours = Array.from({ length: 24 }, (_, h) => {
     const v = Math.sin((h - 6) / 6) * 80 + (h >= 9 && h <= 16 ? 40 : 0);
@@ -417,7 +417,7 @@ function PerformanceMock() {
   return (
     <div className="space-y-3">
       <div className="text-[10px] font-bold uppercase tracking-widest text-pink-400/80 flex items-center gap-1.5">
-        <BarChart3 size={11} /> Performance Â· 50+ metrics
+        <BarChart3 size={11} /> Performance · 50+ metrics
       </div>
 
       {/* Symbol breakdown */}
@@ -487,14 +487,14 @@ function PerformanceMock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Playbook Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Playbook Mock ──────────────── */
 function PlaybookMock() {
   const rules = [
     { r: 'Max 3 trades per session',       comp: 92, status: 'pass'   },
-    { r: 'Risk â‰¤ 1.5% per trade',          comp: 88, status: 'pass'   },
-    { r: 'No trading 21:00â€“06:00 UTC',     comp: 78, status: 'warn'   },
+    { r: 'Risk ≤ 1.5% per trade',          comp: 88, status: 'pass'   },
+    { r: 'No trading 21:00–06:00 UTC',     comp: 78, status: 'warn'   },
     { r: 'Stop loss within 0.8% of entry', comp: 95, status: 'pass'   },
-    { r: 'No revenge trade after âˆ’2R loss', comp: 64, status: 'fail'   },
+    { r: 'No revenge trade after −2R loss', comp: 64, status: 'fail'   },
     { r: 'Avoid first 15min after news',   comp: 100, status: 'pass'  },
   ];
   return (
@@ -512,7 +512,7 @@ function PlaybookMock() {
           <div className="text-3xl font-bold bg-gradient-to-r from-pink-300 to-pink-300 bg-clip-text text-transparent tabular-nums">86</div>
           <div>
             <div className="text-[10px] font-bold text-pink-300">Compliance Score</div>
-            <div className="text-[9px] text-[var(--muted-foreground)]">5 of 6 rules followed Â· up from 64% last month</div>
+            <div className="text-[9px] text-[var(--muted-foreground)]">5 of 6 rules followed · up from 64% last month</div>
           </div>
         </div>
         <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">

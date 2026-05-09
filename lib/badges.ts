@@ -1,4 +1,4 @@
-﻿// Static badge catalog â€” computed at read time from existing data.
+// Static badge catalog — computed at read time from existing data.
 // No schema needed; badges are derived from trades + reflections.
 
 import type { Trade, DailyReflection } from './types';
@@ -12,7 +12,7 @@ export interface BadgeDef {
   description: string;
   category: BadgeCategory;
   tier: BadgeTier;
-  icon: string; // emoji for now â€” can swap to lucide later
+  icon: string; // emoji for now — can swap to lucide later
   /** Returns 0..1 progress; 1 means earned */
   progress: (data: BadgeData) => number;
 }
@@ -41,7 +41,7 @@ export function tierGradient(tier: BadgeTier) {
   return TIER_COLORS[tier];
 }
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ────────────────────────────────────────────────────────
 function closedTrades(trades: Trade[]) {
   return trades.filter(t => !t.isOpen && t.actualPnL !== null);
 }
@@ -106,21 +106,21 @@ function consecutiveDaysWithCompliance(trades: Trade[]): number {
   return max;
 }
 
-// â”€â”€â”€ Badge catalog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Badge catalog ──────────────────────────────────────────────────
 function progressFn(current: number, target: number): number {
   if (target <= 0) return 1;
   return Math.min(1, current / target);
 }
 
 export const BADGES: BadgeDef[] = [
-  // â”€â”€ VOLUME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── VOLUME ────────────────────────────────────────────────────────
   {
     id: 'first-trade',
     name: 'First Step',
     description: 'Log your very first trade.',
     category: 'volume',
     tier: 'bronze',
-    icon: 'ðŸŽ¯',
+    icon: '🎯',
     progress: (d) => progressFn(d.trades.length, 1),
   },
   {
@@ -129,7 +129,7 @@ export const BADGES: BadgeDef[] = [
     description: 'Log 10 trades.',
     category: 'volume',
     tier: 'bronze',
-    icon: 'ðŸ“',
+    icon: '📝',
     progress: (d) => progressFn(d.trades.length, 10),
   },
   {
@@ -138,7 +138,7 @@ export const BADGES: BadgeDef[] = [
     description: 'Log 100 trades.',
     category: 'volume',
     tier: 'silver',
-    icon: 'ðŸ’¯',
+    icon: '💯',
     progress: (d) => progressFn(d.trades.length, 100),
   },
   {
@@ -147,7 +147,7 @@ export const BADGES: BadgeDef[] = [
     description: 'Log 500 trades.',
     category: 'volume',
     tier: 'gold',
-    icon: 'âš”ï¸',
+    icon: '⚔️',
     progress: (d) => progressFn(d.trades.length, 500),
   },
   {
@@ -156,18 +156,18 @@ export const BADGES: BadgeDef[] = [
     description: 'Log 1,000 trades.',
     category: 'volume',
     tier: 'platinum',
-    icon: 'ðŸ‘‘',
+    icon: '👑',
     progress: (d) => progressFn(d.trades.length, 1000),
   },
 
-  // â”€â”€ DISCIPLINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── DISCIPLINE ────────────────────────────────────────────────────
   {
     id: 'first-clean-trade',
     name: 'By the Book',
     description: 'Complete one trade with 100% rule compliance.',
     category: 'discipline',
     tier: 'bronze',
-    icon: 'âœ…',
+    icon: '✅',
     progress: (d) => {
       const clean = closedTrades(d.trades).filter(t => ruleCompliantPct(t) === 1).length;
       return progressFn(clean, 1);
@@ -179,7 +179,7 @@ export const BADGES: BadgeDef[] = [
     description: '7 consecutive days with 90%+ rule compliance.',
     category: 'discipline',
     tier: 'silver',
-    icon: 'ðŸ›¡ï¸',
+    icon: '🛡️',
     progress: (d) => progressFn(consecutiveDaysWithCompliance(d.trades), 7),
   },
   {
@@ -188,7 +188,7 @@ export const BADGES: BadgeDef[] = [
     description: '30 consecutive days with 90%+ rule compliance.',
     category: 'discipline',
     tier: 'gold',
-    icon: 'ðŸ’Ž',
+    icon: '💎',
     progress: (d) => progressFn(consecutiveDaysWithCompliance(d.trades), 30),
   },
   {
@@ -197,21 +197,21 @@ export const BADGES: BadgeDef[] = [
     description: '50 trades with 100% rule compliance.',
     category: 'discipline',
     tier: 'gold',
-    icon: 'ðŸ†',
+    icon: '🏆',
     progress: (d) => {
       const clean = closedTrades(d.trades).filter(t => ruleCompliantPct(t) === 1).length;
       return progressFn(clean, 50);
     },
   },
 
-  // â”€â”€ REFLECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── REFLECTION ────────────────────────────────────────────────────
   {
     id: 'first-reflection',
     name: 'Mirror Mirror',
     description: 'Write your first daily reflection.',
     category: 'reflection',
     tier: 'bronze',
-    icon: 'ðŸªž',
+    icon: '🪞',
     progress: (d) => progressFn(d.reflections.length, 1),
   },
   {
@@ -220,7 +220,7 @@ export const BADGES: BadgeDef[] = [
     description: '7 consecutive days with reflections.',
     category: 'reflection',
     tier: 'silver',
-    icon: 'ðŸ§˜',
+    icon: '🧘',
     progress: (d) => progressFn(consecutiveDaysWithReflections(d.reflections), 7),
   },
   {
@@ -229,7 +229,7 @@ export const BADGES: BadgeDef[] = [
     description: '30 consecutive days with reflections.',
     category: 'reflection',
     tier: 'platinum',
-    icon: 'ðŸŒŸ',
+    icon: '🌟',
     progress: (d) => progressFn(consecutiveDaysWithReflections(d.reflections), 30),
   },
 ];

@@ -398,7 +398,8 @@ export type TabId =
   | 'indicators'
   | 'economic'
   | 'world'
-  | 'articles';
+  | 'articles'
+  | 'signals';
 
 // ─── Universal time range ────────────────────────────────────────────
 export type TimeRange = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL';

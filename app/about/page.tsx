@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -11,7 +11,7 @@ const PILLARS = [
   {
     icon: Eye,
     title: 'Make trading review measurable',
-    body: 'Tradia turns raw trade history into evidence â€” costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
+    body: 'Tradia turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
   },
   {
     icon: Target,
@@ -26,12 +26,12 @@ const PILLARS = [
   {
     icon: Globe,
     title: 'Privacy-first infrastructure',
-    body: 'Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks â€” engineered to be the safest place your trade history can live.',
+    body: 'Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks — engineered to be the safest place your trade history can live.',
   },
 ];
 
 const FOR = [
-  'Active traders â€” crypto, futures, forex, stocks, options',
+  'Active traders — crypto, futures, forex, stocks, options',
   'Prop firm traders working toward funded accounts',
   'Trading coaches reviewing student performance',
   'Trading teams enforcing playbook discipline at scale',
@@ -59,7 +59,7 @@ const FAQ = [
   },
   {
     q: 'What markets do you support?',
-    a: 'Crypto spot, crypto perp futures, forex, equities, options, and futures â€” across 67+ brokers via CSV, XLSX, or live API.',
+    a: 'Crypto spot, crypto perp futures, forex, equities, options, and futures — across 67+ brokers via CSV, XLSX, or live API.',
   },
 ];
 
@@ -88,7 +88,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Tradia exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that â€” and to make discipline something you can prove, not something you hope you have.
+            Tradia exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.
           </motion.p>
         </div>
       </section>
@@ -126,7 +126,7 @@ export default function AboutPage() {
             <ul className="space-y-2">
               {FOR.map(item => (
                 <li key={item} className="text-sm text-[var(--foreground)] flex items-start gap-2">
-                  <span className="text-pink-400 mt-0.5">Â·</span>{item}
+                  <span className="text-pink-400 mt-0.5">·</span>{item}
                 </li>
               ))}
             </ul>
@@ -139,7 +139,7 @@ export default function AboutPage() {
             <ul className="space-y-2">
               {NOT_FOR.map(item => (
                 <li key={item} className="text-sm text-[var(--muted-foreground)] flex items-start gap-2">
-                  <span className="text-[var(--muted-foreground)] mt-0.5">Â·</span>{item}
+                  <span className="text-[var(--muted-foreground)] mt-0.5">·</span>{item}
                 </li>
               ))}
             </ul>

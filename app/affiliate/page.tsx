@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -45,7 +45,7 @@ const TIERS = [
 
 const HOW = [
   { icon: Link2,     title: 'Get your link',    body: 'Sign up free, grab your unique referral link from the affiliate dashboard.' },
-  { icon: Users,     title: 'Share with traders', body: 'Drop the link in Twitter, YouTube, Discord, blogs â€” anywhere traders gather.' },
+  { icon: Users,     title: 'Share with traders', body: 'Drop the link in Twitter, YouTube, Discord, blogs — anywhere traders gather.' },
   { icon: DollarSign, title: 'Earn recurring',   body: 'Get paid every month they stay subscribed. Lifetime commissions, no caps.' },
 ];
 
@@ -106,7 +106,7 @@ export default function AffiliatePage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Earn 30â€“50% recurring commission on every trader you refer. Lifetime. No caps. Monthly payouts.
+            Earn 30–50% recurring commission on every trader you refer. Lifetime. No caps. Monthly payouts.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -137,7 +137,7 @@ export default function AffiliatePage() {
             {[
               { v: '50%', l: 'Top commission' },
               { v: '90d', l: 'Cookie window' },
-              { v: 'âˆž',   l: 'Lifetime payouts' },
+              { v: '∞',   l: 'Lifetime payouts' },
               { v: '$50', l: 'Minimum payout' },
             ].map((s, i) => (
               <motion.div
