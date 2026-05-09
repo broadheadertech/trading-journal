@@ -128,7 +128,7 @@ export default function AdminUserDetail({
                 >
                   <option value="">Select plan...</option>
                   <option value="free">Free</option>
-                  {plans?.map((p) => (
+                  {plans?.filter((p) => p.isActive).map((p) => (
                     <option key={p.planId} value={p.planId}>{p.name}</option>
                   ))}
                 </select>
