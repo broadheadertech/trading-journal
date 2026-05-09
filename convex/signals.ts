@@ -115,7 +115,6 @@ export const post = mutation({
     }
 
     const isLong = args.direction === "long";
-    const entryMid = (args.entryLow + args.entryHigh) / 2;
 
     // SL must be on opposite side of entry zone from TPs
     if (isLong) {
@@ -140,8 +139,10 @@ export const post = mutation({
       }
     }
 
-    const risk = Math.abs(entryMid - args.stopLoss);
-    const reward = Math.abs(args.takeProfits[0] - entryMid);
+    // Use worst-case entry for R:R (matches the pip-display convention)
+    const refEntry = isLong ? args.entryHigh : args.entryLow;
+    const risk = Math.abs(refEntry - args.stopLoss);
+    const reward = Math.abs(args.takeProfits[0] - refEntry);
     const rrRatio = risk > 0 ? reward / risk : 0;
 
     const now = new Date();
@@ -206,9 +207,10 @@ export const updateStatus = mutation({
         // Compute realized R based on which TP hit
         const tpIndex = args.tpHit ? args.tpHit - 1 : 0;
         const tp = signal.takeProfits[tpIndex] ?? signal.takeProfits[0];
-        const entryMid = (signal.entryLow + signal.entryHigh) / 2;
-        const risk = Math.abs(entryMid - signal.stopLoss);
-        const reward = Math.abs(tp - entryMid);
+        const isLong = signal.direction === "long";
+        const refEntry = isLong ? signal.entryHigh : signal.entryLow;
+        const risk = Math.abs(refEntry - signal.stopLoss);
+        const reward = Math.abs(tp - refEntry);
         patch.actualR = risk > 0 ? reward / risk : 0;
         patch.tpHit = args.tpHit ?? 1;
       } else if (args.status === "lost") {

@@ -39,16 +39,25 @@ type Signal = {
 const PRO_PLUS = new Set(['pro', 'elite', 'legend']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
+// Symbol-based detection takes priority so gold/silver work even if the
+// poster mis-selects the market. Gold convention: 1.0 move = 10 pips
+// (1 pip = $0.10), matching common signal-provider format.
 function pipSize(market: Market, symbol: string): number {
   const sym = symbol.toUpperCase();
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.1;
+  if (sym.startsWith('XAG') || sym === 'SILVER') return 0.001;
   if (market === 'forex') return sym.includes('JPY') ? 0.01 : 0.0001;
-  if (market === 'commodities') {
-    if (sym.startsWith('XAU')) return 0.1;       // gold: 0.1 = 1 pip
-    if (sym.startsWith('XAG')) return 0.001;     // silver
-    return 0.01;
-  }
+  if (market === 'commodities') return 0.01;
   if (market === 'stocks') return 0.01;
   return 1;  // crypto: per-dollar
+}
+
+// Worst-case entry for the direction. For LONG, you assume the highest fill
+// in the entry zone (smallest gain to TP, largest distance to SL). For SHORT,
+// the lowest. This matches the convention your example uses (entryHigh = 4700
+// → TP1 at 4710 = "+100 pips" rather than midpoint).
+function refEntry(direction: Direction, entryLow: number, entryHigh: number): number {
+  return direction === 'long' ? entryHigh : entryLow;
 }
 
 function fmtPips(market: Market, symbol: string, from: number, to: number): string {
@@ -303,7 +312,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
   const posterStats = useQuery(api.signals.posterStats, { posterId: s.posterId });
 
   const entryLabel = s.entryLow === s.entryHigh ? fmt(s.entryLow) : `${fmt(s.entryLow)}–${fmt(s.entryHigh)}`;
-  const entryMid = (s.entryLow + s.entryHigh) / 2;
+  const entryRef = refEntry(s.direction, s.entryLow, s.entryHigh);
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col hover:border-pink-500/30 transition-colors">
@@ -344,7 +353,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
         <div className="flex items-center gap-3">
           <span className="text-[var(--muted-foreground)] w-14 shrink-0">SL:</span>
           <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
-          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryMid, s.stopLoss)}</span>
+          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss)}</span>
         </div>
 
         <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
@@ -359,7 +368,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
                   {fmt(tp)}
                 </span>
                 <span className="text-[10px] text-emerald-400/60 tabular-nums">
-                  🎯 {fmtPips(s.market, s.symbol, entryMid, tp)}
+                  🎯 {fmtPips(s.market, s.symbol, entryRef, tp)}
                 </span>
                 {hit && <CheckCircle2 size={11} className="text-emerald-400 ml-auto" />}
               </div>
@@ -478,9 +487,9 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
   const tpNums = tpInputs.map(t => parseFloat(t)).filter(n => Number.isFinite(n) && n > 0);
 
   const allBaseValid = [entryLowNum, entryHighNum, slNum].every(n => Number.isFinite(n) && n > 0);
-  const entryMid = allBaseValid ? (entryLowNum + entryHighNum) / 2 : 0;
+  const entryRef = allBaseValid ? refEntry(direction, entryLowNum, entryHighNum) : 0;
   const previewRR = allBaseValid && tpNums[0]
-    ? Math.abs(tpNums[0] - entryMid) / Math.max(0.0000001, Math.abs(entryMid - slNum))
+    ? Math.abs(tpNums[0] - entryRef) / Math.max(0.0000001, Math.abs(entryRef - slNum))
     : 0;
 
   function addTp() {
@@ -627,7 +636,7 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
                     />
                     {showPips && (
                       <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
-                        {fmtPips(market, symbol || 'X', entryMid, tpNum)}
+                        {fmtPips(market, symbol || 'X', entryRef, tpNum)}
                       </span>
                     )}
                     <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
