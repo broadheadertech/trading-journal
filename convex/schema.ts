@@ -354,8 +354,8 @@ export default defineSchema({
     tpHit: v.optional(v.number()),      // which TP level hit (1-based) when status=won
     // Per-signal pip / lot overrides — broker conventions vary, especially for gold
     // (MT4 standard: 1 pip = $0.01; some signal providers: 1 pip = $0.10).
-    pipSize: v.optional(v.number()),    // price units per pip (e.g. 0.01 for XAU MT4)
-    lotSize: v.optional(v.number()),    // contract size for risk-per-pip calc (e.g. 100 oz for XAU)
+    pipSize: v.optional(v.number()),
+    lotSize: v.optional(v.number()),
     postedAt: v.string(),               // ISO
     expiresAt: v.optional(v.string()),  // ISO (default: +24h)
     closedAt: v.optional(v.string()),   // ISO when status moved to terminal
@@ -364,6 +364,25 @@ export default defineSchema({
     .index("by_poster", ["posterId"])
     .index("by_status", ["status"])
     .index("by_market_status", ["market", "status"]),
+
+  // ─── MT4/MT5 EA sync connections ────────────────────────────────────
+  // Per-user webhook tokens for the tradia-sync Expert Advisor. The EA
+  // POSTs every closed deal to /api/mt5-sync with the user's token; we
+  // look up the userId here and write the deal into their `trades` table.
+  mtConnections: defineTable({
+    userId: v.string(),
+    syncToken: v.string(),
+    brokerName: v.optional(v.string()),
+    mtAccountNumber: v.optional(v.string()),
+    mtServer: v.optional(v.string()),
+    lastSyncAt: v.optional(v.string()),
+    lastEAVersion: v.optional(v.string()),
+    tradesSynced: v.number(),
+    isActive: v.boolean(),
+    createdAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_token", ["syncToken"]),
 
   // ─── Admin activity events ──────────────────────────────────────────
   adminEvents: defineTable({
