@@ -34,22 +34,42 @@ type Signal = {
   expiresAt?: string;
   closedAt?: string;
   actualR?: number;
+  pipSize?: number;
+  lotSize?: number;
 };
 
 const PRO_PLUS = new Set(['pro', 'elite', 'legend']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
-// Symbol-based detection takes priority so gold/silver work even if the
-// poster mis-selects the market. Gold convention: 1.0 move = 10 pips
-// (1 pip = $0.10), matching common signal-provider format.
-function pipSize(market: Market, symbol: string): number {
+// Defaults follow MT4/MT5 broker convention. Gold default: 1 pip = $0.01
+// (so a $10 move = 1000 pips). Posters can override per signal if their
+// broker uses a different convention.
+function defaultPipSize(market: Market, symbol: string): number {
   const sym = symbol.toUpperCase();
-  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.1;
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.01;     // MT4 standard
   if (sym.startsWith('XAG') || sym === 'SILVER') return 0.001;
   if (market === 'forex') return sym.includes('JPY') ? 0.01 : 0.0001;
   if (market === 'commodities') return 0.01;
   if (market === 'stocks') return 0.01;
   return 1;  // crypto: per-dollar
+}
+
+function defaultLotSize(market: Market, symbol: string): number {
+  const sym = symbol.toUpperCase();
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 100;       // 100 oz / standard lot
+  if (sym.startsWith('XAG') || sym === 'SILVER') return 5000;    // 5000 oz / standard lot
+  if (market === 'forex') return 100_000;                        // 1 standard lot
+  return 1;
+}
+
+function fmtPips(market: Market, symbol: string, from: number, to: number, override?: number): string {
+  const size = override ?? defaultPipSize(market, symbol);
+  const diff = (to - from) / size;
+  const abs = Math.round(Math.abs(diff));
+  const sign = diff >= 0 ? '+' : '−';
+  if (market === 'crypto') return `${sign}$${abs.toLocaleString()}`;
+  if (market === 'stocks') return `${sign}${abs}¢`;
+  return `${sign}${abs.toLocaleString()}pips`;
 }
 
 // Worst-case entry for the direction. For LONG, you assume the highest fill
@@ -60,14 +80,10 @@ function refEntry(direction: Direction, entryLow: number, entryHigh: number): nu
   return direction === 'long' ? entryHigh : entryLow;
 }
 
-function fmtPips(market: Market, symbol: string, from: number, to: number): string {
-  const size = pipSize(market, symbol);
-  const diff = (to - from) / size;
-  const abs = Math.round(Math.abs(diff));
-  const sign = diff >= 0 ? '+' : '−';
-  if (market === 'crypto') return `${sign}$${abs.toLocaleString()}`;
-  if (market === 'stocks') return `${sign}${abs}¢`;
-  return `${sign}${abs}pips`;
+function fmtPriceUnit(market: Market, pip: number): string {
+  if (market === 'crypto') return `$${pip}`;
+  if (market === 'stocks') return `${(pip * 100).toFixed(0)}¢`;
+  return `$${pip}`;
 }
 
 export default function TradingSignals() {
@@ -353,7 +369,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
         <div className="flex items-center gap-3">
           <span className="text-[var(--muted-foreground)] w-14 shrink-0">SL:</span>
           <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
-          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss)}</span>
+          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}</span>
         </div>
 
         <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
@@ -368,12 +384,21 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
                   {fmt(tp)}
                 </span>
                 <span className="text-[10px] text-emerald-400/60 tabular-nums">
-                  🎯 {fmtPips(s.market, s.symbol, entryRef, tp)}
+                  🎯 {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
                 </span>
                 {hit && <CheckCircle2 size={11} className="text-emerald-400 ml-auto" />}
               </div>
             );
           })}
+        </div>
+
+        {/* Pip / lot reference */}
+        <div className="pt-2 mt-2 border-t border-[var(--border)] flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] tabular-nums">
+          <span>1 pip = {fmtPriceUnit(s.market, s.pipSize ?? defaultPipSize(s.market, s.symbol))}</span>
+          {(s.lotSize !== undefined) && <span>· {s.lotSize.toLocaleString()} units / lot</span>}
+          {(s.pipSize !== undefined && s.pipSize !== defaultPipSize(s.market, s.symbol)) && (
+            <span className="text-pink-400">· custom</span>
+          )}
         </div>
       </div>
 
@@ -480,6 +505,14 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
   const [tpInputs, setTpInputs] = useState<string[]>(['']);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>('high');
   const [rationale, setRationale] = useState('');
+  const [showAdjust, setShowAdjust] = useState(false);
+  const [pipSize, setPipSize] = useState('');
+  const [lotSize, setLotSize] = useState('');
+
+  const computedDefaultPip = defaultPipSize(market, symbol || 'X');
+  const computedDefaultLot = defaultLotSize(market, symbol || 'X');
+  const effectivePip = pipSize.trim() ? parseFloat(pipSize) : computedDefaultPip;
+  const effectiveLot = lotSize.trim() ? parseFloat(lotSize) : computedDefaultLot;
 
   const entryLowNum = parseFloat(entryLow);
   const entryHighNum = parseFloat(entryHigh || entryLow);
@@ -515,6 +548,11 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
     if (tpNums.length === 0) { setError('At least one take-profit is required.'); return; }
     if (rationale.trim().length < 10) { setError('Rationale must be at least 10 characters.'); return; }
 
+    const customPip = pipSize.trim() ? parseFloat(pipSize) : NaN;
+    const customLot = lotSize.trim() ? parseFloat(lotSize) : NaN;
+    if (pipSize.trim() && (!Number.isFinite(customPip) || customPip <= 0)) { setError('Pip size must be a positive number.'); return; }
+    if (lotSize.trim() && (!Number.isFinite(customLot) || customLot <= 0)) { setError('Lot size must be a positive number.'); return; }
+
     setSubmitting(true);
     try {
       await post({
@@ -528,6 +566,8 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
         takeProfits: tpNums,
         riskLevel,
         rationale: rationale.trim(),
+        pipSize: Number.isFinite(customPip) ? customPip : undefined,
+        lotSize: Number.isFinite(customLot) ? customLot : undefined,
       });
       onClose();
     } catch (err) {
@@ -636,7 +676,7 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
                     />
                     {showPips && (
                       <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
-                        {fmtPips(market, symbol || 'X', entryRef, tpNum)}
+                        {fmtPips(market, symbol || 'X', entryRef, tpNum, effectivePip)}
                       </span>
                     )}
                     <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
@@ -654,6 +694,58 @@ function PostSignalModal({ posterName, onClose }: { posterName: string; onClose:
               R:R (vs TP1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-red-400'}`}>{previewRR.toFixed(2)}</span>
             </div>
           )}
+
+          {/* Adjust pip & lot */}
+          <div className="rounded-xl border border-[var(--border)] bg-black/10">
+            <button
+              type="button"
+              onClick={() => setShowAdjust(v => !v)}
+              className="w-full px-3 py-2 flex items-center justify-between text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <span>Adjust pip / lot size{(pipSize.trim() || lotSize.trim()) ? ' · custom' : ' · using defaults'}</span>
+              <span className="text-[10px]">{showAdjust ? '▾' : '▸'}</span>
+            </button>
+            {showAdjust && (
+              <div className="px-3 pb-3 space-y-3 border-t border-[var(--border)]">
+                <div className="text-[10px] text-[var(--muted-foreground)] leading-relaxed pt-2">
+                  Defaults match MT4/MT5 broker convention. For {symbol || 'this symbol'} ({market}):
+                  <span className="text-pink-400 ml-1">1 pip = {fmtPriceUnit(market, computedDefaultPip)}</span>
+                  <span className="ml-1">·</span>
+                  <span className="text-pink-400 ml-1">{computedDefaultLot.toLocaleString()} units / lot</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Pip size (override)">
+                    <input
+                      type="number"
+                      step="any"
+                      value={pipSize}
+                      onChange={e => setPipSize(e.target.value)}
+                      placeholder={String(computedDefaultPip)}
+                    />
+                  </Field>
+                  <Field label="Lot size (units)">
+                    <input
+                      type="number"
+                      step="any"
+                      value={lotSize}
+                      onChange={e => setLotSize(e.target.value)}
+                      placeholder={String(computedDefaultLot)}
+                    />
+                  </Field>
+                </div>
+                {effectivePip > 0 && allBaseValid && tpNums[0] && (
+                  <div className="text-[10px] text-emerald-400/80 tabular-nums">
+                    Preview with current settings: TP1 = {fmtPips(market, symbol || 'X', entryRef, tpNums[0], effectivePip)}
+                    {effectiveLot > 0 && (
+                      <span className="ml-2 text-[var(--muted-foreground)]">
+                        · ${(effectivePip * effectiveLot).toLocaleString(undefined, { maximumFractionDigits: 2 })} per pip
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           <Field label="Rationale (≥10 chars)">
             <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={3} placeholder="Why this trade? Levels, catalysts, invalidation..." maxLength={500} />

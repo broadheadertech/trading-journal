@@ -352,6 +352,10 @@ export default defineSchema({
       v.literal("expired"),     // timed out
     ),
     tpHit: v.optional(v.number()),      // which TP level hit (1-based) when status=won
+    // Per-signal pip / lot overrides — broker conventions vary, especially for gold
+    // (MT4 standard: 1 pip = $0.01; some signal providers: 1 pip = $0.10).
+    pipSize: v.optional(v.number()),    // price units per pip (e.g. 0.01 for XAU MT4)
+    lotSize: v.optional(v.number()),    // contract size for risk-per-pip calc (e.g. 100 oz for XAU)
     postedAt: v.string(),               // ISO
     expiresAt: v.optional(v.string()),  // ISO (default: +24h)
     closedAt: v.optional(v.string()),   // ISO when status moved to terminal

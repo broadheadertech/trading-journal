@@ -95,6 +95,8 @@ export const post = mutation({
     riskLevel: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
     rationale: v.string(),
     expiresAt: v.optional(v.string()),
+    pipSize: v.optional(v.number()),
+    lotSize: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
@@ -165,6 +167,8 @@ export const post = mutation({
       status: "pending",
       postedAt: now.toISOString(),
       expiresAt: args.expiresAt ?? defaultExpiry,
+      pipSize: args.pipSize,
+      lotSize: args.lotSize,
     });
   },
 });
