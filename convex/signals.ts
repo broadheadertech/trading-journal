@@ -164,7 +164,7 @@ export const post = mutation({
       rrRatio,
       riskLevel: args.riskLevel,
       rationale: args.rationale,
-      status: "pending",
+      status: "active",
       postedAt: now.toISOString(),
       expiresAt: args.expiresAt ?? defaultExpiry,
       pipSize: args.pipSize,
