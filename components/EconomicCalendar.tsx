@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import { CalendarClock, Filter, AlertTriangle, Globe2 } from 'lucide-react';
@@ -19,20 +19,20 @@ interface EconomicEvent {
   actual?: string;
 }
 
-// Sample / placeholder feed â€” swap for a real provider (ForexFactory, Trading Economics, etc.) later.
+// Sample / placeholder feed — swap for a real provider (ForexFactory, Trading Economics, etc.) later.
 const SAMPLE_EVENTS: EconomicEvent[] = [
-  { id: '1', date: today(0), time: '08:30', country: 'United States', flag: 'ðŸ‡ºðŸ‡¸', currency: 'USD', title: 'Non-Farm Payrolls', impact: 'high', forecast: '180K', previous: '227K' },
-  { id: '2', date: today(0), time: '08:30', country: 'United States', flag: 'ðŸ‡ºðŸ‡¸', currency: 'USD', title: 'Unemployment Rate',  impact: 'high', forecast: '4.2%', previous: '4.2%' },
-  { id: '3', date: today(0), time: '14:00', country: 'United States', flag: 'ðŸ‡ºðŸ‡¸', currency: 'USD', title: 'Fed Chair Speech',    impact: 'high' },
-  { id: '4', date: today(1), time: '02:00', country: 'Germany',       flag: 'ðŸ‡©ðŸ‡ª', currency: 'EUR', title: 'CPI m/m',             impact: 'medium', forecast: '0.3%', previous: '0.4%' },
-  { id: '5', date: today(1), time: '04:30', country: 'United Kingdom',flag: 'ðŸ‡¬ðŸ‡§', currency: 'GBP', title: 'GDP q/q',             impact: 'high', forecast: '0.1%', previous: '0.5%' },
-  { id: '6', date: today(1), time: '10:00', country: 'Eurozone',      flag: 'ðŸ‡ªðŸ‡º', currency: 'EUR', title: 'ECB Rate Decision',   impact: 'high', forecast: '3.25%', previous: '3.50%' },
-  { id: '7', date: today(2), time: '07:30', country: 'Canada',        flag: 'ðŸ‡¨ðŸ‡¦', currency: 'CAD', title: 'Employment Change',   impact: 'high', forecast: '25K', previous: '50.5K' },
-  { id: '8', date: today(2), time: '21:30', country: 'Australia',     flag: 'ðŸ‡¦ðŸ‡º', currency: 'AUD', title: 'RBA Cash Rate',       impact: 'high', forecast: '4.10%', previous: '4.35%' },
-  { id: '9', date: today(3), time: '00:30', country: 'Japan',         flag: 'ðŸ‡¯ðŸ‡µ', currency: 'JPY', title: 'Tokyo Core CPI y/y',  impact: 'medium', forecast: '2.0%', previous: '2.2%' },
-  { id: '10',date: today(3), time: '08:30', country: 'United States', flag: 'ðŸ‡ºðŸ‡¸', currency: 'USD', title: 'Core PCE m/m',         impact: 'high', forecast: '0.2%', previous: '0.3%' },
-  { id: '11',date: today(4), time: '04:00', country: 'Switzerland',   flag: 'ðŸ‡¨ðŸ‡­', currency: 'CHF', title: 'SNB Rate Decision',   impact: 'high', forecast: '0.50%', previous: '1.00%' },
-  { id: '12',date: today(4), time: '14:00', country: 'United States', flag: 'ðŸ‡ºðŸ‡¸', currency: 'USD', title: 'Crude Oil Inventories', impact: 'medium', forecast: '-1.2M', previous: '0.8M' },
+  { id: '1', date: today(0), time: '08:30', country: 'United States', flag: '🇺🇸', currency: 'USD', title: 'Non-Farm Payrolls', impact: 'high', forecast: '180K', previous: '227K' },
+  { id: '2', date: today(0), time: '08:30', country: 'United States', flag: '🇺🇸', currency: 'USD', title: 'Unemployment Rate',  impact: 'high', forecast: '4.2%', previous: '4.2%' },
+  { id: '3', date: today(0), time: '14:00', country: 'United States', flag: '🇺🇸', currency: 'USD', title: 'Fed Chair Speech',    impact: 'high' },
+  { id: '4', date: today(1), time: '02:00', country: 'Germany',       flag: '🇩🇪', currency: 'EUR', title: 'CPI m/m',             impact: 'medium', forecast: '0.3%', previous: '0.4%' },
+  { id: '5', date: today(1), time: '04:30', country: 'United Kingdom',flag: '🇬🇧', currency: 'GBP', title: 'GDP q/q',             impact: 'high', forecast: '0.1%', previous: '0.5%' },
+  { id: '6', date: today(1), time: '10:00', country: 'Eurozone',      flag: '🇪🇺', currency: 'EUR', title: 'ECB Rate Decision',   impact: 'high', forecast: '3.25%', previous: '3.50%' },
+  { id: '7', date: today(2), time: '07:30', country: 'Canada',        flag: '🇨🇦', currency: 'CAD', title: 'Employment Change',   impact: 'high', forecast: '25K', previous: '50.5K' },
+  { id: '8', date: today(2), time: '21:30', country: 'Australia',     flag: '🇦🇺', currency: 'AUD', title: 'RBA Cash Rate',       impact: 'high', forecast: '4.10%', previous: '4.35%' },
+  { id: '9', date: today(3), time: '00:30', country: 'Japan',         flag: '🇯🇵', currency: 'JPY', title: 'Tokyo Core CPI y/y',  impact: 'medium', forecast: '2.0%', previous: '2.2%' },
+  { id: '10',date: today(3), time: '08:30', country: 'United States', flag: '🇺🇸', currency: 'USD', title: 'Core PCE m/m',         impact: 'high', forecast: '0.2%', previous: '0.3%' },
+  { id: '11',date: today(4), time: '04:00', country: 'Switzerland',   flag: '🇨🇭', currency: 'CHF', title: 'SNB Rate Decision',   impact: 'high', forecast: '0.50%', previous: '1.00%' },
+  { id: '12',date: today(4), time: '14:00', country: 'United States', flag: '🇺🇸', currency: 'USD', title: 'Crude Oil Inventories', impact: 'medium', forecast: '-1.2M', previous: '0.8M' },
 ];
 
 function today(offsetDays: number) {
@@ -166,15 +166,15 @@ export default function EconomicCalendar() {
                       {/* Forecast/previous/actual on wide screens */}
                       <div className="hidden sm:block text-right">
                         <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Forecast</div>
-                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.forecast ?? 'â€”'}</div>
+                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.forecast ?? '—'}</div>
                       </div>
                       <div className="hidden sm:block text-right">
                         <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Previous</div>
-                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.previous ?? 'â€”'}</div>
+                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.previous ?? '—'}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Actual</div>
-                        <div className={`text-sm font-bold ${ev.actual ? 'text-emerald-400' : 'text-[var(--muted-foreground)]'}`}>{ev.actual ?? 'â€”'}</div>
+                        <div className={`text-sm font-bold ${ev.actual ? 'text-emerald-400' : 'text-[var(--muted-foreground)]'}`}>{ev.actual ?? '—'}</div>
                       </div>
                     </div>
                   );
@@ -186,7 +186,7 @@ export default function EconomicCalendar() {
       )}
 
       <p className="text-xs text-[var(--muted-foreground)] text-center">
-        Sample data â€” live feed (ForexFactory / Trading Economics) integration coming soon.
+        Sample data — live feed (ForexFactory / Trading Economics) integration coming soon.
       </p>
     </div>
   );

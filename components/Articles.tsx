@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -55,12 +55,12 @@ export default function Articles() {
           Read, learn, <span className="gradient-text">level up</span>
         </h1>
         <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-          Long-form articles from senior traders and coaches â€” strategy breakdowns, psychology deep-dives, and market analysis.
+          Long-form articles from senior traders and coaches — strategy breakdowns, psychology deep-dives, and market analysis.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
-        {/* Sidebar â€” categories + tags */}
+        {/* Sidebar — categories + tags */}
         <aside className="glass rounded-2xl p-4 space-y-4 h-fit anim-fade-up" style={{ animationDelay: '60ms' }}>
           <div className="relative">
             <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
@@ -206,7 +206,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
   }, [article, tierName]);
 
   if (!article) {
-    return <div className="text-[var(--muted-foreground)] text-sm">Loadingâ€¦</div>;
+    return <div className="text-[var(--muted-foreground)] text-sm">Loading…</div>;
   }
 
   return (
@@ -225,11 +225,11 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
       <header className="space-y-3">
         <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--muted-foreground)]">
           <span className="px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400 font-bold uppercase tracking-wider">{article.category}</span>
-          <span>Â·</span>
+          <span>·</span>
           <span>by {article.authorName}</span>
-          <span>Â·</span>
+          <span>·</span>
           <span>{timeAgo(article.publishedAt ?? article.createdAt)}</span>
-          <span>Â·</span>
+          <span>·</span>
           <span className="flex items-center gap-1"><Eye size={11} /> {article.viewCount} views</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--foreground)] leading-tight">{article.title}</h1>

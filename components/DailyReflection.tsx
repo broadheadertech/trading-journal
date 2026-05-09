@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import { DailyReflection as DailyReflectionType, WeeklyReview, DisciplineGrade, Trade } from '@/lib/types';
@@ -129,7 +129,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
         <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-sm">
           <CheckCircle size={16} className="text-[var(--green)]" />
           <span className="text-[var(--green)] font-medium">Today&apos;s reflection completed</span>
-          <span className="text-[var(--muted-foreground)]">â€” Rating: {todayReflection.overallRating}/10</span>
+          <span className="text-[var(--muted-foreground)]">— Rating: {todayReflection.overallRating}/10</span>
         </div>
       )}
 
@@ -258,9 +258,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <span>
                   <span className="font-semibold text-[var(--foreground)]">{weeklyData.summary.total}</span>
-                  <span className="text-[var(--muted-foreground)]"> trades Â· </span>
+                  <span className="text-[var(--muted-foreground)]"> trades · </span>
                   <span className="text-[var(--gain)] font-semibold">{weeklyData.summary.wins}W</span>
-                  <span className="text-[var(--muted-foreground)]"> Â· </span>
+                  <span className="text-[var(--muted-foreground)]"> · </span>
                   <span className="text-[var(--loss)] font-semibold">{weeklyData.summary.losses}L</span>
                 </span>
                 {weeklyData.summary.total > 0 && (
@@ -278,7 +278,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                 <p className="text-xs text-[var(--muted-foreground)]">
                   Top emotion: <span className="text-[var(--foreground)] font-medium">{weeklyData.summary.topEmotion}</span>
                   {weeklyData.summary.avgConfidenceOnLoss !== null && (
-                    <span> Â· avg confidence on losses: <span className="font-medium">{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
+                    <span> · avg confidence on losses: <span className="font-medium">{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
                   )}
                 </p>
               )}

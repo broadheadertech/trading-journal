@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
@@ -113,13 +113,13 @@ export default function AdminArticlesPage() {
                     <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${meta.color}`}>
                       <Icon size={10} /> {meta.label}
                     </span>
-                    <span className="text-[10px] text-[var(--muted-foreground)]">{a.category} Â· {a.accessTier}</span>
+                    <span className="text-[10px] text-[var(--muted-foreground)]">{a.category} · {a.accessTier}</span>
                   </div>
                   <div className="font-semibold text-[var(--foreground)]">{a.title}</div>
                   <div className="text-xs text-[var(--muted-foreground)] line-clamp-1">{a.excerpt}</div>
                   <div className="flex items-center gap-3 mt-1 text-[10px] text-[var(--muted-foreground)]">
                     <span>by {a.authorName}</span>
-                    <span>Â·</span>
+                    <span>·</span>
                     <span className="flex items-center gap-1"><Eye size={10} /> {a.viewCount}</span>
                   </div>
                   {a.reviewNotes && (
@@ -214,7 +214,7 @@ function Stat({ label, value, icon: Icon, accent }: { label: string; value: numb
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void }) {
   const { user } = useUser();
   const { showToast } = useToast();
@@ -269,7 +269,7 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
 
   return (
     <div className="max-w-3xl space-y-5">
-      <button onClick={onBack} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">â† Back</button>
+      <button onClick={onBack} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">← Back</button>
 
       <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">{article ? 'Edit' : 'New'} Article</h1>
 
@@ -294,7 +294,7 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
             onClick={submit}
             className="flex-1 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {busy ? 'Savingâ€¦' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
+            {busy ? 'Saving…' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
           </button>
         </div>
       </div>

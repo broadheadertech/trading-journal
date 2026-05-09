@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
@@ -102,7 +102,7 @@ export default function Coaching() {
             <Headphones size={28} className="text-pink-400" />
           </div>
           <p className="text-[var(--foreground)] font-medium">No coaches available yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon â€” we&apos;re onboarding the first cohort.</p>
+          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — we&apos;re onboarding the first cohort.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -144,7 +144,7 @@ export default function Coaching() {
               <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between">
                 <div className="text-sm">
                   <span className="font-bold text-[var(--foreground)]">${c.hourlyRateUsd}</span>
-                  <span className="text-[var(--muted-foreground)]"> / hr Â· {c.sessionDurationMin}min</span>
+                  <span className="text-[var(--muted-foreground)]"> / hr · {c.sessionDurationMin}min</span>
                 </div>
                 <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
                   Book <ArrowRight size={14} />
@@ -158,7 +158,7 @@ export default function Coaching() {
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 function CoachDetail({
   coachId, onBack, onBooked,
 }: {
@@ -234,7 +234,7 @@ function CoachDetail({
               <div className="flex items-center gap-1.5 text-sm">
                 <Star size={14} className="text-amber-400 fill-amber-400" />
                 <span className="font-bold text-[var(--foreground)]">{coach.avgRating?.toFixed(1)}</span>
-                <span className="text-[var(--muted-foreground)]">Â· {coach.reviewCount} reviews Â· {coach.totalSessions ?? 0} sessions</span>
+                <span className="text-[var(--muted-foreground)]">· {coach.reviewCount} reviews · {coach.totalSessions ?? 0} sessions</span>
               </div>
             )}
             <div className="flex flex-wrap gap-1.5 pt-1">
@@ -310,7 +310,7 @@ function CoachDetail({
             </div>
             <div className="text-sm">
               <div className="text-[var(--muted-foreground)]">When</div>
-              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} â€“ {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
             </div>
             <div className="text-sm">
               <div className="text-[var(--muted-foreground)]">Total</div>
@@ -331,7 +331,7 @@ function CoachDetail({
               onClick={handleBook}
               className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
             >
-              {busy ? 'Bookingâ€¦' : `Confirm & pay $${totalPrice.toFixed(2)}`}
+              {busy ? 'Booking…' : `Confirm & pay $${totalPrice.toFixed(2)}`}
             </button>
             <p className="text-[10px] text-[var(--muted-foreground)] text-center">
               Stub mode: payment is recorded automatically. Real Stripe Connect to be wired later.
@@ -343,7 +343,7 @@ function CoachDetail({
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 export function MySessionsView({
   sessions, onBack, onOpen,
 }: {
@@ -387,7 +387,7 @@ export function SessionRow({ session, onOpen }: { session: any; onOpen: () => vo
       </div>
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-[var(--foreground)]">{fmt(session.startsAt)}</div>
-        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min Â· ${session.pricePaidUsd.toFixed(2)}</div>
+        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
       </div>
       <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[session.status]}`}>
         {session.status.replace('_', ' ')}
@@ -396,7 +396,7 @@ export function SessionRow({ session, onOpen }: { session: any; onOpen: () => vo
   );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 export function SessionView({
   sessionId, role, onBack,
 }: {
@@ -467,7 +467,7 @@ export function SessionView({
             <div className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] mb-1">Session</div>
             <h1 className="text-2xl font-bold text-[var(--foreground)]">{fmt(session.startsAt)}</h1>
             <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              {session.sessionDurationMin} minutes Â· ${session.pricePaidUsd.toFixed(2)} Â·{' '}
+              {session.sessionDurationMin} minutes · ${session.pricePaidUsd.toFixed(2)} ·{' '}
               <span className="capitalize">{session.status.replace('_', ' ')}</span>
             </p>
           </div>
@@ -546,7 +546,7 @@ export function SessionView({
                 <button
                   onClick={async () => {
                     await completeSession({ id: sessionId, coachNotes });
-                    showToast('Session completed â€” funds released', 'success');
+                    showToast('Session completed — funds released', 'success');
                   }}
                   className="w-full py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium"
                 >
@@ -564,7 +564,7 @@ export function SessionView({
           onClick={() => setShowReviewForm(true)}
           className="w-full py-3 glass rounded-2xl text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)]/40"
         >
-          Leave a review â†’
+          Leave a review →
         </button>
       )}
       {canReview && showReviewForm && (

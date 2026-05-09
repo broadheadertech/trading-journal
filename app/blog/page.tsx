@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
@@ -283,7 +283,7 @@ export default function BlogPage() {
                     </button>
                   </div>
                   <div className="mt-3 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
-                    <CheckCircle size={10} className="text-pink-400" /> No spam Â· Unsubscribe anytime
+                    <CheckCircle size={10} className="text-pink-400" /> No spam · Unsubscribe anytime
                   </div>
                 </div>
               </div>
@@ -316,7 +316,7 @@ function ArticleCover({ article, large, compact }: {
       <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 100" preserveAspectRatio="none">
         <polyline fill="none" stroke="white" strokeWidth="1.5" points="0,80 25,72 50,75 75,60 100,65 125,48 150,52 175,32 200,28" />
       </svg>
-      {/* Title block â€” only on large/non-compact */}
+      {/* Title block — only on large/non-compact */}
       {!compact && (
         <div className="absolute top-3 left-3">
           <span className="text-[9px] font-bold uppercase tracking-widest text-white/90 bg-black/30 px-2 py-0.5 rounded backdrop-blur-sm">

@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from 'lucide-react';
 import LandingNav from '@/components/landing/LandingNav';
@@ -68,7 +68,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
           <div className="mb-4 flex items-center gap-3">
             <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={11} /> 8 min read</span>
-            <span className="text-[10px] text-[var(--muted-foreground)]">Â·</span>
+            <span className="text-[10px] text-[var(--muted-foreground)]">·</span>
             <span className="text-[10px] text-[var(--muted-foreground)]">Updated 2026</span>
           </div>
 
@@ -82,7 +82,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 mb-10">
             <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-              <strong className="text-[var(--foreground)]">In this article</strong> â€” we cover the data behind {article.title.toLowerCase()},
+              <strong className="text-[var(--foreground)]">In this article</strong> — we cover the data behind {article.title.toLowerCase()},
               with real numbers, charts, and concrete recommendations you can apply to your own trading immediately.
               The full editorial draft for this piece is being finalized; sign up to be notified when it goes live, or browse the related articles below to start now.
             </p>
@@ -91,7 +91,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
               href="/sign-up"
               className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
             >
-              Notify me when itâ€™s ready
+              Notify me when it’s ready
               <ArrowRight size={14} />
             </Link>
           </div>

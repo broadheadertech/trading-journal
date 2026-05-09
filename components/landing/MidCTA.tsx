@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -56,7 +56,7 @@ export default function MidCTA() {
             </div>
 
             <p className="mt-5 text-xs text-[var(--muted-foreground)]">
-              14 days free Â· No credit card Â· Setup in 60 seconds
+              14 days free · No credit card · Setup in 60 seconds
             </p>
           </div>
         </motion.div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -49,9 +49,9 @@ const COMPARISON = {
 
 const FAQ = [
   { q: 'Do I need a credit card to start the trial?', a: 'No. The 14-day free trial is genuinely no-card. You only enter payment details if you decide to continue after the trial ends.' },
-  { q: 'What happens after my trial?',                a: 'You drop to the Free plan automatically â€” no surprise charges. Your data is preserved. You can upgrade any time.' },
-  { q: 'Can I cancel anytime?',                       a: 'Yes. One click in Settings â†’ Subscription. No retention calls, no questions asked. You keep access until the end of the billing period.' },
-  { q: 'Do you support my broker?',                   a: 'Probably yes â€” we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@tradia.app and we add new formats within 48 hours.' },
+  { q: 'What happens after my trial?',                a: 'You drop to the Free plan automatically — no surprise charges. Your data is preserved. You can upgrade any time.' },
+  { q: 'Can I cancel anytime?',                       a: 'Yes. One click in Settings → Subscription. No retention calls, no questions asked. You keep access until the end of the billing period.' },
+  { q: 'Do you support my broker?',                   a: 'Probably yes — we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@tradia.app and we add new formats within 48 hours.' },
   { q: 'Is my trade data safe?',                      a: 'API keys are read-only by design. Tradia never holds funds, never executes orders. Hosted in Europe under GDPR with isolated background tasks.' },
   { q: 'Do you offer refunds?',                       a: 'If you cancel within 7 days of your first paid charge, we refund in full. After that, we prorate to the end of the billing period.' },
 ];
@@ -165,7 +165,7 @@ export default function PricingPage() {
               <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">every plan</span>
             </h2>
             <ul className="mt-6 space-y-2 max-w-md mx-auto text-left">
-              {['No credit card required', 'Full Pro access for 14 days', 'Cancel anytime â€” one click'].map(item => (
+              {['No credit card required', 'Full Pro access for 14 days', 'Cancel anytime — one click'].map(item => (
                 <li key={item} className="flex items-center gap-2 text-sm">
                   <CheckCircle size={16} className="text-pink-400 shrink-0" />
                   {item}
@@ -188,7 +188,7 @@ export default function PricingPage() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Comparison Matrix â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Comparison Matrix ──────────────── */
 function ComparisonMatrix() {
   const tiers = ['Free', 'Pro', 'Team', 'Elite'] as const;
   type Tier = typeof tiers[number];
@@ -233,7 +233,7 @@ function ComparisonMatrix() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 1 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Day 1 Mock ──────────────── */
 function Day1Mock() {
   return (
     <div className="space-y-2">
@@ -243,7 +243,7 @@ function Day1Mock() {
       <div className="rounded-md border-2 border-dashed border-pink-500/30 bg-pink-500/5 p-3 text-center">
         <Upload size={16} className="text-pink-400 mx-auto mb-1" />
         <div className="text-[9px] font-bold text-[var(--foreground)]">trades_q4.csv</div>
-        <div className="text-[7px] text-[var(--muted-foreground)]">2.4 MB Â· 386 trades</div>
+        <div className="text-[7px] text-[var(--muted-foreground)]">2.4 MB · 386 trades</div>
       </div>
       <div className="space-y-1">
         {['Detected: Binance Futures', 'Normalizing 386 fills', 'Computing metrics', 'Dashboard ready'].map((s, i) => (
@@ -257,13 +257,13 @@ function Day1Mock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 3 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Day 3 Mock ──────────────── */
 function Day3Mock() {
   const leaks = [
-    { n: 'Revenge Trading',    c: 'âˆ’$1,420', p: 100 },
-    { n: 'Oversized Position', c: 'âˆ’$890',  p: 63 },
-    { n: 'FOMO Entries',       c: 'âˆ’$540',  p: 38 },
-    { n: 'Late Session',       c: 'âˆ’$280',  p: 20 },
+    { n: 'Revenge Trading',    c: '−$1,420', p: 100 },
+    { n: 'Oversized Position', c: '−$890',  p: 63 },
+    { n: 'FOMO Entries',       c: '−$540',  p: 38 },
+    { n: 'Late Session',       c: '−$280',  p: 20 },
   ];
   return (
     <div className="space-y-2">
@@ -291,7 +291,7 @@ function Day3Mock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Day 7 Mock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── Day 7 Mock ──────────────── */
 function Day7Mock() {
   return (
     <div className="space-y-2.5">
@@ -325,7 +325,7 @@ function Day7Mock() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FAQ Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ──────────────── FAQ Item ──────────────── */
 function FAQItem({ q, a, idx }: { q: string; a: string; idx: number }) {
   const [open, setOpen] = useState(idx === 0);
   return (

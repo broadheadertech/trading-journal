@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { Upload, Search, Wrench, FileSpreadsheet, AlertTriangle, CheckCircle2 } from 'lucide-react';
@@ -44,7 +44,7 @@ export default function HowItWorks() {
             n="02"
             icon={Search}
             title="See what's costing you money"
-            desc="28+ patterns detected and ranked by dollar impact â€” revenge trading, overtrading, bad sessions, with evidence."
+            desc="28+ patterns detected and ranked by dollar impact — revenge trading, overtrading, bad sessions, with evidence."
             delay={0.1}
           >
             <DetectMock />
@@ -95,7 +95,7 @@ function UploadMock() {
       <div className="rounded-lg border-2 border-dashed border-pink-500/30 bg-pink-500/5 p-4 text-center">
         <FileSpreadsheet size={20} className="text-pink-400 mx-auto mb-1.5" />
         <div className="text-[10px] font-bold text-[var(--foreground)]">trades_q4_2025.csv</div>
-        <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">2.4 MB Â· 386 trades</div>
+        <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">2.4 MB · 386 trades</div>
       </div>
       <div className="space-y-1">
         {[
@@ -116,10 +116,10 @@ function UploadMock() {
 
 function DetectMock() {
   const leaks = [
-    { name: 'Revenge trading',  cost: 'âˆ’$1,420', pct: 100, sev: 'high' },
-    { name: 'Oversized risk',   cost: 'âˆ’$890',  pct: 63, sev: 'high' },
-    { name: 'Late session',     cost: 'âˆ’$540',  pct: 38, sev: 'med' },
-    { name: 'No stop loss',     cost: 'âˆ’$220',  pct: 16, sev: 'low' },
+    { name: 'Revenge trading',  cost: '−$1,420', pct: 100, sev: 'high' },
+    { name: 'Oversized risk',   cost: '−$890',  pct: 63, sev: 'high' },
+    { name: 'Late session',     cost: '−$540',  pct: 38, sev: 'med' },
+    { name: 'No stop loss',     cost: '−$220',  pct: 16, sev: 'low' },
   ];
   return (
     <div className="space-y-2">
