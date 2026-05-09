@@ -2,13 +2,13 @@ import { query, mutation, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { getUser, requireUser } from "./helpers";
 
-const PRO_PLUS_TIERS = new Set(["pro", "elite", "legend"]);
+const PRO_PLUS_TIERS = new Set(["pro", "elite"]);
 const TERMINAL_STATUSES = new Set(["won", "lost", "cancelled", "expired"]);
 
 async function currentUserPlanId(ctx: MutationCtx, userId: string): Promise<string> {
   // Admin auto-elevation: matches the rule in subscriptions.ts:getUserSubscription
   const adminId = process.env.ADMIN_USER_ID;
-  if (adminId && userId === adminId) return "legend";
+  if (adminId && userId === adminId) return "elite";
   const sub = await ctx.db
     .query("userSubscriptions")
     .withIndex("by_user", (q) => q.eq("userId", userId))
