@@ -184,7 +184,7 @@ export default function MTConnect() {
             {confirmRegen ? (
               <>
                 <span className="text-xs text-amber-300">Old token will stop working. Sure?</span>
-                <button onClick={handleRegenerate} className="px-3 py-1 rounded text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors font-semibold">Regenerate</button>
+                <button onClick={handleRegenerate} className="px-3 py-1 rounded text-[10px] bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors font-semibold">Regenerate</button>
                 <button onClick={() => setConfirmRegen(false)} className="px-3 py-1 rounded text-[10px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">Cancel</button>
               </>
             ) : (
@@ -196,11 +196,11 @@ export default function MTConnect() {
             {confirmDisconnect ? (
               <>
                 <span className="text-xs text-amber-300">Disconnect — historical trades stay. Sure?</span>
-                <button onClick={handleDisconnect} className="px-3 py-1 rounded text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors font-semibold">Disconnect</button>
+                <button onClick={handleDisconnect} className="px-3 py-1 rounded text-[10px] bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors font-semibold">Disconnect</button>
                 <button onClick={() => setConfirmDisconnect(false)} className="px-3 py-1 rounded text-[10px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">Cancel</button>
               </>
             ) : (
-              <button onClick={() => setConfirmDisconnect(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-300 border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition-colors">
+              <button onClick={() => setConfirmDisconnect(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-amber-300 border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
                 <Power size={11} /> Disconnect
               </button>
             )}

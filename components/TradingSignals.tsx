@@ -38,7 +38,8 @@ type Signal = {
   lotSize?: number;
 };
 
-const PRO_PLUS = new Set(['pro', 'elite']);
+// Core+ during BETA — every registered user is auto-elevated to Core, so they can post.
+const PRO_PLUS = new Set(['core', 'pro', 'elite']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
 // Defaults follow MT4/MT5 broker convention. Gold default: 1 pip = $0.01
@@ -149,10 +150,10 @@ export default function TradingSignals() {
             ) : (
               <button
                 disabled
-                title="Posting signals requires Pro, Elite, or Legend"
+                title="Posting signals requires a paid subscription (Core, Pro, or Elite)"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[var(--muted-foreground)] border border-[var(--border)] bg-[var(--card)] opacity-60 cursor-not-allowed"
               >
-                <Lock size={14} /> Post (Pro+)
+                <Lock size={14} /> Post (Core+)
               </button>
             )}
           </div>

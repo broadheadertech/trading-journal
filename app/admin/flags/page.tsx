@@ -7,9 +7,9 @@ import type { Id } from '@/convex/_generated/dataModel';
 
 // ─── Flag badge config ───────────────────────────────────────────────────────
 const FLAG_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-  phantom_trade_detected: { label: 'Phantom Trade', bg: 'bg-red-500/15', text: 'text-red-400' },
+  phantom_trade_detected: { label: 'Phantom Trade', bg: 'bg-amber-500/15', text: 'text-amber-400' },
   pnl_anomaly_flagged: { label: 'P&L Anomaly', bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
-  recovery_lock_limit: { label: 'Lock Exceeded', bg: 'bg-red-500/15', text: 'text-red-400' },
+  recovery_lock_limit: { label: 'Lock Exceeded', bg: 'bg-amber-500/15', text: 'text-amber-400' },
   recovery_lock_active: { label: 'Lock Active', bg: 'bg-zinc-500/15', text: 'text-zinc-400' },
 };
 
@@ -149,7 +149,7 @@ export default function AntiGamingFlagsPage() {
                   <span
                     className={`inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-semibold w-fit ${
                       isBlocking
-                        ? 'bg-red-500/15 text-red-400'
+                        ? 'bg-amber-500/15 text-amber-400'
                         : 'bg-yellow-500/15 text-yellow-400'
                     }`}
                   >
@@ -162,7 +162,7 @@ export default function AntiGamingFlagsPage() {
                       e.delta > 0
                         ? 'text-green-400'
                         : e.delta < 0
-                          ? 'text-red-400'
+                          ? 'text-amber-400'
                           : 'text-[var(--muted-foreground)]'
                     }`}
                   >
@@ -233,7 +233,7 @@ export default function AntiGamingFlagsPage() {
                                     ? 'bg-green-400'
                                     : rc.compliance === 'partial'
                                       ? 'bg-yellow-400'
-                                      : 'bg-red-400'
+                                      : 'bg-amber-400'
                                 }`}
                               />
                               <span className="text-[var(--foreground)]">{rc.rule}</span>

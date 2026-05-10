@@ -2,7 +2,9 @@ import { query, mutation, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { getUser, requireUser } from "./helpers";
 
-const PRO_PLUS_TIERS = new Set(["pro", "elite"]);
+// Tiers allowed to post signals. Core+ during BETA so any registered user can post;
+// tighten to Pro+ when paid subscriptions go live if you want posting to be a paid perk.
+const PRO_PLUS_TIERS = new Set(["core", "pro", "elite"]);
 const TERMINAL_STATUSES = new Set(["won", "lost", "cancelled", "expired"]);
 
 async function currentUserPlanId(ctx: MutationCtx, userId: string): Promise<string> {
@@ -103,7 +105,7 @@ export const post = mutation({
     const planId = await currentUserPlanId(ctx, userId);
 
     if (!PRO_PLUS_TIERS.has(planId)) {
-      throw new Error("Posting signals requires a Pro, Elite, or Legend subscription.");
+      throw new Error("Posting signals requires a paid subscription (Core, Pro, or Elite).");
     }
 
     if (args.entryLow > args.entryHigh) {
