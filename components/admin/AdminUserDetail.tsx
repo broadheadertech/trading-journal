@@ -86,7 +86,7 @@ export default function AdminUserDetail({
             <div className="flex items-center justify-between text-sm">
               <span className="text-[var(--muted-foreground)]">Status</span>
               {detail.isBanned ? (
-                <span className="flex items-center gap-1.5 text-[var(--red)]">
+                <span className="flex items-center gap-1.5 text-amber-400">
                   <ShieldAlert size={14} /> Banned
                 </span>
               ) : (
@@ -96,7 +96,7 @@ export default function AdminUserDetail({
               )}
             </div>
             {detail.isBanned && detail.bannedReason && (
-              <div className="text-xs text-[var(--muted-foreground)] bg-[var(--red)]/5 px-3 py-2 rounded-lg">
+              <div className="text-xs text-[var(--muted-foreground)] bg-amber-500/5 px-3 py-2 rounded-lg">
                 Reason: {detail.bannedReason}
               </div>
             )}
@@ -165,7 +165,7 @@ export default function AdminUserDetail({
                     <button
                       onClick={handleBan}
                       disabled={busy || !banReason.trim()}
-                      className="flex-1 py-2 rounded-lg bg-[var(--red)] text-white text-xs font-medium disabled:opacity-50 transition-colors"
+                      className="flex-1 py-2 rounded-lg bg-amber-500 text-slate-900 text-xs font-semibold disabled:opacity-50 transition-colors hover:bg-amber-400"
                     >
                       Confirm Ban
                     </button>
@@ -181,7 +181,7 @@ export default function AdminUserDetail({
                 <button
                   onClick={() => setShowBanInput(true)}
                   disabled={busy}
-                  className="w-full py-2 rounded-lg border border-[var(--red)]/30 text-[var(--red)] text-xs font-medium hover:bg-[var(--red)]/10 transition-colors disabled:opacity-50"
+                  className="w-full py-2 rounded-lg border border-amber-500/30 text-amber-300 text-xs font-medium hover:bg-amber-500/10 transition-colors disabled:opacity-50"
                 >
                   Ban User
                 </button>
@@ -189,8 +189,8 @@ export default function AdminUserDetail({
             </div>
 
             {/* Danger zone */}
-            <div className="border-t border-[var(--red)]/20 pt-3">
-              <p className="text-[10px] font-medium text-[var(--red)] mb-2 uppercase tracking-wide">Danger Zone</p>
+            <div className="border-t border-amber-500/20 pt-3">
+              <p className="text-[10px] font-medium text-amber-300 mb-2 uppercase tracking-wide">Danger Zone</p>
               <button
                 onClick={handleReset}
                 disabled={busy}

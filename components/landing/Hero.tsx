@@ -18,9 +18,12 @@ export default function Hero() {
       />
       {/* Dark overlay so copy stays readable */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/70 to-[var(--background)]" />
+      {/* Northern Lights aurora ambient pattern */}
+      <div className="aurora-bg" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-pink-500 opacity-[0.07] rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 right-1/4 w-[400px] h-[350px] bg-fuchsia-500 opacity-[0.05] rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-pink-500 opacity-[0.06] rounded-full blur-[140px]" />
+        <div className="absolute top-1/4 right-1/3 w-[420px] h-[360px] bg-cyan-400 opacity-[0.05] rounded-full blur-[130px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[350px] bg-emerald-400 opacity-[0.04] rounded-full blur-[120px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-12 sm:pb-16">
@@ -45,8 +48,8 @@ export default function Hero() {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight"
             >
               <span className="text-[var(--foreground)]">Find the trading mistakes costing you thousands </span>
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">— and prove </span>
-              <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">you fixed them</span>
+              <span className="aurora-text">— and prove </span>
+              <span className="aurora-text">you fixed them</span>
             </motion.h1>
 
             <motion.p
@@ -147,7 +150,7 @@ function TradiaDashboardMock() {
         <div className="border-r border-[var(--border)] bg-black/20 p-2 space-y-0.5">
           <div className="flex items-center gap-1.5 px-2 py-1 mb-2">
             <Image src="/logo.png" alt="Tradia" width={20} height={20} className="w-5 h-5 object-contain" />
-            <span className="text-[11px] font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
+            <span className="font-brand text-[11px] font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
           </div>
           {tabs.map(t => (
             <div

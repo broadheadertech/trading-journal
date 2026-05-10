@@ -129,7 +129,7 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-2.5 text-center">
                       {u.isBanned ? (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-[var(--red)]/10 text-[var(--red)]">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-amber-500/10 text-amber-400">
                           Banned
                         </span>
                       ) : (

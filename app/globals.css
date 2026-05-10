@@ -80,14 +80,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-display);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-display), system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01", "cv11";
   -webkit-tap-highlight-color: transparent;
   transition: --accent 2s ease, --accent-glow 2s ease, --bg-tint 2s ease,
               --brain-dimming 1.5s ease, --brain-pulse-speed 1s ease;
@@ -273,9 +274,99 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--border);
 }
 
-/* Gradient text accent — uses brand neon pink */
+/* Brand wordmark utility — wide-tracking geometric look matching the TRADIA logo */
+.font-brand {
+  font-family: var(--font-brand), system-ui, -apple-system, sans-serif !important;
+  letter-spacing: 0.16em;
+}
+
+.brand-wordmark {
+  font-family: var(--font-brand), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* All headlines use League Spartan for the geometric impact */
+h1, h2, h3 {
+  font-family: var(--font-brand), system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Northern Lights / Aurora theme ─────────────────────────────────
+   Three-color brand system:
+     Primary  → neon pink ↔ cyan-blue ↔ green (aurora)
+     Secondary → neon orange (CTAs)
+     Tertiary  → neon green (success accents)
+*/
+.aurora-text {
+  background: linear-gradient(120deg,
+    #ff2eb3 0%,
+    #d946ef 18%,
+    #22d3ee 38%,
+    #34d399 60%,
+    #d946ef 82%,
+    #ff2eb3 100%);
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: aurora-shift 9s ease-in-out infinite;
+}
+
+.aurora-text-static {
+  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 50%, #34d399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* Subtle animated aurora background — drop on any section as <div className="aurora-bg" /> */
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 18% 10%,  rgba(255, 46, 179, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 18%,  rgba(34, 211, 238, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 35% at 50% 95%,  rgba(52, 211, 153, 0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 92% 70%,  rgba(251, 146, 60, 0.10) 0%, transparent 60%);
+  filter: blur(40px);
+  animation: aurora-drift 22s ease-in-out infinite;
+}
+
+@keyframes aurora-drift {
+  0%, 100% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 100% 70%;
+    opacity: 1;
+  }
+  50% {
+    background-position: 25% 5%, 75% -5%, 50% 90%, 95% 60%;
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-text { animation: none; background-position: 30% 50%; }
+  .aurora-bg   { animation: none; }
+}
+
+/* Aurora-tinted border + soft glow for cards/CTAs you want to feature */
+.aurora-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 46, 179, 0.18),
+    0 0 30px -8px rgba(34, 211, 238, 0.30),
+    0 0 60px -20px rgba(52, 211, 153, 0.25);
+}
+
+/* Gradient text accent — Northern Lights aurora */
 .gradient-text {
-  background: linear-gradient(135deg, #ff52c3 0%, #ff2eb3 50%, #ec4899 100%);
+  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 50%, #34d399 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

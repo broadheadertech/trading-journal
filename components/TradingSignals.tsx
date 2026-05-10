@@ -38,7 +38,8 @@ type Signal = {
   lotSize?: number;
 };
 
-const PRO_PLUS = new Set(['pro', 'elite']);
+// Core+ during BETA — every registered user is auto-elevated to Core, so they can post.
+const PRO_PLUS = new Set(['core', 'pro', 'elite']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
 // Defaults follow MT4/MT5 broker convention. Gold default: 1 pip = $0.01
@@ -149,10 +150,10 @@ export default function TradingSignals() {
             ) : (
               <button
                 disabled
-                title="Posting signals requires Pro, Elite, or Legend"
+                title="Posting signals requires a paid subscription (Core, Pro, or Elite)"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[var(--muted-foreground)] border border-[var(--border)] bg-[var(--card)] opacity-60 cursor-not-allowed"
               >
-                <Lock size={14} /> Post (Pro+)
+                <Lock size={14} /> Post (Core+)
               </button>
             )}
           </div>
@@ -293,7 +294,7 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
               </div>
             </div>
             <div className="text-right">
-              <div className={`text-sm font-bold tabular-nums ${r.hitRate >= 0.6 ? 'text-emerald-400' : r.hitRate >= 0.4 ? 'text-amber-400' : 'text-red-400'}`}>
+              <div className={`text-sm font-bold tabular-nums ${r.hitRate >= 0.6 ? 'text-emerald-400' : r.hitRate >= 0.4 ? 'text-amber-400' : 'text-amber-500'}`}>
                 {(r.hitRate * 100).toFixed(0)}%
               </div>
               <div className="text-[9px] text-[var(--muted-foreground)] tabular-nums">
@@ -315,7 +316,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
   const action = isLong ? 'BUY' : 'SELL';
 
   const riskBadge =
-    s.riskLevel === 'high' ? { color: 'text-red-300 bg-red-500/15 border-red-500/40', label: '⚠️ High Risk ⚠️' } :
+    s.riskLevel === 'high' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: '⚠️ High Risk ⚠️' } :
     s.riskLevel === 'medium' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: 'Medium Risk' } :
     { color: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/40', label: 'Low Risk' };
 
@@ -359,6 +360,15 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
         <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${statusColor}`}>
           {s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}
         </span>
+      </div>
+
+      {/* Poster + winrate badge */}
+      <div className="px-5 pt-2 flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 text-[11px] text-[var(--muted-foreground)]">
+          <Radio size={11} className="text-pink-400" />
+          <span className="font-semibold text-[var(--foreground)]">{s.posterName}</span>
+        </div>
+        <PosterWinRateBadge stats={posterStats} />
       </div>
 
       {/* Levels */}
@@ -413,15 +423,6 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
       {/* Footer */}
       <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-between text-[10px] mt-auto bg-black/10">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-[var(--muted-foreground)]">
-            <Radio size={10} />
-            <span className="font-medium text-[var(--foreground)]">{s.posterName}</span>
-            {posterStats && posterStats.total > 0 && (
-              <span className={`ml-1 ${posterStats.hitRate >= 0.6 ? 'text-emerald-400' : posterStats.hitRate >= 0.4 ? 'text-amber-400' : 'text-red-400'}`}>
-                · {(posterStats.hitRate * 100).toFixed(0)}% on {posterStats.total}
-              </span>
-            )}
-          </div>
           <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
             <Target size={10} className="text-pink-400" />
             <span className="tabular-nums">R:R {s.rrRatio.toFixed(1)}</span>
@@ -442,6 +443,42 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
         )}
       </div>
     </div>
+  );
+}
+
+type PosterStats = { posterId: string; total: number; won: number; hitRate: number } | undefined;
+
+function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
+  // Loading state — query in flight
+  if (stats === undefined) {
+    return (
+      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)]/30 border border-[var(--border)] text-[var(--muted-foreground)] animate-pulse">
+        Loading…
+      </span>
+    );
+  }
+
+  // New poster — no closed signals yet
+  if (stats.total === 0) {
+    return (
+      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-pink-500/10 text-pink-300 border-pink-500/30 inline-flex items-center gap-1">
+        ✨ New analyst
+      </span>
+    );
+  }
+
+  // Tier the badge color by hit rate — emerald (great), pink (good), amber (mediocre)
+  const pct = Math.round(stats.hitRate * 100);
+  const tone =
+    stats.hitRate >= 0.6 ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
+    stats.hitRate >= 0.4 ? 'bg-pink-500/10 text-pink-300 border-pink-500/30' :
+                            'bg-amber-500/10 text-amber-300 border-amber-500/30';
+
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border tabular-nums inline-flex items-center gap-1 ${tone}`}>
+      🎯 {pct}% win rate
+      <span className="opacity-60 font-normal">· {stats.won}/{stats.total}</span>
+    </span>
   );
 }
 
@@ -626,7 +663,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
                   <button key={r} type="button" onClick={() => setRiskLevel(r)}
                     className={`flex-1 px-2 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
                       riskLevel === r
-                        ? r === 'high' ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                        ? r === 'high' ? 'bg-amber-600/25 text-amber-200 border border-amber-500/50'
                           : r === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                           : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                         : 'text-[var(--muted-foreground)]'
@@ -682,7 +719,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
                       </span>
                     )}
                     <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
-                      className="p-1 rounded text-[var(--muted-foreground)] hover:text-red-400 transition-colors disabled:opacity-30">
+                      className="p-1 rounded text-[var(--muted-foreground)] hover:text-amber-400 transition-colors disabled:opacity-30">
                       {tpInputs.length === 1 ? <Minus size={12} /> : <Trash2 size={12} />}
                     </button>
                   </div>
@@ -693,7 +730,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
 
           {previewRR > 0 && (
             <div className="text-xs text-[var(--muted-foreground)] tabular-nums">
-              R:R (vs TP1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-red-400'}`}>{previewRR.toFixed(2)}</span>
+              R:R (vs TP1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-amber-500'}`}>{previewRR.toFixed(2)}</span>
             </div>
           )}
 
@@ -754,7 +791,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
             <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/500</div>
           </Field>
 
-          {error && <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded px-3 py-2">{error}</div>}
+          {error && <div className="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-3 py-2">{error}</div>}
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">

@@ -127,7 +127,7 @@ export default function LandingNav() {
             priority
             className="w-9 h-9 object-contain"
           />
-          <span className="text-xl font-bold bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
+          <span className="font-brand text-xl font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
             Tradia
           </span>
         </Link>
