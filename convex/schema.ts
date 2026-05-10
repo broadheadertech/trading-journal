@@ -332,6 +332,13 @@ export default defineSchema({
       v.literal("commodities"),
     ),
     direction: v.union(v.literal("long"), v.literal("short")),
+    // Order type — combined with direction gives Buy Stop / Sell Stop / Buy Limit / Sell Limit / Market.
+    // Optional for backward-compat with signals posted before this field existed (treat as "market").
+    orderType: v.optional(v.union(
+      v.literal("market"),
+      v.literal("stop"),
+      v.literal("limit"),
+    )),
     entryLow: v.number(),               // bottom of entry zone (= entryHigh if single price)
     entryHigh: v.number(),              // top of entry zone
     stopLoss: v.number(),

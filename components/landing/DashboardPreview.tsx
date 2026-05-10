@@ -138,8 +138,8 @@ function DisciplineMock() {
             />
             <defs>
               <linearGradient id="discGrad">
-                <stop offset="0%" stopColor="#5eead4" />
-                <stop offset="100%" stopColor="#22d3ee" />
+                <stop offset="0%" stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#22c55e" />
               </linearGradient>
             </defs>
           </svg>
@@ -153,7 +153,7 @@ function DisciplineMock() {
         {[0.6, 0.4, 0.7, 0.85, 0.3, 0.9, 0.78].map((v, i) => (
           <div key={i} className="text-center">
             <div className="h-10 flex items-end justify-center">
-              <div className="w-full rounded-sm bg-gradient-to-t from-pink-500 to-fuchsia-400" style={{ height: `${v * 100}%` }} />
+              <div className="w-full rounded-sm bg-gradient-to-t from-green-500 to-green-400" style={{ height: `${v * 100}%` }} />
             </div>
             <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">{['M','T','W','T','F','S','S'][i]}</div>
           </div>
@@ -186,12 +186,12 @@ function EdgeMock() {
         <svg className="w-full h-20" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
             <linearGradient id="edgeFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#34d399" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
+              <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
             </linearGradient>
           </defs>
           <polygon fill="url(#edgeFill)" points={`0,100 ${path} 100,100`} />
-          <polyline fill="none" stroke="#34d399" strokeWidth="1.2" points={path} />
+          <polyline fill="none" stroke="#22c55e" strokeWidth="1.2" points={path} />
         </svg>
       </div>
       <div className="flex items-center justify-between text-[9px]">

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useMemo, useState } from 'react';
 import { Trophy, Lock } from 'lucide-react';
@@ -66,8 +66,8 @@ export default function Achievements({ trades, reflections }: Props) {
               />
               <defs>
                 <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#2dd4bf" />
-                  <stop offset="100%" stopColor="#0d9488" />
+                  <stop offset="0%" stopColor="#22c55e" />
+                  <stop offset="100%" stopColor="#22c55e" />
                 </linearGradient>
               </defs>
             </svg>

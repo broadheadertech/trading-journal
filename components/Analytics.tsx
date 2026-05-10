@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import { Trade } from '@/lib/types';
@@ -372,15 +372,15 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
                 <AreaChart data={m.equityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2dd4bf" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#2dd4bf" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                   <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                   <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', color: 'var(--foreground)' }} formatter={(v: unknown) => [formatCurrency(v as number), 'Equity']} />
-                  <Area type="monotone" dataKey="pnl" stroke="#2dd4bf" strokeWidth={2} fill="url(#eqGrad)" dot={false} isAnimationActive={false} />
+                  <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#eqGrad)" dot={false} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

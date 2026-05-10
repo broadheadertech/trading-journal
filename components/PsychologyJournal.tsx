@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, Fragment } from 'react';
 import { Trade, JournalEntry, EmotionState, CircuitBreakerEvent, TriggerEntry, DailyReflection as DailyReflectionType, WeeklyReview } from '@/lib/types';
@@ -476,7 +476,7 @@ export default function PsychologyJournal({
               <circle cx="100" cy="100" r="85" fill="none" stroke="var(--border)" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={`${85 * 2 * Math.PI * 0.75} ${85 * 2 * Math.PI * 0.25}`}
                 transform="rotate(135 100 100)" />
-              <circle cx="100" cy="100" r="85" fill="none" stroke="#22d3ee" strokeWidth="12" strokeLinecap="round"
+              <circle cx="100" cy="100" r="85" fill="none" stroke="#22c55e" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={`${85 * 2 * Math.PI * 0.75 * (m.healthScore / 100)} ${85 * 2 * Math.PI}`}
                 transform="rotate(135 100 100)" className="transition-all duration-700" />
               <text x="100" y="95" textAnchor="middle" className="fill-[var(--foreground)]" fontSize="42" fontWeight="bold" fontFamily="var(--font-sans), system-ui, sans-serif">{m.healthScore}</text>
@@ -522,7 +522,7 @@ export default function PsychologyJournal({
                       <YAxis domain={[0, 100]} tick={false} axisLine={false} />
                       <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }}
                         formatter={(v: unknown) => [`Score ${v}`, '']} labelFormatter={(l) => `${l}`} />
-                      <Line type="monotone" dataKey="score" stroke="#22d3ee" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
+                      <Line type="monotone" dataKey="score" stroke="#22c55e" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -663,8 +663,8 @@ export default function PsychologyJournal({
                 margin={{ top: 5, right: 40, left: 10, bottom: 5 }}>
                 <defs>
                   <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -672,7 +672,7 @@ export default function PsychologyJournal({
                 <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                 <YAxis yAxisId="pressure" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#3b82f6" strokeWidth={2} fill="url(#pnlGrad)" dot={{ fill: '#3b82f6', r: 4 }} name="PnL" />
+                <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#pnlGrad)" dot={{ fill: '#22c55e', r: 4 }} name="PnL" />
                 <Line yAxisId="pressure" type="monotone" dataKey="pressure" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Pressure" />
               </AreaChart>
             </ResponsiveContainer>

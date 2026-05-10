@@ -162,7 +162,7 @@ function FixMock() {
                 whileInView={{ height: `${v}%` }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 * i }}
-                className="w-full rounded-sm bg-gradient-to-t from-pink-500 to-fuchsia-400"
+                className="w-full rounded-sm bg-gradient-to-t from-green-500 to-green-400"
               />
             </div>
             <div className="text-[8px] text-[var(--muted-foreground)] mt-1">W{i+1}</div>

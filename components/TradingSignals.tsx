@@ -6,12 +6,21 @@ import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, CheckCircle2, XCircle, Ban } from 'lucide-react';
+import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban } from 'lucide-react';
 
 type Direction = 'long' | 'short';
+type OrderType = 'market' | 'stop' | 'limit';
 type RiskLevel = 'high' | 'medium' | 'low';
 type Status = 'pending' | 'active' | 'won' | 'lost' | 'cancelled' | 'expired';
 type Market = 'crypto' | 'forex' | 'stocks' | 'commodities';
+
+// Display label combining direction + order type
+function orderLabel(direction: Direction, orderType: OrderType | undefined): string {
+  const verb = direction === 'long' ? 'BUY' : 'SELL';
+  if (!orderType || orderType === 'market') return `${verb} (MARKET)`;
+  if (orderType === 'stop') return `${verb} STOP`;
+  return `${verb} LIMIT`;
+}
 
 type Signal = {
   _id: Id<'signals'>;
@@ -21,6 +30,7 @@ type Signal = {
   symbol: string;
   market: Market;
   direction: Direction;
+  orderType?: OrderType;
   entryLow: number;
   entryHigh: number;
   stopLoss: number;
@@ -313,7 +323,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
   const isLong = s.direction === 'long';
   const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
   const dirColor = isLong ? 'text-emerald-400' : 'text-red-400';
-  const action = isLong ? 'BUY' : 'SELL';
+  const action = orderLabel(s.direction, s.orderType);
 
   const riskBadge =
     s.riskLevel === 'high' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: '⚠️ High Risk ⚠️' } :
@@ -352,7 +362,7 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
           <div>
             <div className="flex items-baseline gap-2">
               <h3 className="text-2xl font-bold text-[var(--foreground)] tabular-nums tracking-tight">{s.symbol}</h3>
-              <span className={`text-base font-bold tracking-widest ${dirColor}`}>{action}S</span>
+              <span className={`text-base font-bold tracking-widest ${dirColor}`}>{action}</span>
             </div>
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-0.5">{s.market}</div>
           </div>
@@ -395,9 +405,9 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
                   {fmt(tp)}
                 </span>
                 <span className="text-[10px] text-emerald-400/60 tabular-nums">
-                  🎯 {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
+                  {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
                 </span>
-                {hit && <CheckCircle2 size={11} className="text-emerald-400 ml-auto" />}
+                {hit && <Target size={12} className="text-emerald-400 ml-auto" strokeWidth={2.5} />}
               </div>
             );
           })}
@@ -496,7 +506,7 @@ function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]
       {takeProfits.length > 1 ? (
         <>
           <button onClick={() => setTpPickerOpen(v => !v)} title="Mark TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
-            <CheckCircle2 size={10} /> TP hit
+            <Target size={10} strokeWidth={2.5} /> TP hit
           </button>
           {tpPickerOpen && (
             <div className="absolute bottom-full right-0 mb-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg p-1 flex flex-col z-10">
@@ -514,7 +524,7 @@ function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]
         </>
       ) : (
         <button onClick={() => onUpdate('won', 1)} title="TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
-          <CheckCircle2 size={10} /> TP hit
+          <Target size={10} strokeWidth={2.5} /> TP hit
         </button>
       )}
 
@@ -537,6 +547,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
   const [symbol, setSymbol] = useState('');
   const [market, setMarket] = useState<Market>('commodities');
   const [direction, setDirection] = useState<Direction>('long');
+  const [orderType, setOrderType] = useState<OrderType>('market');
   const [entryLow, setEntryLow] = useState('');
   const [entryHigh, setEntryHigh] = useState('');
   const [stopLoss, setStopLoss] = useState('');
@@ -564,7 +575,6 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
     : 0;
 
   function addTp() {
-    if (tpInputs.length >= 10) return;
     setTpInputs([...tpInputs, '']);
   }
   function removeTp(i: number) {
@@ -598,6 +608,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
         symbol: symbol.trim(),
         market,
         direction,
+        orderType,
         entryLow: entryLowNum,
         entryHigh: entryHighNum,
         stopLoss: slNum,
@@ -657,6 +668,23 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
                 </button>
               </div>
             </Field>
+            <Field label="Order Type">
+              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
+                {([
+                  { value: 'market', label: 'Market' },
+                  { value: 'stop', label: 'Stop' },
+                  { value: 'limit', label: 'Limit' },
+                ] as { value: OrderType; label: string }[]).map(o => (
+                  <button key={o.value} type="button" onClick={() => setOrderType(o.value)}
+                    className={`flex-1 px-2 py-1.5 rounded-full text-xs font-semibold transition-all ${orderType === o.value ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40' : 'text-[var(--muted-foreground)]'}`}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
             <Field label="Risk Level">
               <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
                 {(['low', 'medium', 'high'] as RiskLevel[]).map(r => (
@@ -691,9 +719,9 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                Take Profits ({tpInputs.length}/10)
+                Take Profits ({tpInputs.length})
               </div>
-              <button type="button" onClick={addTp} disabled={tpInputs.length >= 10}
+              <button type="button" onClick={addTp}
                 className="inline-flex items-center gap-1 text-[10px] text-pink-400 hover:text-pink-300 transition-colors disabled:opacity-40">
                 <Plus size={10} /> Add TP
               </button>

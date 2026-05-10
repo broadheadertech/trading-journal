@@ -131,7 +131,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
                   formatter={(value, name) => [typeof value === 'number' ? value : 0, name === 'count' ? 'Occurrences' : 'Led to Trade']}
                 />
-                <Bar dataKey="count" name="Occurrences" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="count" name="Occurrences" fill="#22c55e" radius={[0, 4, 4, 0]} />
                 <Bar dataKey="traded" name="Led to Trade" radius={[0, 4, 4, 0]}>
                   {chartData.map((entry, i) => (
                     <Cell key={i} fill={entry.winRate >= 50 ? '#22c55e' : entry.traded > 0 ? '#ef4444' : '#6b7280'} />
