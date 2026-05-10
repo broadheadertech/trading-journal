@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useRef } from 'react';
 import { Strategy, StrategyType, Trade } from '@/lib/types';
@@ -1049,14 +1049,14 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                       <AreaChart data={metrics.equityData}>
                         <defs>
                           <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#4ade80" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#4ade80" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
                         <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                        <Area type="monotone" dataKey="actual" stroke="#4ade80" fill="url(#pnlGrad)" strokeWidth={2} dot={{ r: 3, fill: '#4ade80' }} />
+                        <Area type="monotone" dataKey="actual" stroke="#22c55e" fill="url(#pnlGrad)" strokeWidth={2} dot={{ r: 3, fill: '#22c55e' }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   ) : (
@@ -1076,7 +1076,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                         <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} />
                         <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
                         <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                        <Line type="monotone" dataKey="compliance" stroke="#facc15" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3, fill: '#facc15' }} />
+                        <Line type="monotone" dataKey="compliance" stroke="#22c55e" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3, fill: '#22c55e' }} />
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (

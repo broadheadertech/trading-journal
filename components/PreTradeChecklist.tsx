@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import { PreTradeChecklist as ChecklistType, Strategy, Trade } from '@/lib/types';
@@ -392,15 +392,15 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                   <AreaChart data={m.regimeEquity} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                     <defs>
                       <linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                     <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                     <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                    <Area type="monotone" dataKey="pnl" stroke="#22d3ee" strokeWidth={2} fill="url(#regGrad)" dot={{ fill: '#22d3ee', r: 3 }} isAnimationActive={false} />
+                    <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#regGrad)" dot={{ fill: '#22c55e', r: 3 }} isAnimationActive={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -488,7 +488,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                   <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                   <YAxis yAxisId="vol" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                  <Line yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22d3ee" strokeWidth={2} dot={{ fill: '#22d3ee', r: 3 }} name="PnL" />
+                  <Line yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} dot={{ fill: '#22c55e', r: 3 }} name="PnL" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -564,8 +564,8 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                 <AreaChart data={m.weekdayData} margin={{ top: 5, right: 40, left: 10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="wdGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -573,7 +573,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                   <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                   <YAxis yAxisId="wr" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} />
                   <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                  <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22d3ee" strokeWidth={2} fill="url(#wdGrad)" name="PnL" />
+                  <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#wdGrad)" name="PnL" />
                   <Line yAxisId="wr" type="monotone" dataKey="winRate" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Win Rate %" />
                 </AreaChart>
               </ResponsiveContainer>

@@ -90,6 +90,7 @@ export const post = mutation({
       v.literal("commodities"),
     ),
     direction: v.union(v.literal("long"), v.literal("short")),
+    orderType: v.optional(v.union(v.literal("market"), v.literal("stop"), v.literal("limit"))),
     entryLow: v.number(),
     entryHigh: v.number(),
     stopLoss: v.number(),
@@ -113,9 +114,6 @@ export const post = mutation({
     }
     if (args.takeProfits.length === 0) {
       throw new Error("At least one take-profit level is required.");
-    }
-    if (args.takeProfits.length > 10) {
-      throw new Error("Up to 10 take-profit levels supported.");
     }
 
     const isLong = args.direction === "long";
@@ -159,6 +157,7 @@ export const post = mutation({
       symbol: args.symbol.toUpperCase(),
       market: args.market,
       direction: args.direction,
+      orderType: args.orderType ?? "market",
       entryLow: args.entryLow,
       entryHigh: args.entryHigh,
       stopLoss: args.stopLoss,

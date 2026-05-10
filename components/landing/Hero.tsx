@@ -209,8 +209,8 @@ function TradiaDashboardMock() {
             <svg className="w-full h-14" viewBox="0 0 200 50" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="heroEq" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#34d399" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
                 </linearGradient>
               </defs>
               <polygon
@@ -219,7 +219,7 @@ function TradiaDashboardMock() {
               />
               <polyline
                 fill="none"
-                stroke="#34d399"
+                stroke="#22c55e"
                 strokeWidth="1.2"
                 points="0,42 15,38 30,40 50,32 70,34 90,28 110,30 130,22 150,24 170,16 190,12 200,10"
               />
