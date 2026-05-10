@@ -211,10 +211,10 @@ input::placeholder, textarea::placeholder {
   animation: none;
 }
 
-/* Brain dimension immersive background (Story 3.4) */
+/* Brain dimension immersive background (Story 3.4) — uses theme bg so it flips for light mode */
 .brain-dimension-bg {
-  background-color: #020208;
-  background-image: radial-gradient(ellipse at 50% 30%, rgba(45, 148, 132, 0.04) 0%, #050510 50%, #020208 100%);
+  background-color: var(--background);
+  background-image: radial-gradient(ellipse at 50% 30%, var(--accent-glow) 0%, var(--card) 50%, var(--background) 100%);
   background-position: center;
   animation: dimension-bg 8s ease-in-out infinite;
 }

@@ -109,7 +109,7 @@ export default function Courses() {
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
-                      <GraduationCap size={56} className="text-white/40" />
+                      <GraduationCap size={56} className="text-[var(--foreground)]/40" />
                     </div>
                   )}
                   {/* Gradient overlay for legibility */}
@@ -117,16 +117,16 @@ export default function Courses() {
 
                   {/* Owned badge */}
                   {owned && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-white text-[10px] font-semibold uppercase tracking-wide shadow-lg">
+                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide shadow-lg">
                       <Check size={11} strokeWidth={3} /> Owned
                     </div>
                   )}
 
                   {/* Floating price chip */}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-xs font-semibold">
                     <span>${c.priceUsd}</span>
-                    <span className="text-white/60">·</span>
-                    <span className="text-white/80">₱{c.pricePhp}</span>
+                    <span className="text-[var(--foreground)]/60">·</span>
+                    <span className="text-[var(--foreground)]/80">₱{c.pricePhp}</span>
                   </div>
                 </div>
 
@@ -231,7 +231,7 @@ function CourseDetail({
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() => onBuy('stripe')}
-                  className="px-5 py-2.5 bg-[var(--accent)] text-white rounded-xl font-medium hover:opacity-90"
+                  className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
                 >
                   Pay ${course.priceUsd} with Card (Stripe)
                 </button>
@@ -330,7 +330,7 @@ function CourseDetail({
                   href={activeLesson.externalUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-xl"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl"
                 >
                   Open external resource <ExternalLink size={14} />
                 </a>
@@ -353,7 +353,7 @@ function CourseDetail({
                 ) : (
                   <button
                     onClick={() => markComplete({ lessonId: activeLesson.id, courseId })}
-                    className="px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium"
+                    className="px-4 py-2 bg-emerald-500 text-[var(--foreground)] rounded-xl text-sm font-medium"
                   >
                     Mark as complete
                   </button>
@@ -396,7 +396,7 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
         ) : <span />}
         <button
           onClick={() => setShowNew(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
         >
           <Plus size={16} /> New Course
         </button>
@@ -514,7 +514,7 @@ function NewCourseModal({
                 setBusy(false);
               }
             }}
-            className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
+            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium disabled:opacity-50"
           >
             {busy ? 'Creating…' : 'Create'}
           </button>
@@ -657,7 +657,7 @@ function MultiImageUpload({
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="absolute -top-1 -right-1 bg-[var(--red)] text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 bg-[var(--red)] text-[var(--foreground)] rounded-full p-0.5 opacity-0 group-hover:opacity-100"
             >
               <Trash2 size={10} />
             </button>
@@ -775,7 +775,7 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
             });
             showToast('Course updated', 'success');
           }}
-          className="px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium"
+          className="px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
         >
           Save course details
         </button>
@@ -803,7 +803,7 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
               });
               setNewModuleTitle('');
             }}
-            className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg text-sm font-medium disabled:opacity-50"
+            className="px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-lg text-sm font-medium disabled:opacity-50"
           >
             Add Module
           </button>
@@ -910,7 +910,7 @@ function LessonEditorModal({
               <button
                 key={t}
                 onClick={() => setContentType(t)}
-                className={`px-3 py-1.5 rounded-lg text-sm ${contentType === t ? 'bg-[var(--accent)] text-white' : 'border border-[var(--border)] text-[var(--muted-foreground)]'}`}
+                className={`px-3 py-1.5 rounded-lg text-sm ${contentType === t ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'border border-[var(--border)] text-[var(--muted-foreground)]'}`}
               >
                 {t}
               </button>
@@ -927,7 +927,7 @@ function LessonEditorModal({
           <button onClick={onClose} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
           <button
             onClick={() => onSave({ title, contentType, body, videoUrl: videoUrl || undefined, externalUrl: externalUrl || undefined })}
-            className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium"
+            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
           >
             Save
           </button>

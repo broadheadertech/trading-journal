@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo } from 'react';
 import {
@@ -299,7 +299,7 @@ export default function Dashboard({
           : 'bg-gradient-to-br from-red-900/60 via-rose-800/40 to-red-900/30 border border-red-700/30'
         }`}>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <span className="text-xs font-medium text-[var(--foreground)]/60 uppercase tracking-wider">
               Net P&L
             </span>
             <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-md ${isPositive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}>
@@ -314,30 +314,30 @@ export default function Dashboard({
             <span className="flex items-center gap-1 text-red-400"><TrendingDown size={14} /> {metrics.losses} losses</span>
           </div>
           <div className="grid grid-cols-3 gap-3 mt-4">
-            <div className="bg-white/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-white/40 uppercase tracking-wider mb-0.5">Best Day</div>
+            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
+              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Best Day</div>
               {metrics.bestDay ? (
                 <>
                   <div className={`text-sm font-semibold ${metrics.bestDay[1] >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {fmtPnl(metrics.bestDay[1])}
                   </div>
-                  <div className="text-[10px] text-white/30">{format(new Date(metrics.bestDay[0]), 'dd/MM/yyyy')}</div>
+                  <div className="text-[10px] text-[var(--foreground)]/30">{format(new Date(metrics.bestDay[0]), 'dd/MM/yyyy')}</div>
                 </>
-              ) : <div className="text-sm text-white/30">-</div>}
+              ) : <div className="text-sm text-[var(--foreground)]/30">-</div>}
             </div>
-            <div className="bg-white/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-white/40 uppercase tracking-wider mb-0.5">Worst Day</div>
+            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
+              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Worst Day</div>
               {metrics.worstDay ? (
                 <>
                   <div className={`text-sm font-semibold ${metrics.worstDay[1] >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {fmtPnl(metrics.worstDay[1])}
                   </div>
-                  <div className="text-[10px] text-white/30">{format(new Date(metrics.worstDay[0]), 'dd/MM/yyyy')}</div>
+                  <div className="text-[10px] text-[var(--foreground)]/30">{format(new Date(metrics.worstDay[0]), 'dd/MM/yyyy')}</div>
                 </>
-              ) : <div className="text-sm text-white/30">Need 2+ days</div>}
+              ) : <div className="text-sm text-[var(--foreground)]/30">Need 2+ days</div>}
             </div>
-            <div className="bg-white/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-white/40 uppercase tracking-wider mb-0.5">Avg Trade</div>
+            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
+              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Avg Trade</div>
               <div className={`text-sm font-semibold ${metrics.avgTrade >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                 {fmtPnl(metrics.avgTrade)}
               </div>
@@ -350,7 +350,7 @@ export default function Dashboard({
               onClick={() => {
                 document.getElementById('next-best-actions')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="mt-4 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl text-sm text-white/80 transition-colors"
+              className="mt-4 flex items-center gap-2 px-4 py-2 bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/15 rounded-xl text-sm text-[var(--foreground)]/80 transition-colors"
             >
               <Flame size={16} className="text-amber-400" />
               Fix biggest leak
