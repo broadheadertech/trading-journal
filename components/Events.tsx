@@ -126,25 +126,25 @@ export default function Events() {
                     <img src={e.coverImage} alt={e.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
-                      <CalendarDays size={56} className="text-white/40" />
+                      <CalendarDays size={56} className="text-[var(--foreground)]/40" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
 
                   {reg && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-white text-[10px] font-semibold uppercase tracking-wide shadow-lg">
+                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide shadow-lg">
                       <Check size={11} strokeWidth={3} /> Registered
                     </div>
                   )}
 
                   <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                    <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-[10px] font-semibold uppercase tracking-wide`}>
+                    <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide`}>
                       {m.icon} {m.label}
                     </span>
                     {isFree ? (
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-white text-[10px] font-semibold uppercase tracking-wide">Free</span>
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide">Free</span>
                     ) : (
-                      <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-semibold">
+                      <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-xs font-semibold">
                         ${e.priceUsd} · ₱{e.pricePhp}
                       </span>
                     )}
@@ -263,7 +263,7 @@ function EventDetail({
             ) : isFree ? (
               <button
                 onClick={onRegisterFree}
-                className="px-5 py-2.5 bg-[var(--accent)] text-white rounded-xl font-medium hover:opacity-90"
+                className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
               >
                 Register (Free)
               </button>
@@ -271,7 +271,7 @@ function EventDetail({
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() => onBuy('stripe')}
-                  className="px-5 py-2.5 bg-[var(--accent)] text-white rounded-xl font-medium hover:opacity-90"
+                  className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
                 >
                   Pay ${ev.priceUsd} with Card (Stripe)
                 </button>
@@ -320,7 +320,7 @@ export function AdminEvents({ onBack }: { onBack?: () => void }) {
         ) : <span />}
         <button
           onClick={() => setCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
         >
           <Plus size={16} /> New Event
         </button>
@@ -457,7 +457,7 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
                 type="button"
                 onClick={() => setMode(mm)}
                 className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 ${
-                  mode === mm ? 'bg-[var(--accent)] text-white' : 'border border-[var(--border)] text-[var(--muted-foreground)]'
+                  mode === mm ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'border border-[var(--border)] text-[var(--muted-foreground)]'
                 }`}
               >
                 {MODE_LABEL[mm].icon} {MODE_LABEL[mm].label}
@@ -511,7 +511,7 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
           <button
             disabled={busy}
             onClick={submit}
-            className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
+            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium disabled:opacity-50"
           >
             {busy ? 'Saving…' : event ? 'Save changes' : 'Create event'}
           </button>
@@ -673,7 +673,7 @@ function MultiImageUpload({
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="absolute -top-1 -right-1 bg-[var(--red)] text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 bg-[var(--red)] text-[var(--foreground)] rounded-full p-0.5 opacity-0 group-hover:opacity-100"
             >
               <Trash2 size={10} />
             </button>

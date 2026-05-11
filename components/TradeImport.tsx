@@ -328,31 +328,31 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#0a0a14] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-[#0a0a14] border border-[var(--foreground)]/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--foreground)]/10">
           <div className="flex items-center gap-3">
-            <Upload size={20} className="text-white/60" />
-            <h2 className="text-lg font-semibold text-white">Import Trades</h2>
+            <Upload size={20} className="text-[var(--foreground)]/60" />
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">Import Trades</h2>
           </div>
-          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Steps indicator */}
-        <div className="flex items-center gap-2 px-6 py-3 border-b border-white/5">
+        <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--foreground)]/5">
           {[1, 2, 3].map(s => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
-                step >= s ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' : 'bg-white/5 text-white/30 border border-white/10'
+                step >= s ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' : 'bg-[var(--foreground)]/5 text-[var(--foreground)]/30 border border-[var(--foreground)]/10'
               }`}>
                 {step > s ? <Check size={14} /> : s}
               </div>
-              <span className={`text-xs hidden sm:inline ${step >= s ? 'text-white/70' : 'text-white/30'}`}>
+              <span className={`text-xs hidden sm:inline ${step >= s ? 'text-[var(--foreground)]/70' : 'text-[var(--foreground)]/30'}`}>
                 {s === 1 ? 'Upload' : s === 2 ? 'Map Columns' : 'Preview & Import'}
               </span>
-              {s < 3 && <ChevronRight size={14} className="text-white/20 mx-1" />}
+              {s < 3 && <ChevronRight size={14} className="text-[var(--foreground)]/20 mx-1" />}
             </div>
           ))}
         </div>
@@ -367,7 +367,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer ${
-                dragOver ? 'border-blue-400 bg-blue-500/10' : 'border-white/15 hover:border-white/30'
+                dragOver ? 'border-blue-400 bg-blue-500/10' : 'border-[var(--foreground)]/15 hover:border-[var(--foreground)]/30'
               }`}
               onClick={() => fileRef.current?.click()}
             >
@@ -378,10 +378,10 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
               />
-              <FileText size={40} className="mx-auto text-white/30 mb-4" />
-              <p className="text-white/70 text-sm mb-1">Drop your CSV or Excel file here</p>
-              <p className="text-white/40 text-xs">or click to browse — .csv, .xlsx supported</p>
-              <p className="text-white/30 text-xs mt-4">
+              <FileText size={40} className="mx-auto text-[var(--foreground)]/30 mb-4" />
+              <p className="text-[var(--foreground)]/70 text-sm mb-1">Drop your CSV or Excel file here</p>
+              <p className="text-[var(--foreground)]/40 text-xs">or click to browse — .csv, .xlsx supported</p>
+              <p className="text-[var(--foreground)]/30 text-xs mt-4">
                 Supports exports from Binance, Bybit, TradingView, MetaTrader, and most brokers
               </p>
             </div>
@@ -391,16 +391,16 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
           {step === 2 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-white/60">
-                  <span className="text-white font-medium">{rawRows.length}</span> rows detected in <span className="text-white/80">{fileName}</span>
+                <p className="text-sm text-[var(--foreground)]/60">
+                  <span className="text-[var(--foreground)] font-medium">{rawRows.length}</span> rows detected in <span className="text-[var(--foreground)]/80">{fileName}</span>
                 </p>
-                <p className="text-xs text-white/40">{columns.length} columns</p>
+                <p className="text-xs text-[var(--foreground)]/40">{columns.length} columns</p>
               </div>
 
               <div className="space-y-2">
                 {MAPPABLE_FIELDS.map(({ field, label, required }) => (
                   <div key={field} className="flex items-center gap-3">
-                    <span className={`text-xs w-44 ${required ? 'text-white/80' : 'text-white/50'}`}>
+                    <span className={`text-xs w-44 ${required ? 'text-[var(--foreground)]/80' : 'text-[var(--foreground)]/50'}`}>
                       {label} {required && <span className="text-red-400">*</span>}
                     </span>
                     <select
@@ -415,7 +415,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
                         if (e.target.value) newMapping[e.target.value] = field;
                         setMapping(newMapping);
                       }}
-                      className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white/80 outline-none focus:border-blue-500/50"
+                      className="flex-1 bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 rounded-lg px-3 py-1.5 text-sm text-[var(--foreground)]/80 outline-none focus:border-blue-500/50"
                     >
                       <option value="">— Not mapped —</option>
                       {columns.map(col => (
@@ -432,22 +432,22 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
               {/* Preview */}
               {rawRows.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-xs text-white/40 mb-2">Preview (first 3 rows):</p>
+                  <p className="text-xs text-[var(--foreground)]/40 mb-2">Preview (first 3 rows):</p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="border-b border-white/10">
+                        <tr className="border-b border-[var(--foreground)]/10">
                           {MAPPABLE_FIELDS.filter(f => Object.values(mapping).includes(f.field)).map(f => (
-                            <th key={f.field} className="text-left text-white/50 px-2 py-1 font-medium">{f.label}</th>
+                            <th key={f.field} className="text-left text-[var(--foreground)]/50 px-2 py-1 font-medium">{f.label}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {rawRows.slice(0, 3).map((row, i) => (
-                          <tr key={i} className="border-b border-white/5">
+                          <tr key={i} className="border-b border-[var(--foreground)]/5">
                             {MAPPABLE_FIELDS.filter(f => Object.values(mapping).includes(f.field)).map(f => {
                               const col = Object.entries(mapping).find(([, mf]) => mf === f.field)?.[0];
-                              return <td key={f.field} className="px-2 py-1 text-white/70">{col ? row[col] || '—' : '—'}</td>;
+                              return <td key={f.field} className="px-2 py-1 text-[var(--foreground)]/70">{col ? row[col] || '—' : '—'}</td>;
                             })}
                           </tr>
                         ))}
@@ -495,36 +495,36 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
               {/* Valid trades preview */}
               {validation.valid.length > 0 && (
                 <div>
-                  <p className="text-xs text-white/40 mb-2">Preview of valid trades:</p>
+                  <p className="text-xs text-[var(--foreground)]/40 mb-2">Preview of valid trades:</p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="border-b border-white/10">
-                          <th className="text-left text-white/50 px-2 py-1">Coin</th>
-                          <th className="text-left text-white/50 px-2 py-1">Entry</th>
-                          <th className="text-left text-white/50 px-2 py-1">Exit</th>
-                          <th className="text-left text-white/50 px-2 py-1">Capital</th>
-                          <th className="text-left text-white/50 px-2 py-1">P&L</th>
-                          <th className="text-left text-white/50 px-2 py-1">Date</th>
+                        <tr className="border-b border-[var(--foreground)]/10">
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Coin</th>
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Entry</th>
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Exit</th>
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Capital</th>
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">P&L</th>
+                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {validation.valid.slice(0, 5).map((t, i) => (
-                          <tr key={i} className="border-b border-white/5">
-                            <td className="px-2 py-1 text-white/80 font-medium">{t.coin}</td>
-                            <td className="px-2 py-1 text-white/60">${t.entryPrice.toLocaleString()}</td>
-                            <td className="px-2 py-1 text-white/60">{t.exitPrice ? `$${t.exitPrice.toLocaleString()}` : '—'}</td>
-                            <td className="px-2 py-1 text-white/60">${t.capital.toLocaleString()}</td>
+                          <tr key={i} className="border-b border-[var(--foreground)]/5">
+                            <td className="px-2 py-1 text-[var(--foreground)]/80 font-medium">{t.coin}</td>
+                            <td className="px-2 py-1 text-[var(--foreground)]/60">${t.entryPrice.toLocaleString()}</td>
+                            <td className="px-2 py-1 text-[var(--foreground)]/60">{t.exitPrice ? `$${t.exitPrice.toLocaleString()}` : '—'}</td>
+                            <td className="px-2 py-1 text-[var(--foreground)]/60">${t.capital.toLocaleString()}</td>
                             <td className={`px-2 py-1 ${(t.actualPnL ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                               {t.actualPnL !== null ? `$${t.actualPnL.toFixed(2)}` : '—'}
                             </td>
-                            <td className="px-2 py-1 text-white/60">{t.entryDate.slice(0, 10)}</td>
+                            <td className="px-2 py-1 text-[var(--foreground)]/60">{t.entryDate.slice(0, 10)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                     {validation.valid.length > 5 && (
-                      <p className="text-xs text-white/30 mt-1 px-2">...and {validation.valid.length - 5} more</p>
+                      <p className="text-xs text-[var(--foreground)]/30 mt-1 px-2">...and {validation.valid.length - 5} more</p>
                     )}
                   </div>
                 </div>
@@ -533,13 +533,13 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
               {/* Progress bar */}
               {importing && (
                 <div className="mt-4">
-                  <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-[var(--foreground)]/5 rounded-full h-2 overflow-hidden">
                     <div
                       className="bg-blue-500 h-full rounded-full transition-all duration-300"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <p className="text-xs text-white/40 mt-1 text-center">Importing... {progress}%</p>
+                  <p className="text-xs text-[var(--foreground)]/40 mt-1 text-center">Importing... {progress}%</p>
                 </div>
               )}
             </div>
@@ -547,10 +547,10 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--foreground)]/10">
           <button
             onClick={step === 1 ? onClose : () => setStep((step - 1) as 1 | 2)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] transition-colors"
             disabled={importing}
           >
             <ChevronLeft size={16} /> {step === 1 ? 'Cancel' : 'Back'}
@@ -560,7 +560,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
             <button
               onClick={handleValidate}
               disabled={!requiredMapped}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2 bg-blue-500 hover:bg-blue-600 text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Validate & Preview <ChevronRight size={16} />
             </button>
@@ -570,7 +570,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
             <button
               onClick={handleImport}
               disabled={importing || validation.valid.length === 0}
-              className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {importing ? (
                 <><Loader2 size={16} className="animate-spin" /> Importing...</>

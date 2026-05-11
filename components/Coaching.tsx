@@ -87,7 +87,7 @@ export default function Coaching() {
           {user && (
             <Link
               href="/coach"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 flex items-center gap-2"
             >
               <UserPlus size={16} />
               {myCoachProfile ? 'Coach Hub' : 'Become a coach'}
@@ -118,7 +118,7 @@ export default function Coaching() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={c.photoUrl} alt={c.displayName} className="w-16 h-16 rounded-2xl object-cover border border-[var(--border)]" />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-white">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-[var(--foreground)]">
                     {c.displayName.charAt(0)}
                   </div>
                 )}
@@ -223,7 +223,7 @@ function CoachDetail({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={coach.photoUrl} alt={coach.displayName} className="w-28 h-28 rounded-3xl object-cover border border-[var(--border)]" />
           ) : (
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-4xl font-bold text-white">
+            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-4xl font-bold text-[var(--foreground)]">
               {coach.displayName.charAt(0)}
             </div>
           )}
@@ -329,7 +329,7 @@ function CoachDetail({
             <button
               disabled={busy || !goals.trim()}
               onClick={handleBook}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+              className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
             >
               {busy ? 'Booking…' : `Confirm & pay $${totalPrice.toFixed(2)}`}
             </button>
@@ -477,7 +477,7 @@ export function SessionView({
                 href={session.meetingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30"
               >
                 <Video size={16} /> Join call
               </a>
@@ -520,7 +520,7 @@ export function SessionView({
                     setMeetingUrlInput('');
                     showToast('Meeting URL set', 'success');
                   }}
-                  className="px-4 py-2 rounded-lg bg-pink-500 text-white text-sm font-medium"
+                  className="px-4 py-2 rounded-lg bg-pink-500 text-[var(--foreground)] text-sm font-medium"
                 >
                   Save
                 </button>
@@ -529,7 +529,7 @@ export function SessionView({
             {session.status === 'confirmed' && session.meetingUrl && (
               <button
                 onClick={() => markInProgress({ id: sessionId })}
-                className="w-full py-2 rounded-lg bg-blue-500 text-white text-sm font-medium"
+                className="w-full py-2 rounded-lg bg-blue-500 text-[var(--foreground)] text-sm font-medium"
               >
                 Start session
               </button>
@@ -548,7 +548,7 @@ export function SessionView({
                     await completeSession({ id: sessionId, coachNotes });
                     showToast('Session completed — funds released', 'success');
                   }}
-                  className="w-full py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium"
+                  className="w-full py-2 rounded-lg bg-emerald-500 text-[var(--foreground)] text-sm font-medium"
                 >
                   Mark as completed
                 </button>
@@ -597,7 +597,7 @@ export function SessionView({
               showToast('Review submitted!', 'success');
               setShowReviewForm(false);
             }}
-            className="w-full py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold disabled:opacity-50"
+            className="w-full py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold disabled:opacity-50"
           >
             Submit review
           </button>
@@ -618,7 +618,7 @@ export function SessionView({
               return (
                 <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                    mine ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white' : 'bg-[var(--muted)]/40 text-[var(--foreground)]'
+                    mine ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)]' : 'bg-[var(--muted)]/40 text-[var(--foreground)]'
                   }`}>
                     {!mine && <div className="text-[10px] font-medium opacity-70 mb-0.5">{m.fromName}</div>}
                     <div className="text-sm whitespace-pre-wrap">{m.body}</div>
@@ -640,7 +640,7 @@ export function SessionView({
           <button
             onClick={handleSend}
             disabled={!body.trim()}
-            className="px-4 py-2 rounded-xl bg-pink-500 text-white disabled:opacity-50"
+            className="px-4 py-2 rounded-xl bg-pink-500 text-[var(--foreground)] disabled:opacity-50"
           >
             <Send size={16} />
           </button>

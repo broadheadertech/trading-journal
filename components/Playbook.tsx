@@ -458,7 +458,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
           <div className="flex gap-2 shrink-0 flex-wrap">
             <button onClick={openRuleComposer}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors">
+              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors">
               <Plus size={14} /> Create Rule
             </button>
             <button onClick={openRuleSetComposer}
@@ -782,7 +782,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 <div className="flex gap-2 flex-wrap">
                   <span className="px-3 py-1.5 rounded-lg bg-[var(--muted)] text-xs">{strategies.length} templates available</span>
                   <button onClick={openRuleSetComposer} disabled={usage.strategies.isAtLimit}
-                    className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
+                    className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
                     <Plus size={14} /> Create Rule Set
                   </button>
                   <button onClick={openStratComposer} disabled={usage.strategies.isAtLimit}
@@ -838,7 +838,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                             </button>
                           ) : (
                             <button onClick={() => { setAmSelected([strategy.id]); setActivationMixerOpen(true); }}
-                              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors">
+                              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors">
                               Activate Rule Set <ArrowRight size={14} />
                             </button>
                           )}
@@ -876,7 +876,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <button key={c} onClick={() => setRuleFilter(c)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       ruleFilter === c
-                        ? 'bg-[var(--accent)] text-white'
+                        ? 'bg-[var(--accent)] text-[var(--foreground)]'
                         : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]/80'
                     }`}>{c}</button>
                 ))}
@@ -1248,7 +1248,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
           <div className="flex justify-end gap-3 pt-3 border-t border-[var(--border)]">
             <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)] transition-colors">Cancel</button>
-            <button onClick={handleSave} disabled={!form.name.trim()} className="px-4 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg transition-colors disabled:opacity-50">
+            <button onClick={handleSave} disabled={!form.name.trim()} className="px-4 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
               {editingId ? 'Update' : 'Create'} Strategy
             </button>
           </div>
@@ -1260,7 +1260,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure you want to delete this strategy? This cannot be undone.</p>
         <div className="flex justify-end gap-3">
           <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-white rounded-lg">Delete</button>
+          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-[var(--foreground)] rounded-lg">Delete</button>
         </div>
       </Modal>
 
@@ -1272,7 +1272,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             {[1, 2, 3].map(s => (
               <div key={s} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  rcStep === s ? 'bg-[var(--accent)] text-white' : rcStep > s ? 'bg-green-500/20 text-green-400' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                  rcStep === s ? 'bg-[var(--accent)] text-[var(--foreground)]' : rcStep > s ? 'bg-green-500/20 text-green-400' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
                 }`}>{rcStep > s ? <Check size={14} /> : s}</div>
                 <span className={`text-xs font-medium ${rcStep === s ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>
                   {s === 1 ? 'Category & Type' : s === 2 ? 'Details' : 'Review'}
@@ -1393,12 +1393,12 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             {rcStep < 3 ? (
               <button onClick={() => setRcStep((rcStep + 1) as RuleComposerStep)}
                 disabled={rcStep === 1 && !rcRuleType}
-                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg transition-colors disabled:opacity-50">
+                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
                 Continue <ChevronRight size={14} />
               </button>
             ) : (
               <button onClick={saveRule}
-                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg transition-colors">
                 <Plus size={14} /> Create Rule
               </button>
             )}
@@ -1416,7 +1416,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               {[1, 2].map(s => (
                 <button key={s} onClick={() => s === 1 && setRsStep(1)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    rsStep === s ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
+                    rsStep === s ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
                   }`}>
                   {s === 1 ? 'Step 1: Template Identity' : 'Step 2: Select Rules'}
                 </button>
@@ -1434,7 +1434,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <textarea value={rsDescription} onChange={e => setRsDescription(e.target.value)} placeholder="Describe what this rule set is designed to do..." rows={4} className="w-full" />
                 </div>
                 <button onClick={() => setRsStep(2)} disabled={!rsName.trim()}
-                  className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg transition-colors disabled:opacity-50">
+                  className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
                   Next: Select Rules <ChevronRight size={14} />
                 </button>
               </div>
@@ -1463,7 +1463,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
                             selected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--muted-foreground)]'
                           }`}>
-                            {selected && <Check size={12} className="text-white" />}
+                            {selected && <Check size={12} className="text-[var(--foreground)]" />}
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-medium truncate">{rule}</p>
@@ -1527,12 +1527,12 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </button>
           {rsStep === 1 ? (
             <button onClick={() => setRsStep(2)} disabled={!rsName.trim()}
-              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg disabled:opacity-50">
+              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg disabled:opacity-50">
               Next <ChevronRight size={14} />
             </button>
           ) : (
             <button onClick={saveRuleSet} disabled={!rsName.trim() || rsSelectedRules.length === 0}
-              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg disabled:opacity-50">
+              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg disabled:opacity-50">
               <Plus size={14} /> Create Rule Set
             </button>
           )}
@@ -1652,7 +1652,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             <button onClick={() => setStratComposerOpen(false)}
               className="px-5 py-2.5 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]">Cancel</button>
             <button onClick={saveStratComposer} disabled={!scName.trim() || scSteps.length === 0}
-              className="px-5 py-2.5 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50">
+              className="px-5 py-2.5 text-sm bg-blue-500 hover:bg-blue-600 text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
               Create Strategy
             </button>
           </div>
@@ -1703,7 +1703,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                             className={`mt-1 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
                               selected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--muted-foreground)]'
                             }`}>
-                            {selected && <Check size={12} className="text-white" />}
+                            {selected && <Check size={12} className="text-[var(--foreground)]" />}
                           </button>
                           {/* Info */}
                           <div className="flex-1 min-w-0">
@@ -1721,7 +1721,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                                   onClick={() => setAmItemPriorities(prev => ({ ...prev, [strategy.id]: p }))}
                                   className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors ${
                                     itemPriority === p
-                                      ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                                      ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]'
                                       : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/30'
                                   }`}>{p}</button>
                               ))}
@@ -1801,7 +1801,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             <button onClick={() => setActivationMixerOpen(false)}
               className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
             <button onClick={handleActivate} disabled={amSelected.length === 0}
-              className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
               <Zap size={14} /> Activate {amSelected.length > 0 ? `(${amSelected.length})` : ''}
             </button>
           </div>
@@ -1874,7 +1874,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     <button key={p}
                       className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
                         p === 'Medium'
-                          ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                          ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]'
                           : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'
                       }`}>{p} priority</button>
                   ))}
@@ -1887,7 +1887,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 <div className="flex items-center gap-3">
                   <input type="datetime-local" defaultValue={format(new Date(strategy.createdAt), "yyyy-MM-dd'T'HH:mm")}
                     className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm" />
-                  <button className="px-4 py-2 text-sm bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)]">Save Start</button>
+                  <button className="px-4 py-2 text-sm bg-[var(--accent)] text-[var(--foreground)] rounded-lg hover:bg-[var(--accent-hover)]">Save Start</button>
                 </div>
                 <p className="text-[10px] text-[var(--muted-foreground)] mt-2">Evidence and compliance are tracked from this timestamp forward.</p>
               </div>
@@ -1914,7 +1914,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                             <span className="px-2 py-0.5 rounded-full text-[10px] bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]">Evidence: {rb.total - rb.met}</span>
                             {(['P1', 'P2', 'P3'] as const).map(p => (
                               <span key={p} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                                p === 'P2' ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)]'
+                                p === 'P2' ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]' : 'border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)]'
                               }`}>{p}</span>
                             ))}
                           </div>
@@ -1962,7 +1962,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               {/* Footer */}
               <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
                 <button onClick={() => { setDetailsStrategyId(null); scrollToSection('Rules Library'); }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)]">
+                  className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-[var(--accent)] text-[var(--foreground)] rounded-lg hover:bg-[var(--accent-hover)]">
                   Open Rules Library
                 </button>
                 <button onClick={() => setDetailsStrategyId(null)}
