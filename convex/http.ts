@@ -22,10 +22,20 @@ http.route({
       console.error("[mt5-sync] First 500 chars:", rawText.slice(0, 500));
       console.error("[mt5-sync] Last 100 chars:", rawText.slice(-100));
       console.error("[mt5-sync] Parse error:", e instanceof Error ? e.message : String(e));
+      // Extract bytes around the parse failure point so we can see what character broke it.
+      const detail = e instanceof Error ? e.message : "parse failed";
+      const posMatch = detail.match(/position (\d+)/);
+      const pos = posMatch ? parseInt(posMatch[1], 10) : 0;
+      const windowStart = Math.max(0, pos - 30);
+      const windowEnd = Math.min(rawText.length, pos + 30);
+      const aroundError = rawText.slice(windowStart, windowEnd);
+      const charAtPos = pos < rawText.length ? rawText.charCodeAt(pos) : -1;
       return new Response(JSON.stringify({
         error: "Invalid JSON",
-        detail: e instanceof Error ? e.message : "parse failed",
-        preview: rawText.slice(0, 200),
+        detail,
+        bytesReceived: rawText.length,
+        aroundError,
+        charAtPosCode: charAtPos,
       }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
