@@ -75,15 +75,22 @@ export default function TradeForm({
   const [exitPrice, setExitPrice] = useState(editTrade?.exitPrice?.toString() ?? '');
   const [isOpen, setIsOpen] = useState(editTrade?.isOpen ?? false);
   const [capital, setCapital] = useState(editTrade?.capital?.toString() ?? '');
-  const [entryDate, setEntryDate] = useState(editTrade?.entryDate ?? new Date().toISOString().slice(0, 16));
-  const [exitDate, setExitDate] = useState(editTrade?.exitDate ?? '');
+  // datetime-local inputs only accept "YYYY-MM-DDTHH:MM" (16 chars). MT5-synced
+  // trades store full ISO strings — slice so the input doesn't render blank.
+  const [entryDate, setEntryDate] = useState(
+    editTrade?.entryDate ? editTrade.entryDate.slice(0, 16) : new Date().toISOString().slice(0, 16)
+  );
+  const [exitDate, setExitDate] = useState(
+    editTrade?.exitDate ? editTrade.exitDate.slice(0, 16) : ''
+  );
   const [strategy, setStrategy] = useState(editTrade?.strategy ?? '');
   const [targetPnL, setTargetPnL] = useState(editTrade?.targetPnL?.toString() ?? '');
-  const [stopLossVal, setStopLossVal] = useState(editTrade?.stopLoss?.toString() ?? '');
-  const [leverageVal, setLeverageVal] = useState(editTrade?.leverage ? editTrade.leverage.toString() : '');
-  const [feesVal, setFeesVal] = useState(editTrade?.fees ? editTrade.fees.toString() : '');
-  const [fundingVal, setFundingVal] = useState(editTrade?.funding ? editTrade.funding.toString() : '');
-  const [marginVal, setMarginVal] = useState(editTrade?.margin ? editTrade.margin.toString() : '');
+  const [stopLossVal, setStopLossVal] = useState(editTrade?.stopLoss != null ? editTrade.stopLoss.toString() : '');
+  // Use != null (not truthy check) so that legitimate zeros pre-fill instead of becoming empty
+  const [leverageVal, setLeverageVal] = useState(editTrade?.leverage != null ? editTrade.leverage.toString() : '');
+  const [feesVal, setFeesVal] = useState(editTrade?.fees != null ? editTrade.fees.toString() : '');
+  const [fundingVal, setFundingVal] = useState(editTrade?.funding != null ? editTrade.funding.toString() : '');
+  const [marginVal, setMarginVal] = useState(editTrade?.margin != null ? editTrade.margin.toString() : '');
   const [realizedPnlVal, setRealizedPnlVal] = useState('');
   const [reasoning, setReasoning] = useState(editTrade?.reasoning ?? prefilledEmotion?.reasoning ?? '');
   const [emotion, setEmotion] = useState<EmotionState>(editTrade?.emotion ?? prefilledEmotion?.emotion ?? 'Neutral');
@@ -394,6 +401,10 @@ export default function TradeForm({
           <select value={strategy} onChange={e => setStrategy(e.target.value)} className="w-full">
             <option value="">Select strategy</option>
             {strategies.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+            {/* Preserve "orphan" strategies (e.g., "MT5 sync") so synced trades don't render blank */}
+            {strategy && !strategies.some(s => s.name === strategy) && (
+              <option value={strategy}>{strategy} (external)</option>
+            )}
           </select>
         </div>
         <div>
