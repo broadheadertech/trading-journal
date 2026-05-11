@@ -13,10 +13,20 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     let body: Record<string, unknown>;
+    // Read the body as text first so we can log it on parse failure (helps diagnose EA encoding bugs)
+    const rawText = await request.text();
     try {
-      body = await request.json();
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      body = JSON.parse(rawText);
+    } catch (e) {
+      console.error("[mt5-sync] Invalid JSON received. Length:", rawText.length);
+      console.error("[mt5-sync] First 500 chars:", rawText.slice(0, 500));
+      console.error("[mt5-sync] Last 100 chars:", rawText.slice(-100));
+      console.error("[mt5-sync] Parse error:", e instanceof Error ? e.message : String(e));
+      return new Response(JSON.stringify({
+        error: "Invalid JSON",
+        detail: e instanceof Error ? e.message : "parse failed",
+        preview: rawText.slice(0, 200),
+      }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });

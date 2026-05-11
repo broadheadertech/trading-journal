@@ -189,9 +189,14 @@ bool SendDealById(ulong closeTicket)
 //+------------------------------------------------------------------+
 bool PostJson(const string body)
   {
+   // Convert JSON string to UTF-8 byte array. With WHOLE_ARRAY, MQL5 appends a
+   // trailing null terminator we need to strip — otherwise the server gets a
+   // null byte after the closing `}` and rejects the payload as invalid JSON.
    char post[];
-   StringToCharArray(body, post, 0, StringLen(body), CP_UTF8);
-   ArrayResize(post, ArraySize(post) - 1);
+   int n = StringToCharArray(body, post, 0, WHOLE_ARRAY, CP_UTF8);
+   if(n > 0) ArrayResize(post, n - 1);
+
+   if(EnableLogging) PrintFormat("[Tradia DEBUG] Sending %d bytes: %s", ArraySize(post), body);
 
    char result[];
    string headers = "Content-Type: application/json\r\nX-Sync-Token: " + SyncToken + "\r\n";
