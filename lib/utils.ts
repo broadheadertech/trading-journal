@@ -104,15 +104,36 @@ export function formatPercent(value: number): string {
 }
 
 export function formatPrice(value: number, currencyCode: string = 'USD'): string {
+  // Compute the minimum precision needed to round-trip the actual value.
+  // This preserves forex 5-digit pip precision (1.17728), JPY 3-digit (157.107),
+  // crypto micros (0.00001234), and avoids forcing trailing zeros that look noisy.
   const locale = getCurrencyLocale(currencyCode);
   const opts = { style: 'currency' as const, currency: currencyCode };
-  if (value >= 1000) {
-    return new Intl.NumberFormat(locale, { ...opts, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+  const abs = Math.abs(value);
+  // Use the original string representation to detect actual decimal places.
+  // toString() returns the shortest representation, e.g. 1.17728 → "1.17728" (5 digits).
+  const str = value.toString();
+  const dotIdx = str.indexOf('.');
+  const actualDecimals = dotIdx === -1 ? 0 : str.length - dotIdx - 1;
+  let minDigits: number;
+  let maxDigits: number;
+  if (abs >= 1000) {
+    minDigits = 2;
+    maxDigits = Math.max(2, Math.min(actualDecimals, 4));
+  } else if (abs >= 1) {
+    // Forex (EUR/USD 5 digit), JPY-pairs (3 digit), gold (2), etc.
+    minDigits = 2;
+    maxDigits = Math.max(2, Math.min(actualDecimals, 5));
+  } else {
+    // Small crypto — preserve all meaningful precision up to 8.
+    minDigits = 2;
+    maxDigits = Math.max(2, Math.min(actualDecimals, 8));
   }
-  if (value >= 1) {
-    return new Intl.NumberFormat(locale, { ...opts, minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(value);
-  }
-  return new Intl.NumberFormat(locale, { ...opts, minimumFractionDigits: 8, maximumFractionDigits: 8 }).format(value);
+  return new Intl.NumberFormat(locale, {
+    ...opts,
+    minimumFractionDigits: minDigits,
+    maximumFractionDigits: maxDigits,
+  }).format(value);
 }
 
 export function getWinRate(trades: Trade[]): number {
