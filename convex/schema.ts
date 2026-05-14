@@ -749,6 +749,55 @@ export default defineSchema({
     .index("by_coach", ["coachId"])
     .index("by_session", ["sessionId"]),
 
+  // ─── Cohort Coaching (group subscription model) ────────────────────
+  // A cohort is a recurring group call hosted by a coach. Members pay a
+  // monthly subscription; the coach hosts a weekly live session for the
+  // group. Capacity-limited so each member gets attention.
+  cohorts: defineTable({
+    id: v.string(),
+    coachId: v.string(),                     // owner coach
+    coachUserId: v.string(),                 // Clerk userId of host coach
+    coachName: v.string(),                   // denorm for cheap listing
+    coachPhotoUrl: v.optional(v.string()),
+    name: v.string(),                        // e.g. "Forex Discipline Cohort"
+    description: v.string(),                 // longer pitch
+    schedule: v.string(),                    // human-readable, e.g. "Thursdays 7pm EST"
+    nextSessionAt: v.optional(v.string()),   // ISO datetime of the next live call
+    capacity: v.number(),                    // max members
+    monthlyPriceUsd: v.number(),             // recurring monthly price
+    isActive: v.boolean(),                   // hidden if false
+    memberCount: v.number(),                 // denorm — synced via join/leave mutations
+    coverImage: v.optional(v.string()),
+    tags: v.array(v.string()),               // ["forex", "discipline", "beginners"]
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_coach", ["coachId"])
+    .index("by_active", ["isActive"]),
+
+  // One row per (user, cohort). Stripe subscription id placeholder for now.
+  cohortMembers: defineTable({
+    id: v.string(),
+    cohortId: v.string(),
+    userId: v.string(),                      // Clerk userId of the member
+    userName: v.string(),                    // denorm
+    userImage: v.optional(v.string()),
+    status: v.union(
+      v.literal("active"),
+      v.literal("cancelled"),                // user opted out, but kept until period ends
+      v.literal("past_due"),                 // payment failed
+      v.literal("ended"),                    // subscription fully ended
+    ),
+    joinedAt: v.string(),
+    cancelledAt: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()), // wire to Stripe later
+    currentPeriodEnd: v.optional(v.string()),     // when access expires
+  })
+    .index("by_cohort", ["cohortId"])
+    .index("by_user", ["userId"])
+    .index("by_cohort_status", ["cohortId", "status"])
+    .index("by_user_status", ["userId", "status"]),
+
   // ─── Articles / Content Publishing ─────────────────────────────────
   articles: defineTable({
     id: v.string(),

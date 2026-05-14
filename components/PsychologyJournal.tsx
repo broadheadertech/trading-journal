@@ -7,6 +7,8 @@ import { Brain, Shield, AlertTriangle, RefreshCw, Heart, Activity, Zap, ChevronR
 import { format, subDays } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { useCurrency } from '@/hooks/useCurrency';
+import DailyReflection from './DailyReflection';
+import TriggerJournal from './TriggerJournal';
 
 interface Props {
   trades: Trade[];
@@ -377,6 +379,24 @@ export default function PsychologyJournal({
 
   return (
     <div className="space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto">
+      {/* Journaling — Daily Reflection + Trigger logging (forms wired to Convex via parent) */}
+      {onAddReflection && onAddReview && (
+        <DailyReflection
+          reflections={reflections}
+          reviews={reviews}
+          trades={trades}
+          onAddReflection={onAddReflection}
+          onAddReview={onAddReview}
+        />
+      )}
+      {onAddTrigger && onDeleteTrigger && (
+        <TriggerJournal
+          triggers={triggers}
+          onAdd={onAddTrigger}
+          onDelete={onDeleteTrigger}
+        />
+      )}
+
       {/* â”€â”€ Hero â”€â”€ */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">

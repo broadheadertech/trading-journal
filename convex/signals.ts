@@ -78,6 +78,19 @@ export const getMine = query({
   },
 });
 
+// ─── Public history view for a given poster ───────────────────────────
+// Used by the "view signal history" modal on each signal card.
+export const byPoster = query({
+  args: { posterId: v.string(), limit: v.optional(v.number()) },
+  handler: async (ctx, { posterId, limit }) => {
+    return ctx.db
+      .query("signals")
+      .withIndex("by_poster", (q) => q.eq("posterId", posterId))
+      .order("desc")
+      .take(limit ?? 200);
+  },
+});
+
 // ─── Post a new signal (Pro+ only) ────────────────────────────────────
 export const post = mutation({
   args: {
