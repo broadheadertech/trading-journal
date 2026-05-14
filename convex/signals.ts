@@ -187,6 +187,98 @@ export const post = mutation({
   },
 });
 
+// ─── Edit a signal's content (poster only, while still open) ──────────
+// Lets the poster fix typos, add TPs, adjust levels, or update the rationale.
+// Re-runs the same validation as `post` and recomputes rrRatio. Cannot be
+// used after the signal has been closed (won/lost/cancelled/expired).
+export const edit = mutation({
+  args: {
+    id: v.id("signals"),
+    symbol: v.string(),
+    market: v.union(
+      v.literal("crypto"),
+      v.literal("forex"),
+      v.literal("stocks"),
+      v.literal("commodities"),
+    ),
+    direction: v.union(v.literal("long"), v.literal("short")),
+    orderType: v.optional(v.union(v.literal("market"), v.literal("stop"), v.literal("limit"))),
+    entryLow: v.number(),
+    entryHigh: v.number(),
+    stopLoss: v.number(),
+    takeProfits: v.array(v.number()),
+    riskLevel: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    rationale: v.string(),
+    pipSize: v.optional(v.number()),
+    lotSize: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await requireUser(ctx);
+    const signal = await ctx.db.get(args.id);
+    if (!signal) throw new Error("Signal not found");
+
+    const adminId = process.env.ADMIN_USER_ID;
+    if (signal.posterId !== userId && userId !== adminId) {
+      throw new Error("Only the poster (or admin) can edit this signal.");
+    }
+    if (TERMINAL_STATUSES.has(signal.status)) {
+      throw new Error("Closed signals cannot be edited.");
+    }
+
+    // Same validation rules as `post`
+    if (args.entryLow > args.entryHigh) {
+      throw new Error("Entry low must be ≤ entry high.");
+    }
+    if (args.takeProfits.length === 0) {
+      throw new Error("At least one take-profit level is required.");
+    }
+
+    const isLong = args.direction === "long";
+    if (isLong) {
+      if (args.stopLoss >= args.entryLow) throw new Error("Long stop must be below entry zone.");
+      for (let i = 0; i < args.takeProfits.length; i++) {
+        if (args.takeProfits[i] <= args.entryHigh) {
+          throw new Error(`TP${i + 1} must be above entry zone for long.`);
+        }
+        if (i > 0 && args.takeProfits[i] <= args.takeProfits[i - 1]) {
+          throw new Error(`TP${i + 1} must be greater than TP${i} for long.`);
+        }
+      }
+    } else {
+      if (args.stopLoss <= args.entryHigh) throw new Error("Short stop must be above entry zone.");
+      for (let i = 0; i < args.takeProfits.length; i++) {
+        if (args.takeProfits[i] >= args.entryLow) {
+          throw new Error(`TP${i + 1} must be below entry zone for short.`);
+        }
+        if (i > 0 && args.takeProfits[i] >= args.takeProfits[i - 1]) {
+          throw new Error(`TP${i + 1} must be less than TP${i} for short.`);
+        }
+      }
+    }
+
+    const refEntry = isLong ? args.entryHigh : args.entryLow;
+    const risk = Math.abs(refEntry - args.stopLoss);
+    const reward = Math.abs(args.takeProfits[0] - refEntry);
+    const rrRatio = risk > 0 ? reward / risk : 0;
+
+    await ctx.db.patch(args.id, {
+      symbol: args.symbol.toUpperCase(),
+      market: args.market,
+      direction: args.direction,
+      orderType: args.orderType ?? "market",
+      entryLow: args.entryLow,
+      entryHigh: args.entryHigh,
+      stopLoss: args.stopLoss,
+      takeProfits: args.takeProfits,
+      rrRatio,
+      riskLevel: args.riskLevel,
+      rationale: args.rationale,
+      pipSize: args.pipSize,
+      lotSize: args.lotSize,
+    });
+  },
+});
+
 // ─── Update signal status (poster or admin only) ──────────────────────
 export const updateStatus = mutation({
   args: {
