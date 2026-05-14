@@ -6,7 +6,8 @@ import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban } from 'lucide-react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History } from 'lucide-react';
 
 type Direction = 'long' | 'short';
 type OrderType = 'market' | 'stop' | 'limit';
@@ -106,6 +107,8 @@ export default function TradingSignals() {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('active');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showPips, setShowPips] = useLocalStorage<boolean>('crypto-journal-signals-show-pips', true);
+  const [historyPoster, setHistoryPoster] = useState<{ id: string; name: string } | null>(null);
 
   const signals = useQuery(api.signals.list, {
     market: marketFilter === 'all' ? undefined : marketFilter,
@@ -143,6 +146,14 @@ export default function TradingSignals() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => setShowPips(v => !v)}
+              title={showPips ? 'Hide pip annotations on every signal' : 'Show pip annotations on every signal'}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]/50 transition-all"
+            >
+              {showPips ? <EyeOff size={14} /> : <Eye size={14} />}
+              {showPips ? 'Hide pips' : 'Show pips'}
+            </button>
             <button
               onClick={() => setShowLeaderboard(v => !v)}
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]/50 transition-all"
@@ -225,7 +236,9 @@ export default function TradingSignals() {
               key={s._id}
               signal={s}
               isOwn={s.posterId === user?.id}
+              showPips={showPips}
               onUpdate={(status, tpHit) => updateStatus({ id: s._id, status, tpHit })}
+              onViewHistory={(id, name) => setHistoryPoster({ id, name })}
             />
           ))}
         </div>
@@ -243,8 +256,21 @@ export default function TradingSignals() {
       {showPostModal && canPost && (
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
+          showPips={showPips}
           onClose={() => setShowPostModal(false)}
           onPosted={() => { setStatusFilter('active'); setMarketFilter('all'); }}
+        />
+      )}
+
+      {historyPoster && (
+        <SignalHistoryModal
+          posterId={historyPoster.id}
+          posterName={historyPoster.name}
+          showPips={showPips}
+          currentUserId={user?.id}
+          onUpdate={(id, status, tpHit) => updateStatus({ id, status, tpHit })}
+          onViewHistory={(id, name) => setHistoryPoster({ id, name })}
+          onClose={() => setHistoryPoster(null)}
         />
       )}
     </div>
@@ -319,7 +345,13 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
 }
 
 // ─── Telegram-style signal card ───────────────────────────────────────
-function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boolean; onUpdate: (status: Status, tpHit?: number) => Promise<unknown> }) {
+function SignalCard({ signal: s, isOwn, showPips, onUpdate, onViewHistory }: {
+  signal: Signal;
+  isOwn: boolean;
+  showPips: boolean;
+  onUpdate: (status: Status, tpHit?: number) => Promise<unknown>;
+  onViewHistory: (posterId: string, posterName: string) => void;
+}) {
   const isLong = s.direction === 'long';
   const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
   const dirColor = isLong ? 'text-emerald-400' : 'text-red-400';
@@ -374,10 +406,16 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
 
       {/* Poster + winrate badge */}
       <div className="px-5 pt-2 flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5 text-[11px] text-[var(--muted-foreground)]">
+        <button
+          type="button"
+          onClick={() => onViewHistory(s.posterId, s.posterName)}
+          title={`View ${s.posterName}'s signal history`}
+          className="flex items-center gap-1.5 text-[11px] text-[var(--muted-foreground)] hover:text-pink-300 transition-colors group"
+        >
           <Radio size={11} className="text-pink-400" />
-          <span className="font-semibold text-[var(--foreground)]">{s.posterName}</span>
-        </div>
+          <span className="font-semibold text-[var(--foreground)] group-hover:text-pink-300 group-hover:underline">{s.posterName}</span>
+          <History size={11} className="opacity-60 group-hover:opacity-100" />
+        </button>
         <PosterWinRateBadge stats={posterStats} />
       </div>
 
@@ -390,7 +428,9 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
         <div className="flex items-center gap-3">
           <span className="text-[var(--muted-foreground)] w-14 shrink-0">SL:</span>
           <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
-          <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}</span>
+          {showPips && (
+            <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}</span>
+          )}
         </div>
 
         <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
@@ -404,23 +444,31 @@ function SignalCard({ signal: s, isOwn, onUpdate }: { signal: Signal; isOwn: boo
                 <span className={`font-bold tabular-nums ${hit ? 'text-emerald-300' : 'text-emerald-300/90'}`}>
                   {fmt(tp)}
                 </span>
-                <span className="text-[10px] text-emerald-400/60 tabular-nums">
-                  {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
-                </span>
-                {hit && <Target size={12} className="text-emerald-400 ml-auto" strokeWidth={2.5} />}
+                {showPips && (
+                  <span className="text-[10px] text-emerald-400/60 tabular-nums">
+                    {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
+                  </span>
+                )}
+                {hit && (
+                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`TP${i + 1} hit`}>
+                    <Target size={18} className="text-emerald-400" strokeWidth={2.5} />
+                  </span>
+                )}
               </div>
             );
           })}
         </div>
 
         {/* Pip / lot reference */}
-        <div className="pt-2 mt-2 border-t border-[var(--border)] flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] tabular-nums">
-          <span>1 pip = {fmtPriceUnit(s.market, s.pipSize ?? defaultPipSize(s.market, s.symbol))}</span>
-          {(s.lotSize !== undefined) && <span>· {s.lotSize.toLocaleString()} units / lot</span>}
-          {(s.pipSize !== undefined && s.pipSize !== defaultPipSize(s.market, s.symbol)) && (
-            <span className="text-pink-400">· custom</span>
-          )}
-        </div>
+        {showPips && (
+          <div className="pt-2 mt-2 border-t border-[var(--border)] flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] tabular-nums">
+            <span>1 pip = {fmtPriceUnit(s.market, s.pipSize ?? defaultPipSize(s.market, s.symbol))}</span>
+            {(s.lotSize !== undefined) && <span>· {s.lotSize.toLocaleString()} units / lot</span>}
+            {(s.pipSize !== undefined && s.pipSize !== defaultPipSize(s.market, s.symbol)) && (
+              <span className="text-pink-400">· custom</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Rationale */}
@@ -462,7 +510,7 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   // Loading state — query in flight
   if (stats === undefined) {
     return (
-      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)]/30 border border-[var(--border)] text-[var(--muted-foreground)] animate-pulse">
+      <span className="text-xs px-2.5 py-1 rounded-full bg-[var(--muted)]/30 border border-[var(--border)] text-[var(--muted-foreground)] animate-pulse">
         Loading…
       </span>
     );
@@ -471,7 +519,7 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   // New poster — no closed signals yet
   if (stats.total === 0) {
     return (
-      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-pink-500/10 text-pink-300 border-pink-500/30 inline-flex items-center gap-1">
+      <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-pink-500/10 text-pink-300 border-pink-500/30 inline-flex items-center gap-1">
         ✨ New analyst
       </span>
     );
@@ -485,9 +533,11 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
                             'bg-amber-500/10 text-amber-300 border-amber-500/30';
 
   return (
-    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border tabular-nums inline-flex items-center gap-1 ${tone}`}>
-      🎯 {pct}% win rate
-      <span className="opacity-60 font-normal">· {stats.won}/{stats.total}</span>
+    <span className={`px-3 py-1 rounded-full border tabular-nums inline-flex items-baseline gap-1.5 ${tone}`}>
+      <span className="text-base leading-none">🎯</span>
+      <span className="text-lg font-extrabold leading-none">{pct}%</span>
+      <span className="text-[10px] font-bold uppercase tracking-wider leading-none">win rate</span>
+      <span className="text-[10px] opacity-60 font-normal leading-none">· {stats.won}/{stats.total}</span>
     </span>
   );
 }
@@ -539,7 +589,7 @@ function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]
 }
 
 // ─── Post modal ───────────────────────────────────────────────────────
-function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string; onClose: () => void; onPosted?: () => void }) {
+function PostSignalModal({ posterName, showPips, onClose, onPosted }: { posterName: string; showPips: boolean; onClose: () => void; onPosted?: () => void }) {
   const post = useMutation(api.signals.post);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -655,34 +705,27 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Direction">
-              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
-                <button type="button" onClick={() => setDirection('long')}
-                  className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'long' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'text-[var(--muted-foreground)]'}`}>
-                  BUY (Long)
-                </button>
-                <button type="button" onClick={() => setDirection('short')}
-                  className={`flex-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${direction === 'short' ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'text-[var(--muted-foreground)]'}`}>
-                  SELL (Short)
-                </button>
-              </div>
-            </Field>
-            <Field label="Order Type">
-              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
-                {([
-                  { value: 'market', label: 'Market' },
-                  { value: 'stop', label: 'Stop' },
-                  { value: 'limit', label: 'Limit' },
-                ] as { value: OrderType; label: string }[]).map(o => (
-                  <button key={o.value} type="button" onClick={() => setOrderType(o.value)}
-                    className={`flex-1 px-2 py-1.5 rounded-full text-xs font-semibold transition-all ${orderType === o.value ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40' : 'text-[var(--muted-foreground)]'}`}>
+          <Field label="Order">
+            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl border border-[var(--border)] bg-black/20">
+              {([
+                { dir: 'long',  type: 'market', label: 'BUY (Market)',  cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+                { dir: 'long',  type: 'stop',   label: 'BUY STOP',      cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+                { dir: 'long',  type: 'limit',  label: 'BUY LIMIT',     cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+                { dir: 'short', type: 'market', label: 'SELL (Market)', cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
+                { dir: 'short', type: 'stop',   label: 'SELL STOP',     cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
+                { dir: 'short', type: 'limit',  label: 'SELL LIMIT',    cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
+              ] as { dir: Direction; type: OrderType; label: string; cls: string }[]).map(o => {
+                const active = direction === o.dir && orderType === o.type;
+                return (
+                  <button key={o.label} type="button"
+                    onClick={() => { setDirection(o.dir); setOrderType(o.type); }}
+                    className={`px-2 py-2 rounded-xl text-[11px] font-bold tracking-wide transition-all border ${active ? o.cls : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}>
                     {o.label}
                   </button>
-                ))}
-              </div>
-            </Field>
-          </div>
+                );
+              })}
+            </div>
+          </Field>
 
           <div className="grid grid-cols-1 gap-3">
             <Field label="Risk Level">
@@ -719,17 +762,17 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                Take Profits ({tpInputs.length})
+                Take Profits ({tpInputs.length}) <span className="opacity-60 normal-case font-normal tracking-normal">· no limit</span>
               </div>
               <button type="button" onClick={addTp}
-                className="inline-flex items-center gap-1 text-[10px] text-pink-400 hover:text-pink-300 transition-colors disabled:opacity-40">
+                className="inline-flex items-center gap-1 text-[10px] text-pink-400 hover:text-pink-300 transition-colors">
                 <Plus size={10} /> Add TP
               </button>
             </div>
             <div className="space-y-1.5">
               {tpInputs.map((v, i) => {
                 const tpNum = parseFloat(v);
-                const showPips = Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
+                const showTpPips = showPips && Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
                 return (
                   <div key={i} className="flex items-center gap-2">
                     <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-10 shrink-0 tabular-nums">TP{i + 1}</span>
@@ -741,7 +784,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
                       placeholder={`Target ${i + 1}`}
                       className="flex-1"
                     />
-                    {showPips && (
+                    {showTpPips && (
                       <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
                         {fmtPips(market, symbol || 'X', entryRef, tpNum, effectivePip)}
                       </span>
@@ -800,7 +843,7 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
                     />
                   </Field>
                 </div>
-                {effectivePip > 0 && allBaseValid && tpNums[0] && (
+                {showPips && effectivePip > 0 && allBaseValid && tpNums[0] && (
                   <div className="text-[10px] text-emerald-400/80 tabular-nums">
                     Preview with current settings: TP1 = {fmtPips(market, symbol || 'X', entryRef, tpNums[0], effectivePip)}
                     {effectiveLot > 0 && (
@@ -814,9 +857,9 @@ function PostSignalModal({ posterName, onClose, onPosted }: { posterName: string
             )}
           </div>
 
-          <Field label="Rationale (≥10 chars)">
-            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={3} placeholder="Why this trade? Levels, catalysts, invalidation..." maxLength={500} />
-            <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/500</div>
+          <Field label="Rationale / Comments (≥10 chars)">
+            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={4} placeholder="Why this trade? Levels, catalysts, invalidation, anything you want followers to know..." maxLength={1000} />
+            <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/1000</div>
           </Field>
 
           {error && <div className="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-3 py-2">{error}</div>}
@@ -857,4 +900,105 @@ function timeAgo(iso: string) {
   if (s < 3600) return `${Math.round(s / 60)}m ago`;
   if (s < 86400) return `${Math.round(s / 3600)}h ago`;
   return `${Math.round(s / 86400)}d ago`;
+}
+
+// ─── Signal history modal — all signals posted by a given user ───────
+function SignalHistoryModal({
+  posterId,
+  posterName,
+  showPips,
+  currentUserId,
+  onUpdate,
+  onViewHistory,
+  onClose,
+}: {
+  posterId: string;
+  posterName: string;
+  showPips: boolean;
+  currentUserId?: string;
+  onUpdate: (id: Id<'signals'>, status: Status, tpHit?: number) => Promise<unknown>;
+  onViewHistory: (posterId: string, posterName: string) => void;
+  onClose: () => void;
+}) {
+  const history = useQuery(api.signals.byPoster, { posterId }) as Signal[] | undefined;
+  const stats = useQuery(api.signals.posterStats, { posterId });
+
+  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
+  const list = (history ?? []).filter(s => statusFilter === 'all' ? true : s.status === statusFilter);
+
+  const wonCount = (history ?? []).filter(s => s.status === 'won').length;
+  const lostCount = (history ?? []).filter(s => s.status === 'lost').length;
+  const activeCount = (history ?? []).filter(s => s.status === 'active' || s.status === 'pending').length;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div
+        onClick={e => e.stopPropagation()}
+        className="relative w-full max-w-4xl rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] flex flex-col"
+      >
+        <div className="flex items-center justify-between p-5 border-b border-[var(--border)]">
+          <div className="flex items-center gap-3 flex-wrap">
+            <History size={18} className="text-pink-400" />
+            <div>
+              <h2 className="text-lg font-bold text-[var(--foreground)]">{posterName}'s signal history</h2>
+              <div className="flex items-center gap-3 text-[11px] text-[var(--muted-foreground)] mt-0.5 tabular-nums">
+                <span>{history?.length ?? 0} total</span>
+                <span className="text-emerald-400">{wonCount} won</span>
+                <span className="text-red-400">{lostCount} lost</span>
+                <span className="text-amber-400">{activeCount} open</span>
+                {stats && stats.total > 0 && (
+                  <span className="text-pink-300 font-semibold">· {Math.round(stats.hitRate * 100)}% hit-rate</span>
+                )}
+              </div>
+            </div>
+          </div>
+          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
+            <X size={18} className="text-[var(--muted-foreground)]" />
+          </button>
+        </div>
+
+        <div className="px-5 py-3 border-b border-[var(--border)] flex flex-wrap items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Filter</span>
+          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20">
+            {(['all', 'active', 'pending', 'won', 'lost', 'cancelled', 'expired'] as const).map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize transition-all ${
+                  statusFilter === s
+                    ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
+                    : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-5">
+          {history === undefined ? (
+            <div className="text-center text-sm text-[var(--muted-foreground)] py-10">Loading history…</div>
+          ) : list.length === 0 ? (
+            <div className="text-center text-sm text-[var(--muted-foreground)] py-10">
+              No signals match this filter.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {list.map(s => (
+                <SignalCard
+                  key={s._id}
+                  signal={s}
+                  isOwn={s.posterId === currentUserId}
+                  showPips={showPips}
+                  onUpdate={(status, tpHit) => onUpdate(s._id, status, tpHit)}
+                  onViewHistory={onViewHistory}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

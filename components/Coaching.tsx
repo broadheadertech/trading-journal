@@ -6,12 +6,14 @@ import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
   Headphones, ArrowLeft, ArrowRight, Star, Clock, Send, Check,
-  Calendar, MessageCircle, Video, X, Loader2, UserPlus,
+  Calendar, MessageCircle, Video, X, Loader2, UserPlus, Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast';
+import CoachingCohorts from './CoachingCohorts';
 
 type View = 'catalog' | 'detail' | 'mine' | 'session';
+type CoachingTab = 'sessions' | 'cohorts';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const fmt = (iso: string) => {
@@ -21,6 +23,7 @@ const fmt = (iso: string) => {
 
 export default function Coaching() {
   const { user } = useUser();
+  const [tab, setTab] = useState<CoachingTab>('sessions');
   const [view, setView] = useState<View>('catalog');
   const [coachId, setCoachId] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -66,17 +69,23 @@ export default function Coaching() {
       <header className="flex items-end justify-between flex-wrap gap-4 anim-fade-up">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-            <Headphones size={12} /> 1-on-1 sessions
+            <Headphones size={12} /> {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-            Talk to a <span className="gradient-text">trading coach</span>
+            {tab === 'sessions' ? (
+              <>Talk to a <span className="gradient-text">trading coach</span></>
+            ) : (
+              <>Join a <span className="gradient-text">trading cohort</span></>
+            )}
           </h1>
           <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-            Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.
+            {tab === 'sessions'
+              ? 'Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.'
+              : 'Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {user && (
+          {user && tab === 'sessions' && (
             <button
               onClick={() => setView('mine')}
               className="px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 backdrop-blur text-sm font-medium hover:bg-[var(--muted)]/60 transition-all"
@@ -96,7 +105,33 @@ export default function Coaching() {
         </div>
       </header>
 
-      {coaches.length === 0 ? (
+      {/* ── Tab toggle: 1-on-1 sessions vs Cohorts ── */}
+      <div className="glass rounded-2xl p-1.5 inline-flex gap-1">
+        <button
+          onClick={() => setTab('sessions')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            tab === 'sessions'
+              ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg'
+              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+          }`}
+        >
+          <Headphones size={16} /> 1-on-1 Sessions
+        </button>
+        <button
+          onClick={() => setTab('cohorts')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            tab === 'cohorts'
+              ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg'
+              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+          }`}
+        >
+          <Users size={16} /> Cohorts
+        </button>
+      </div>
+
+      {tab === 'cohorts' && <CoachingCohorts />}
+
+      {tab === 'sessions' && (coaches.length === 0 ? (
         <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
           <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
             <Headphones size={28} className="text-pink-400" />
@@ -153,7 +188,7 @@ export default function Coaching() {
             </article>
           ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }
