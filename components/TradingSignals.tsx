@@ -7,7 +7,7 @@ import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History } from 'lucide-react';
+import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
 
 type Direction = 'long' | 'short';
 type OrderType = 'market' | 'stop' | 'limit';
@@ -109,6 +109,7 @@ export default function TradingSignals() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showPips, setShowPips] = useLocalStorage<boolean>('crypto-journal-signals-show-pips', true);
   const [historyPoster, setHistoryPoster] = useState<{ id: string; name: string } | null>(null);
+  const [editingSignal, setEditingSignal] = useState<Signal | null>(null);
 
   const signals = useQuery(api.signals.list, {
     market: marketFilter === 'all' ? undefined : marketFilter,
@@ -239,6 +240,7 @@ export default function TradingSignals() {
               showPips={showPips}
               onUpdate={(status, tpHit) => updateStatus({ id: s._id, status, tpHit })}
               onViewHistory={(id, name) => setHistoryPoster({ id, name })}
+              onEdit={(sig) => setEditingSignal(sig)}
             />
           ))}
         </div>
@@ -262,6 +264,15 @@ export default function TradingSignals() {
         />
       )}
 
+      {editingSignal && (
+        <PostSignalModal
+          posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
+          showPips={showPips}
+          editSignal={editingSignal}
+          onClose={() => setEditingSignal(null)}
+        />
+      )}
+
       {historyPoster && (
         <SignalHistoryModal
           posterId={historyPoster.id}
@@ -270,6 +281,7 @@ export default function TradingSignals() {
           currentUserId={user?.id}
           onUpdate={(id, status, tpHit) => updateStatus({ id, status, tpHit })}
           onViewHistory={(id, name) => setHistoryPoster({ id, name })}
+          onEdit={(sig) => setEditingSignal(sig)}
           onClose={() => setHistoryPoster(null)}
         />
       )}
@@ -345,12 +357,13 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
 }
 
 // ─── Telegram-style signal card ───────────────────────────────────────
-function SignalCard({ signal: s, isOwn, showPips, onUpdate, onViewHistory }: {
+function SignalCard({ signal: s, isOwn, showPips, onUpdate, onViewHistory, onEdit }: {
   signal: Signal;
   isOwn: boolean;
   showPips: boolean;
   onUpdate: (status: Status, tpHit?: number) => Promise<unknown>;
   onViewHistory: (posterId: string, posterName: string) => void;
+  onEdit: (signal: Signal) => void;
 }) {
   const isLong = s.direction === 'long';
   const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
@@ -497,7 +510,7 @@ function SignalCard({ signal: s, isOwn, showPips, onUpdate, onViewHistory }: {
         </div>
 
         {isOwn && (s.status === 'pending' || s.status === 'active') && (
-          <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} />
+          <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} onEdit={() => onEdit(s)} />
         )}
       </div>
     </div>
@@ -542,11 +555,14 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   );
 }
 
-function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status }) {
+function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status; onEdit: () => void }) {
   const [tpPickerOpen, setTpPickerOpen] = useState(false);
 
   return (
     <div className="flex items-center gap-1 relative">
+      <button onClick={onEdit} title="Edit signal" className="px-2 py-0.5 rounded text-[10px] bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors inline-flex items-center gap-1">
+        <Pencil size={10} /> Edit
+      </button>
       {status === 'pending' && (
         <button onClick={() => onUpdate('active')} title="Mark active" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors">
           Activate
@@ -588,25 +604,48 @@ function OwnerActions({ takeProfits, onUpdate, status }: { takeProfits: number[]
   );
 }
 
-// ─── Post modal ───────────────────────────────────────────────────────
-function PostSignalModal({ posterName, showPips, onClose, onPosted }: { posterName: string; showPips: boolean; onClose: () => void; onPosted?: () => void }) {
+// ─── Post / Edit modal ────────────────────────────────────────────────
+// When `editSignal` is provided, the modal becomes an edit form for that
+// signal — prefilled values, "Save changes" button, and uses the `edit`
+// mutation instead of `post`. Otherwise it behaves like a normal post form.
+function PostSignalModal({
+  posterName,
+  showPips,
+  editSignal,
+  onClose,
+  onPosted,
+}: {
+  posterName: string;
+  showPips: boolean;
+  editSignal?: Signal | null;
+  onClose: () => void;
+  onPosted?: () => void;
+}) {
   const post = useMutation(api.signals.post);
+  const edit = useMutation(api.signals.edit);
+  const isEdit = !!editSignal;
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [symbol, setSymbol] = useState('');
-  const [market, setMarket] = useState<Market>('commodities');
-  const [direction, setDirection] = useState<Direction>('long');
-  const [orderType, setOrderType] = useState<OrderType>('market');
-  const [entryLow, setEntryLow] = useState('');
-  const [entryHigh, setEntryHigh] = useState('');
-  const [stopLoss, setStopLoss] = useState('');
-  const [tpInputs, setTpInputs] = useState<string[]>(['']);
-  const [riskLevel, setRiskLevel] = useState<RiskLevel>('high');
-  const [rationale, setRationale] = useState('');
+  const [symbol, setSymbol] = useState(editSignal?.symbol ?? '');
+  const [market, setMarket] = useState<Market>(editSignal?.market ?? 'commodities');
+  const [direction, setDirection] = useState<Direction>(editSignal?.direction ?? 'long');
+  const [orderType, setOrderType] = useState<OrderType>(editSignal?.orderType ?? 'market');
+  const [entryLow, setEntryLow] = useState(editSignal ? String(editSignal.entryLow) : '');
+  const [entryHigh, setEntryHigh] = useState(
+    editSignal && editSignal.entryHigh !== editSignal.entryLow ? String(editSignal.entryHigh) : ''
+  );
+  const [stopLoss, setStopLoss] = useState(editSignal ? String(editSignal.stopLoss) : '');
+  const [tpInputs, setTpInputs] = useState<string[]>(
+    editSignal && editSignal.takeProfits.length > 0
+      ? editSignal.takeProfits.map(tp => String(tp))
+      : ['']
+  );
+  const [riskLevel, setRiskLevel] = useState<RiskLevel>(editSignal?.riskLevel ?? 'high');
+  const [rationale, setRationale] = useState(editSignal?.rationale ?? '');
   const [showAdjust, setShowAdjust] = useState(false);
-  const [pipSize, setPipSize] = useState('');
-  const [lotSize, setLotSize] = useState('');
+  const [pipSize, setPipSize] = useState(editSignal?.pipSize !== undefined ? String(editSignal.pipSize) : '');
+  const [lotSize, setLotSize] = useState(editSignal?.lotSize !== undefined ? String(editSignal.lotSize) : '');
 
   const computedDefaultPip = defaultPipSize(market, symbol || 'X');
   const computedDefaultLot = defaultLotSize(market, symbol || 'X');
@@ -653,25 +692,43 @@ function PostSignalModal({ posterName, showPips, onClose, onPosted }: { posterNa
 
     setSubmitting(true);
     try {
-      await post({
-        posterName,
-        symbol: symbol.trim(),
-        market,
-        direction,
-        orderType,
-        entryLow: entryLowNum,
-        entryHigh: entryHighNum,
-        stopLoss: slNum,
-        takeProfits: tpNums,
-        riskLevel,
-        rationale: rationale.trim(),
-        pipSize: Number.isFinite(customPip) ? customPip : undefined,
-        lotSize: Number.isFinite(customLot) ? customLot : undefined,
-      });
+      if (isEdit && editSignal) {
+        await edit({
+          id: editSignal._id,
+          symbol: symbol.trim(),
+          market,
+          direction,
+          orderType,
+          entryLow: entryLowNum,
+          entryHigh: entryHighNum,
+          stopLoss: slNum,
+          takeProfits: tpNums,
+          riskLevel,
+          rationale: rationale.trim(),
+          pipSize: Number.isFinite(customPip) ? customPip : undefined,
+          lotSize: Number.isFinite(customLot) ? customLot : undefined,
+        });
+      } else {
+        await post({
+          posterName,
+          symbol: symbol.trim(),
+          market,
+          direction,
+          orderType,
+          entryLow: entryLowNum,
+          entryHigh: entryHighNum,
+          stopLoss: slNum,
+          takeProfits: tpNums,
+          riskLevel,
+          rationale: rationale.trim(),
+          pipSize: Number.isFinite(customPip) ? customPip : undefined,
+          lotSize: Number.isFinite(customLot) ? customLot : undefined,
+        });
+      }
       onPosted?.();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to post signal.');
+      setError(err instanceof Error ? err.message : isEdit ? 'Failed to save changes.' : 'Failed to post signal.');
     } finally {
       setSubmitting(false);
     }
@@ -682,8 +739,8 @@ function PostSignalModal({ posterName, showPips, onClose, onPosted }: { posterNa
       <form onSubmit={submit} className="relative w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--card)] z-10">
           <div className="flex items-center gap-2">
-            <Radio size={16} className="text-pink-400" />
-            <h2 className="text-lg font-bold text-[var(--foreground)]">Post a trading signal</h2>
+            {isEdit ? <Pencil size={16} className="text-pink-400" /> : <Radio size={16} className="text-pink-400" />}
+            <h2 className="text-lg font-bold text-[var(--foreground)]">{isEdit ? 'Edit signal' : 'Post a trading signal'}</h2>
           </div>
           <button type="button" onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
             <X size={18} className="text-[var(--muted-foreground)]" />
@@ -870,7 +927,7 @@ function PostSignalModal({ posterName, showPips, onClose, onPosted }: { posterNa
             </button>
             <button type="submit" disabled={submitting}
               className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all disabled:opacity-50">
-              {submitting ? 'Posting...' : 'Post Signal'}
+              {submitting ? (isEdit ? 'Saving…' : 'Posting…') : (isEdit ? 'Save changes' : 'Post Signal')}
             </button>
           </div>
         </div>
@@ -910,6 +967,7 @@ function SignalHistoryModal({
   currentUserId,
   onUpdate,
   onViewHistory,
+  onEdit,
   onClose,
 }: {
   posterId: string;
@@ -918,6 +976,7 @@ function SignalHistoryModal({
   currentUserId?: string;
   onUpdate: (id: Id<'signals'>, status: Status, tpHit?: number) => Promise<unknown>;
   onViewHistory: (posterId: string, posterName: string) => void;
+  onEdit: (signal: Signal) => void;
   onClose: () => void;
 }) {
   const history = useQuery(api.signals.byPoster, { posterId }) as Signal[] | undefined;
@@ -993,6 +1052,7 @@ function SignalHistoryModal({
                   showPips={showPips}
                   onUpdate={(status, tpHit) => onUpdate(s._id, status, tpHit)}
                   onViewHistory={onViewHistory}
+                  onEdit={onEdit}
                 />
               ))}
             </div>
