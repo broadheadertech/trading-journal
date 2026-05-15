@@ -113,6 +113,7 @@ export const post = mutation({
     expiresAt: v.optional(v.string()),
     pipSize: v.optional(v.number()),
     lotSize: v.optional(v.number()),
+    showPips: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
@@ -183,6 +184,7 @@ export const post = mutation({
       expiresAt: args.expiresAt ?? defaultExpiry,
       pipSize: args.pipSize,
       lotSize: args.lotSize,
+      showPips: args.showPips,
     });
   },
 });
@@ -211,6 +213,7 @@ export const edit = mutation({
     rationale: v.string(),
     pipSize: v.optional(v.number()),
     lotSize: v.optional(v.number()),
+    showPips: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
@@ -275,6 +278,7 @@ export const edit = mutation({
       rationale: args.rationale,
       pipSize: args.pipSize,
       lotSize: args.lotSize,
+      showPips: args.showPips,
     });
   },
 });
