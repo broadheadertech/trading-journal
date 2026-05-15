@@ -6,7 +6,6 @@ import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
 
 type Direction = 'long' | 'short';
@@ -47,6 +46,7 @@ type Signal = {
   actualR?: number;
   pipSize?: number;
   lotSize?: number;
+  showPips?: boolean;  // poster preference — undefined = legacy default (show)
 };
 
 // Core+ during BETA — every registered user is auto-elevated to Core, so they can post.
@@ -107,7 +107,6 @@ export default function TradingSignals() {
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('active');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [showPips, setShowPips] = useLocalStorage<boolean>('crypto-journal-signals-show-pips', true);
   const [historyPoster, setHistoryPoster] = useState<{ id: string; name: string } | null>(null);
   const [editingSignal, setEditingSignal] = useState<Signal | null>(null);
 
@@ -147,14 +146,6 @@ export default function TradingSignals() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
-            <button
-              onClick={() => setShowPips(v => !v)}
-              title={showPips ? 'Hide pip annotations on every signal' : 'Show pip annotations on every signal'}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]/50 transition-all"
-            >
-              {showPips ? <EyeOff size={14} /> : <Eye size={14} />}
-              {showPips ? 'Hide pips' : 'Show pips'}
-            </button>
             <button
               onClick={() => setShowLeaderboard(v => !v)}
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]/50 transition-all"
@@ -237,7 +228,6 @@ export default function TradingSignals() {
               key={s._id}
               signal={s}
               isOwn={s.posterId === user?.id}
-              showPips={showPips}
               onUpdate={(status, tpHit) => updateStatus({ id: s._id, status, tpHit })}
               onViewHistory={(id, name) => setHistoryPoster({ id, name })}
               onEdit={(sig) => setEditingSignal(sig)}
@@ -258,7 +248,6 @@ export default function TradingSignals() {
       {showPostModal && canPost && (
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
-          showPips={showPips}
           onClose={() => setShowPostModal(false)}
           onPosted={() => { setStatusFilter('active'); setMarketFilter('all'); }}
         />
@@ -267,7 +256,6 @@ export default function TradingSignals() {
       {editingSignal && (
         <PostSignalModal
           posterName={user?.fullName ?? user?.username ?? user?.firstName ?? 'Anonymous'}
-          showPips={showPips}
           editSignal={editingSignal}
           onClose={() => setEditingSignal(null)}
         />
@@ -277,7 +265,6 @@ export default function TradingSignals() {
         <SignalHistoryModal
           posterId={historyPoster.id}
           posterName={historyPoster.name}
-          showPips={showPips}
           currentUserId={user?.id}
           onUpdate={(id, status, tpHit) => updateStatus({ id, status, tpHit })}
           onViewHistory={(id, name) => setHistoryPoster({ id, name })}
@@ -357,14 +344,16 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
 }
 
 // ─── Telegram-style signal card ───────────────────────────────────────
-function SignalCard({ signal: s, isOwn, showPips, onUpdate, onViewHistory, onEdit }: {
+function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
   signal: Signal;
   isOwn: boolean;
-  showPips: boolean;
   onUpdate: (status: Status, tpHit?: number) => Promise<unknown>;
   onViewHistory: (posterId: string, posterName: string) => void;
   onEdit: (signal: Signal) => void;
 }) {
+  // Pip annotations are visible by the poster's choice. Old signals (undefined)
+  // default to showing — only an explicit `false` hides them.
+  const showPips = s.showPips !== false;
   const isLong = s.direction === 'long';
   const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
   const dirColor = isLong ? 'text-emerald-400' : 'text-red-400';
@@ -610,13 +599,11 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
 // mutation instead of `post`. Otherwise it behaves like a normal post form.
 function PostSignalModal({
   posterName,
-  showPips,
   editSignal,
   onClose,
   onPosted,
 }: {
   posterName: string;
-  showPips: boolean;
   editSignal?: Signal | null;
   onClose: () => void;
   onPosted?: () => void;
@@ -646,6 +633,9 @@ function PostSignalModal({
   const [showAdjust, setShowAdjust] = useState(false);
   const [pipSize, setPipSize] = useState(editSignal?.pipSize !== undefined ? String(editSignal.pipSize) : '');
   const [lotSize, setLotSize] = useState(editSignal?.lotSize !== undefined ? String(editSignal.lotSize) : '');
+  // Poster choice — should the signal display pip annotations on its card?
+  // Default to true for new signals and any legacy signal where the field is undefined.
+  const [showPips, setShowPips] = useState<boolean>(editSignal?.showPips !== false);
 
   const computedDefaultPip = defaultPipSize(market, symbol || 'X');
   const computedDefaultLot = defaultLotSize(market, symbol || 'X');
@@ -707,6 +697,7 @@ function PostSignalModal({
           rationale: rationale.trim(),
           pipSize: Number.isFinite(customPip) ? customPip : undefined,
           lotSize: Number.isFinite(customLot) ? customLot : undefined,
+          showPips,
         });
       } else {
         await post({
@@ -723,6 +714,7 @@ function PostSignalModal({
           rationale: rationale.trim(),
           pipSize: Number.isFinite(customPip) ? customPip : undefined,
           lotSize: Number.isFinite(customLot) ? customLot : undefined,
+          showPips,
         });
       }
       onPosted?.();
@@ -919,6 +911,30 @@ function PostSignalModal({
             <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/1000</div>
           </Field>
 
+          {/* Poster choice — show pip annotations on the card? */}
+          <button
+            type="button"
+            onClick={() => setShowPips(v => !v)}
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-[var(--border)] bg-black/20 hover:bg-black/30 transition-colors text-left"
+          >
+            <div className="flex items-center gap-2.5">
+              {showPips ? <Eye size={16} className="text-pink-400" /> : <EyeOff size={16} className="text-[var(--muted-foreground)]" />}
+              <div>
+                <div className="text-sm font-semibold text-[var(--foreground)]">
+                  {showPips ? 'Show pips on this signal' : 'Hide pips on this signal'}
+                </div>
+                <div className="text-[11px] text-[var(--muted-foreground)] leading-snug">
+                  {showPips
+                    ? 'Followers see pip distances next to SL and every TP.'
+                    : 'Followers see prices only — no pip annotations.'}
+                </div>
+              </div>
+            </div>
+            <span className={`relative inline-block w-10 h-5 rounded-full shrink-0 transition-colors ${showPips ? 'bg-pink-500' : 'bg-[var(--muted)]'}`}>
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${showPips ? 'translate-x-5' : ''}`} />
+            </span>
+          </button>
+
           {error && <div className="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-3 py-2">{error}</div>}
 
           <div className="flex items-center justify-end gap-2 pt-2">
@@ -963,7 +979,6 @@ function timeAgo(iso: string) {
 function SignalHistoryModal({
   posterId,
   posterName,
-  showPips,
   currentUserId,
   onUpdate,
   onViewHistory,
@@ -972,7 +987,6 @@ function SignalHistoryModal({
 }: {
   posterId: string;
   posterName: string;
-  showPips: boolean;
   currentUserId?: string;
   onUpdate: (id: Id<'signals'>, status: Status, tpHit?: number) => Promise<unknown>;
   onViewHistory: (posterId: string, posterName: string) => void;
@@ -1049,7 +1063,6 @@ function SignalHistoryModal({
                   key={s._id}
                   signal={s}
                   isOwn={s.posterId === currentUserId}
-                  showPips={showPips}
                   onUpdate={(status, tpHit) => onUpdate(s._id, status, tpHit)}
                   onViewHistory={onViewHistory}
                   onEdit={onEdit}

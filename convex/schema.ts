@@ -363,6 +363,9 @@ export default defineSchema({
     // (MT4 standard: 1 pip = $0.01; some signal providers: 1 pip = $0.10).
     pipSize: v.optional(v.number()),
     lotSize: v.optional(v.number()),
+    // Poster preference — when false, viewers see prices only (no pip annotations).
+    // Optional for back-compat; undefined means show pips (legacy default).
+    showPips: v.optional(v.boolean()),
     postedAt: v.string(),               // ISO
     expiresAt: v.optional(v.string()),  // ISO (default: +24h)
     closedAt: v.optional(v.string()),   // ISO when status moved to terminal
