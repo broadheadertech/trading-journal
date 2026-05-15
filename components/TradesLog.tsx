@@ -24,8 +24,8 @@ import { useUsage } from '@/hooks/useUsage';
 interface TradesLogProps {
   trades: Trade[];
   strategies: Strategy[];
-  onAdd: (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => void;
-  onUpdate: (id: string, updates: Partial<Trade>) => void;
+  onAdd: (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => Promise<unknown>;
+  onUpdate: (id: string, updates: Partial<Trade>) => Promise<unknown>;
   onDelete: (id: string) => void;
   onBulkImport?: (trades: any[]) => Promise<number>;
   showAddModal?: boolean;
@@ -167,13 +167,34 @@ export default function TradesLog({
   }, [filtered]);
 
   /* â”€â”€ CRUD handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  const handleAdd = (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
-    onAdd(trade);
-    setIsAddOpen(false);
-    showToast('Trade added');
+  // Convex errors arrive with a noisy prefix like
+  // "[CONVEX M(trades:add)] [Request ID: …] Server Error\nUncaught Error: …".
+  // Show only the human-readable trailing line in the toast.
+  const cleanConvexError = (err: unknown): string => {
+    const raw = err instanceof Error ? err.message : String(err);
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    const last = lines[lines.length - 1] ?? raw;
+    return last.replace(/^Uncaught\s+Error:\s*/i, '').replace(/^\[CONVEX[^\]]*\]\s*/i, '').trim() || 'Something went wrong.';
   };
-  const handleEdit = (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
-    if (editTrade) { onUpdate(editTrade.id, trade); setEditTrade(null); showToast('Trade updated'); }
+
+  const handleAdd = async (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
+    try {
+      await onAdd(trade);
+      setIsAddOpen(false);
+      showToast('Trade added', 'success');
+    } catch (err) {
+      showToast(cleanConvexError(err), 'error');
+    }
+  };
+  const handleEdit = async (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
+    if (!editTrade) return;
+    try {
+      await onUpdate(editTrade.id, trade);
+      setEditTrade(null);
+      showToast('Trade updated', 'success');
+    } catch (err) {
+      showToast(cleanConvexError(err), 'error');
+    }
   };
   const handleDeleteConfirm = (id: string) => { onDelete(id); setDeleteConfirm(null); showToast('Trade deleted'); };
 

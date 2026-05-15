@@ -1,6 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { requireUser, getUser } from "./helpers";
+import { requireUser, getUser, getEffectivePlanId } from "./helpers";
 import { getLimitsForPlan } from "./tierLimits";
 import { scoreTradeInternal } from "./brain";
 import { api } from "./_generated/api";
@@ -67,12 +67,9 @@ export const add = mutation({
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
 
-    // Enforce trade limit based on subscription tier
-    const sub = await ctx.db
-      .query("userSubscriptions")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .first();
-    const { maxTrades } = getLimitsForPlan(sub?.planId ?? "free");
+    // Enforce trade limit based on the user's effective plan (matches what the UI shows).
+    const planId = await getEffectivePlanId(ctx, userId);
+    const { maxTrades } = getLimitsForPlan(planId);
     if (maxTrades !== -1) {
       const count = (await ctx.db
         .query("trades")

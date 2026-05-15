@@ -1,22 +1,11 @@
-import { query, mutation, MutationCtx } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { getUser, requireUser } from "./helpers";
+import { getUser, requireUser, getEffectivePlanId } from "./helpers";
 
 // Tiers allowed to post signals. Core+ during BETA so any registered user can post;
 // tighten to Pro+ when paid subscriptions go live if you want posting to be a paid perk.
 const PRO_PLUS_TIERS = new Set(["core", "pro", "elite"]);
 const TERMINAL_STATUSES = new Set(["won", "lost", "cancelled", "expired"]);
-
-async function currentUserPlanId(ctx: MutationCtx, userId: string): Promise<string> {
-  // Admin auto-elevation: matches the rule in subscriptions.ts:getUserSubscription
-  const adminId = process.env.ADMIN_USER_ID;
-  if (adminId && userId === adminId) return "elite";
-  const sub = await ctx.db
-    .query("userSubscriptions")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
-    .first();
-  return sub?.planId ?? "free";
-}
 
 // ─── List active + pending signals (any subscriber can read) ──────────
 export const list = query({
@@ -117,7 +106,7 @@ export const post = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
-    const planId = await currentUserPlanId(ctx, userId);
+    const planId = await getEffectivePlanId(ctx, userId);
 
     if (!PRO_PLUS_TIERS.has(planId)) {
       throw new Error("Posting signals requires a paid subscription (Core, Pro, or Elite).");
