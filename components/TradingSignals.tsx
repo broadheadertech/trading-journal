@@ -53,12 +53,13 @@ type Signal = {
 const PRO_PLUS = new Set(['core', 'pro', 'elite']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
-// Defaults follow MT4/MT5 broker convention. Gold default: 1 pip = $0.01
-// (so a $10 move = 1000 pips). Posters can override per signal if their
-// broker uses a different convention.
+// Defaults are tuned so the universal rule holds: at lot 0.01, 10 pips = $1.
+// For gold that means the signal-provider convention (1 pip = $0.10, so a $10
+// move = 100 pips) rather than the MT4 raw-tick convention (1 pip = $0.01).
+// Posters can override per-signal in the "Adjust pip / lot size" section.
 function defaultPipSize(market: Market, symbol: string): number {
   const sym = symbol.toUpperCase();
-  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.01;     // MT4 standard
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.10;     // signal-provider: 0.01 lot × 10 pips = $1
   if (sym.startsWith('XAG') || sym === 'SILVER') return 0.001;
   if (market === 'forex') return sym.includes('JPY') ? 0.01 : 0.0001;
   if (market === 'commodities') return 0.01;
@@ -84,12 +85,12 @@ function fmtPips(market: Market, symbol: string, from: number, to: number, overr
   return `${sign}${abs.toLocaleString()}pips`;
 }
 
-// Worst-case entry for the direction. For LONG, you assume the highest fill
-// in the entry zone (smallest gain to TP, largest distance to SL). For SHORT,
-// the lowest. This matches the convention your example uses (entryHigh = 4700
-// → TP1 at 4710 = "+100 pips" rather than midpoint).
-function refEntry(direction: Direction, entryLow: number, entryHigh: number): number {
-  return direction === 'long' ? entryHigh : entryLow;
+// Anchor for pip and R:R calculations. Always entryLow — the bottom of the
+// entry zone — so TP/SL distances are measured from the same canonical price
+// regardless of direction. For a limit buy or stop sell this is also the
+// actual fill price, so the displayed pips match the trader's realized P/L.
+function refEntry(_direction: Direction, entryLow: number, _entryHigh: number): number {
+  return entryLow;
 }
 
 function fmtPriceUnit(market: Market, pip: number): string {
@@ -408,15 +409,21 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
 
       {/* Poster + winrate badge */}
       <div className="px-5 pt-2 flex items-center gap-2 flex-wrap">
-        <button
-          type="button"
-          onClick={() => onViewHistory(s.posterId, s.posterName)}
-          title={`View ${s.posterName}'s signal history`}
+        <a
+          href={`/u/${s.posterId}`}
+          title={`Open ${s.posterName}'s profile`}
           className="flex items-center gap-1.5 text-[11px] text-[var(--muted-foreground)] hover:text-pink-300 transition-colors group"
         >
           <Radio size={11} className="text-pink-400" />
           <span className="font-semibold text-[var(--foreground)] group-hover:text-pink-300 group-hover:underline">{s.posterName}</span>
-          <History size={11} className="opacity-60 group-hover:opacity-100" />
+        </a>
+        <button
+          type="button"
+          onClick={() => onViewHistory(s.posterId, s.posterName)}
+          title={`View ${s.posterName}'s signal history inline`}
+          className="inline-flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-pink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-[var(--muted)]/30"
+        >
+          <History size={10} /> History
         </button>
         <PosterWinRateBadge stats={posterStats} />
       </div>
@@ -673,7 +680,7 @@ function PostSignalModal({
     if (!allBaseValid) { setError('Entry, stop, and at least one TP must be positive numbers.'); return; }
     if (entryLowNum > entryHighNum) { setError('Entry low must be ≤ entry high.'); return; }
     if (tpNums.length === 0) { setError('At least one take-profit is required.'); return; }
-    if (rationale.trim().length < 10) { setError('Rationale must be at least 10 characters.'); return; }
+    // Rationale is optional — posters can add or refine it later via the edit modal.
 
     const customPip = pipSize.trim() ? parseFloat(pipSize) : NaN;
     const customLot = lotSize.trim() ? parseFloat(lotSize) : NaN;
@@ -906,8 +913,8 @@ function PostSignalModal({
             )}
           </div>
 
-          <Field label="Rationale / Comments (≥10 chars)">
-            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={4} placeholder="Why this trade? Levels, catalysts, invalidation, anything you want followers to know..." maxLength={1000} />
+          <Field label="Rationale / Comments (optional)">
+            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={4} placeholder="Optional — why this trade, catalysts, invalidation, updates. You can add or edit this any time after posting." maxLength={1000} />
             <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/1000</div>
           </Field>
 

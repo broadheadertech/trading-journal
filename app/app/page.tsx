@@ -69,6 +69,7 @@ function AppContent() {
   const importMutation = useMutation(api.migrations.importFromLocalStorage);
   const ensureFreeSub = useMutation(api.subscriptions.ensureFreeSubscription);
   const initBrainState = useMutation(api.brain.initializeBrainState);
+  const syncIdentity = useMutation(api.profile.syncIdentityFromClerk);
 
   const { trades, addTrade, updateTrade, deleteTrade, bulkImportTrades, isLoaded: tradesLoaded } = useTrades();
   const { strategies, addStrategy, updateStrategy, deleteStrategy, isLoaded: strategiesLoaded } = useStrategies();
@@ -91,6 +92,18 @@ function AppContent() {
     if (user) ensureFreeSub().catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  // Sync Clerk identity into the profile so the public /u/[slug] page has
+  // a name + avatar + fallback handle to show.
+  useEffect(() => {
+    if (!user) return;
+    syncIdentity({
+      clerkUsername: user.username ?? undefined,
+      displayName: user.fullName ?? user.firstName ?? user.username ?? undefined,
+      avatarUrl: user.imageUrl ?? undefined,
+    }).catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.username, user?.fullName, user?.imageUrl]);
 
   // Seed / migration logic — runs once after trades are loaded
   useEffect(() => {

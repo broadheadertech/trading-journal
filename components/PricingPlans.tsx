@@ -11,11 +11,15 @@ interface PricingPlansProps {
   onClose: () => void;
 }
 
+type Provider = 'stripe' | 'paymongo';
+
 export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   const plans = useQuery(api.subscriptions.getActivePlans);
   const { planId: currentPlanId, isActive, subscription } = useSubscription();
   const [interval, setInterval] = useState<'month' | 'year'>('month');
+  const [provider, setProvider] = useState<Provider>('stripe');
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!open) return null;
 
@@ -23,17 +27,28 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
   const handleSubscribe = async (plan: Plan) => {
     setLoading(plan.planId);
+    setError(null);
     try {
-      const res = await fetch('/api/paymongo/checkout', {
+      const endpoint = provider === 'stripe' ? '/api/stripe/checkout' : '/api/paymongo/checkout';
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planId: plan.planId, interval }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(typeof data?.error === 'string' ? data.error : 'Checkout failed. Try again.');
+        setLoading(null);
+        return;
+      }
       if (data.url) {
         window.location.href = data.url;
+        return;
       }
-    } catch {
+      setError('Checkout did not return a redirect URL.');
+      setLoading(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Checkout failed.');
       setLoading(null);
     }
   };
@@ -103,7 +118,37 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               <span className="ml-1 text-[10px] opacity-75">Save ~17%</span>
             </button>
           </div>
+
+          {/* Payment provider toggle — Stripe for international cards, PayMongo for PH local methods */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <button
+              onClick={() => setProvider('stripe')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                provider === 'stripe'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              Card (Stripe)
+            </button>
+            <button
+              onClick={() => setProvider('paymongo')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                provider === 'paymongo'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              GCash / GrabPay (PH)
+            </button>
+          </div>
         </div>
+
+        {error && (
+          <div className="mb-4 mx-auto max-w-md text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-center">
+            {error}
+          </div>
+        )}
 
         {!plans ? (
           <div className="flex justify-center py-8">

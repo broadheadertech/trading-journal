@@ -95,6 +95,9 @@ export interface Trade {
   // Whether the user followed their plan
   followedPlan?: boolean | null;
   isOpen: boolean;
+  // Sharing — when 'public', this trade appears on the owner's /u/[slug] profile feed.
+  // Undefined defaults to private so legacy trades stay hidden.
+  visibility?: 'public' | 'private';
   createdAt: string;
 }
 

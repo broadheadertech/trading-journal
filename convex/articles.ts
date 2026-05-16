@@ -61,6 +61,21 @@ export const getById = query({
   },
 });
 
+// Public list of an author's published articles — used by /u/[slug] profile pages.
+export const listPublishedByAuthor = query({
+  args: { authorUserId: v.string(), limit: v.optional(v.number()) },
+  handler: async (ctx, { authorUserId, limit }) => {
+    const docs = await ctx.db
+      .query("articles")
+      .withIndex("by_author", (q) => q.eq("authorUserId", authorUserId))
+      .collect();
+    const published = docs
+      .filter((d) => d.status === "published")
+      .sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt));
+    return limit ? published.slice(0, limit) : published;
+  },
+});
+
 // ─── Tags ───────────────────────────────────────────────────────────
 export const listTags = query({
   handler: async (ctx) => {

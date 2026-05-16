@@ -67,8 +67,8 @@ export async function POST(req: NextRequest) {
               "paymaya",
               "card",
             ],
-            success_url: `${appUrl}/?checkout=success`,
-            cancel_url: `${appUrl}/?checkout=canceled`,
+            success_url: `${appUrl}/checkout/success?provider=paymongo`,
+            cancel_url: `${appUrl}/checkout/canceled`,
             metadata: {
               userId,
               planId: plan.planId,

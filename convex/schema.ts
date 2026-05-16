@@ -89,6 +89,9 @@ export default defineSchema({
     margin: v.optional(v.union(v.null(), v.number())),
     followedPlan: v.optional(v.union(v.null(), v.boolean())),
     isOpen: v.boolean(),
+    // Sharing — when "public" the trade shows on the owner's /u/[slug] profile feed.
+    // Optional + undefined defaults to private so legacy trades stay invisible.
+    visibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
     createdAt: v.string(),
   }).index("by_user", ["userId"]),
 
@@ -292,7 +295,16 @@ export default defineSchema({
     primaryMarket: v.optional(v.string()),
     textOnlyBrain: v.optional(v.boolean()), // Story 9.1 — text-only companion mode (FR43)
     reducedMotion: v.optional(v.boolean()), // Story 9.2 — reduced motion mode (FR44)
-  }).index("by_user", ["userId"]),
+    // Public profile fields — populated on first sync from Clerk and editable from /u/[slug] settings.
+    username: v.optional(v.string()),       // custom slug (e.g. "jaezar"). Falls back to clerkUsername when unset.
+    clerkUsername: v.optional(v.string()),  // synced from Clerk for slug fallback + display
+    displayName: v.optional(v.string()),    // synced from Clerk fullName/firstName
+    avatarUrl: v.optional(v.string()),      // synced from Clerk imageUrl
+    bio: v.optional(v.string()),            // free-text user bio shown on profile
+  })
+    .index("by_user", ["userId"])
+    .index("by_username", ["username"])
+    .index("by_clerk_username", ["clerkUsername"]),
 
   // ─── Admin back-office ─────────────────────────────────────────────
   adminSettings: defineTable({
