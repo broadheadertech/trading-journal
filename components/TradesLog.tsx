@@ -8,7 +8,7 @@ import { useCurrency } from '@/hooks/useCurrency';
 import {
   Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search,
   LayoutGrid, List, Calendar, TrendingUp, TrendingDown, Clock,
-  Eye, EyeOff, Sparkles, Shield, Target, BarChart3, Upload,
+  Eye, EyeOff, Sparkles, Shield, Target, BarChart3, Upload, Globe, Lock,
 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, parseISO, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import Modal from './ui/Modal';
@@ -494,8 +494,27 @@ export default function TradesLog({
                                 ) : (
                                   <span className="text-[10px] text-yellow-400">Pending review</span>
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setDetailTrade(trade); }}
-                                  className="text-[10px] text-[var(--accent)] hover:underline">Open review</button>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const next = trade.visibility === 'public' ? 'private' : 'public';
+                                      onUpdate(trade.id, { visibility: next })
+                                        .then(() => showToast(next === 'public' ? 'Trade is now public — visible on your profile' : 'Trade hidden from your profile', 'success'))
+                                        .catch((err: unknown) => showToast(err instanceof Error ? err.message : 'Failed to update visibility', 'error'));
+                                    }}
+                                    title={trade.visibility === 'public' ? 'Make this trade private' : 'Share this trade on your public profile'}
+                                    className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded transition-colors ${
+                                      trade.visibility === 'public'
+                                        ? 'bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25'
+                                        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                                    }`}
+                                  >
+                                    {trade.visibility === 'public' ? <><Globe size={10} /> Public</> : <><Lock size={10} /> Private</>}
+                                  </button>
+                                  <button onClick={(e) => { e.stopPropagation(); setDetailTrade(trade); }}
+                                    className="text-[10px] text-[var(--accent)] hover:underline">Open review</button>
+                                </div>
                               </div>
                             </div>
                           ))}

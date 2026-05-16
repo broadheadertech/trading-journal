@@ -19,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
   '/use-cases',
   '/privacy',
   '/terms',
+  '/u/(.*)',           // public profile pages
   '/api/stripe/webhook',
 ]);
 

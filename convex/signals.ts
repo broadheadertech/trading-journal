@@ -144,8 +144,9 @@ export const post = mutation({
       }
     }
 
-    // Use worst-case entry for R:R (matches the pip-display convention)
-    const refEntry = isLong ? args.entryHigh : args.entryLow;
+    // Anchor R:R at entryLow regardless of direction — same convention the
+    // client uses to render pip distances, so displayed pips and stored R:R agree.
+    const refEntry = args.entryLow;
     const risk = Math.abs(refEntry - args.stopLoss);
     const reward = Math.abs(args.takeProfits[0] - refEntry);
     const rrRatio = risk > 0 ? reward / risk : 0;
@@ -248,7 +249,7 @@ export const edit = mutation({
       }
     }
 
-    const refEntry = isLong ? args.entryHigh : args.entryLow;
+    const refEntry = args.entryLow;
     const risk = Math.abs(refEntry - args.stopLoss);
     const reward = Math.abs(args.takeProfits[0] - refEntry);
     const rrRatio = risk > 0 ? reward / risk : 0;
@@ -307,11 +308,10 @@ export const updateStatus = mutation({
       patch.closedAt = new Date().toISOString();
 
       if (args.status === "won") {
-        // Compute realized R based on which TP hit
+        // Compute realized R from entryLow — same anchor used at post / edit time.
         const tpIndex = args.tpHit ? args.tpHit - 1 : 0;
         const tp = signal.takeProfits[tpIndex] ?? signal.takeProfits[0];
-        const isLong = signal.direction === "long";
-        const refEntry = isLong ? signal.entryHigh : signal.entryLow;
+        const refEntry = signal.entryLow;
         const risk = Math.abs(refEntry - signal.stopLoss);
         const reward = Math.abs(tp - refEntry);
         patch.actualR = risk > 0 ? reward / risk : 0;

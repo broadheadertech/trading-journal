@@ -27,35 +27,23 @@ export const getUserSubscription = query({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .first();
 
-    // BETA ACCESS — every signed-in registered user is elevated to "core"
-    // (the entry-level paid tier). Remove this block when paid subscriptions
-    // go live; the original admin-only elevation is preserved below.
-    const now = new Date().toISOString();
-    return {
-      userId,
-      stripeCustomerId: existing?.stripeCustomerId ?? "",
-      paymentProvider: existing?.paymentProvider as "stripe" | "paymongo" | undefined,
-      planId: "core",
-      status: "active" as const,
-      createdAt: existing?.createdAt ?? now,
-      updatedAt: now,
-    };
+    // Admin elevation — the admin account always sees the top tier so they can
+    // exercise every feature without a real subscription.
+    const adminId = process.env.ADMIN_USER_ID;
+    if (adminId && userId === adminId) {
+      const now = new Date().toISOString();
+      return {
+        userId,
+        stripeCustomerId: existing?.stripeCustomerId ?? "",
+        paymentProvider: existing?.paymentProvider as "stripe" | "paymongo" | undefined,
+        planId: "elite",
+        status: "active" as const,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+      };
+    }
 
-    // ── Original admin-only elevation (re-enable when going paid) ──
-    // const adminId = process.env.ADMIN_USER_ID;
-    // if (adminId && userId === adminId && (!existing || existing.planId === "free")) {
-    //   const now = new Date().toISOString();
-    //   return {
-    //     userId,
-    //     stripeCustomerId: "",
-    //     paymentProvider: undefined as "stripe" | "paymongo" | undefined,
-    //     planId: "elite",
-    //     status: "active" as const,
-    //     createdAt: existing?.createdAt ?? now,
-    //     updatedAt: now,
-    //   };
-    // }
-    // return existing;
+    return existing;
   },
 });
 

@@ -62,6 +62,7 @@ export const add = mutation({
     margin: v.optional(v.union(v.null(), v.number())),
     followedPlan: v.optional(v.union(v.null(), v.boolean())),
     isOpen: v.boolean(),
+    visibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
     createdAt: v.string(),
   },
   handler: async (ctx, args) => {
@@ -162,6 +163,7 @@ export const bulkImport = mutation({
         margin: v.optional(v.union(v.null(), v.number())),
         followedPlan: v.optional(v.union(v.null(), v.boolean())),
         isOpen: v.boolean(),
+        visibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
         createdAt: v.string(),
       })
     ),
@@ -169,12 +171,9 @@ export const bulkImport = mutation({
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
 
-    // Enforce trade limit
-    const sub = await ctx.db
-      .query("userSubscriptions")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .first();
-    const { maxTrades } = getLimitsForPlan(sub?.planId ?? "free");
+    // Enforce trade limit (use effective plan so paid users get their real cap).
+    const planId = await getEffectivePlanId(ctx, userId);
+    const { maxTrades } = getLimitsForPlan(planId);
     if (maxTrades !== -1) {
       const count = (await ctx.db
         .query("trades")
@@ -213,5 +212,38 @@ export const remove = mutation({
       .filter((q) => q.eq(q.field("id"), id))
       .first();
     if (doc) await ctx.db.delete(doc._id);
+  },
+});
+
+// Toggle a single trade's public/private visibility from the trades log.
+export const setVisibility = mutation({
+  args: {
+    id: v.string(),
+    visibility: v.union(v.literal("public"), v.literal("private")),
+  },
+  handler: async (ctx, { id, visibility }) => {
+    const userId = await requireUser(ctx);
+    const doc = await ctx.db
+      .query("trades")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("id"), id))
+      .first();
+    if (!doc) throw new Error("Trade not found");
+    await ctx.db.patch(doc._id, { visibility });
+  },
+});
+
+// Public feed of a user's published trades — used by /u/[slug] profile pages.
+// No auth required; only returns trades the owner explicitly marked public.
+export const listPublicByUser = query({
+  args: { userId: v.string(), limit: v.optional(v.number()) },
+  handler: async (ctx, { userId, limit }) => {
+    const all = await ctx.db
+      .query("trades")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+    const publicOnly = all.filter((t) => t.visibility === "public");
+    return publicOnly.slice(0, limit ?? 50);
   },
 });

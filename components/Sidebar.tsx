@@ -416,6 +416,15 @@ export default function Sidebar({
               </div>
 
               <SubscriptionBadge />
+              {user?.id && (
+                <Link
+                  href={`/u/${user.username ?? user.id}`}
+                  title="View your public profile"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors text-[var(--foreground)]"
+                >
+                  My profile
+                </Link>
+              )}
               <UserButton afterSignOutUrl="/sign-in" />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

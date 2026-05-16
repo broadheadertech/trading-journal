@@ -29,5 +29,6 @@ export function migrateTrade(t: any): Trade {
     funding: t.funding ?? null,
     margin: t.margin ?? null,
     followedPlan: t.followedPlan ?? null,
+    visibility: t.visibility ?? 'private',
   };
 }
