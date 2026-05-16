@@ -444,7 +444,15 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
 
         <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
           {s.takeProfits.map((tp, i) => {
-            const hit = s.tpHit && i + 1 <= s.tpHit;
+            // Only the specific TP the poster marked as the closing fill gets the
+            // emerald "hit" treatment. Earlier TPs stay neutral — the bullseye now
+            // means "this is where the position closed", not "the market passed here".
+            const hit = s.tpHit === i + 1;
+            // Per-TP R:R — risk anchored at entryLow → SL, reward at this TP. Shown
+            // as "1:N.N" so posters and followers can see how R:R climbs with each TP.
+            const tpRisk = Math.abs(s.entryLow - s.stopLoss);
+            const tpReward = Math.abs(tp - s.entryLow);
+            const tpRR = tpRisk > 0 ? tpReward / tpRisk : 0;
             return (
               <div key={i} className={`flex items-center gap-3 ${hit ? 'text-emerald-300' : ''}`}>
                 <span className={`w-14 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
@@ -458,8 +466,11 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
                     {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
                   </span>
                 )}
+                <span className={`text-[10px] tabular-nums px-1.5 py-0.5 rounded ${hit ? 'bg-emerald-500/25 text-emerald-200 font-bold' : 'text-pink-300/80 bg-pink-500/10'}`}>
+                  1:{tpRR.toFixed(1)}
+                </span>
                 {hit && (
-                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`TP${i + 1} hit`}>
+                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`Closed at TP${i + 1}`}>
                     <Target size={18} className="text-emerald-400" strokeWidth={2.5} />
                   </span>
                 )}
@@ -828,7 +839,12 @@ function PostSignalModal({
             <div className="space-y-1.5">
               {tpInputs.map((v, i) => {
                 const tpNum = parseFloat(v);
-                const showTpPips = showPips && Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
+                const tpValid = Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
+                const showTpPips = showPips && tpValid;
+                // Live per-TP R:R preview — uses entryLow as the anchor to match the card.
+                const tpRisk = tpValid ? Math.abs(entryLowNum - slNum) : 0;
+                const tpReward = tpValid ? Math.abs(tpNum - entryLowNum) : 0;
+                const tpRR = tpValid && tpRisk > 0 ? tpReward / tpRisk : 0;
                 return (
                   <div key={i} className="flex items-center gap-2">
                     <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-10 shrink-0 tabular-nums">TP{i + 1}</span>
@@ -843,6 +859,11 @@ function PostSignalModal({
                     {showTpPips && (
                       <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
                         {fmtPips(market, symbol || 'X', entryRef, tpNum, effectivePip)}
+                      </span>
+                    )}
+                    {tpValid && (
+                      <span className="text-[10px] text-pink-300/90 bg-pink-500/10 tabular-nums px-1.5 py-0.5 rounded w-14 text-center">
+                        1:{tpRR.toFixed(1)}
                       </span>
                     )}
                     <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
