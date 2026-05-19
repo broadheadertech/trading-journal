@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
@@ -13,7 +13,26 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 //
 // PayMongo follows the same flow (?provider=paymongo) — its webhook is what
 // actually flips the row, so the same wait-and-redirect UX works for both.
+
+// Top-level export wraps the body in <Suspense> because useSearchParams()
+// triggers a CSR bailout that Next.js 16 refuses to prerender without one.
 export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<CheckoutSuccessFallback />}>
+      <CheckoutSuccessInner />
+    </Suspense>
+  );
+}
+
+function CheckoutSuccessFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+      <Loader2 size={28} className="text-pink-400 animate-spin" />
+    </div>
+  );
+}
+
+function CheckoutSuccessInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const provider = searchParams.get('provider') === 'paymongo' ? 'paymongo' : 'stripe';
