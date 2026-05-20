@@ -53,26 +53,29 @@ type Signal = {
 const PRO_PLUS = new Set(['core', 'pro', 'elite']);
 
 // ─── Pip / point conversion per market & symbol ───────────────────────
-// Defaults are tuned so the universal rule holds: at lot 0.01, 10 pips = $1.
-// For gold that means the signal-provider convention (1 pip = $0.10, so a $10
-// move = 100 pips) rather than the MT4 raw-tick convention (1 pip = $0.01).
-// Posters can override per-signal in the "Adjust pip / lot size" section.
+// Defaults are tuned so the universal rule holds for every market:
+//   0.01 lot × 10 pips = $1   ⟺   pip_size × contract_size = $10
+// This is a simplified P&L model — JPY pairs use 0.0001 here (not the broker
+// display convention 0.01) because the alternative requires quote-currency
+// conversion. Posters can override pip_size per-signal in "Adjust pip / lot size".
 function defaultPipSize(market: Market, symbol: string): number {
   const sym = symbol.toUpperCase();
-  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.10;     // signal-provider: 0.01 lot × 10 pips = $1
-  if (sym.startsWith('XAG') || sym === 'SILVER') return 0.001;
-  if (market === 'forex') return sym.includes('JPY') ? 0.01 : 0.0001;
-  if (market === 'commodities') return 0.01;
-  if (market === 'stocks') return 0.01;
-  return 1;  // crypto: per-dollar
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 0.10;     // × 100 oz = $10
+  if (sym.startsWith('XAG') || sym === 'SILVER') return 0.002;  // × 5000 oz = $10
+  if (market === 'forex') return 0.0001;                          // × 100k = $10 (JPY & non-JPY)
+  if (market === 'commodities') return 0.01;                      // × 1000 = $10
+  if (market === 'stocks') return 0.01;                           // × 1000 shares = $10
+  return 1;                                                       // crypto: $1 per pip with 10-coin lot
 }
 
 function defaultLotSize(market: Market, symbol: string): number {
   const sym = symbol.toUpperCase();
-  if (sym.startsWith('XAU') || sym === 'GOLD') return 100;       // 100 oz / standard lot
-  if (sym.startsWith('XAG') || sym === 'SILVER') return 5000;    // 5000 oz / standard lot
-  if (market === 'forex') return 100_000;                        // 1 standard lot
-  return 1;
+  if (sym.startsWith('XAU') || sym === 'GOLD') return 100;        // 100 oz / standard lot
+  if (sym.startsWith('XAG') || sym === 'SILVER') return 5000;     // 5000 oz / standard lot
+  if (market === 'forex') return 100_000;                          // 1 standard FX lot
+  if (market === 'commodities') return 1000;
+  if (market === 'stocks') return 1000;                            // 1 lot = 1000 shares
+  return 10;                                                       // crypto: 1 lot = 10 units
 }
 
 function fmtPips(market: Market, symbol: string, from: number, to: number, override?: number): string {

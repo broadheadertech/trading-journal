@@ -384,6 +384,61 @@ h1, h2, h3 {
   .neon-headline, .neon-eyebrow { filter: none; }
 }
 
+/* Confidence / sentiment slider — track is red → amber → emerald only up to the
+   current value (set via the `--fill` custom property on the element). Everything
+   past that is greyed out, so a value of 5/10 colors the left half and the right
+   half reads as "not yet". Used by the trade form's confidence sliders. */
+.confidence-slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  --fill: 50%;
+  /* Top layer: transparent up to --fill, then opaque muted grey beyond — masks
+     the colored gradient below to leave only the "earned" portion visible. */
+  background:
+    linear-gradient(
+      to right,
+      transparent 0%,
+      transparent var(--fill),
+      rgba(255, 255, 255, 0.10) var(--fill),
+      rgba(255, 255, 255, 0.10) 100%
+    ),
+    linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+.confidence-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+.confidence-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+.confidence-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+}
+.confidence-slider:focus-visible::-webkit-slider-thumb,
+.confidence-slider:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 @keyframes aurora-shift {
   0%, 100% { background-position: 0% 50%; }
   50%      { background-position: 100% 50%; }

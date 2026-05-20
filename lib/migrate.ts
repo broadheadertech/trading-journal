@@ -30,5 +30,20 @@ export function migrateTrade(t: any): Trade {
     margin: t.margin ?? null,
     followedPlan: t.followedPlan ?? null,
     visibility: t.visibility ?? 'private',
+    // FX-style logging fields default to undefined so legacy trades render
+    // their existing shape without phantom data appearing.
+    session: t.session,
+    entryType: t.entryType,
+    timeframeAnalysis: t.timeframeAnalysis,
+    timeframeEntry: t.timeframeEntry,
+    bias: t.bias,
+    takeProfit: t.takeProfit ?? null,
+    lotSize: t.lotSize ?? null,
+    amount: t.amount ?? null,
+    targetPips: t.targetPips ?? null,
+    pipGain: t.pipGain ?? null,
+    source: t.source,
+    totalTradesAtEntry: t.totalTradesAtEntry,
+    totalWinAmountAtEntry: t.totalWinAmountAtEntry,
   };
 }
