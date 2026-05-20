@@ -52,6 +52,36 @@
   --loss: #ff4d6a;
   --input-bg: #080e1a;
   --input-border: #152038;
+
+  /* ── Tradia Design System tokens (Aurora) ───────────────────────────
+     Formalized from the design-system handoff. Where the codebase used
+     hex literals scattered through Tailwind arbitrary values, the same
+     colors are now reachable via tokens so future surfaces stay in sync. */
+  --aurora-pink:    #ff2eb3;
+  --aurora-fuchsia: #d946ef;
+  --aurora-cyan:    #22d3ee;
+  --aurora-emerald: #34d399;
+  --cta-orange:     #fb923c;
+  --cta-amber:      #fbbf24;
+  --cta-glow:       rgba(251, 146, 60, 0.6);
+
+  /* Severity (used by Leak Detection lists) */
+  --sev-high: #ff4d6a;
+  --sev-med:  #ffc233;
+  --sev-low:  #5a7194;
+
+  /* Glow signatures — three named treatments + one combined aurora ring.
+     Use over the bare drop-shadow tokens whenever you want elevation on a
+     dark surface; box-shadow alone is nearly invisible by design. */
+  --glow-pink:    0 0 30px -4px rgba(255, 46, 179, 0.50);
+  --glow-orange:  0 0 30px -4px rgba(251, 146, 60, 0.60);
+  --glow-cyan:    0 0 30px -8px rgba(34, 211, 238, 0.35);
+  --glow-emerald: 0 0 30px -8px rgba(52, 211, 153, 0.30);
+  --aurora-ring:
+    0 0 0 1px rgba(255, 46, 179, 0.18),
+    0 0 30px -8px rgba(34, 211, 238, 0.30),
+    0 0 60px -20px rgba(52, 211, 153, 0.25);
+  --shadow-card-lift: 0 20px 40px -20px rgba(255, 46, 179, 0.40);
 }
 
 .light {
@@ -319,6 +349,39 @@ h1, h2, h3 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Neon headline accent — multi-color aurora gradient (pink → fuchsia → cyan → emerald)
+   plus a layered drop-shadow that gives the text a literal glow against the dark bg.
+   Use on h1/h2 highlight spans where the old pink-fuchsia gradient lived. */
+.neon-headline {
+  background: linear-gradient(120deg,
+    var(--aurora-pink) 0%,
+    var(--aurora-fuchsia) 22%,
+    var(--aurora-cyan) 56%,
+    var(--aurora-emerald) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(0 0 12px rgba(34, 211, 238, 0.35))
+    drop-shadow(0 0 28px rgba(255, 46, 179, 0.18));
+}
+
+/* Neon eyebrow — quieter, cyan-emerald tilted so it doesn't compete with the headline.
+   Drop in place of the pink-fuchsia eyebrow gradient. */
+.neon-eyebrow {
+  background: linear-gradient(90deg,
+    var(--aurora-cyan) 0%,
+    var(--aurora-emerald) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-headline, .neon-eyebrow { filter: none; }
 }
 
 @keyframes aurora-shift {

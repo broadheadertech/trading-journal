@@ -29,11 +29,11 @@ export default function ExploreSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
+          <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
             Explore
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Explore <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Tradia</span>
+            Explore <span className="neon-headline">Tradia</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Everything you need to know â€” features, pricing, integrations, and where to go next.

@@ -28,12 +28,12 @@ export default function MidCTA() {
           }} />
 
           <div className="relative">
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
+            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
               Stop Repeating
             </span>
             <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
               Your next trade doesn&apos;t have to{' '}
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">repeat the same mistake</span>
+              <span className="neon-headline">repeat the same mistake</span>
             </h2>
             <p className="mt-4 text-base text-[var(--muted-foreground)] max-w-2xl mx-auto">
               Upload your trades. See the dollar cost of every pattern. Fix the biggest one first.

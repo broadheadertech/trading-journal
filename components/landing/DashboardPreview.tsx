@@ -21,7 +21,7 @@ export default function DashboardPreview() {
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
             <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Your dashboard after</span>{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">one CSV upload</span>
+            <span className="neon-headline">one CSV upload</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Three core dashboards, each one purpose-built to surface what&apos;s draining your account and what&apos;s working.

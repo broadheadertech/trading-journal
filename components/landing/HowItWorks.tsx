@@ -18,12 +18,12 @@ export default function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
+          <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
             How It Works
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
             Three steps to{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">measurable improvement</span>
+            <span className="neon-headline">measurable improvement</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             No spreadsheets. No guesswork. A clear path from raw trade history to a measurably better trader.

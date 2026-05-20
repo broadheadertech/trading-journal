@@ -117,10 +117,10 @@ export default function LandingNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo — neural-brain brand mark + pink-aurora wordmark (legacy marketing variant) */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <Image
-            src="/logo.png"
+            src="/tradia-brain-only.png"
             alt="Tradia"
             width={36}
             height={36}
