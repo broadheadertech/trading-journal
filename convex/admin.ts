@@ -361,3 +361,72 @@ export const getAdminUserSubscription = query({
       .first();
   },
 });
+
+// ─── Manual plan override (admin-only) ───────────────────────────────
+//
+// Manually upgrades or downgrades a target user's plan without going through
+// Stripe. Use this for QA / testing Pro/Elite limits before the webhook is
+// fully wired, or to comp a customer support case. Writes the same shape the
+// Stripe webhook would, so `getEffectivePlanId` and `getUserSubscription`
+// both pick it up immediately on the next query.
+//
+// Run from the Convex dashboard:
+//   Functions → admin:setUserPlan → Run
+//   { "targetUserId": "user_2abc…", "planId": "pro", "status": "active" }
+export const setUserPlan = mutation({
+  args: {
+    targetUserId: v.string(),
+    planId: v.union(
+      v.literal("free"),
+      v.literal("core"),
+      v.literal("pro"),
+      v.literal("elite"),
+    ),
+    status: v.optional(v.union(
+      v.literal("active"),
+      v.literal("trialing"),
+      v.literal("canceled"),
+      v.literal("past_due"),
+      v.literal("unpaid"),
+      v.literal("incomplete"),
+      v.literal("free"),
+    )),
+  },
+  handler: async (ctx, { targetUserId, planId, status }) => {
+    await requireAdmin(ctx);
+
+    const effectiveStatus = status ?? (planId === "free" ? "free" : "active");
+    const now = new Date().toISOString();
+
+    const existing = await ctx.db
+      .query("userSubscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", targetUserId))
+      .first();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        planId,
+        status: effectiveStatus,
+        updatedAt: now,
+      });
+    } else {
+      await ctx.db.insert("userSubscriptions", {
+        userId: targetUserId,
+        stripeCustomerId: "",
+        planId,
+        status: effectiveStatus,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    await ctx.db.insert("adminEvents", {
+      type: "subscription_change",
+      userId: targetUserId,
+      metadata: JSON.stringify({ planId, status: effectiveStatus, source: "admin_manual_override" }),
+      timestamp: now,
+    });
+
+    return { targetUserId, planId, status: effectiveStatus };
+  },
+});

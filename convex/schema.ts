@@ -92,6 +92,22 @@ export default defineSchema({
     // Sharing — when "public" the trade shows on the owner's /u/[slug] profile feed.
     // Optional + undefined defaults to private so legacy trades stay invisible.
     visibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
+    // ── FX-style logging fields (added 2026-05-21) ────────────────────
+    // All optional so legacy trades validate untouched; the new TradeForm
+    // populates them on every new trade.
+    session: v.optional(v.string()),                                // 'asia' | 'london' | 'new-york' | 'overlap' | 'sydney'
+    entryType: v.optional(v.union(v.literal("market"), v.literal("stop"), v.literal("limit"))),
+    timeframeAnalysis: v.optional(v.string()),                       // 'D1' | 'H4' | 'M15' …
+    timeframeEntry: v.optional(v.string()),
+    bias: v.optional(v.union(v.literal("bullish"), v.literal("bearish"), v.literal("neutral"))),
+    takeProfit: v.optional(v.union(v.null(), v.number())),           // price level (NOT $ target)
+    lotSize: v.optional(v.union(v.null(), v.number())),              // position size in lots (e.g. 0.01)
+    amount: v.optional(v.union(v.null(), v.number())),               // $ notional value of the position (legacy; the FX form now stores targetPips instead)
+    targetPips: v.optional(v.union(v.null(), v.number())),           // target pip distance Entry → TP (auto-derived, user-overridable)
+    pipGain: v.optional(v.union(v.null(), v.number())),              // signed pip count once closed
+    source: v.optional(v.string()),                                  // signal provider / origin label
+    totalTradesAtEntry: v.optional(v.number()),                      // cumulative-at-entry snapshot
+    totalWinAmountAtEntry: v.optional(v.number()),                   // cumulative-win-$ snapshot
     createdAt: v.string(),
   }).index("by_user", ["userId"]),
 

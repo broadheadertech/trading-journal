@@ -98,6 +98,21 @@ export interface Trade {
   // Sharing — when 'public', this trade appears on the owner's /u/[slug] profile feed.
   // Undefined defaults to private so legacy trades stay hidden.
   visibility?: 'public' | 'private';
+  // ── FX-style logging fields (added 2026-05-21) ───────────────────────
+  // Populated by the new TradeForm; absent on legacy trades.
+  session?: string;                                                  // 'asia' | 'london' | 'new-york' | 'overlap' | 'sydney'
+  entryType?: 'market' | 'stop' | 'limit';
+  timeframeAnalysis?: string;                                        // 'D1' | 'H4' | 'M15' …
+  timeframeEntry?: string;
+  bias?: 'bullish' | 'bearish' | 'neutral';
+  takeProfit?: number | null;                                        // price level
+  lotSize?: number | null;
+  amount?: number | null;                                            // $ notional (legacy field — the FX form now stores targetPips)
+  targetPips?: number | null;                                        // target pip distance Entry → TP
+  pipGain?: number | null;                                           // signed pip count after close
+  source?: string;                                                   // signal provider / origin label
+  totalTradesAtEntry?: number;                                       // cumulative count snapshot
+  totalWinAmountAtEntry?: number;                                    // cumulative win-$ snapshot
   createdAt: string;
 }
 
