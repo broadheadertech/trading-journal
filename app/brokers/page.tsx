@@ -52,7 +52,7 @@ const FEATURES = [
   {
     icon: CheckCircle2,
     title: 'CSV fallback',
-    body: 'No API? Upload a CSV from any broker â€” Tradia auto-detects the format.',
+    body: 'No API? Upload a CSV from any broker — Tradia auto-detects the format.',
   },
 ];
 
@@ -90,7 +90,7 @@ export default function BrokersPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Crypto, forex, stocks, futures, prop firms â€” Tradia speaks the language of every major broker. Read-only, secure, and instant.
+            Crypto, forex, stocks, futures, prop firms — Tradia speaks the language of every major broker. Read-only, secure, and instant.
           </motion.p>
         </div>
       </section>
@@ -155,7 +155,7 @@ export default function BrokersPage() {
             Don&apos;t see your broker?
           </h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            CSV import works with any broker. We add new native integrations every month â€” request yours.
+            CSV import works with any broker. We add new native integrations every month — request yours.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

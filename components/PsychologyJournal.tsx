@@ -63,7 +63,7 @@ export default function PsychologyJournal({
     return trades.filter(t => !t.isOpen && t.actualPnL !== null);
   }, [trades]);
 
-  // â”€â”€ Core Metrics â”€â”€
+  // ── Core Metrics ──
   const m = useMemo(() => {
     const closed = windowedTrades;
     const sorted = [...closed].sort((a, b) => new Date(a.exitDate ?? a.entryDate).getTime() - new Date(b.exitDate ?? b.entryDate).getTime());
@@ -397,7 +397,7 @@ export default function PsychologyJournal({
         />
       )}
 
-      {/* â”€â”€ Hero â”€â”€ */}
+      {/* ── Hero ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -463,7 +463,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ 4 Stat Cards â”€â”€ */}
+      {/* ── 4 Stat Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         {[
           { label: 'HEALTH SCORE', icon: <Shield size={16} />, desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
@@ -487,7 +487,7 @@ export default function PsychologyJournal({
         ))}
       </div>
 
-      {/* â”€â”€ Behavioral Health Score Gauge + Breakdown â”€â”€ */}
+      {/* ── Behavioral Health Score Gauge + Breakdown ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
           {/* SVG Gauge */}
@@ -552,7 +552,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ Signal Snapshot + Action Queue â”€â”€ */}
+      {/* ── Signal Snapshot + Action Queue ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -620,7 +620,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ Emotional State Flow â”€â”€ */}
+      {/* ── Emotional State Flow ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-1">
           <div>
@@ -700,7 +700,7 @@ export default function PsychologyJournal({
         )}
       </div>
 
-      {/* â”€â”€ Selected Session + State Distribution â”€â”€ */}
+      {/* ── Selected Session + State Distribution ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-4">
         {/* Selected session */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
@@ -790,7 +790,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ Revenge Trade Cascade + Session Heatmap â”€â”€ */}
+      {/* ── Revenge Trade Cascade + Session Heatmap ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Revenge Trade Cascade</h2>
@@ -886,7 +886,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ Discipline Tracker + Cognitive Bias Profile â”€â”€ */}
+      {/* ── Discipline Tracker + Cognitive Bias Profile ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Discipline Tracker</h2>
@@ -963,7 +963,7 @@ export default function PsychologyJournal({
         </div>
       </div>
 
-      {/* â”€â”€ Behavior Edge Context â”€â”€ */}
+      {/* ── Behavior Edge Context ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-1">
           <RefreshCw size={16} className="text-fuchsia-400" />

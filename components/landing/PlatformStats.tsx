@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Database, Zap, BarChart3, Activity, DollarSign } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 const STATS = [
   { icon: BarChart3,  value: '100,800+', label: 'Trades Analyzed',    sub: 'Across every connected account' },
@@ -13,10 +14,8 @@ const STATS = [
 
 export default function PlatformStats() {
   return (
-    <section id="stats" className="relative py-20 sm:py-24 border-t border-[var(--border)]">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-pink-500 opacity-[0.03] rounded-full blur-[140px]" />
-      </div>
+    <section id="stats" className="relative overflow-hidden py-20 sm:py-24 border-t border-[var(--border)]">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -34,7 +33,7 @@ export default function PlatformStats() {
             <span className="neon-headline">the platform</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Brokers integrated, detectors shipped, metrics computed. Live platform numbers â€” not marketing fluff.
+            Brokers integrated, detectors shipped, metrics computed. Live platform numbers — not marketing fluff.
           </p>
         </motion.div>
 

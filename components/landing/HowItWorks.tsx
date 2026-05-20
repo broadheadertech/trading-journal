@@ -2,13 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { Upload, Search, Wrench, FileSpreadsheet, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-20 sm:py-24 border-t border-[var(--border)] bg-[var(--card)]/20">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-pink-500 opacity-[0.04] rounded-full blur-[120px]" />
-      </div>
+    <section id="how-it-works" className="relative overflow-hidden py-20 sm:py-24 border-t border-[var(--border)] bg-[var(--card)]/20">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div

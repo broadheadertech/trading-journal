@@ -62,18 +62,18 @@ export default function TradesLog({
     if (!isAddOpen && onCloseAddModal) onCloseAddModal();
   }, [isAddOpen, onCloseAddModal]);
 
-  /* â”€â”€ Asset-class filter applied across the whole tab â”€â”€ */
+  /* ── Asset-class filter applied across the whole tab ── */
   const tradesScoped = useMemo(() => {
     if (marketFilter === 'all') return trades;
     return trades.filter(t => (t.marketType ?? 'crypto') === marketFilter);
   }, [trades, marketFilter]);
 
-  /* â”€â”€ Closed trades (time filtering handled by universal top-bar filter) â”€â”€ */
+  /* ── Closed trades (time filtering handled by universal top-bar filter) ── */
   const filtered = useMemo(() => {
     return tradesScoped.filter(t => !t.isOpen && t.actualPnL !== null);
   }, [tradesScoped]);
 
-  /* â”€â”€ Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Metrics ──────────────────────────────────────── */
   const metrics = useMemo(() => {
     const total = filtered.length;
     const netPnL = filtered.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
@@ -94,7 +94,7 @@ export default function TradesLog({
     return { total, netPnL, wins: wins.length, losses: losses.length, winRate, avgPnL, reviewCoverage, reviewed, bestTrade, worstTrade, avgR, processHealth };
   }, [filtered]);
 
-  /* â”€â”€ Calendar data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Calendar data ───────────────────────────────── */
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(calendarMonth);
     const monthEnd = endOfMonth(calendarMonth);
@@ -112,7 +112,7 @@ export default function TradesLog({
     });
   }, [calendarMonth, trades]);
 
-  /* â”€â”€ Day-grouped trades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Day-grouped trades ──────────────────────────── */
   const dayGroups = useMemo(() => {
     const groups = new Map<string, Trade[]>();
     const sorted = [...filtered].sort((a, b) => {
@@ -134,7 +134,7 @@ export default function TradesLog({
     });
   }, [filtered]);
 
-  /* â”€â”€ Patterns discovered â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Patterns discovered ─────────────────────────── */
   const patterns = useMemo(() => {
     const result: { name: string; icon: string; net: number; count: number; winRate: number; share: number; color: string }[] = [];
     // Hour-based patterns
@@ -166,7 +166,7 @@ export default function TradesLog({
     return result;
   }, [filtered]);
 
-  /* â”€â”€ CRUD handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── CRUD handlers ───────────────────────────────── */
   // Convex errors arrive with a noisy prefix like
   // "[CONVEX M(trades:add)] [Request ID: …] Server Error\nUncaught Error: …".
   // Show only the human-readable trailing line in the toast.
@@ -202,7 +202,7 @@ export default function TradesLog({
     <div className="relative space-y-6 anim-fade-up">
       <div className="hero-glow" />
 
-      {/* â”€â”€ Hero Section â”€â”€ */}
+      {/* ── Hero Section ── */}
       <div className="glass rounded-2xl p-6">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
           <div>
@@ -231,7 +231,7 @@ export default function TradesLog({
         )}
       </div>
 
-      {/* â”€â”€ Top 4 Stat Cards â”€â”€ */}
+      {/* ── Top 4 Stat Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
           <div className="flex items-center justify-between mb-1">
@@ -267,7 +267,7 @@ export default function TradesLog({
         </div>
       </div>
 
-      {/* â”€â”€ Secondary Stats Row â”€â”€ */}
+      {/* ── Secondary Stats Row ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
           <div className="flex items-center justify-between mb-1">
@@ -309,7 +309,7 @@ export default function TradesLog({
         </div>
       </div>
 
-      {/* â”€â”€ Monthly Calendar â”€â”€ */}
+      {/* ── Monthly Calendar ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -369,7 +369,7 @@ export default function TradesLog({
         </div>
       </div>
 
-      {/* â”€â”€ Trade Journal + Sidebar â”€â”€ */}
+      {/* ── Trade Journal + Sidebar ── */}
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
 
         {/* Main: Trade Journal (3/4) */}
@@ -528,7 +528,7 @@ export default function TradesLog({
           </div>
         </div>
 
-        {/* â”€â”€ Right Sidebar (1/4) â”€â”€ */}
+        {/* ── Right Sidebar (1/4) ── */}
         <div className="space-y-4">
           {/* Review Queue Focus */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
@@ -626,29 +626,29 @@ export default function TradesLog({
         </div>
       </div>
 
-      {/* â”€â”€ Add Trade Modal â”€â”€ */}
+      {/* ── Add Trade Modal ── */}
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="" size="xl">
         <TradeForm strategies={strategies} trades={trades} onSubmit={handleAdd} onCancel={() => setIsAddOpen(false)} onRuleBreak={onRuleBreak} availableBalance={initialCapital} />
       </Modal>
 
-      {/* â”€â”€ Edit Trade Modal â”€â”€ */}
+      {/* ── Edit Trade Modal ── */}
       <Modal isOpen={!!editTrade} onClose={() => setEditTrade(null)} title="" size="xl">
         {editTrade && <TradeForm strategies={strategies} trades={trades} editTrade={editTrade} onSubmit={handleEdit} onCancel={() => setEditTrade(null)} onRuleBreak={onRuleBreak} availableBalance={initialCapital} />}
       </Modal>
 
-      {/* â”€â”€ Trade Detail Modal â”€â”€ */}
+      {/* ── Trade Detail Modal ── */}
       <Modal isOpen={!!detailTrade} onClose={() => setDetailTrade(null)} title={detailTrade?.coin ?? ''} size="xl">
         {detailTrade && <TradeDetailView trade={detailTrade} onEdit={() => { setEditTrade(detailTrade); setDetailTrade(null); }} />}
       </Modal>
 
-      {/* â”€â”€ Import Modal â”€â”€ */}
+      {/* ── Import Modal ── */}
       {onBulkImport && (
         <Modal isOpen={showImport} onClose={() => setShowImport(false)} title="Import Trades" size="lg">
           <TradeImport onImport={async (data) => { const count = await onBulkImport(data); showToast(`${count} trades imported`); setShowImport(false); }} onClose={() => setShowImport(false)} strategies={strategies.map(s => s.name)} />
         </Modal>
       )}
 
-      {/* â”€â”€ Delete Confirmation â”€â”€ */}
+      {/* ── Delete Confirmation ── */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Trade" size="sm">
         <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure? This cannot be undone.</p>
         <div className="flex justify-end gap-3">

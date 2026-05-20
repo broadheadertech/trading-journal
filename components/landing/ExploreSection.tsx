@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowUpRight, Sparkles, Workflow, DollarSign, Plug, Users, MonitorPlay, BookOpen } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 const ITEMS = [
   { icon: Sparkles,    accent: 'from-pink-400 to-fuchsia-400',     title: 'Features',         desc: 'Leak detection, behavior scoring, playbook rules, 50+ metrics.', href: '/#features' },
@@ -16,10 +17,8 @@ const ITEMS = [
 
 export default function ExploreSection() {
   return (
-    <section id="explore" className="relative py-20 sm:py-24 border-t border-[var(--border)]">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 right-1/4 w-[500px] h-[400px] bg-fuchsia-500 opacity-[0.04] rounded-full blur-[140px]" />
-      </div>
+    <section id="explore" className="relative overflow-hidden py-20 sm:py-24 border-t border-[var(--border)]">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -36,7 +35,7 @@ export default function ExploreSection() {
             Explore <span className="neon-headline">Tradia</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Everything you need to know â€” features, pricing, integrations, and where to go next.
+            Everything you need to know — features, pricing, integrations, and where to go next.
           </p>
         </motion.div>
 

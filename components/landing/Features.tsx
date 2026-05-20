@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Search, Activity, BarChart3, Shield, LayoutDashboard, Sparkles } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 const features = [
   {
@@ -32,7 +33,7 @@ const features = [
     icon: LayoutDashboard,
     accent: 'from-violet-400 to-fuchsia-400',
     title: 'Dashboard Overview',
-    description: 'Net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history â€” all updated automatically.',
+    description: 'Net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history — all updated automatically.',
   },
   {
     icon: Sparkles,
@@ -44,10 +45,8 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="relative py-20 sm:py-24 border-t border-[var(--border)] bg-[var(--card)]/20">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-pink-500 opacity-[0.04] rounded-full blur-[140px]" />
-      </div>
+    <section id="features" className="relative overflow-hidden py-20 sm:py-24 border-t border-[var(--border)] bg-[var(--card)]/20">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -67,7 +66,7 @@ export default function Features() {
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Identifies costly patterns ranked by financial impact. Behavioral health scoring,
-            emotional pressure monitoring, and session-by-session discipline tracking â€” all in one platform.
+            emotional pressure monitoring, and session-by-session discipline tracking — all in one platform.
           </p>
         </motion.div>
 

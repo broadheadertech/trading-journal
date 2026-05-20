@@ -16,7 +16,7 @@ interface Props {
   trades: Trade[];
 }
 
-/* â”€â”€ Leak detection engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Leak detection engine ──────────────────────────────── */
 
 interface Leak {
   id: string;
@@ -36,7 +36,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
   const leaks: Leak[] = [];
   const totalPnL = closed.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
 
-  // 1. Loss containment failure â€” trades where loss > 2x average loss
+  // 1. Loss containment failure — trades where loss > 2x average loss
   const losses = closed.filter(t => (t.actualPnL ?? 0) < 0);
   if (losses.length > 0) {
     const avgLoss = losses.reduce((s, t) => s + Math.abs(t.actualPnL ?? 0), 0) / losses.length;
@@ -56,7 +56,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     }
   }
 
-  // 2. Edge fragility map â€” coins with negative expectancy
+  // 2. Edge fragility map — coins with negative expectancy
   const coinMap = new Map<string, Trade[]>();
   closed.forEach(t => { if (!coinMap.has(t.coin)) coinMap.set(t.coin, []); coinMap.get(t.coin)!.push(t); });
   const weakCoins = [...coinMap.entries()].filter(([, ts]) => {
@@ -77,7 +77,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     });
   }
 
-  // 3. Restriction bypass contradiction â€” rule breaks leading to losses
+  // 3. Restriction bypass contradiction — rule breaks leading to losses
   const ruleBreakLosses = closed.filter(t =>
     (t.actualPnL ?? 0) < 0 && t.ruleChecklist.some(r => r.compliance === 'no')
   );
@@ -95,7 +95,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     });
   }
 
-  // 4. Rule fatigue decay â€” high compliance early, low compliance later
+  // 4. Rule fatigue decay — high compliance early, low compliance later
   const sorted = [...closed].sort((a, b) => new Date(a.entryDate).getTime() - new Date(b.entryDate).getTime());
   const half = Math.floor(sorted.length / 2);
   if (half >= 3) {
@@ -121,7 +121,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     }
   }
 
-  // 5. Few large losses dominate â€” top 3 losses = >60% of total losses
+  // 5. Few large losses dominate — top 3 losses = >60% of total losses
   if (losses.length >= 3) {
     const sortedLosses = [...losses].sort((a, b) => (a.actualPnL ?? 0) - (b.actualPnL ?? 0));
     const top3 = sortedLosses.slice(0, 3);
@@ -143,7 +143,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     }
   }
 
-  // 6. Emotional trading drag â€” FOMO/revenge trades with negative PnL
+  // 6. Emotional trading drag — FOMO/revenge trades with negative PnL
   const emotionalLosses = closed.filter(t =>
     (t.actualPnL ?? 0) < 0 && ['FOMO', 'Revenge Trading', 'Greedy'].includes(t.emotion)
   );
@@ -161,7 +161,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
     });
   }
 
-  // 7. Overtrading drain â€” days with >3 trades that net negative
+  // 7. Overtrading drain — days with >3 trades that net negative
   const dayMap = new Map<string, Trade[]>();
   closed.forEach(t => {
     const d = t.exitDate ? t.exitDate.slice(0, 10) : t.entryDate.slice(0, 10);
@@ -186,7 +186,7 @@ function detectLeaks(trades: Trade[]): Leak[] {
   return leaks.sort((a, b) => a.impact - b.impact); // most negative first
 }
 
-/* â”€â”€ Simulation compute â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Simulation compute ──────────────────────────────────── */
 
 function computeMetrics(trades: Trade[]) {
   const closed = trades.filter(t => !t.isOpen && t.actualPnL !== null);
@@ -209,7 +209,7 @@ function computeMetrics(trades: Trade[]) {
   return { totalPnL, winRate, profitFactor, maxDrawdown: maxDd, expectancy: totalPnL / closed.length, avgWin, avgLoss, closedCount: closed.length };
 }
 
-/* â”€â”€ Effort/Confidence badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Effort/Confidence badges ─────────────────────────────── */
 
 function EffortBadge({ effort }: { effort: string }) {
   const colors = effort === 'LOW' ? 'bg-green-500/20 text-green-400' : effort === 'MEDIUM' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400';
@@ -221,7 +221,7 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
   return <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${colors}`}>{confidence} Confidence</span>;
 }
 
-/* â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Main Component ───────────────────────────────────────── */
 
 export default function WhatIfSimulation({ trades }: Props) {
   const { formatCurrency } = useCurrency();
@@ -307,7 +307,7 @@ export default function WhatIfSimulation({ trades }: Props) {
     <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6 anim-fade-up">
       <div className="hero-glow" />
 
-      {/* â”€â”€ Hero Card â”€â”€ */}
+      {/* ── Hero Card ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-0">
           <div className="p-6 sm:p-8">
@@ -359,10 +359,10 @@ export default function WhatIfSimulation({ trades }: Props) {
         </div>
       </div>
 
-      {/* â”€â”€ Main 2-Column Layout â”€â”€ */}
+      {/* ── Main 2-Column Layout ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-6">
 
-        {/* â”€â”€ Scenario Composer (Left) â”€â”€ */}
+        {/* ── Scenario Composer (Left) ── */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
@@ -442,7 +442,7 @@ export default function WhatIfSimulation({ trades }: Props) {
           </div>
         </div>
 
-        {/* â”€â”€ Simulation Engine (Right) â”€â”€ */}
+        {/* ── Simulation Engine (Right) ── */}
         <div className="space-y-6">
           {/* Engine header + chart */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
@@ -589,7 +589,7 @@ export default function WhatIfSimulation({ trades }: Props) {
         </div>
       </div>
 
-      {/* â”€â”€ Quick Scenario Cards â”€â”€ */}
+      {/* ── Quick Scenario Cards ── */}
       {leaks.length > 0 && (
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">Quick Scenario Cards</p>
@@ -613,7 +613,7 @@ export default function WhatIfSimulation({ trades }: Props) {
         </div>
       )}
 
-      {/* â”€â”€ Simulation Notes â”€â”€ */}
+      {/* ── Simulation Notes ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl">
         <button onClick={() => setShowNotes(!showNotes)} className="w-full flex items-center justify-between p-5">
           <div className="flex items-center gap-2">

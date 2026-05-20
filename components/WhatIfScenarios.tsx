@@ -129,7 +129,7 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold">What-If Scenarios</h2>
-        <p className="text-sm text-[var(--muted-foreground)]">AI trade assistant â€” analyze planned trades before execution</p>
+        <p className="text-sm text-[var(--muted-foreground)]">AI trade assistant — analyze planned trades before execution</p>
       </div>
 
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-5">

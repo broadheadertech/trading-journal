@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Check, ArrowRight, Zap, Users, Star, Target } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 type Plan = {
   _id: string;
@@ -40,10 +41,8 @@ export default function Pricing() {
   const sortedPlans = (plans ?? []).slice().sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <section id="pricing" className="relative py-20 sm:py-24">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-pink-500 opacity-[0.04] rounded-full blur-[140px]" />
-      </div>
+    <section id="pricing" className="relative overflow-hidden py-20 sm:py-24">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
