@@ -36,7 +36,7 @@ export default function Hero() {
               transition={{ duration: 0.4 }}
               className="inline-flex items-center gap-2 mb-4"
             >
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(244,114,182,0.6)]">
+              <span className="neon-eyebrow text-[10px] font-bold tracking-[0.2em] uppercase">
                 Behavioral Analytics for Active Traders
               </span>
             </motion.div>
@@ -149,7 +149,7 @@ function TradiaDashboardMock() {
         {/* Sidebar */}
         <div className="border-r border-[var(--border)] bg-black/20 p-2 space-y-0.5">
           <div className="flex items-center gap-1.5 px-2 py-1 mb-2">
-            <Image src="/logo.png" alt="Tradia" width={20} height={20} className="w-5 h-5 object-contain" />
+            <Image src="/tradia-brain-only.png" alt="Tradia" width={20} height={20} className="w-5 h-5 object-contain" />
             <span className="font-brand text-[11px] font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
           </div>
           {tabs.map(t => (
@@ -189,7 +189,7 @@ function TradiaDashboardMock() {
           <div className="grid grid-cols-3 gap-1.5">
             {[
               { l: 'Total P&L',     v: '+$4,230', sub: '+18.3%',    valColor: 'text-emerald-300', borderColor: 'border-emerald-500/30', bgColor: 'bg-emerald-500/5' },
-              { l: 'Win Rate',      v: '67%',     sub: '52W / 26L', valColor: 'text-pink-300',    borderColor: 'border-pink-500/30',    bgColor: 'bg-pink-500/5' },
+              { l: 'Win Rate',      v: '93%',     sub: '70W / 5L',  valColor: 'text-pink-300',    borderColor: 'border-pink-500/30',    bgColor: 'bg-pink-500/5' },
               { l: 'Profit Factor', v: '2.14',    sub: 'Gross 2.4x', valColor: 'text-amber-300',  borderColor: 'border-amber-500/30',   bgColor: 'bg-amber-500/5' },
             ].map(s => (
               <div key={s.l} className={`rounded-md border ${s.borderColor} ${s.bgColor} p-1.5`}>

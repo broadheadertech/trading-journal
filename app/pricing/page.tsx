@@ -73,10 +73,10 @@ export default function PricingPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">Compare</span>
+            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">Compare</span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
               What&apos;s included on{' '}
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">each tier</span>
+              <span className="neon-headline">each tier</span>
             </h2>
           </motion.div>
 
@@ -99,7 +99,7 @@ export default function PricingPage() {
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
               From signup to{' '}
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">measurable improvement</span>
+              <span className="neon-headline">measurable improvement</span>
             </h2>
             <p className="mt-3 text-[var(--muted-foreground)] max-w-xl mx-auto">
               The fastest path from &quot;I just signed up&quot; to &quot;I know exactly what&apos;s costing me money.&quot;
@@ -141,7 +141,7 @@ export default function PricingPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">FAQ</span>
+            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">FAQ</span>
             <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Pricing questions</h2>
           </motion.div>
           <div className="space-y-3">
@@ -162,7 +162,7 @@ export default function PricingPage() {
           >
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
               14-day free trial on{' '}
-              <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">every plan</span>
+              <span className="neon-headline">every plan</span>
             </h2>
             <ul className="mt-6 space-y-2 max-w-md mx-auto text-left">
               {['No credit card required', 'Full Pro access for 14 days', 'Cancel anytime — one click'].map(item => (

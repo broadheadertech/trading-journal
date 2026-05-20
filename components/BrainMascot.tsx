@@ -19,7 +19,7 @@ export default function BrainMascot({ size = 32, glow = false, beat = false, cla
         />
       )}
       <Image
-        src="/logo.png"
+        src="/tradia-brain-only.png"
         alt="Tradia"
         width={size}
         height={size}

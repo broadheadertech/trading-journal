@@ -76,6 +76,9 @@ export const seedPlans = mutation({
         tagline: "For beginner to intermediate solo traders",
         priceMonthly: 29,
         priceYearly: 290,
+        stripePriceIdMonthly: "price_1TYLOzGwHwvTu3Zmj1YQFXkg",
+        stripePriceIdYearly:  "price_1TYLYzGwHwvTu3ZmRVuOrcop",
+        stripeProductId:      "prod_UXQF5kZbz7ZPJa",
         features: [
           "Unlimited trade journaling",
           "Basic performance analytics (PnL, win rate, equity curve)",
@@ -97,6 +100,9 @@ export const seedPlans = mutation({
         tagline: "For serious traders leveling up performance",
         priceMonthly: 39,
         priceYearly: 390,
+        stripePriceIdMonthly: "price_1TYLPCGwHwvTu3ZmqG4wgnCa",
+        stripePriceIdYearly:  "price_1TYLXoGwHwvTu3ZmUc2RFe95",
+        stripeProductId:      "prod_UXQFYZ5CrL3ufx",
         features: [
           "Everything in Core",
           "Advanced analytics (50+ metrics)",
@@ -120,6 +126,9 @@ export const seedPlans = mutation({
         tagline: "For mentors, funded traders, and trading communities",
         priceMonthly: 59,
         priceYearly: 590,
+        stripePriceIdMonthly: "price_1TYLPZGwHwvTu3ZmevkmMAx7",
+        stripePriceIdYearly:  "price_1TYLUyGwHwvTu3ZmpGpI4phA",
+        stripeProductId:      "prod_UXQGwBHHKmzvOe",
         features: [
           "Everything in Pro",
           "Team / student management system",

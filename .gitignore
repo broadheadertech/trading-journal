@@ -40,6 +40,9 @@ yarn-error.log*
 # claude
 /.claude/
 
+# design system handoff (reference reading only; assets already copied to /public)
+/.design-pkg/
+
 # vercel
 .vercel
 

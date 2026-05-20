@@ -70,7 +70,7 @@ export default function DemoPage() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--foreground)] tracking-tight"
           >
             This is what your{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">dashboard looks like</span>
+            <span className="neon-headline">dashboard looks like</span>
           </motion.h1>
 
           <motion.p
@@ -141,7 +141,7 @@ export default function DemoPage() {
             className="rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-500/5 to-fuchsia-500/5 p-10 sm:p-14 text-center"
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] tracking-tight">
-              Ready to see your <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">own numbers?</span>
+              Ready to see your <span className="neon-headline">own numbers?</span>
             </h2>
             <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
               Upload your first CSV and get your real dashboard — with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.

@@ -15,7 +15,7 @@ export default function SignUpPage() {
       {!proceeded ? (
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-8">
-            <Image src="/logo.png" alt="Tradia" width={56} height={56} className="mb-4" />
+            <Image src="/tradia-brain-only.png" alt="Tradia" width={56} height={56} className="mb-4" />
             <h1 className="text-2xl font-bold text-[var(--foreground)]">Create your Tradia account</h1>
             <p className="text-sm text-[var(--muted-foreground)] mt-2 text-center">
               Before you get started, please review and accept our policies.

@@ -68,7 +68,7 @@ export default function BlogPage() {
             transition={{ duration: 0.4 }}
             className="inline-flex items-center gap-2 mb-4"
           >
-            <span className="text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
+            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
               Trading Blog
             </span>
           </motion.div>
@@ -79,7 +79,7 @@ export default function BlogPage() {
             className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight"
           >
             Real research on{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">trading psychology</span>
+            <span className="neon-headline">trading psychology</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
