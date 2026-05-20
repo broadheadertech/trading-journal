@@ -73,7 +73,7 @@ export default function Footer() {
                   <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
                 </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                  Find the trading mistakes costing you thousands â€” and prove you fixed them.
+                  Find the trading mistakes costing you thousands — and prove you fixed them.
                 </p>
               </div>
               <NewsletterSignup />

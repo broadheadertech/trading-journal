@@ -34,7 +34,7 @@ export default function PlatformStats() {
             <span className="neon-headline">the platform</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Brokers integrated, detectors shipped, metrics computed. Live platform numbers â€” not marketing fluff.
+            Brokers integrated, detectors shipped, metrics computed. Live platform numbers — not marketing fluff.
           </p>
         </motion.div>
 

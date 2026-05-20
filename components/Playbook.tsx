@@ -19,7 +19,7 @@ import UsageBar from './UsageBar';
 import { useUsage } from '@/hooks/useUsage';
 import { format, parseISO, startOfWeek } from 'date-fns';
 
-/* â”€â”€ Sub-section nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Sub-section nav ─────────────────────────────────────────────── */
 type SubSection = 'Active Rule Sets' | 'Playbook Library' | 'Rules Library' | 'Weekly Focus' | 'Impact';
 const SUB_SECTIONS: { key: SubSection; label: string; desc: string }[] = [
   { key: 'Active Rule Sets', label: 'Active Rule Sets', desc: 'Live setup' },
@@ -29,11 +29,11 @@ const SUB_SECTIONS: { key: SubSection; label: string; desc: string }[] = [
   { key: 'Impact', label: 'Impact', desc: 'PnL + compliance' },
 ];
 
-/* â”€â”€ Rule category types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Rule category types ─────────────────────────────────────────── */
 type RuleCategory = 'All' | 'Risk' | 'Time' | 'Behavior';
 const RULE_CATEGORIES: RuleCategory[] = ['All', 'Risk', 'Time', 'Behavior'];
 
-/* â”€â”€ Rule Composer types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Rule Composer types ──────────────────────────────────────────── */
 type RuleComposerCategory = 'Behavior' | 'Discipline' | 'Performance';
 type RuleComposerStep = 1 | 2 | 3;
 const RULE_TYPES: Record<RuleComposerCategory, string[]> = {
@@ -42,7 +42,7 @@ const RULE_TYPES: Record<RuleComposerCategory, string[]> = {
   Performance: ['Minimum Win Rate', 'Target R-Multiple', 'Weekly PnL Goal', 'Drawdown Recovery', 'Streak Protection', 'Edge Validation'],
 };
 
-/* â”€â”€ Activation priority â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Activation priority ──────────────────────────────────────────── */
 type ActivationPriority = 'High' | 'Medium' | 'Low';
 
 interface PlaybookProps {
@@ -80,7 +80,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [ruleFilter, setRuleFilter] = useState<RuleCategory>('All');
 
-  // â”€â”€ Rule Composer modal state â”€â”€
+  // ── Rule Composer modal state ──
   const [ruleComposerOpen, setRuleComposerOpen] = useState(false);
   const [rcStep, setRcStep] = useState<RuleComposerStep>(1);
   const [rcCategory, setRcCategory] = useState<RuleComposerCategory>('Behavior');
@@ -88,7 +88,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   const [rcCustomRule, setRcCustomRule] = useState('');
   const [rcDescription, setRcDescription] = useState('');
 
-  // â”€â”€ Rule Set Template Composer modal state â”€â”€
+  // ── Rule Set Template Composer modal state ──
   const [ruleSetComposerOpen, setRuleSetComposerOpen] = useState(false);
   const [rsStep, setRsStep] = useState<1 | 2>(1);
   const [rsName, setRsName] = useState('');
@@ -96,7 +96,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   const [rsSelectedRules, setRsSelectedRules] = useState<string[]>([]);
   const [rsSearch, setRsSearch] = useState('');
 
-  // â”€â”€ Strategy Template Composer modal state â”€â”€
+  // ── Strategy Template Composer modal state ──
   const [stratComposerOpen, setStratComposerOpen] = useState(false);
   const [scStep, setScStep] = useState<1 | 2>(1);
   const [scName, setScName] = useState('');
@@ -105,17 +105,17 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   const [scSteps, setScSteps] = useState<string[]>([]);
   const [scStepInput, setScStepInput] = useState('');
 
-  // â”€â”€ Activation Mixer modal state â”€â”€
+  // ── Activation Mixer modal state ──
   const [activationMixerOpen, setActivationMixerOpen] = useState(false);
   const [amSearch, setAmSearch] = useState('');
   const [amSelected, setAmSelected] = useState<string[]>([]);
   const [amPriority, setAmPriority] = useState<ActivationPriority>('Medium');
   const [amItemPriorities, setAmItemPriorities] = useState<Record<string, 'P1' | 'P2' | 'P3'>>({});
 
-  // â”€â”€ Active Ruleset Details modal state â”€â”€
+  // ── Active Ruleset Details modal state ──
   const [detailsStrategyId, setDetailsStrategyId] = useState<string | null>(null);
 
-  // â”€â”€ Activation tracking â€” which strategies are "live" vs just saved â”€â”€
+  // ── Activation tracking — which strategies are "live" vs just saved ──
   const [activatedIds, setActivatedIds] = useState<Set<string>>(() => new Set(strategies.map(s => s.id)));
 
   // Section refs for scroll
@@ -137,12 +137,12 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     sectionRefs[s].current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  /* â”€â”€ Closed trades (time filtering handled by universal top-bar filter) â”€â”€ */
+  /* ── Closed trades (time filtering handled by universal top-bar filter) ── */
   const filtered = useMemo(() => {
     return trades.filter(t => !t.isOpen && t.actualPnL !== null);
   }, [trades]);
 
-  /* â”€â”€ Metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Metrics ───────────────────────────────────────────────────── */
   const metrics = useMemo(() => {
     const total = filtered.length;
     const netPnL = filtered.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
@@ -296,7 +296,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     };
   }, [filtered, strategies]);
 
-  /* â”€â”€ Strategy CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Strategy CRUD ─────────────────────────────────────────────── */
   const openAdd = () => { setForm(emptyStrategy); setEditingId(null); setIsModalOpen(true); };
   const openEdit = (strategy: Strategy) => {
     setForm({
@@ -321,14 +321,14 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   const updateListItem = (field: 'rules' | 'entryChecklist' | 'exitChecklist', index: number, value: string) => setForm(prev => ({ ...prev, [field]: prev[field].map((item, i) => (i === index ? value : item)) }));
   const removeListItem = (field: 'rules' | 'entryChecklist' | 'exitChecklist', index: number) => setForm(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== index) }));
 
-  // â”€â”€ All rules from all strategies (for pickers) â”€â”€
+  // ── All rules from all strategies (for pickers) ──
   const allRuleStrings = useMemo(() => {
     const set = new Set<string>();
     strategies.forEach(s => s.rules.forEach(r => { if (r.trim()) set.add(r); }));
     return [...set];
   }, [strategies]);
 
-  // â”€â”€ Rule Composer handlers â”€â”€
+  // ── Rule Composer handlers ──
   const openRuleComposer = () => { setRcStep(1); setRcCategory('Behavior'); setRcRuleType(''); setRcCustomRule(''); setRcDescription(''); setRuleComposerOpen(true); };
   const saveRule = () => {
     const ruleName = rcCustomRule.trim() || rcRuleType;
@@ -345,7 +345,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     setRuleComposerOpen(false);
   };
 
-  // â”€â”€ Rule Set Composer handlers â”€â”€
+  // ── Rule Set Composer handlers ──
   const openRuleSetComposer = () => { setRsStep(1); setRsName(''); setRsDescription(''); setRsSelectedRules([]); setRsSearch(''); setRuleSetComposerOpen(true); };
   const saveRuleSet = () => {
     if (!rsName.trim() || rsSelectedRules.length === 0) return;
@@ -354,7 +354,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     setRuleSetComposerOpen(false);
   };
 
-  // â”€â”€ Strategy Composer handlers â”€â”€
+  // ── Strategy Composer handlers ──
   const openStratComposer = () => { setScStep(1); setScName(''); setScDescription(''); setScType('swing'); setScSteps([]); setScStepInput(''); setStratComposerOpen(true); };
   const saveStratComposer = () => {
     if (!scName.trim()) return;
@@ -368,7 +368,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     setScStepInput('');
   };
 
-  // â”€â”€ Activation Mixer handlers â”€â”€
+  // ── Activation Mixer handlers ──
   const openActivationMixer = () => { setAmSearch(''); setAmSelected([]); setAmPriority('Medium'); setAmItemPriorities({}); setActivationMixerOpen(true); };
   const handleActivate = () => {
     if (amSelected.length === 0) return;
@@ -406,7 +406,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     </div>
   );
 
-  /* â”€â”€ Filtered rules by category â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Filtered rules by category ────────────────────────────────── */
   const filteredRules = useMemo(() => {
     return metrics.ruleHealth.filter(r => {
       if (ruleFilter === 'All') return true;
@@ -418,7 +418,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     });
   }, [metrics.ruleHealth, ruleFilter]);
 
-  /* â”€â”€ Behavior target compliance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Behavior target compliance ────────────────────────────────── */
   const behaviorTargets = useMemo(() => {
     const riskRules = metrics.ruleHealth.filter(r => r.rule.toLowerCase().match(/risk|loss|position|stop/));
     const timeRules = metrics.ruleHealth.filter(r => r.rule.toLowerCase().match(/time|session|hour|day/));
@@ -444,7 +444,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     <div className="relative space-y-6 anim-fade-up">
       <div className="hero-glow" />
 
-      {/* â”€â”€ Hero Section â”€â”€ */}
+      {/* ── Hero Section ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
           <div>
@@ -486,7 +486,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         )}
       </div>
 
-      {/* â”€â”€ 4 Stat Cards â”€â”€ */}
+      {/* ── 4 Stat Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Rules Active</p>
@@ -518,7 +518,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         </div>
       </div>
 
-      {/* â”€â”€ How to Run + Advices â”€â”€ */}
+      {/* ── How to Run + Advices ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--accent)]/30 rounded-xl p-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
@@ -546,7 +546,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         </div>
       </div>
 
-      {/* â”€â”€ Sub-section Navigation â”€â”€ */}
+      {/* ── Sub-section Navigation ── */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {SUB_SECTIONS.map(s => (
           <button key={s.key} onClick={() => scrollToSection(s.key)}
@@ -565,7 +565,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       {/* â•â•â•â•â•â•â•â•â•â• MAIN CONTENT + SIDEBAR â•â•â•â•â•â•â•â•â•â• */}
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
 
-        {/* â”€â”€ Main content (3 cols) â”€â”€ */}
+        {/* ── Main content (3 cols) ── */}
         <div className="xl:col-span-3 space-y-6">
 
           {/* â•â•â•â•â•â•â•â•â•â• ACTIVE RULE SETS â•â•â•â•â•â•â•â•â•â• */}
@@ -698,7 +698,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           Observed ledger: {sTrades.length} events &middot; PnL: {formatCurrency(ss?.pnl ?? 0)} &middot; Risk {formatCurrency(estLeak)} &middot; Confidence {compliancePct}%
                         </div>
 
-                        {/* â”€â”€ LIVE PROGRESS â”€â”€ */}
+                        {/* ── LIVE PROGRESS ── */}
                         <div className="bg-[var(--card)] rounded-lg p-3 mb-3">
                           <div className="flex items-center justify-between mb-2">
                             <p className="text-sm font-bold">Live Progress</p>
@@ -736,7 +736,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           </div>
                         </div>
 
-                        {/* â”€â”€ Per-rule breakdown â”€â”€ */}
+                        {/* ── Per-rule breakdown ── */}
                         {ruleBreakdown.length > 0 && (
                           <div className="space-y-1.5">
                             {ruleBreakdown.map((rb, i) => {
@@ -973,7 +973,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <p className="text-sm font-bold mb-1">Top Rule to Watch</p>
                   <p className="text-xs text-[var(--muted-foreground)]">
                     {metrics.ruleHealth.length > 0
-                      ? `Focus on "${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].rule}" â€” lowest compliance at ${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].compliance}%`
+                      ? `Focus on "${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].rule}" — lowest compliance at ${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].compliance}%`
                       : 'No rules tracked yet.'}
                   </p>
                 </div>
@@ -1035,7 +1035,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Best Week</p>
                     <div className="p-1 rounded bg-green-500/10"><CheckCircle2 size={12} className="text-green-400" /></div>
                   </div>
-                  <p className="text-xl font-bold">{metrics.bestWeek ? metrics.bestWeek[0] : 'â€”'}</p>
+                  <p className="text-xl font-bold">{metrics.bestWeek ? metrics.bestWeek[0] : '—'}</p>
                 </div>
               </div>
 
@@ -1089,7 +1089,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
         </div>
 
-        {/* â”€â”€ Right Sidebar â”€â”€ */}
+        {/* ── Right Sidebar ── */}
         <div className="space-y-4">
 
           {/* Execution Checklist */}
@@ -1207,7 +1207,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         </div>
       </div>
 
-      {/* â”€â”€ Strategy Form Modal â”€â”€ */}
+      {/* ── Strategy Form Modal ── */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Edit Strategy' : 'Create Rule Set Template'} size="lg">
         <div className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1407,7 +1407,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       </Modal>
 
       {/* â•â•â•â•â•â•â•â•â•â• RULE SET TEMPLATE COMPOSER â•â•â•â•â•â•â•â•â•â• */}
-      <Modal isOpen={ruleSetComposerOpen} onClose={() => setRuleSetComposerOpen(false)} title="Template Composer â€” Rule Set" size="xl">
+      <Modal isOpen={ruleSetComposerOpen} onClose={() => setRuleSetComposerOpen(false)} title="Template Composer — Rule Set" size="xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main area (2/3) */}
           <div className="lg:col-span-2 space-y-5">

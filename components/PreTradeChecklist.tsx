@@ -262,7 +262,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
   return (
     <div className="relative space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto anim-fade-up">
       <div className="hero-glow" />
-      {/* â”€â”€ Hero â”€â”€ */}
+      {/* ── Hero ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -303,7 +303,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* â”€â”€ 4 Stat Cards â”€â”€ */}
+      {/* ── 4 Stat Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
           <div className="flex items-center justify-between mb-2">
@@ -339,7 +339,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* â”€â”€ Regime Navigator â”€â”€ */}
+      {/* ── Regime Navigator ── */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
         <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Regime Navigator</h2>
         <p className="text-xs text-[var(--muted-foreground)] mb-4">Click a regime to inspect isolated performance and context fit.</p>
@@ -439,7 +439,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* â”€â”€ Session Compatibility + Volatility Pressure â”€â”€ */}
+      {/* ── Session Compatibility + Volatility Pressure ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">
@@ -498,7 +498,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* â”€â”€ Context Correlations + Action Blueprint â”€â”€ */}
+      {/* ── Context Correlations + Action Blueprint ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">
@@ -550,7 +550,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
       </div>
 
-      {/* â”€â”€ Weekday Bias Map + High-Impact Days â”€â”€ */}
+      {/* ── Weekday Bias Map + High-Impact Days ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
           <div className="flex items-center justify-between mb-1">

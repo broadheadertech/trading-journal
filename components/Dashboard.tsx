@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types ─────────────────────────────────────────────────────────────────────
 interface DashboardProps {
   trades: Trade[];
   strategies: Strategy[];
@@ -35,7 +35,7 @@ interface DashboardProps {
   onSetDailyGoal?: (args: { dailyLossLimit?: number; dailyProfitTarget?: number; goalMode?: 'daily' | 'session' }) => void;
 }
 
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Component ─────────────────────────────────────────────────────────────────
 export default function Dashboard({
   trades, strategies, onAddTrade, onNavigate,
   initialCapital = 0, dailyLossLimit, dailyProfitTarget,
@@ -46,7 +46,7 @@ export default function Dashboard({
   // Trades are already filtered by the universal top-bar time range
   const windowedTrades = trades;
 
-  // â”€â”€â”€ All computed metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── All computed metrics ───────────────────────────────────────────────────
   const metrics = useMemo(() => {
     const all = windowedTrades;
     const closed = all.filter(t => !t.isOpen && t.actualPnL !== null);
@@ -182,7 +182,7 @@ export default function Dashboard({
     const top3Profit = greenDays.slice(0, 3).reduce((s, [, v]) => s + v, 0);
     const edgeConcentration = grossProfit > 0 ? Math.round((top3Profit / grossProfit) * 100) : null;
 
-    // Next Best Actions â€” leak analysis
+    // Next Best Actions — leak analysis
     const leaks: { title: string; description: string; amount: number; severity: 'high' | 'medium' | 'low' }[] = [];
     // Leak 1: Worst coin
     if (biggestLeaks.length > 0) {
@@ -246,7 +246,7 @@ export default function Dashboard({
     };
   }, [windowedTrades, initialCapital]);
 
-  // â”€â”€â”€ Equity curve data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Equity curve data ──────────────────────────────────────────────────────
   const equityData = useMemo(() => {
     const data = getEquityCurveData(windowedTrades);
     if (equityMode === 'drawdown') {
@@ -259,10 +259,10 @@ export default function Dashboard({
     return data;
   }, [windowedTrades, equityMode]);
 
-  // â”€â”€â”€ Streak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Streak ────────────────────────────────────────────────────────────────
   const streak = useMemo(() => getCurrentStreak(windowedTrades), [windowedTrades]);
 
-  // â”€â”€â”€ Recent trades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Recent trades ─────────────────────────────────────────────────────────
   const recentTrades = useMemo(() => {
     return [...windowedTrades]
       .filter(t => !t.isOpen && t.actualPnL !== null)
@@ -270,7 +270,7 @@ export default function Dashboard({
       .slice(0, 5);
   }, [windowedTrades]);
 
-  // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Helpers ────────────────────────────────────────────────────────────────
   const fmtPnl = (v: number) => {
     const s = formatCurrency(Math.abs(v));
     return v < 0 ? `-${s}` : s;
@@ -288,11 +288,11 @@ export default function Dashboard({
     return `bg-red-500/${Math.round(20 + intensity * 60)}`;
   };
 
-  // â”€â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="relative space-y-4 anim-fade-up">
       <div className="hero-glow" />
-      {/* â”€â”€ Hero Card + Execution Score â”€â”€ */}
+      {/* ── Hero Card + Execution Score ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-4">
         <div className={`rounded-2xl p-5 sm:p-6 ${isPositive
           ? 'bg-gradient-to-br from-emerald-900/60 via-emerald-800/40 to-pink-900/30 border border-emerald-700/30'
@@ -382,7 +382,7 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* â”€â”€ Summary Stat Cards â”€â”€ */}
+      {/* ── Summary Stat Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Net P&L', icon: <TrendingUp size={18} />, value: fmtPnl(metrics.totalPnL), color: pnlColor(metrics.totalPnL), borderColor: 'border-t-red-500' },
@@ -400,7 +400,7 @@ export default function Dashboard({
         ))}
       </div>
 
-      {/* â”€â”€ Main Content: Left (Charts) + Right (Sidebar Cards) â”€â”€ */}
+      {/* ── Main Content: Left (Charts) + Right (Sidebar Cards) ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
         {/* Left column */}
         <div className="space-y-4">
@@ -667,7 +667,7 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* â”€â”€ Right Sidebar Cards â”€â”€ */}
+        {/* ── Right Sidebar Cards ── */}
         <div className="space-y-4">
           {/* Top vs Worst Symbols */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">

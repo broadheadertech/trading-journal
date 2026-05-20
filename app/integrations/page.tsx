@@ -29,7 +29,7 @@ const FEATURES = [
   {
     icon: Zap,
     title: 'Live API sync',
-    body: 'Five direct connectors stream trades into Tradia within seconds of close. Read-only keys only â€” no withdrawal, no execution.',
+    body: 'Five direct connectors stream trades into Tradia within seconds of close. Read-only keys only — no withdrawal, no execution.',
   },
   {
     icon: FileSpreadsheet,
@@ -39,7 +39,7 @@ const FEATURES = [
   {
     icon: Globe2,
     title: 'Cross-market normalization',
-    body: 'Every trade â€” crypto, forex, stocks, options â€” lands in the same unified schema. Run analytics across portfolios, not silos.',
+    body: 'Every trade — crypto, forex, stocks, options — lands in the same unified schema. Run analytics across portfolios, not silos.',
   },
   {
     icon: ShieldCheck,
@@ -81,7 +81,7 @@ export default function IntegrationsPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Five live API connectors plus 67+ broker CSV/XLSX formats â€” auto-detected and normalized into a single trade structure.
+            Five live API connectors plus 67+ broker CSV/XLSX formats — auto-detected and normalized into a single trade structure.
           </motion.p>
         </div>
       </section>

@@ -161,7 +161,7 @@ export default function Navigation({
             </button>
             <SubscriptionBadge />
             <UserButton afterSignOutUrl="/sign-in" />
-            {/* Menu button â€” visible on mobile only (desktop uses bottom bar for all tabs) */}
+            {/* Menu button — visible on mobile only (desktop uses bottom bar for all tabs) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors"
@@ -172,7 +172,7 @@ export default function Navigation({
         </div>
       </header>
 
-      {/* Desktop tab bar â€” below header */}
+      {/* Desktop tab bar — below header */}
       <nav className="hidden md:block shrink-0 border-b border-[var(--border)] bg-[var(--card)]">
         <div className="max-w-[1400px] mx-auto flex items-stretch">
           {allowedTabs.map(tab => (
@@ -235,7 +235,7 @@ export default function Navigation({
                 className="w-full text-xs"
               >
                 {SUPPORTED_CURRENCIES.map(c => (
-                  <option key={c.code} value={c.code}>{c.symbol} â€” {c.label}</option>
+                  <option key={c.code} value={c.code}>{c.symbol} — {c.label}</option>
                 ))}
               </select>
             </div>
@@ -251,7 +251,7 @@ export default function Navigation({
       {/* Pricing modal */}
       <PricingPlans open={pricingOpen} onClose={() => setPricingOpen(false)} />
 
-      {/* Bottom navigation â€” mobile only */}
+      {/* Bottom navigation — mobile only */}
       <nav className="md:hidden shrink-0 z-40 border-t border-[var(--border)] bg-[var(--card)] safe-bottom">
         <div className="flex items-stretch">
           {allowedBottomTabs.map(tabId => {

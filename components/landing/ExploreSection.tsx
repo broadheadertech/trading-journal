@@ -36,7 +36,7 @@ export default function ExploreSection() {
             Explore <span className="neon-headline">Tradia</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Everything you need to know â€” features, pricing, integrations, and where to go next.
+            Everything you need to know — features, pricing, integrations, and where to go next.
           </p>
         </motion.div>
 

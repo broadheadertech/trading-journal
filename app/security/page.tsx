@@ -15,7 +15,7 @@ const PILLARS = [
   {
     icon: ShieldOff,
     title: 'No order execution path',
-    body: 'The platform is analytics software. It does not submit, modify, or cancel orders â€” there is no code path that could.',
+    body: 'The platform is analytics software. It does not submit, modify, or cancel orders — there is no code path that could.',
   },
   {
     icon: Eye,
@@ -130,7 +130,7 @@ export default function SecurityPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Questions about security?</h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Reach our security team at <a href="mailto:security@tradia.app" className="text-pink-400 hover:text-pink-300">security@tradia.app</a> â€” or start with no commitment.
+            Reach our security team at <a href="mailto:security@tradia.app" className="text-pink-400 hover:text-pink-300">security@tradia.app</a> — or start with no commitment.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/sign-up" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors">

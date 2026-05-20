@@ -32,7 +32,7 @@ const features = [
     icon: LayoutDashboard,
     accent: 'from-violet-400 to-fuchsia-400',
     title: 'Dashboard Overview',
-    description: 'Net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history â€” all updated automatically.',
+    description: 'Net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history — all updated automatically.',
   },
   {
     icon: Sparkles,
@@ -67,7 +67,7 @@ export default function Features() {
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Identifies costly patterns ranked by financial impact. Behavioral health scoring,
-            emotional pressure monitoring, and session-by-session discipline tracking â€” all in one platform.
+            emotional pressure monitoring, and session-by-session discipline tracking — all in one platform.
           </p>
         </motion.div>
 
