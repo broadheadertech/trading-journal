@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import AtmosphericBackground from './AtmosphericBackground';
 
 // Round-robin avatar gradients — keeps the grid visually varied without
 // hand-coding a color per testimonial.
@@ -98,8 +99,9 @@ const itemVariants = {
 
 export default function Testimonials() {
   return (
-    <section className="py-20 sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="relative overflow-hidden py-20 sm:py-28">
+      <AtmosphericBackground />
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

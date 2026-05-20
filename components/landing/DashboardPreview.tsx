@@ -3,13 +3,12 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Search, Activity, BarChart3, AlertTriangle, TrendingUp, Flame } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 export default function DashboardPreview() {
   return (
-    <section id="dashboard-preview" className="relative py-20 sm:py-28 border-t border-[var(--border)]">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-pink-500 opacity-[0.04] rounded-full blur-[140px]" />
-      </div>
+    <section id="dashboard-preview" className="relative overflow-hidden py-20 sm:py-28 border-t border-[var(--border)]">
+      <AtmosphericBackground />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -175,7 +174,7 @@ function EdgeMock() {
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
           <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Win Rate</div>
-          <div className="text-lg font-bold text-pink-300 tabular-nums">62%</div>
+          <div className="text-lg font-bold text-pink-300 tabular-nums">93%</div>
         </div>
         <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
           <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Profit Factor</div>

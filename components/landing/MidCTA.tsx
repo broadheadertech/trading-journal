@@ -3,13 +3,12 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import AtmosphericBackground from './AtmosphericBackground';
 
 export default function MidCTA() {
   return (
-    <section className="relative py-20 sm:py-24">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-pink-500 opacity-[0.05] rounded-full blur-[140px]" />
-      </div>
+    <section className="relative overflow-hidden py-20 sm:py-24">
+      <AtmosphericBackground />
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
         <motion.div
