@@ -272,10 +272,10 @@ export default function Dashboard({
   }, [windowedTrades]);
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
-  const fmtPnl = (v: number) => {
-    const s = formatCurrency(Math.abs(v));
-    return v < 0 ? `-${s}` : s;
-  };
+  // formatCurrency already prepends '+' for positive and '-' for negative — calling
+  // it on the raw value avoids the double-sign bug (`-+$X.XX`) that came from
+  // wrapping Math.abs(v) and then manually prefixing the '-' again.
+  const fmtPnl = (v: number) => formatCurrency(v);
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
   const isPositive = metrics.totalPnL >= 0;
   const scoreColor = metrics.execScore >= 7 ? '#22c55e' : metrics.execScore >= 4 ? '#eab308' : '#ef4444';
