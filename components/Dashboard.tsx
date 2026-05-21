@@ -232,6 +232,7 @@ export default function Dashboard({
 
     return {
       totalPnL, pnlPercent, wins: wins.length, losses: losses.length,
+      grossProfit, grossLoss,
       winRate, profitFactor,
       bestDay, worstDay, avgTrade, execScore,
       coinStats, topPerformers, biggestLeaks,
@@ -388,7 +389,7 @@ export default function Dashboard({
           { label: 'Net P&L', icon: <TrendingUp size={18} />, value: fmtPnl(metrics.totalPnL), color: pnlColor(metrics.totalPnL), borderColor: 'border-t-red-500' },
           { label: 'Total Trades', icon: <Activity size={18} />, value: String(metrics.closed.length), color: 'text-[var(--foreground)]', borderColor: 'border-t-blue-500' },
           { label: 'Win Rate', icon: <Target size={18} />, value: `${metrics.winRate.toFixed(1)}%`, color: metrics.winRate >= 50 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-emerald-500' },
-          { label: 'Profit Factor', icon: <Zap size={18} />, value: metrics.profitFactor === Infinity ? 'âˆž' : metrics.profitFactor.toFixed(2), color: metrics.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-cyan-500' },
+          { label: 'Profit Factor', icon: <Zap size={18} />, value: metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2), color: metrics.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-cyan-500' },
         ].map(card => (
           <div key={card.label} className={`bg-[var(--card)] border border-[var(--border)] border-t-2 ${card.borderColor} rounded-xl p-4`}>
             <div className="flex items-center justify-between mb-2">
@@ -460,7 +461,7 @@ export default function Dashboard({
           {/* Activity Map (Heatmap) */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
             <h3 className="text-base font-semibold text-[var(--foreground)] mb-1">Activity Map</h3>
-            <p className="text-xs text-[var(--muted-foreground)] mb-4">Net P&L by weekday and session (UTC)</p>
+            <p className="text-xs text-[var(--muted-foreground)] mb-4">Net P&L by weekday and session (local time)</p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
@@ -483,19 +484,33 @@ export default function Dashboard({
                         const pnl = cell?.pnl ?? 0;
                         const count = cell?.count ?? 0;
                         const intensity = count > 0 ? Math.min(Math.abs(pnl) / metrics.heatmapMax, 1) : 0;
-                        const alpha = count === 0 ? 0.05 : 0.15 + intensity * 0.65;
+                        const alpha = count === 0 ? 0.05 : 0.18 + intensity * 0.62;
                         const bg = count === 0
                           ? 'rgba(100,116,139,0.08)'
                           : pnl >= 0
                             ? `rgba(34,197,94,${alpha})`
                             : `rgba(239,68,68,${alpha})`;
+                        const pnlTextColor = pnl > 0 ? 'text-emerald-300' : pnl < 0 ? 'text-red-300' : 'text-[var(--muted-foreground)]';
                         return (
                           <td key={sessIdx} className="px-0.5 py-0.5">
                             <div
-                              className="w-full h-6 rounded"
+                              className="w-full h-12 rounded flex flex-col items-center justify-center px-1"
                               style={{ backgroundColor: bg }}
-                              title={count > 0 ? `${fmtPnl(pnl)} (${count} trades)` : 'No trades'}
-                            />
+                              title={count > 0 ? `${fmtPnl(pnl)} across ${count} trade${count === 1 ? '' : 's'}` : 'No trades'}
+                            >
+                              {count > 0 ? (
+                                <>
+                                  <span className={`text-[11px] font-bold tabular-nums leading-tight ${pnlTextColor}`}>
+                                    {fmtPnl(pnl)}
+                                  </span>
+                                  <span className="text-[9px] text-[var(--muted-foreground)] leading-tight">
+                                    {count} trade{count === 1 ? '' : 's'}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-[9px] text-[var(--muted-foreground)]/40">—</span>
+                              )}
+                            </div>
                           </td>
                         );
                       })}
@@ -504,24 +519,27 @@ export default function Dashboard({
                 </tbody>
               </table>
             </div>
-            <p className="text-[10px] text-[var(--muted-foreground)] mt-2">Hover a cell to see exact performance.</p>
+            <p className="text-[10px] text-[var(--muted-foreground)] mt-2">Each cell shows total $ P&L and trade count for that weekday × session bucket.</p>
 
-            {/* P&L bar */}
-            {metrics.totalPnL !== 0 && (
+            {/* Gross losses ◀ ▶ gross wins — total $ on each side of the ledger. */}
+            {(metrics.grossProfit > 0 || metrics.grossLoss > 0) && (
               <div className="mt-3">
                 <div className="h-3 rounded-full bg-[var(--muted)] overflow-hidden flex">
-                  {metrics.totalPnL < 0 ? (
-                    <div className="h-full bg-red-500 rounded-full" style={{ width: '100%' }} />
-                  ) : (
-                    <>
-                      <div className="h-full bg-red-500" style={{ width: `${Math.round((Math.abs(metrics.closed.filter(t => t.actualPnL! < 0).reduce((s, t) => s + t.actualPnL!, 0)) / (Math.abs(metrics.totalPnL) + Math.abs(metrics.closed.filter(t => t.actualPnL! < 0).reduce((s, t) => s + t.actualPnL!, 0)) * 2)) * 100)}%` }} />
-                      <div className="h-full bg-emerald-500 flex-1" />
-                    </>
-                  )}
+                  {(() => {
+                    const total = metrics.grossProfit + metrics.grossLoss;
+                    const lossPct = total > 0 ? (metrics.grossLoss / total) * 100 : 0;
+                    const winPct = total > 0 ? (metrics.grossProfit / total) * 100 : 0;
+                    return (
+                      <>
+                        {metrics.grossLoss > 0 && <div className="h-full bg-red-500" style={{ width: `${lossPct}%` }} />}
+                        {metrics.grossProfit > 0 && <div className="h-full bg-emerald-500" style={{ width: `${winPct}%` }} />}
+                      </>
+                    );
+                  })()}
                 </div>
-                <div className="flex justify-between text-[10px] text-[var(--muted-foreground)] mt-1">
-                  <span>{fmtPnl(Math.min(metrics.totalPnL, 0))}</span>
-                  <span>$0</span>
+                <div className="flex justify-between text-[10px] tabular-nums mt-1">
+                  <span className="text-red-400">{fmtPnl(-metrics.grossLoss)}</span>
+                  <span className="text-emerald-400">{fmtPnl(metrics.grossProfit)}</span>
                 </div>
               </div>
             )}

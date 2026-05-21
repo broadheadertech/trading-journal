@@ -341,7 +341,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
           { label: 'Net P&L', icon: '$', value: fmtPnl(m.totalPnL), sub: 'Realized outcome', color: pnlColor(m.totalPnL) },
           { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--foreground)]' },
           { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-emerald-400' : 'text-red-400' },
-          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? 'âˆž' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400' },
+          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400' },
           { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-red-400' },
           { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--foreground)]' },
         ].map(card => (

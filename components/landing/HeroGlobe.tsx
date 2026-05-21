@@ -53,7 +53,7 @@ const RINGS = POINTS.map(p => ({ lat: p.lat, lng: p.lng, color: p.color }));
 // to read as "growing platform" rather than "fake JS animation". Number
 // format is locked to en-US so the comma separators look the same for every
 // visitor regardless of locale.
-const COUNTER_START = 520_888;
+const COUNTER_START = 61_785;
 const COUNTER_MIN_DELAY_MS = 4_000;
 const COUNTER_MAX_DELAY_MS = 7_000;
 const COUNTER_MIN_DELTA = 1;
