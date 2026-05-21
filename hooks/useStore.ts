@@ -19,7 +19,7 @@ export function useTrades() {
   const isLoaded = tradesQuery !== undefined;
 
   const addTrade = (
-    trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>
+    trade: Omit<Trade, 'id' | 'createdAt' | 'verdict'>
   ) => {
     const hasBreak = (trade.ruleChecklist ?? []).some((r) => r.compliance === 'no');
     const rulesFollowed =
@@ -27,26 +27,31 @@ export function useTrades() {
 
     const id = uuidv4();
     const createdAt = new Date().toISOString();
-    let actualPnL: number | null = null;
-    let actualPnLPercent: number | null = null;
+    // Prefer the form-provided actualPnL (which respects the user's Amount input);
+    // fall back to calculatePnL only when the caller didn't compute one — e.g. legacy
+    // entry paths or imports.
+    let actualPnL: number | null = trade.actualPnL ?? null;
+    let actualPnLPercent: number | null = trade.actualPnLPercent ?? null;
     let verdict: Trade['verdict'] = null;
 
     if (trade.exitPrice !== null && !trade.isOpen) {
-      const { pnlPercent, pnlDollar } = calculatePnL(
-        trade.entryPrice,
-        trade.exitPrice,
-        trade.capital,
-        trade.direction ?? 'long',
-        trade.leverage ?? 1
-      );
-      actualPnL = pnlDollar;
-      actualPnLPercent = pnlPercent;
+      if (actualPnL === null) {
+        const { pnlPercent, pnlDollar } = calculatePnL(
+          trade.entryPrice,
+          trade.exitPrice,
+          trade.capital,
+          trade.direction ?? 'long',
+          trade.leverage ?? 1
+        );
+        actualPnL = pnlDollar;
+        actualPnLPercent = pnlPercent;
+      }
       verdict = generateVerdict({
         ...trade,
         rulesFollowed,
         id: '',
         actualPnL,
-        actualPnLPercent: pnlPercent,
+        actualPnLPercent,
         verdict: null,
         createdAt: '',
       } as Trade);

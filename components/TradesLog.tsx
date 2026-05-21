@@ -24,7 +24,7 @@ import { useUsage } from '@/hooks/useUsage';
 interface TradesLogProps {
   trades: Trade[];
   strategies: Strategy[];
-  onAdd: (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => Promise<unknown>;
+  onAdd: (trade: Omit<Trade, 'id' | 'createdAt' | 'verdict'>) => Promise<unknown>;
   onUpdate: (id: string, updates: Partial<Trade>) => Promise<unknown>;
   onDelete: (id: string) => void;
   onBulkImport?: (trades: any[]) => Promise<number>;
@@ -177,7 +177,7 @@ export default function TradesLog({
     return last.replace(/^Uncaught\s+Error:\s*/i, '').replace(/^\[CONVEX[^\]]*\]\s*/i, '').trim() || 'Something went wrong.';
   };
 
-  const handleAdd = async (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
+  const handleAdd = async (trade: Omit<Trade, 'id' | 'createdAt' | 'verdict'>) => {
     try {
       await onAdd(trade);
       setIsAddOpen(false);
@@ -186,7 +186,7 @@ export default function TradesLog({
       showToast(cleanConvexError(err), 'error');
     }
   };
-  const handleEdit = async (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => {
+  const handleEdit = async (trade: Omit<Trade, 'id' | 'createdAt' | 'verdict'>) => {
     if (!editTrade) return;
     try {
       await onUpdate(editTrade.id, trade);

@@ -11,7 +11,7 @@ import { format, parseISO } from 'date-fns';
 // ─── Constants ───────────────────────────────────────────────────────
 
 const SESSIONS = [
-  { value: 'asia',     label: 'Asia',     hint: '00:00 – 09:00 UTC' },
+  { value: 'tokyo',    label: 'Tokyo',    hint: '00:00 – 09:00 UTC' },
   { value: 'london',   label: 'London',   hint: '08:00 – 17:00 UTC' },
   { value: 'new-york', label: 'New York', hint: '13:00 – 22:00 UTC' },
   { value: 'overlap',  label: 'Overlap',  hint: 'London / NY 13:00 – 17:00 UTC' },
@@ -99,7 +99,7 @@ interface TradeFormProps {
   strategies: Strategy[];
   trades: Trade[];
   editTrade?: Trade | null;
-  onSubmit: (trade: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'>) => void;
+  onSubmit: (trade: Omit<Trade, 'id' | 'createdAt' | 'verdict'>) => void;
   onCancel: () => void;
   /** Ignored by the new FX form but kept in the prop signature so existing callers compile. */
   prefilledEmotion?: { emotion: EmotionState; intensity: number; reasoning: string };
@@ -141,15 +141,18 @@ export default function TradeForm({
 
   // ── Position ──
   const [lotSize, setLotSize] = useState(editTrade?.lotSize != null ? String(editTrade.lotSize) : '0.01');
-  // Pips target — auto from |Entry − TP| / pip_size, manually overridable.
-  const [pipsTarget, setPipsTarget] = useState(editTrade?.targetPips != null ? String(editTrade.targetPips) : '');
-  const [pipsTouched, setPipsTouched] = useState(false);
 
   // ── Result ──
   const [isOpen, setIsOpen] = useState(editTrade?.isOpen ?? false);
   const [exitPrice, setExitPrice] = useState(editTrade?.exitPrice != null ? String(editTrade.exitPrice) : '');
   const [exitDate, setExitDate] = useState(initExit?.date ?? '');
   const [exitTime, setExitTime] = useState(initExit?.time ?? '');
+  // Amount = realized $ won/lost on this trade. Standalone field — the user
+  // types what the broker actually settled at (which may differ slightly from
+  // pure pip-math because of fees / swap / slippage). Auto-suggested from
+  // lot × pip × pip_value when both Entry and Exit are set, but always overridable.
+  const [amount, setAmount] = useState(editTrade?.actualPnL != null ? String(editTrade.actualPnL) : '');
+  const [amountTouched, setAmountTouched] = useState(false);
 
   // ── Psychology (pre-trade) ──
   const [emotion, setEmotion] = useState<EmotionState>(editTrade?.emotion ?? 'Neutral');
@@ -191,41 +194,45 @@ export default function TradeForm({
   const tpNum = parseFloat(takeProfit);
   const lotNum = parseFloat(lotSize);
 
-  // Pips target auto-fills from the absolute distance between Entry and TP,
-  // measured in pips for the active market+symbol. User can override with a custom
-  // pip target (e.g. partial-target trades where TP doesn't reflect the full edge).
-  const autoPips = useMemo(() => {
+  // Target pips — purely a planning display (Entry → TP distance). Read-only.
+  const targetPipsDisplay = useMemo(() => {
     if (!Number.isFinite(entryNum) || !Number.isFinite(tpNum) || entryNum <= 0 || tpNum <= 0) return 0;
     return Math.abs(pipsBetween(market, pair, entryNum, tpNum));
   }, [market, pair, entryNum, tpNum]);
-  const effectivePips = pipsTouched ? parseFloat(pipsTarget) : autoPips;
-  // $ notional is no longer surfaced as a form field; keep it derived for any
-  // downstream analytics that read `amount` (computed for display only).
+  // Notional position size — used for the actualPnLPercent denominator.
   const derivedNotional = useMemo(() => {
     if (!Number.isFinite(lotNum) || !Number.isFinite(entryNum) || lotNum <= 0 || entryNum <= 0) return 0;
     return notionalAmount(market, pair, lotNum, entryNum);
   }, [market, pair, lotNum, entryNum]);
+  // Auto Amount = realized $ P&L from pip math. User can override via the input.
+  const autoAmount = useMemo(() => {
+    if (isOpen || !Number.isFinite(entryNum) || !Number.isFinite(exitNum) || !Number.isFinite(lotNum)) return null;
+    return realizedPnL(market, pair, direction, entryNum, exitNum, lotNum);
+  }, [isOpen, entryNum, exitNum, lotNum, market, pair, direction]);
+  // What we'll persist as the trade's actualPnL.
+  const effectiveAmount: number | null = isOpen
+    ? null
+    : amountTouched && amount.trim() !== ''
+      ? (Number.isFinite(parseFloat(amount)) ? parseFloat(amount) : null)
+      : autoAmount;
 
-  // Pip gain/loss and realized $ P&L (only when closed + exit price set)
+  // Realized pip gain/loss (signed) — derived from prices, NOT from the Amount input.
   const pipGain = useMemo(() => {
     if (isOpen || !Number.isFinite(entryNum) || !Number.isFinite(exitNum)) return null;
     const signed = pipsBetween(market, pair, entryNum, exitNum);
     return direction === 'long' ? signed : -signed;
   }, [isOpen, entryNum, exitNum, market, pair, direction]);
 
-  const actualPnL = useMemo(() => {
-    if (isOpen || !Number.isFinite(entryNum) || !Number.isFinite(exitNum) || !Number.isFinite(lotNum)) return null;
-    return realizedPnL(market, pair, direction, entryNum, exitNum, lotNum);
-  }, [isOpen, entryNum, exitNum, lotNum, market, pair, direction]);
-
-  const actualPnLPercent = useMemo(() => {
-    if (actualPnL === null || derivedNotional <= 0) return null;
-    return (actualPnL / derivedNotional) * 100;
-  }, [actualPnL, derivedNotional]);
-
-  const winLossLabel: 'WIN' | 'LOSS' | 'BREAK-EVEN' | null = actualPnL === null
+  // Win / Loss derives from the effective Amount (auto or user-typed). The user's
+  // override wins over the math, so if their broker reports a small loss after fees
+  // even though pips were +1, the badge respects the typed Amount.
+  const actualPnLPercent: number | null = effectiveAmount === null || derivedNotional <= 0
     ? null
-    : actualPnL > 0 ? 'WIN' : actualPnL < 0 ? 'LOSS' : 'BREAK-EVEN';
+    : (effectiveAmount / derivedNotional) * 100;
+
+  const winLossLabel: 'WIN' | 'LOSS' | 'BREAK-EVEN' | null = effectiveAmount === null
+    ? null
+    : effectiveAmount > 0 ? 'WIN' : effectiveAmount < 0 ? 'LOSS' : 'BREAK-EVEN';
 
   // ── Live counters (header) ──
   const today = format(new Date(), 'yyyy-MM-dd');
@@ -257,13 +264,17 @@ export default function TradeForm({
 
     // Snapshot the cumulative-at-entry counters into the row so historical reporting
     // can replay them later without re-aggregating. Excludes the trade being edited.
-    const submitted: Omit<Trade, 'id' | 'createdAt' | 'actualPnL' | 'actualPnLPercent' | 'verdict'> = {
+    const submitted: Omit<Trade, 'id' | 'createdAt' | 'verdict'> = {
       coin: pair.trim().toUpperCase(),
       entryPrice: entryNum,
       exitPrice: isOpen ? null : (Number.isFinite(exitNum) ? exitNum : null),
       entryDate,
       exitDate: exitDateIso,
       capital: derivedNotional,
+      // actualPnL = the Amount field (user-typed or auto). This becomes the trade's
+      // realized $ outcome that drives every downstream "daily P&L / wins / losses" view.
+      actualPnL: effectiveAmount,
+      actualPnLPercent,
       targetPnL: null,
       strategy: strategy.trim(),
       stopLoss: Number.isFinite(slNum) ? slNum : null,
@@ -289,7 +300,7 @@ export default function TradeForm({
       tags,
       lessonNotes,
       selfVerdict: isOpen ? null : selfVerdict,
-      lossHypothesis: !isOpen && actualPnL !== null && actualPnL < 0 ? (lossHypothesis.trim() || null) : null,
+      lossHypothesis: !isOpen && effectiveAmount !== null && effectiveAmount < 0 ? (lossHypothesis.trim() || null) : null,
       // Fields the new form doesn't surface — preserve existing values on edit, blank otherwise.
       screenshots: editTrade?.screenshots ?? [],
       notes: editTrade?.notes ?? '',
@@ -311,8 +322,8 @@ export default function TradeForm({
       bias,
       takeProfit: Number.isFinite(tpNum) ? tpNum : null,
       lotSize: lotNum,
-      amount: Number.isFinite(derivedNotional) ? derivedNotional : null,
-      targetPips: Number.isFinite(effectivePips) && effectivePips > 0 ? effectivePips : null,
+      amount: effectiveAmount,                                                  // legacy field — mirrors actualPnL for back-compat
+      targetPips: targetPipsDisplay > 0 ? targetPipsDisplay : null,             // derived target distance (Entry → TP)
       pipGain,
       source: source.trim() || undefined,
       // Snapshot — only captured for brand-new trades. When editing, preserve the
@@ -467,47 +478,26 @@ export default function TradeForm({
 
       {/* Section 4 — Position */}
       <Section title="Position">
-        <Grid cols={2}>
-          <Field label="Lot Size">
-            <input
-              type="number"
-              step="0.01"
-              min="0.01"
-              value={lotSize}
-              onChange={e => setLotSize(e.target.value)}
-              placeholder="0.01"
-            />
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-1 tabular-nums">
-              1 pip ≈ {formatCurrency(
-                defaultPipSize(market, pair) * defaultLotSize(market, pair) * (Number.isFinite(lotNum) ? lotNum : 0.01),
-              )} at this lot
-            </div>
-          </Field>
-          <Field label={`Pips (${pipsTouched ? 'manual' : 'auto'})`}>
-            <input
-              type="number"
-              step="1"
-              value={pipsTouched ? pipsTarget : (autoPips > 0 ? autoPips.toFixed(0) : '')}
-              onChange={e => { setPipsTarget(e.target.value); setPipsTouched(true); }}
-              placeholder="1000"
-            />
-            {pipsTouched ? (
-              <button
-                type="button"
-                onClick={() => { setPipsTouched(false); setPipsTarget(''); }}
-                className="text-[10px] text-pink-400 hover:text-pink-300 mt-1"
-              >
-                Reset to auto ({autoPips > 0 ? `${autoPips.toFixed(0)} pips` : '—'})
-              </button>
-            ) : (
-              <div className="text-[10px] text-[var(--muted-foreground)] mt-1 leading-snug">
-                {autoPips > 0
-                  ? <>Distance from Entry → Take Profit. ≈ {formatCurrency(autoPips * defaultPipSize(market, pair) * defaultLotSize(market, pair) * (Number.isFinite(lotNum) ? lotNum : 0))} at {lotSize} lot.</>
-                  : 'Enter both Entry and Take Profit to auto-compute pips.'}
-              </div>
+        <Field label="Lot Size">
+          <input
+            type="number"
+            step="0.01"
+            min="0.01"
+            value={lotSize}
+            onChange={e => setLotSize(e.target.value)}
+            placeholder="0.01"
+          />
+          <div className="text-[10px] text-[var(--muted-foreground)] mt-1 tabular-nums leading-snug">
+            1 pip ≈ {formatCurrency(
+              defaultPipSize(market, pair) * defaultLotSize(market, pair) * (Number.isFinite(lotNum) ? lotNum : 0.01),
+            )} at this lot
+            {targetPipsDisplay > 0 && (
+              <>
+                {' · '}Target: <span className="text-emerald-300 font-bold">{targetPipsDisplay.toFixed(0)} pips</span> from Entry → TP
+              </>
             )}
-          </Field>
-        </Grid>
+          </div>
+        </Field>
       </Section>
 
       {/* Section 5 — Result (record the outcome first, reflect afterwards) */}
@@ -534,21 +524,41 @@ export default function TradeForm({
                 <input type="time" value={exitTime} onChange={e => setExitTime(e.target.value)} />
               </Field>
             </Grid>
+            {/* Amount — the realized $ outcome of the trade. Auto-suggested from
+                pip math; type your broker's exact figure to override. This is what
+                feeds every downstream "daily P&L / wins / losses" view. */}
+            <Field label={`Amount (${amountTouched ? 'manual' : 'auto'}) — $ won / lost`}>
+              <input
+                type="number"
+                step="any"
+                value={amountTouched ? amount : (autoAmount !== null ? autoAmount.toFixed(2) : '')}
+                onChange={e => { setAmount(e.target.value); setAmountTouched(true); }}
+                placeholder="0.00"
+              />
+              {amountTouched ? (
+                <button
+                  type="button"
+                  onClick={() => { setAmountTouched(false); setAmount(''); }}
+                  className="text-[10px] text-pink-400 hover:text-pink-300 mt-1"
+                >
+                  Reset to auto ({autoAmount !== null ? formatCurrency(autoAmount) : '—'})
+                </button>
+              ) : (
+                <div className="text-[10px] text-[var(--muted-foreground)] mt-1 leading-snug">
+                  {autoAmount !== null
+                    ? <>Auto-computed from lot × pip × pip-value. Type a custom figure if your broker reported differently (fees, swaps, slippage).</>
+                    : 'Fill in Entry Price, Exit Price, and Lot Size to auto-compute.'}
+                </div>
+              )}
+            </Field>
+
             {winLossLabel && (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Stat label="Win / Loss" valueClass={winLossLabel === 'WIN' ? 'text-emerald-300' : winLossLabel === 'LOSS' ? 'text-red-300' : 'text-[var(--muted-foreground)]'}>
                   {winLossLabel}
                 </Stat>
                 <Stat label="Pip Gain / Loss" valueClass={(pipGain ?? 0) >= 0 ? 'text-emerald-300' : 'text-red-300'}>
                   {pipGain !== null ? `${pipGain >= 0 ? '+' : ''}${pipGain.toFixed(1)} pips` : '—'}
-                </Stat>
-                <Stat label="P&L" valueClass={(actualPnL ?? 0) >= 0 ? 'text-emerald-300' : 'text-red-300'}>
-                  {actualPnL !== null ? formatCurrency(actualPnL) : '—'}
-                  {actualPnLPercent !== null && (
-                    <div className="text-[10px] opacity-70 mt-0.5">
-                      {actualPnLPercent >= 0 ? '+' : ''}{actualPnLPercent.toFixed(2)}%
-                    </div>
-                  )}
                 </Stat>
               </div>
             )}
