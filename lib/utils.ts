@@ -87,6 +87,22 @@ export function filterTradesByTimeRange(trades: Trade[], range: TimeRange): Trad
   return trades.filter(t => t.entryDate >= cutoffStr);
 }
 
+/**
+ * Format a signed monetary amount for display. **AUTO-PREPENDS A SIGN**:
+ *   formatCurrency(100)   → "+$100.00"
+ *   formatCurrency(-100)  → "-$100.00"
+ *   formatCurrency(0)     → "+$0.00"
+ *
+ * Do NOT wrap the call in another sign prefix in JSX or template strings:
+ *   ❌ `+${formatCurrency(v)}`                      → "++$100.00"
+ *   ❌ `-${formatCurrency(Math.abs(v))}`            → "-+$100.00" for negatives
+ *   ❌ `${v >= 0 ? '+' : ''}${formatCurrency(v)}`   → "++$100.00" for positives
+ *   ✅ `${formatCurrency(v)}` — pass the raw signed value, the helper signs it.
+ *
+ * For descriptive contexts that want the magnitude only (no sign), strip
+ * the leading sign at the call site:
+ *   formatCurrency(Math.abs(v)).replace(/^[+-]/, '')   → "$100.00"
+ */
 export function formatCurrency(value: number, currencyCode: string = 'USD'): string {
   const sign = value >= 0 ? '+' : '';
   const formatted = new Intl.NumberFormat(getCurrencyLocale(currencyCode), {

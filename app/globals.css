@@ -4,13 +4,18 @@
 @property --accent {
   syntax: "<color>";
   inherits: true;
-  initial-value: #ff2eb3;
+  /* Aurora fuchsia (was pure pink #ff2eb3) — sits in the middle of the brand
+     gradient so chrome reads as part of the multi-color ramp rather than
+     pink-dominant. The aurora ramp's pink/cyan/emerald stops still exist as
+     --aurora-pink / --aurora-cyan / --aurora-emerald for spots that genuinely
+     want pure pink. */
+  initial-value: #d946ef;
 }
 
 @property --accent-glow {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(255, 46, 179, 0.18);
+  initial-value: rgba(217, 70, 239, 0.18);
 }
 
 @property --bg-tint {
@@ -39,9 +44,11 @@
   --border: #152038;
   --muted: #152038;
   --muted-foreground: #5a7194;
-  --accent: #ff2eb3;
-  --accent-hover: #ff52c3;
-  --accent-glow: rgba(255, 46, 179, 0.18);
+  /* Accent — fuchsia (was pure pink #ff2eb3) so the chrome aligns with the
+     multi-color aurora ramp instead of reading as pink-dominant. */
+  --accent: #d946ef;
+  --accent-hover: #e879f9;
+  --accent-glow: rgba(217, 70, 239, 0.18);
   --bg-tint: #060a12;
   --green: #00e68a;
   --red: #ff4d6a;
@@ -92,9 +99,10 @@
   --border: #d4dde9;
   --muted: #edf2f9;
   --muted-foreground: #5a6d85;
-  --accent: #d6248c;
-  --accent-hover: #b81c75;
-  --accent-glow: rgba(214, 36, 140, 0.14);
+  /* Light-mode fuchsia (was pink #d6248c). Sibling tone to the dark-mode --accent. */
+  --accent: #c026d3;
+  --accent-hover: #a21caf;
+  --accent-glow: rgba(192, 38, 211, 0.14);
   --bg-tint: #f4f7fb;
   --green: #00a86b;
   --red: #e02850;
