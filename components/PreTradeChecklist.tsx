@@ -256,7 +256,8 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
   }, [windowedTrades, checklists, selectedRegime, formatCurrency]);
 
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--foreground)]';
-  const fmtPnl = (v: number) => `${v >= 0 ? '+' : ''}${formatCurrency(v)}`;
+  // formatCurrency already signs the number — no need to manually prepend '+'.
+  const fmtPnl = (v: number) => formatCurrency(v);
   const corrLabel = (v: number) => Math.abs(v) > 0.7 ? 'Strong' : Math.abs(v) > 0.3 ? 'Moderate' : 'Weak';
 
   return (

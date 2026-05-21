@@ -606,7 +606,7 @@ export default function WhatIfSimulation({ trades }: Props) {
                 </div>
                 <p className="font-semibold text-sm mb-1">{leak.name}</p>
                 <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 mb-2">{leak.description}</p>
-                <p className="text-sm font-bold text-green-400">+{formatCurrency(Math.abs(leak.impact))}</p>
+                <p className="text-sm font-bold text-green-400">{formatCurrency(Math.abs(leak.impact))}</p>
               </button>
             ))}
           </div>
@@ -628,12 +628,12 @@ export default function WhatIfSimulation({ trades }: Props) {
               <>
                 <div className="flex items-start gap-2 text-xs">
                   <span className="text-fuchsia-400 mt-0.5 shrink-0">&#x25CB;</span>
-                  <span>Selected stack estimated drag: {formatCurrency(Math.abs(selectedDrag))}. Run simulation to replay it on this period.</span>
+                  <span>Selected stack estimated drag: {formatCurrency(Math.abs(selectedDrag)).replace(/^\+/, '')}. Run simulation to replay it on this period.</span>
                 </div>
                 {hasRun && (
                   <div className="flex items-start gap-2 text-xs">
                     <span className="text-green-400 mt-0.5 shrink-0">&#x25CB;</span>
-                    <span>Pre-run conservative recovery range: {formatCurrency(Math.abs(selectedDrag) * 0.4)} to {formatCurrency(Math.abs(selectedDrag) * 0.7)}.</span>
+                    <span>Pre-run conservative recovery range: {formatCurrency(Math.abs(selectedDrag) * 0.4).replace(/^\+/, '')} to {formatCurrency(Math.abs(selectedDrag) * 0.7).replace(/^\+/, '')}.</span>
                   </div>
                 )}
               </>

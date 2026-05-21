@@ -345,7 +345,7 @@ export default function PsychologyJournal({
     if (edgeStrengths.length === 0) edgeStrengths.push({ label: 'Building data', desc: 'Need more trades for pattern detection' });
 
     const riskLoops: { label: string; desc: string }[] = [];
-    if (revengeClusterCount > 0) riskLoops.push({ label: 'Revenge cascade pattern', desc: `${revengeClusterCount} clusters detected with ${formatCurrency(Math.abs(revengeClusterPnL))} impact` });
+    if (revengeClusterCount > 0) riskLoops.push({ label: 'Revenge cascade pattern', desc: `${revengeClusterCount} clusters detected with ${formatCurrency(Math.abs(revengeClusterPnL)).replace(/^\+/, '')} impact` });
     if (biases['Overconfidence'] > 5) riskLoops.push({ label: 'Overconfidence sizing', desc: 'Position sizes increase after wins' });
     if (riskLoops.length === 0) riskLoops.push({ label: 'No weakness signal in this range.', desc: 'No high-confidence weakness detected in the selected range.' });
 
@@ -372,7 +372,8 @@ export default function PsychologyJournal({
   const selectedSession = m.sessions[selectedSessionIdx] ?? null;
 
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--foreground)]';
-  const fmtPnl = (v: number) => `${v >= 0 ? '+' : ''}${formatCurrency(v)}`;
+  // formatCurrency already signs the number — no need to manually prepend '+'.
+  const fmtPnl = (v: number) => formatCurrency(v);
 
   const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const HOURS = Array.from({ length: 24 }, (_, i) => i);

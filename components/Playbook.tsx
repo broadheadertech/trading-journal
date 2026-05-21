@@ -668,24 +668,24 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           <div className="grid grid-cols-2 gap-2 mb-2">
                             <div className="bg-[var(--muted)] rounded px-3 py-2">
                               <p className="text-[10px] text-[var(--muted-foreground)]">Est Leak</p>
-                              <p className="text-sm font-bold text-red-400">-{formatCurrency(estLeak)}</p>
+                              <p className="text-sm font-bold text-red-400">{formatCurrency(-estLeak)}</p>
                             </div>
                             <div className="bg-[var(--muted)] rounded px-3 py-2">
                               <p className="text-[10px] text-[var(--muted-foreground)]">Recoverable</p>
-                              <p className="text-sm font-bold text-green-400">+{formatCurrency(recoverable)}</p>
+                              <p className="text-sm font-bold text-green-400">{formatCurrency(recoverable)}</p>
                             </div>
                           </div>
                           <div className="bg-green-500/10 rounded px-3 py-1.5 text-xs text-green-400 mb-2">
-                            Recovery range: +{formatCurrency(0)} to +{formatCurrency(recoverable)}
+                            Recovery range: {formatCurrency(0)} to {formatCurrency(recoverable)}
                           </div>
                           <div className="grid grid-cols-2 gap-2 mb-2">
                             <div className="bg-green-500/10 rounded px-3 py-2">
                               <p className="text-[10px] text-[var(--muted-foreground)]">Captured</p>
-                              <p className="text-sm font-bold text-green-400">+{formatCurrency(capturedPnL)}</p>
+                              <p className="text-sm font-bold text-green-400">{formatCurrency(capturedPnL)}</p>
                             </div>
                             <div className="bg-red-500/10 rounded px-3 py-2">
                               <p className="text-[10px] text-[var(--muted-foreground)]">Missed</p>
-                              <p className="text-sm font-bold text-red-400">-{formatCurrency(missedPnL)}</p>
+                              <p className="text-sm font-bold text-red-400">{formatCurrency(-missedPnL)}</p>
                             </div>
                           </div>
                           <p className="text-[10px] text-[var(--muted-foreground)]">
@@ -1020,7 +1020,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Projected Gain</p>
                     <div className="p-1 rounded bg-green-500/10"><BarChart3 size={12} className="text-green-400" /></div>
                   </div>
-                  <p className="text-xl font-bold text-green-400">+{formatCurrency(metrics.recoverable)}</p>
+                  <p className="text-xl font-bold text-green-400">{formatCurrency(metrics.recoverable)}</p>
                   <p className="text-[10px] text-green-400">If rules followed</p>
                 </div>
                 <div className="bg-[var(--muted)] rounded-xl p-3">

@@ -286,7 +286,7 @@ export default function TradesLog({
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Best Trade</p>
           <p className="text-sm font-bold">{metrics.bestTrade?.coin ?? '--'}</p>
-          {metrics.bestTrade && <p className="text-[10px] text-green-400">+{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
+          {metrics.bestTrade && <p className="text-[10px] text-green-400">{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
         </div>
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Worst Trade</p>

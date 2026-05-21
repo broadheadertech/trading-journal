@@ -86,7 +86,7 @@ export default function Navigation({
         <div className="max-w-[1400px] mx-auto px-3 sm:px-4 h-12 sm:h-14 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <BrainMascot size={28} className="shrink-0" />
-            <h1 className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="neon-headline text-base sm:text-lg font-bold">
               Tradia
             </h1>
             <span className="hidden sm:inline text-[10px] font-medium text-[var(--muted-foreground)] opacity-60">{APP_VERSION}</span>

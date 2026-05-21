@@ -470,7 +470,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
             <div>
               <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">Conservative Recoverable</p>
               <p className="text-xl font-bold text-green-400">
-                +{formatCurrency(metrics.conservativeRecoverable)}
+                {formatCurrency(metrics.conservativeRecoverable)}
               </p>
             </div>
             <div>
@@ -606,7 +606,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Conservative Recoverable</p>
                 </div>
                 <p className="text-2xl sm:text-3xl font-bold text-green-400">
-                  +{formatCurrency(metrics.conservativeRecoverable)}
+                  {formatCurrency(metrics.conservativeRecoverable)}
                 </p>
               </div>
             </div>
@@ -675,7 +675,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
               </p>
               <p className="text-xs text-[var(--muted-foreground)] mb-5">
                 Directional net signal: {formatCurrency(-metrics.grossLeakImpact)}.
-                Conservative recoverable used in projection above: +{formatCurrency(metrics.conservativeRecoverable)}.
+                Conservative recoverable used in projection above: {formatCurrency(metrics.conservativeRecoverable)}.
               </p>
 
               {diagnostics.length === 0 ? (
@@ -818,7 +818,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Total Edge Value</p>
-                <p className="text-xl font-bold">+{formatCurrency(totalEdgeValue)}</p>
+                <p className="text-xl font-bold">{formatCurrency(totalEdgeValue)}</p>
               </div>
             </div>
 
@@ -835,7 +835,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
                   <div key={i} className="bg-[var(--card)] border border-green-500/20 rounded-xl p-4">
                     <p className="text-sm font-bold text-green-400 mb-1">{s.name}</p>
                     <p className="text-xs text-[var(--muted-foreground)] mb-2">{s.description}</p>
-                    <p className="text-lg font-bold text-green-400">+{formatCurrency(s.value)}</p>
+                    <p className="text-lg font-bold text-green-400">{formatCurrency(s.value)}</p>
                     <p className="text-[10px] text-[var(--muted-foreground)]">{s.trades.length} trades</p>
                   </div>
                 ))}
@@ -954,8 +954,8 @@ export default function Verdicts({ trades }: VerdictsProps) {
         <span className="text-[var(--muted-foreground)]">
           Leak diagnostics: {formatCurrency(-metrics.grossLeakImpact)} &middot;
           Overlap-adjusted diagnostics: {formatCurrency(metrics.grossLeakImpact * 0.48)} &middot;
-          Conservative recoverable: +{formatCurrency(metrics.conservativeRecoverable)} &middot;
-          Detected strengths: +{formatCurrency(totalEdgeValue)}
+          Conservative recoverable: {formatCurrency(metrics.conservativeRecoverable)} &middot;
+          Detected strengths: {formatCurrency(totalEdgeValue)}
         </span>
         <div className="ml-auto flex items-center gap-1.5">
           <Shield size={12} style={{ color: hc }} />

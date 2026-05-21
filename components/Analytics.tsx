@@ -229,7 +229,9 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   const selectedDayData = selectedDay ? calendarData.dayMap.get(selectedDay) : null;
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
-  const fmtPnl = (v: number) => { const s = formatCurrency(Math.abs(v)); return v < 0 ? `-${s}` : s; };
+  // formatCurrency already prepends '+' for positives and '-' for negatives —
+  // calling it on the raw value avoids the double-sign bug ('-+$X.XX').
+  const fmtPnl = (v: number) => formatCurrency(v);
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
   const barMaxAbs = Math.max(...m.sessionData.map(s => Math.abs(s.pnl)), 1);
 
@@ -395,7 +397,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
               <span className={pnlColor(m.projectedPnL)}>{fmtPnl(m.projectedPnL)}</span>
             </div>
             <div className="text-xs text-[var(--muted-foreground)] mt-1">
-              Modeled improvement: <span className="text-emerald-400">+{formatCurrency(m.leakAmount.conservative)}</span>
+              Modeled improvement: <span className="text-emerald-400">{formatCurrency(m.leakAmount.conservative)}</span>
             </div>
           </div>
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
