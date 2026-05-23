@@ -267,45 +267,64 @@ export default function TradesLog({
         </div>
       </div>
 
-      {/* ── Secondary Stats Row ── */}
+      {/* ── Secondary Stats Row ──
+          Each card uses the same internal layout: a top label row with optional
+          icon/glyph, then a flex-1 block that vertically + horizontally centers
+          the value group. The grid stretches all cards to equal height, so this
+          keeps the primary value at the same eye-line across the row regardless
+          of whether the card has 1 line, 2 lines, or 3 lines of content. */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <div className="flex items-center justify-between mb-1">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Period P&L</p>
             <TrendingDown size={12} className="text-[var(--muted-foreground)]" />
           </div>
-          <p className={`text-lg font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className={`text-lg font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <div className="flex items-center justify-between mb-1">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Win Rate</p>
             <span className="text-[10px] text-[var(--muted-foreground)]">%</span>
           </div>
-          <p className="text-lg font-bold">{metrics.winRate}%</p>
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-lg font-bold">{metrics.winRate}%</p>
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Best Trade</p>
-          <p className="text-sm font-bold">{metrics.bestTrade?.coin ?? '--'}</p>
-          {metrics.bestTrade && <p className="text-[10px] text-green-400">{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-sm font-bold">{metrics.bestTrade?.coin ?? '--'}</p>
+            {metrics.bestTrade && <p className="text-[10px] text-green-400">{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Worst Trade</p>
-          <p className="text-sm font-bold">{metrics.worstTrade?.coin ?? '--'}</p>
-          {metrics.worstTrade && <p className="text-[10px] text-red-400">{formatCurrency(metrics.worstTrade.actualPnL ?? 0)}</p>}
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-sm font-bold">{metrics.worstTrade?.coin ?? '--'}</p>
+            {metrics.worstTrade && <p className="text-[10px] text-red-400">{formatCurrency(metrics.worstTrade.actualPnL ?? 0)}</p>}
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Avg R</p>
-          <p className="text-lg font-bold">{metrics.avgR.toFixed(2)} <span className="text-xs text-[var(--muted-foreground)]">R:R</span></p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Avg win / avg loss</p>
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-lg font-bold">{metrics.avgR.toFixed(2)} <span className="text-xs text-[var(--muted-foreground)]">R:R</span></p>
+            <p className="text-[10px] text-[var(--muted-foreground)]">Avg win / avg loss</p>
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Fees + Funding</p>
-          <p className="text-lg font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</p>
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-lg font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</p>
+          </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Lots/Qty/Size</p>
-          <p className="text-lg font-bold">{filtered.reduce((s, t) => s + t.capital, 0).toFixed(2)}</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trade{metrics.total !== 1 ? 's' : ''}</p>
+          <div className="flex-1 flex flex-col justify-center items-center text-center">
+            <p className="text-lg font-bold">{filtered.reduce((s, t) => s + t.capital, 0).toFixed(2)}</p>
+            <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trade{metrics.total !== 1 ? 's' : ''}</p>
+          </div>
         </div>
       </div>
 
