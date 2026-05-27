@@ -43,7 +43,13 @@
   --card-hover: #111a2e;
   --border: #152038;
   --muted: #152038;
-  --muted-foreground: #5a7194;
+  /* Lightened from #5a7194 for readability — this token drives every subtitle,
+     caption, helper line and inactive-tab label, so the lift improves secondary
+     text contrast app-wide while staying clearly below --foreground (#e4eaf4). */
+  --muted-foreground: #8195b8;
+  /* Secondary text tier — brighter than --muted-foreground, dimmer than
+     --foreground. Use for page subtitles / lead copy that should read clearly. */
+  --fg-2: #c2cde0;
   /* Accent — fuchsia (was pure pink #ff2eb3) so the chrome aligns with the
      multi-color aurora ramp instead of reading as pink-dominant. */
   --accent: #d946ef;
@@ -99,6 +105,7 @@
   --border: #d4dde9;
   --muted: #edf2f9;
   --muted-foreground: #5a6d85;
+  --fg-2: #2c3a52;  /* secondary text tier (light mode) */
   /* Light-mode fuchsia (was pink #d6248c). Sibling tone to the dark-mode --accent. */
   --accent: #c026d3;
   --accent-hover: #a21caf;

@@ -114,6 +114,25 @@ export function formatCurrency(value: number, currencyCode: string = 'USD'): str
   return `${sign}${value < 0 ? '-' : ''}${formatted}`;
 }
 
+/**
+ * Cycling neon accent for tab strips — active tab color rotates pink → green →
+ * orange by its index, so a row of tabs reads as an alternating-color set
+ * instead of one flat accent. Apply `tabNeonActive(index)` to the ACTIVE tab's
+ * className; leave inactive tabs muted.
+ *
+ * Full literal class strings (no string interpolation) so Tailwind's JIT keeps them.
+ */
+export const TAB_NEON_ACTIVE: string[] = [
+  'bg-gradient-to-br from-pink-500 to-fuchsia-600 text-white shadow-[0_0_18px_-4px_rgba(255,46,179,0.7)]',
+  'bg-gradient-to-br from-emerald-400 to-green-600 text-slate-900 shadow-[0_0_18px_-4px_rgba(16,185,129,0.7)]',
+  'bg-gradient-to-br from-orange-400 to-amber-500 text-slate-900 shadow-[0_0_18px_-4px_rgba(251,146,60,0.7)]',
+];
+
+/** Returns the active-tab neon classes for a tab at position `index`. */
+export function tabNeonActive(index: number): string {
+  return TAB_NEON_ACTIVE[((index % TAB_NEON_ACTIVE.length) + TAB_NEON_ACTIVE.length) % TAB_NEON_ACTIVE.length];
+}
+
 export function formatPercent(value: number): string {
   const sign = value >= 0 ? '+' : '';
   return `${sign}${value.toFixed(2)}%`;
