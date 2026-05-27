@@ -347,10 +347,11 @@ h1, h2, h3 {
 .aurora-text {
   background: linear-gradient(120deg,
     #ff2eb3 0%,
-    #d946ef 18%,
-    #22d3ee 38%,
-    #34d399 60%,
-    #d946ef 82%,
+    #d946ef 15%,
+    #22d3ee 32%,
+    #34d399 50%,
+    #fb923c 68%,
+    #d946ef 86%,
     #ff2eb3 100%);
   background-size: 220% 220%;
   -webkit-background-clip: text;
@@ -360,7 +361,7 @@ h1, h2, h3 {
 }
 
 .aurora-text-static {
-  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 50%, #34d399 100%);
+  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 38%, #34d399 68%, #fb923c 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -372,15 +373,17 @@ h1, h2, h3 {
 .neon-headline {
   background: linear-gradient(120deg,
     var(--aurora-pink) 0%,
-    var(--aurora-fuchsia) 22%,
-    var(--aurora-cyan) 56%,
-    var(--aurora-emerald) 100%);
+    var(--aurora-fuchsia) 20%,
+    var(--aurora-cyan) 44%,
+    var(--aurora-emerald) 68%,
+    var(--cta-orange) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   filter:
     drop-shadow(0 0 12px rgba(34, 211, 238, 0.35))
-    drop-shadow(0 0 28px rgba(255, 46, 179, 0.18));
+    drop-shadow(0 0 22px rgba(255, 46, 179, 0.16))
+    drop-shadow(0 0 30px rgba(251, 146, 60, 0.16));
 }
 
 /* Neon eyebrow — quieter, cyan-emerald tilted so it doesn't compete with the headline.
@@ -500,7 +503,7 @@ h1, h2, h3 {
 
 /* Gradient text accent — Northern Lights aurora */
 .gradient-text {
-  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 50%, #34d399 100%);
+  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 38%, #34d399 68%, #fb923c 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
