@@ -7,7 +7,7 @@ import {
   Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe, Radio, Plug,
   ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
 } from 'lucide-react';
-import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
+import { cn, SUPPORTED_CURRENCIES, navNeonActive } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { UserButton, useUser, useClerk } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
@@ -122,7 +122,7 @@ export default function Sidebar({
 
         {/* Nav items */}
         <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-          {allowedTabs.map(tab => (
+          {allowedTabs.map((tab, idx) => (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
@@ -130,7 +130,11 @@ export default function Sidebar({
                 'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all relative',
                 collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
                 activeTab === tab.id
-                  ? 'bg-gradient-to-br from-pink-500/20 to-pink-600/10 text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full before:bg-gradient-to-b before:from-pink-400 before:to-pink-600'
+                  // Active item: cycling neon tint + left-edge accent bar (pink → green → orange by position)
+                  ? cn(
+                      'text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full',
+                      navNeonActive(idx),
+                    )
                   : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
               )}
               title={collapsed ? tab.label : undefined}
@@ -442,14 +446,14 @@ export default function Sidebar({
             <div className="absolute inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
             <div className="relative bg-[var(--card)] border-b border-[var(--border)] shadow-xl">
               <div className="p-3 grid grid-cols-4 gap-2">
-                {allowedTabs.map(tab => (
+                {allowedTabs.map((tab, idx) => (
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
                     className={cn(
                       'flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-medium transition-colors',
                       activeTab === tab.id
-                        ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
+                        ? cn('text-[var(--foreground)]', navNeonActive(idx))
                         : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
                     )}
                   >

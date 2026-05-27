@@ -133,6 +133,24 @@ export function tabNeonActive(index: number): string {
   return TAB_NEON_ACTIVE[((index % TAB_NEON_ACTIVE.length) + TAB_NEON_ACTIVE.length) % TAB_NEON_ACTIVE.length];
 }
 
+/**
+ * Subtle cycling-neon for vertical nav rails (the sidebar). Same pink → green →
+ * orange rotation as the tabs, but as a soft background tint + matching left-edge
+ * accent bar (via the `before:` pseudo) rather than a solid fill — so the active
+ * nav item reads as "lit" without shouting. Pair with the shared positioning
+ * classes for `before:` already on the button.
+ */
+export const NAV_NEON_ACTIVE: string[] = [
+  'bg-gradient-to-br from-pink-500/20 to-pink-600/10 before:bg-gradient-to-b before:from-pink-400 before:to-pink-600',
+  'bg-gradient-to-br from-emerald-500/20 to-green-600/10 before:bg-gradient-to-b before:from-emerald-400 before:to-green-600',
+  'bg-gradient-to-br from-orange-500/20 to-amber-600/10 before:bg-gradient-to-b before:from-orange-400 before:to-amber-600',
+];
+
+/** Returns the active-nav-item neon tint + edge-bar classes for position `index`. */
+export function navNeonActive(index: number): string {
+  return NAV_NEON_ACTIVE[((index % NAV_NEON_ACTIVE.length) + NAV_NEON_ACTIVE.length) % NAV_NEON_ACTIVE.length];
+}
+
 export function formatPercent(value: number): string {
   const sign = value >= 0 ? '+' : '';
   return `${sign}${value.toFixed(2)}%`;
