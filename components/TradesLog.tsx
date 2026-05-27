@@ -215,7 +215,7 @@ export default function TradesLog({
             </p>
           </div>
           <button onClick={() => setIsAddOpen(true)} disabled={usage.trades.isAtLimit}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shrink-0">
+            className="flex items-center gap-2 px-5 py-2.5 text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] rounded-lg text-sm font-semibold transition-all disabled:opacity-50 shrink-0">
             <Plus size={14} /> Add New Trade
           </button>
         </div>

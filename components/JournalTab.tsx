@@ -16,6 +16,7 @@ import WhatIfSimulation from './WhatIfSimulation';
 import Achievements from './Achievements';
 import UpgradePrompt from './UpgradePrompt';
 import { getRequiredTier } from '@/lib/features';
+import { tabNeonActive } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import type { Trade, Strategy, TabId } from '@/lib/types';
 
@@ -92,7 +93,7 @@ export default function JournalTab(props: Props) {
   return (
     <div className="space-y-6">
       <div className="glass rounded-2xl p-1.5 inline-flex gap-1 overflow-x-auto max-w-full">
-        {SUB_TABS.map(t => {
+        {SUB_TABS.map((t, idx) => {
           const active = sub === t.id;
           return (
             <button
@@ -100,7 +101,7 @@ export default function JournalTab(props: Props) {
               onClick={() => setSub(t.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 active
-                  ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg shadow-teal-500/30'
+                  ? tabNeonActive(idx)
                   : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40'
               }`}
             >

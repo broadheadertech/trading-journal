@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { TrendingUp, Crosshair, Sparkles, Sunrise, Waves, Layers, Clock, LineChart } from 'lucide-react';
+import { tabNeonActive } from '@/lib/utils';
 
 type StrategyId =
   | 'inner-circle'
@@ -187,14 +188,14 @@ export default function Strategies() {
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
           Trading <span className="gradient-text">strategies</span>
         </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+        <p className="text-base sm:text-lg text-[var(--fg-2)] max-w-xl leading-relaxed">
           Explore vetted, battle-tested strategies built by senior traders.
         </p>
       </header>
 
       {/* Sub-tab strip — same pattern as JournalTab */}
       <div className="glass rounded-2xl p-1.5 inline-flex gap-1 overflow-x-auto max-w-full">
-        {STRATEGIES.map(s => {
+        {STRATEGIES.map((s, idx) => {
           const Icon = s.icon;
           const isActive = active === s.id;
           return (
@@ -203,7 +204,7 @@ export default function Strategies() {
               onClick={() => setActive(s.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg shadow-teal-500/30'
+                  ? tabNeonActive(idx)
                   : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40'
               }`}
             >

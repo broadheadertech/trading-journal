@@ -95,7 +95,7 @@ export default function Navigation({
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={onAddTrade}
-              className="shrink-0 whitespace-nowrap flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors"
+              className="shrink-0 whitespace-nowrap flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] rounded-lg text-sm font-semibold transition-all"
             >
               <Plus size={16} />
               <span className="hidden sm:inline">Add Trade</span>
