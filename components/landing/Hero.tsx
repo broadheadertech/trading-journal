@@ -9,11 +9,11 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div
-        className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-30"
+        className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-[0.28]"
         style={{
-          backgroundImage: "url('/hero-bg.png')",
-          filter: 'blur(6px)',
-          transform: 'scale(1.05)',
+          backgroundImage: "url('/tradia-background.png')",
+          filter: 'blur(26px) saturate(0.7) brightness(0.95)',
+          transform: 'scale(1.12)',
         }}
       />
       {/* Dark overlay so copy stays readable */}

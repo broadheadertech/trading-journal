@@ -139,6 +139,35 @@ body {
               --brain-dimming 1.5s ease, --brain-pulse-speed 1s ease;
 }
 
+/* Site-wide ambient backdrop — the bull/bear FX graphic (tradia-background.png),
+   heavily blurred + desaturated, painted on top of the dark base color and behind
+   every bit of content. At low opacity the green/pink/gold of the image reads as a
+   faint on-brand wash that blends into the aurora theme rather than a literal photo.
+   Lives on body::before with z-index:-1 so it paints above body's background-color
+   but beneath all normal-flow content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('/tradia-background.png') center center / cover no-repeat;
+  filter: blur(70px) saturate(0.7) brightness(0.95);
+  transform: scale(1.2);
+  opacity: 0.14;
+}
+
+/* Light theme reads harsher under the saturated image — dial it back. */
+.light body::before {
+  filter: blur(70px) saturate(0.6) brightness(1.08);
+  opacity: 0.07;
+}
+
+/* Respect reduced-motion users' preference for calmer surfaces — slightly fainter. */
+body[data-reduced-motion="true"]::before {
+  opacity: 0.1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   body {
     transition: --brain-dimming 0s, --brain-pulse-speed 0s;
