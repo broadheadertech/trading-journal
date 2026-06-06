@@ -152,20 +152,22 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background: url('/tradia-background.png') center center / cover no-repeat;
-  filter: blur(70px) saturate(0.7) brightness(0.95);
-  transform: scale(1.2);
-  opacity: 0.14;
+  /* Light blur — brightness/saturate lift keeps the dark sky/skyline blended into
+     the base while the green bull / pink bear / gold "VS" stay legible as shapes. */
+  filter: blur(8px) saturate(1.2) brightness(1.3);
+  transform: scale(1.06);
+  opacity: 0.55;
 }
 
 /* Light theme reads harsher under the saturated image — dial it back. */
 .light body::before {
-  filter: blur(70px) saturate(0.6) brightness(1.08);
-  opacity: 0.07;
+  filter: blur(8px) saturate(0.7) brightness(1.05);
+  opacity: 0.2;
 }
 
 /* Respect reduced-motion users' preference for calmer surfaces — slightly fainter. */
 body[data-reduced-motion="true"]::before {
-  opacity: 0.1;
+  opacity: 0.4;
 }
 
 @media (prefers-reduced-motion: reduce) {
