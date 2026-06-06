@@ -351,6 +351,313 @@ export const resetUserData = mutation({
   },
 });
 
+// ─── Per-user activity timeline ──────────────────────────────────────
+//
+// Aggregates events the user has produced across every persisted table into
+// one chronological feed so super-admins can monitor a client's moves without
+// adding any new write paths. Pull from existing rows, normalize them, merge
+// by timestamp, slice.
+//
+// Each source table is capped at `perSourceLimit` (default 60) so the merge
+// stays bounded — admins can page back with `before` (ISO timestamp).
+type TimelineEvent = {
+  id: string;
+  type: string;
+  timestamp: string; // ISO — unified for sort regardless of source field
+  summary: string;
+  meta?: Record<string, unknown>;
+};
+
+export const getUserActivityTimeline = query({
+  args: {
+    userId: v.string(),
+    perSourceLimit: v.optional(v.number()),
+    before: v.optional(v.string()), // ISO — return only events older than this
+    types: v.optional(v.array(v.string())), // optional type filter
+  },
+  handler: async (ctx, { userId, perSourceLimit, before, types }) => {
+    await requireAdmin(ctx);
+    const cap = perSourceLimit ?? 60;
+    const events: TimelineEvent[] = [];
+
+    const byUser = <T extends string>(table: T) =>
+      ctx.db.query(table as never).withIndex("by_user", (q: any) => q.eq("userId", userId));
+
+    // Trades — emit one event per trade (the log) and a separate close event
+    // when the trade has an exitDate, so the timeline reflects both moments.
+    const trades = await byUser("trades").collect();
+    for (const t of trades as any[]) {
+      events.push({
+        id: `trade-log-${t._id}`,
+        type: "trade_logged",
+        timestamp: t.createdAt,
+        summary: `Logged ${t.direction ?? ""} ${t.coin} ${t.isOpen ? "(open)" : "trade"}`.replace(/\s+/g, " ").trim(),
+        meta: {
+          coin: t.coin,
+          direction: t.direction ?? null,
+          entryPrice: t.entryPrice,
+          stopLoss: t.stopLoss,
+          takeProfit: t.takeProfit ?? null,
+          lotSize: t.lotSize ?? null,
+          strategy: t.strategy,
+          isOpen: t.isOpen,
+          marketType: t.marketType ?? null,
+          session: t.session ?? null,
+        },
+      });
+      if (!t.isOpen && t.exitDate) {
+        events.push({
+          id: `trade-close-${t._id}`,
+          type: "trade_closed",
+          timestamp: t.exitDate,
+          summary: `Closed ${t.coin} ${t.actualPnL != null ? (t.actualPnL >= 0 ? "+" : "") + "$" + t.actualPnL.toFixed(2) : ""}`.trim(),
+          meta: {
+            coin: t.coin,
+            actualPnL: t.actualPnL,
+            actualPnLPercent: t.actualPnLPercent,
+            exitPrice: t.exitPrice,
+            pipGain: t.pipGain ?? null,
+            verdict: t.verdict,
+            selfVerdict: t.selfVerdict,
+          },
+        });
+      }
+    }
+
+    // Strategies / Playbook
+    const strategies = await byUser("strategies").collect();
+    for (const s of strategies as any[]) {
+      events.push({
+        id: `strategy-${s._id}`,
+        type: "strategy_created",
+        timestamp: s.createdAt,
+        summary: `Created strategy "${s.name}"`,
+        meta: { name: s.name, ruleCount: s.rules?.length ?? 0 },
+      });
+    }
+
+    // Market-context checklists
+    const checklists = await byUser("checklists").collect();
+    for (const c of checklists as any[]) {
+      events.push({
+        id: `checklist-${c._id}`,
+        type: "checklist_created",
+        timestamp: c.createdAt,
+        summary: `Pre-trade checklist — ${c.marketTrend} / ${c.riskLevel}`,
+        meta: { marketTrend: c.marketTrend, riskLevel: c.riskLevel },
+      });
+    }
+
+    // Psychology journal
+    const journalEntries = await byUser("journalEntries").collect();
+    for (const j of journalEntries as any[]) {
+      events.push({
+        id: `journal-${j._id}`,
+        type: "journal_entry",
+        timestamp: j.createdAt,
+        summary: `Journal entry — ${j.emotion} (energy ${j.energyLevel})`,
+        meta: { emotion: j.emotion, energy: j.energyLevel, lesson: j.lessonLearned },
+      });
+    }
+
+    // Monthly goals
+    const monthlyGoals = await byUser("monthlyGoals").collect();
+    for (const g of monthlyGoals as any[]) {
+      events.push({
+        id: `goal-${g._id}`,
+        type: "monthly_goal",
+        timestamp: g.createdAt,
+        summary: `Set monthly goal — ${g.month}`,
+        meta: { month: g.month, pnlTarget: g.pnlTarget, winRateTarget: g.winRateTarget },
+      });
+    }
+
+    // Trigger entries (emotional triggers)
+    const triggerEntries = await byUser("triggerEntries").collect();
+    for (const tg of triggerEntries as any[]) {
+      events.push({
+        id: `trigger-${tg._id}`,
+        type: "trigger_entry",
+        timestamp: tg.createdAt,
+        summary: `Trigger — ${tg.source} (${tg.emotionalImpact}, ${tg.intensityBefore}→${tg.intensityAfter})`,
+        meta: {
+          source: tg.source,
+          impact: tg.emotionalImpact,
+          intensityBefore: tg.intensityBefore,
+          intensityAfter: tg.intensityAfter,
+          didTrade: tg.didTrade,
+        },
+      });
+    }
+
+    // Daily reflections
+    const dailyReflections = await byUser("dailyReflections").collect();
+    for (const r of dailyReflections as any[]) {
+      events.push({
+        id: `reflection-${r._id}`,
+        type: "daily_reflection",
+        timestamp: r.createdAt,
+        summary: `Daily reflection — rating ${r.overallRating}/10 ${r.tradedMyPlan ? "(plan)" : "(off-plan)"}`,
+        meta: { rating: r.overallRating, tradedMyPlan: r.tradedMyPlan, lesson: r.biggestLesson },
+      });
+    }
+
+    // Weekly reviews
+    const weeklyReviews = await byUser("weeklyReviews").collect();
+    for (const w of weeklyReviews as any[]) {
+      events.push({
+        id: `review-${w._id}`,
+        type: "weekly_review",
+        timestamp: w.createdAt,
+        summary: `Weekly review (${w.weekStart}) — discipline ${w.disciplineGrade}`,
+        meta: { weekStart: w.weekStart, grade: w.disciplineGrade },
+      });
+    }
+
+    // Rule-break logs
+    const ruleBreakLogs = await byUser("ruleBreakLogs").collect();
+    for (const rb of ruleBreakLogs as any[]) {
+      events.push({
+        id: `rulebreak-${rb._id}`,
+        type: "rule_break",
+        timestamp: rb.timestamp,
+        summary: `Broke rule — ${rb.ruleName}`,
+        meta: { ruleName: rb.ruleName, explanation: rb.explanation, tradeId: rb.tradeId },
+      });
+    }
+
+    // Circuit breakers
+    const circuitBreakerEvents = await byUser("circuitBreakerEvents").collect();
+    for (const cb of circuitBreakerEvents as any[]) {
+      events.push({
+        id: `circuit-${cb._id}`,
+        type: "circuit_breaker",
+        timestamp: cb.triggeredAt,
+        summary: `Circuit breaker (${cb.severity}) — ${cb.type}`,
+        meta: { type: cb.type, severity: cb.severity, message: cb.message, overridden: cb.overridden },
+      });
+      if (cb.overridden && cb.overriddenAt) {
+        events.push({
+          id: `circuit-override-${cb._id}`,
+          type: "circuit_breaker_override",
+          timestamp: cb.overriddenAt,
+          summary: `Overrode circuit breaker — ${cb.type}`,
+          meta: { type: cb.type, severity: cb.severity },
+        });
+      }
+    }
+
+    // Brain score events (anti-gaming flags live here)
+    const scoreEvents = await ctx.db
+      .query("scoreEvents")
+      .withIndex("by_user_timestamp", (q) => q.eq("userId", userId))
+      .order("desc")
+      .take(cap);
+    for (const e of scoreEvents) {
+      events.push({
+        id: `score-${e._id}`,
+        type: e.antiGamingFlags?.length ? "anti_gaming_flag" : "score_event",
+        timestamp: new Date(e.timestamp).toISOString(),
+        summary: `${e.eventType} (${e.delta >= 0 ? "+" : ""}${e.delta}) — ${e.reason}`,
+        meta: {
+          eventType: e.eventType,
+          delta: e.delta,
+          previousScore: e.previousScore,
+          newScore: e.newScore,
+          antiGamingFlags: e.antiGamingFlags ?? [],
+          tradeId: e.tradeId ?? null,
+        },
+      });
+    }
+
+    // Subscription — the row only carries current state, but createdAt and
+    // updatedAt are still useful markers. Emit both if they differ.
+    const sub = await ctx.db
+      .query("userSubscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (sub) {
+      events.push({
+        id: `sub-created-${sub._id}`,
+        type: "subscription_created",
+        timestamp: sub.createdAt,
+        summary: `Subscription record opened — ${sub.planId}`,
+        meta: { planId: sub.planId, status: sub.status, provider: sub.paymentProvider ?? null },
+      });
+      if (sub.updatedAt !== sub.createdAt) {
+        events.push({
+          id: `sub-updated-${sub._id}`,
+          type: "subscription_change",
+          timestamp: sub.updatedAt,
+          summary: `Subscription updated — ${sub.planId} (${sub.status})`,
+          meta: { planId: sub.planId, status: sub.status, interval: sub.interval ?? null },
+        });
+      }
+    }
+
+    // Profile creation = signup
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (profile) {
+      events.push({
+        id: `signup-${profile._id}`,
+        type: "signup",
+        timestamp: new Date(profile._creationTime).toISOString(),
+        summary: `User profile created`,
+        meta: { initialCapital: profile.initialCapital, currency: profile.currency ?? "USD" },
+      });
+    }
+
+    // Admin actions taken on this user (ban / override / data reset)
+    // adminEvents has no by_user index — filter from the recent slice.
+    const recentAdmin = await ctx.db
+      .query("adminEvents")
+      .withIndex("by_timestamp")
+      .order("desc")
+      .take(500);
+    for (const a of recentAdmin.filter((e) => e.userId === userId)) {
+      events.push({
+        id: `admin-${a._id}`,
+        type: `admin:${a.type}`,
+        timestamp: a.timestamp,
+        summary: `Admin action — ${a.type.replace(/_/g, " ")}`,
+        meta: { adminId: a.adminId ?? null, raw: a.metadata },
+      });
+    }
+
+    // Sort desc, apply optional filters, slice. The merged set is bounded by
+    // each source's cap so we never load more than ~10× cap into memory.
+    let filtered = events;
+    if (types && types.length > 0) {
+      const set = new Set(types);
+      filtered = filtered.filter((e) => set.has(e.type));
+    }
+    if (before) {
+      filtered = filtered.filter((e) => e.timestamp < before);
+    }
+    filtered.sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
+
+    return {
+      events: filtered.slice(0, cap),
+      totalCounts: {
+        trades: trades.length,
+        strategies: strategies.length,
+        checklists: checklists.length,
+        journalEntries: journalEntries.length,
+        monthlyGoals: monthlyGoals.length,
+        triggerEntries: triggerEntries.length,
+        dailyReflections: dailyReflections.length,
+        weeklyReviews: weeklyReviews.length,
+        ruleBreakLogs: ruleBreakLogs.length,
+        circuitBreakerEvents: circuitBreakerEvents.length,
+        scoreEvents: scoreEvents.length,
+      },
+    };
+  },
+});
+
 export const getAdminUserSubscription = query({
   args: { userId: v.string() },
   handler: async (ctx, { userId }) => {

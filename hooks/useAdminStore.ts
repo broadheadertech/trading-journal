@@ -63,6 +63,59 @@ export function useAdminUserSubscription(userId: string | null) {
   );
 }
 
+export function useAdminUserActivityTimeline(
+  userId: string | null,
+  opts: { types?: string[]; perSourceLimit?: number; before?: string } = {},
+) {
+  return useQuery(
+    api.admin.getUserActivityTimeline,
+    userId ? { userId, ...opts } : 'skip'
+  );
+}
+
+// ─── Phase 3: Global firehose, flagged users, audit, billing ops ──────
+export function useAdminFirehose(opts: {
+  perSourceLimit?: number;
+  limit?: number;
+  types?: string[];
+  userId?: string;
+  before?: string;
+} = {}) {
+  return useQuery(api.adminAnalytics.getActivityFirehose, opts);
+}
+
+export function useAdminFlaggedUsers() {
+  return useQuery(api.adminAnalytics.getFlaggedUsers, {});
+}
+
+export function useAdminAuditLog(opts: {
+  limit?: number;
+  types?: string[];
+  userId?: string;
+  adminId?: string;
+  before?: string;
+  searchPool?: number;
+} = {}) {
+  return useQuery(api.adminAnalytics.getAuditLog, opts);
+}
+
+export function useAdminFailedPayments() {
+  return useQuery(api.adminAnalytics.getFailedPayments, {});
+}
+
+export function useAdminRevenueExtras(months = 6) {
+  return useQuery(api.adminAnalytics.getRevenueExtras, { months });
+}
+
+// ─── Phase 3: Per-user ops valves ─────────────────────────────────────
+export function useAdminUserOps() {
+  const clearRecoveryLock = useMutation(api.adminUserOps.clearRecoveryLock);
+  const exitVacationMode = useMutation(api.adminUserOps.exitVacationMode);
+  const addCoachingNote = useMutation(api.adminUserOps.addCoachingNote);
+  const softResetBrainState = useMutation(api.adminUserOps.softResetBrainState);
+  return { clearRecoveryLock, exitVacationMode, addCoachingNote, softResetBrainState };
+}
+
 // ─── Phase 2: Revenue charts ──────────────────────────────────────────
 export function useAdminSubscriberGrowth() {
   return useQuery(api.subscriptions.getSubscriberGrowth);

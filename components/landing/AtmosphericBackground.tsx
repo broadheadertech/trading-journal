@@ -29,9 +29,9 @@ export default function AtmosphericBackground({ variant = 'subtle' }: { variant?
         className="absolute inset-0 pointer-events-none bg-cover bg-center"
         style={{
           backgroundImage: "url('/tradia-background.png')",
-          filter: 'blur(26px) saturate(0.7) brightness(0.95)',
-          transform: 'scale(1.12)',
-          opacity: isHero ? 0.22 : 0.1,
+          filter: 'blur(8px) saturate(1.1) brightness(1.05)',
+          transform: 'scale(1.06)',
+          opacity: isHero ? 0.4 : 0.18,
         }}
       />
       {/* 2. Dark gradient overlay — keeps copy readable on top of the photo */}

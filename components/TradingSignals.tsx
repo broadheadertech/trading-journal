@@ -459,7 +459,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
             return (
               <div key={i} className={`flex items-center gap-3 ${hit ? 'text-emerald-300' : ''}`}>
                 <span className={`w-14 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
-                  TP{i + 1}:
+                  {hit ? 'WON:' : `TP${i + 1}:`}
                 </span>
                 <span className={`font-bold tabular-nums ${hit ? 'text-emerald-300' : 'text-emerald-300/90'}`}>
                   {fmt(tp)}
@@ -482,16 +482,6 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
           })}
         </div>
 
-        {/* Pip / lot reference */}
-        {showPips && (
-          <div className="pt-2 mt-2 border-t border-[var(--border)] flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] tabular-nums">
-            <span>1 pip = {fmtPriceUnit(s.market, s.pipSize ?? defaultPipSize(s.market, s.symbol))}</span>
-            {(s.lotSize !== undefined) && <span>· {s.lotSize.toLocaleString()} units / lot</span>}
-            {(s.pipSize !== undefined && s.pipSize !== defaultPipSize(s.market, s.symbol)) && (
-              <span className="text-pink-400">· custom</span>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Rationale */}
