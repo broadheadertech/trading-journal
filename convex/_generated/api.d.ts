@@ -9,7 +9,9 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as adminAnalytics from "../adminAnalytics.js";
 import type * as adminEvents from "../adminEvents.js";
+import type * as adminUserOps from "../adminUserOps.js";
 import type * as articles from "../articles.js";
 import type * as brain from "../brain.js";
 import type * as brainAdmin from "../brainAdmin.js";
@@ -58,7 +60,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  adminAnalytics: typeof adminAnalytics;
   adminEvents: typeof adminEvents;
+  adminUserOps: typeof adminUserOps;
   articles: typeof articles;
   brain: typeof brain;
   brainAdmin: typeof brainAdmin;

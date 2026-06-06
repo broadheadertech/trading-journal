@@ -9,6 +9,14 @@ import { useAdminFirehose } from '@/hooks/useAdminStore';
 
 type EventStyle = { icon: any; tint: string; label: string };
 
+type FirehoseEvent = {
+  id: string;
+  type: string;
+  userId: string;
+  timestamp: string;
+  summary: string;
+};
+
 const EVENT_STYLES: Record<string, EventStyle> = {
   trade_logged:     { icon: TrendingUp,     tint: 'text-cyan-400 bg-cyan-500/10',         label: 'Trade logged' },
   trade_closed:     { icon: TrendingDown,   tint: 'text-emerald-400 bg-emerald-500/10',   label: 'Trade closed' },
@@ -140,7 +148,7 @@ export default function AdminFirehosePage() {
           </div>
         ) : (
           <ul className="space-y-1">
-            {events.map((e) => {
+            {(events as FirehoseEvent[]).map((e) => {
               const style = EVENT_STYLES[e.type] ?? { icon: Activity, tint: 'text-slate-400 bg-slate-500/10', label: e.type };
               const Icon = style.icon;
               return (
