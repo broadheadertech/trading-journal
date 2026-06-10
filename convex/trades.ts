@@ -9,11 +9,14 @@ export const list = query({
   handler: async (ctx) => {
     const userId = await getUser(ctx);
     if (!userId) return [];
-    return ctx.db
+    const rows = await ctx.db
       .query("trades")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .order("desc")
       .collect();
+    // Newest trade first by the trade's own date (seeded/imported trades share a
+    // near-identical _creationTime, so index order won't reflect real chronology).
+    rows.sort((a, b) => new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime());
+    return rows;
   },
 });
 
@@ -255,9 +258,9 @@ export const listPublicByUser = query({
     const all = await ctx.db
       .query("trades")
       .withIndex("by_user", (q) => q.eq("userId", userId))
-      .order("desc")
       .collect();
     const publicOnly = all.filter((t) => t.visibility === "public");
+    publicOnly.sort((a, b) => new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime());
     return publicOnly.slice(0, limit ?? 50);
   },
 });
