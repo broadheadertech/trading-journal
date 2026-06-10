@@ -7,6 +7,7 @@ import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
 import SignalSocialBar from '@/components/SignalSocialBar';
+import TopAnalysts from '@/components/TopAnalysts';
 import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
 
 type Direction = 'long' | 'short';
@@ -109,7 +110,7 @@ export default function TradingSignals() {
   const canPost = PRO_PLUS.has(planId);
 
   const [marketFilter, setMarketFilter] = useState<Market | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('active');
+  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [historyPoster, setHistoryPoster] = useState<{ id: string; name: string } | null>(null);
@@ -180,6 +181,8 @@ export default function TradingSignals() {
 
       {showLeaderboard && <Leaderboard rows={leaderboard} />}
 
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+        <main className="min-w-0 space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
           <Filter size={11} /> Market
@@ -227,7 +230,7 @@ export default function TradingSignals() {
           No signals match your filters. {canPost && 'Be the first to post one.'}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {list.map(s => (
             <SignalCard
               key={s._id}
@@ -248,6 +251,17 @@ export default function TradingSignals() {
           Signals are user-posted research-driven trade ideas, not recommendations from Tradia. Run every signal through
           your playbook, your risk model, and your discipline check before sizing in.
         </div>
+      </div>
+        </main>
+
+        {/* Right rail — who to follow */}
+        <aside className="lg:sticky lg:top-4 lg:self-start">
+          <div className="flex items-center gap-2 mb-3">
+            <Award size={15} className="text-amber-400" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Top analysts to follow</h2>
+          </div>
+          <TopAnalysts limit={10} />
+        </aside>
       </div>
 
       {showPostModal && canPost && (

@@ -81,6 +81,10 @@ export const list = query({
     if (args.market && !args.status) {
       results = results.filter((s) => s.market === args.market);
     }
+    // Order by the signal's actual post date (newest first). Imported/seeded
+    // signals share a near-identical _creationTime, so index order alone won't
+    // reflect their real chronology.
+    results.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
     return results;
   },
 });
@@ -91,11 +95,13 @@ export const getMine = query({
   handler: async (ctx) => {
     const userId = await getUser(ctx);
     if (!userId) return [];
-    return ctx.db
+    const rows = await ctx.db
       .query("signals")
       .withIndex("by_poster", (q) => q.eq("posterId", userId))
       .order("desc")
       .take(50);
+    rows.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+    return rows;
   },
 });
 
@@ -104,11 +110,13 @@ export const getMine = query({
 export const byPoster = query({
   args: { posterId: v.string(), limit: v.optional(v.number()) },
   handler: async (ctx, { posterId, limit }) => {
-    return ctx.db
+    const rows = await ctx.db
       .query("signals")
       .withIndex("by_poster", (q) => q.eq("posterId", posterId))
       .order("desc")
       .take(limit ?? 200);
+    rows.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+    return rows;
   },
 });
 
