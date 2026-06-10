@@ -61,6 +61,8 @@ export const getFollowingFeed = query({
           symbol: s.symbol, market: s.market, direction: s.direction, status: s.status,
           tpHit: s.tpHit ?? null, entryLow: s.entryLow, entryHigh: s.entryHigh,
           stopLoss: s.stopLoss, rrRatio: s.rrRatio,
+          rationale: s.rationale,
+          takeProfit: s.takeProfits[(s.tpHit ?? 1) - 1] ?? s.takeProfits[0] ?? null,
         });
       }
 
