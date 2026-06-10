@@ -183,44 +183,32 @@ export default function TradingSignals() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
         <main className="min-w-0 space-y-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-          <Filter size={11} /> Market
-        </div>
-        <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
-          {(['all', 'crypto', 'forex', 'stocks', 'commodities'] as const).map(f => (
-            <button
-              key={f}
-              onClick={() => setMarketFilter(f)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize transition-all ${
-                marketFilter === f
-                  ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] ml-2">
-          Status
-        </div>
-        <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
-          {(['all', 'active', 'pending', 'won', 'lost'] as const).map(s => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize transition-all ${
-                statusFilter === s
-                  ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Filter size={14} className="text-[var(--muted-foreground)] shrink-0" />
+        <select
+          value={marketFilter}
+          onChange={e => setMarketFilter(e.target.value as Market | 'all')}
+          style={{ colorScheme: 'dark' }}
+          className="rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
+        >
+          <option value="all">All markets</option>
+          <option value="crypto">Crypto</option>
+          <option value="forex">Forex</option>
+          <option value="stocks">Stocks</option>
+          <option value="commodities">Commodities</option>
+        </select>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value as Status | 'all')}
+          style={{ colorScheme: 'dark' }}
+          className="rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
+        >
+          <option value="all">All status</option>
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+        </select>
       </div>
 
       {signals === undefined ? (
