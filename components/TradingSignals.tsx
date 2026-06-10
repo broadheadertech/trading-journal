@@ -8,6 +8,7 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import TopAnalysts from '@/components/TopAnalysts';
+import SignalRationale from '@/components/SignalRationale';
 import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
 
 type Direction = 'long' | 'short';
@@ -189,7 +190,7 @@ export default function TradingSignals() {
           value={marketFilter}
           onChange={e => setMarketFilter(e.target.value as Market | 'all')}
           style={{ colorScheme: 'dark' }}
-          className="rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
+          className="w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
         >
           <option value="all">All markets</option>
           <option value="crypto">Crypto</option>
@@ -201,7 +202,7 @@ export default function TradingSignals() {
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value as Status | 'all')}
           style={{ colorScheme: 'dark' }}
-          className="rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
+          className="w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
         >
           <option value="all">All status</option>
           <option value="active">Active</option>
@@ -490,7 +491,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
       {/* Rationale */}
       {s.rationale && (
         <div className="px-5 pb-3 text-xs text-[var(--muted-foreground)] leading-relaxed border-t border-[var(--border)] pt-3">
-          {s.rationale}
+          <SignalRationale text={s.rationale} symbol={s.symbol} />
         </div>
       )}
 

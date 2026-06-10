@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import EditProfileModal from '@/components/EditProfileModal';
 import SignalSocialBar from '@/components/SignalSocialBar';
+import SignalRationale from '@/components/SignalRationale';
 
 type TabKey = 'trades' | 'signals' | 'articles';
 
@@ -359,7 +360,7 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
               {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} target{s.takeProfits.length > 1 ? 's' : ''}
             </div>
             {s.rationale && (
-              <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3">{s.rationale}</p>
+              <SignalRationale text={s.rationale} symbol={s.symbol} className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3 block" />
             )}
           </div>
           <SignalSocialBar signalId={s._id} />

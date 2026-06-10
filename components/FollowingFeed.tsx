@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalSocialBar from '@/components/SignalSocialBar';
+import SignalRationale from '@/components/SignalRationale';
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -148,7 +149,7 @@ function FeedCard({ item }: { item: FeedItem }) {
           <PosterRow item={item} verb="posted a signal" />
 
           {item.rationale && (
-            <p className="text-sm text-[var(--foreground)]/90 leading-relaxed">{item.rationale}</p>
+            <SignalRationale text={item.rationale} symbol={item.symbol} className="text-sm text-[var(--foreground)]/90 leading-relaxed" />
           )}
 
           {/* Embedded signal ticket */}
