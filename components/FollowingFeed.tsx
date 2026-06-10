@@ -39,6 +39,8 @@ type FeedItem = {
   entryHigh?: number;
   stopLoss?: number;
   rrRatio?: number;
+  rationale?: string;
+  takeProfit?: number | null;
   // trade
   coin?: string;
   actualPnL?: number | null;
@@ -124,29 +126,51 @@ function PosterRow({ item, verb }: { item: FeedItem; verb: string }) {
   );
 }
 
+function Level({ label, value, tone }: { label: string; value: string; tone?: 'red' | 'emerald' }) {
+  const color = tone === 'red' ? 'text-red-300' : tone === 'emerald' ? 'text-emerald-300' : 'text-[var(--foreground)]';
+  return (
+    <div className="rounded-md bg-[var(--card)] border border-[var(--border)] px-2 py-1.5 text-center">
+      <div className="text-[9px] uppercase tracking-wide text-[var(--muted-foreground)]">{label}</div>
+      <div className={`text-sm font-bold tabular-nums mt-0.5 ${color}`}>{value}</div>
+    </div>
+  );
+}
+
 function FeedCard({ item }: { item: FeedItem }) {
   if (item.kind === 'signal') {
     const won = item.status === 'won';
     const lost = item.status === 'lost';
+    const isShort = item.direction === 'short';
+    const entry = item.entryHigh !== item.entryLow ? `${item.entryLow}–${item.entryHigh}` : `${item.entryLow}`;
     return (
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
-        <div className="p-4">
+        <div className="p-4 space-y-3">
           <PosterRow item={item} verb="posted a signal" />
-          <div className="flex items-center gap-2 flex-wrap">
-            <Radio size={14} className="text-pink-400" />
-            <span className="font-mono font-bold">{item.symbol}</span>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.direction === 'short' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
-              {item.direction === 'short' ? 'SELL' : 'BUY'}
-            </span>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-              won ? 'bg-emerald-500/15 text-emerald-300' :
-              lost ? 'bg-red-500/15 text-red-300' :
-              'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-            }`}>{item.status}{item.tpHit ? ` · TP${item.tpHit}` : ''}</span>
-            <span className="ml-auto text-xs font-bold tabular-nums text-pink-300">1:{(item.rrRatio ?? 0).toFixed(1)}</span>
-          </div>
-          <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums mt-1.5">
-            entry {item.entryLow}{item.entryHigh !== item.entryLow ? `–${item.entryHigh}` : ''} · SL {item.stopLoss}
+
+          {item.rationale && (
+            <p className="text-sm text-[var(--foreground)]/90 leading-relaxed">{item.rationale}</p>
+          )}
+
+          {/* Embedded signal ticket */}
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--background)]/40 p-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Radio size={15} className="text-pink-400" />
+              <span className="font-mono font-bold text-base">{item.symbol}</span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${isShort ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                {isShort ? 'SELL' : 'BUY'}
+              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                won ? 'bg-emerald-500/15 text-emerald-300' :
+                lost ? 'bg-red-500/15 text-red-300' :
+                'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
+              }`}>{item.status}{item.tpHit ? ` · TP${item.tpHit}` : ''}</span>
+              <span className="ml-auto text-[11px] font-bold tabular-nums text-pink-300">R:R {(item.rrRatio ?? 0).toFixed(1)}</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              <Level label="Entry" value={entry} />
+              <Level label="Stop loss" value={`${item.stopLoss}`} tone="red" />
+              <Level label="Target" value={item.takeProfit != null ? `${item.takeProfit}` : '—'} tone="emerald" />
+            </div>
           </div>
         </div>
         {item.signalId && <SignalSocialBar signalId={item.signalId} />}
