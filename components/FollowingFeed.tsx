@@ -56,8 +56,8 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
   const data = useQuery(api.feed.getFollowingFeed, { limit: 60 });
 
   return (
-    <div className="relative space-y-6 max-w-3xl mx-auto">
-      <header className="space-y-2">
+    <div className="relative max-w-6xl mx-auto">
+      <header className="space-y-2 mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
           <Users size={13} className="text-pink-400" /> Following
         </div>
@@ -67,34 +67,35 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
         </p>
       </header>
 
-      {data === undefined ? (
-        <div className="text-center py-16"><Loader2 size={22} className="animate-spin inline text-pink-400" /></div>
-      ) : data.following === 0 ? (
-        <div className="space-y-5">
-          <EmptyState
-            title="You're not following anyone yet"
-            body="Follow traders and analysts below to see their signals and trades here as they happen."
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+        {/* Main column — the feed itself */}
+        <main className="min-w-0">
+          {data === undefined ? (
+            <div className="text-center py-16"><Loader2 size={22} className="animate-spin inline text-pink-400" /></div>
+          ) : data.following === 0 ? (
+            <EmptyState
+              title="You're not following anyone yet"
+              body="Follow traders and analysts from the panel to fill your feed with their signals and trades."
+            />
+          ) : data.items.length === 0 ? (
+            <EmptyState
+              title="No recent activity"
+              body="The people you follow haven't posted lately. Check back soon, or discover more analysts to follow."
+            />
+          ) : (
+            <div className="space-y-3">
+              {(data.items as FeedItem[]).map(item => (
+                <FeedCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </main>
+
+        {/* Right rail — who to follow */}
+        <aside className="lg:sticky lg:top-4 lg:self-start">
           <DiscoverSection onOpenTab={onOpenTab} />
-        </div>
-      ) : data.items.length === 0 ? (
-        <div className="space-y-5">
-          <EmptyState
-            title="No recent activity"
-            body="The people you follow haven't posted lately. Discover more analysts to follow:"
-          />
-          <DiscoverSection onOpenTab={onOpenTab} />
-        </div>
-      ) : (
-        <div className="space-y-8">
-          <div className="space-y-3">
-            {(data.items as FeedItem[]).map(item => (
-              <FeedCard key={item.id} item={item} />
-            ))}
-          </div>
-          <DiscoverSection onOpenTab={onOpenTab} compact />
-        </div>
-      )}
+        </aside>
+      </div>
     </div>
   );
 }
