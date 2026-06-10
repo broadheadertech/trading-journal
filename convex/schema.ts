@@ -317,10 +317,31 @@ export default defineSchema({
     displayName: v.optional(v.string()),    // synced from Clerk fullName/firstName
     avatarUrl: v.optional(v.string()),      // synced from Clerk imageUrl
     bio: v.optional(v.string()),            // free-text user bio shown on profile
+    // Opt-in: when true, the public profile exposes full-account aggregate stats
+    // (trading W/L + total P&L) — never individual private trades. Default off.
+    shareStats: v.optional(v.boolean()),
+    // Optional social links shown on the public profile. Empty/undefined = hidden.
+    socialX: v.optional(v.string()),
+    socialInstagram: v.optional(v.string()),
+    socialYoutube: v.optional(v.string()),
+    socialTelegram: v.optional(v.string()),
+    socialTiktok: v.optional(v.string()),
+    socialWebsite: v.optional(v.string()),
   })
     .index("by_user", ["userId"])
     .index("by_username", ["username"])
     .index("by_clerk_username", ["clerkUsername"]),
+
+  // ─── Social follow graph ────────────────────────────────────────────
+  // One row per (follower → following) edge. Both are Clerk subject ids.
+  follows: defineTable({
+    followerId: v.string(),   // who is doing the following
+    followingId: v.string(),  // who is being followed
+    createdAt: v.string(),
+  })
+    .index("by_follower", ["followerId"])               // who I follow
+    .index("by_following", ["followingId"])             // my followers
+    .index("by_pair", ["followerId", "followingId"]),   // dedupe + isFollowing lookup
 
   // ─── Admin back-office ─────────────────────────────────────────────
   adminSettings: defineTable({

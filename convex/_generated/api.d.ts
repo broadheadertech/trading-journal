@@ -26,6 +26,7 @@ import type * as cohorts from "../cohorts.js";
 import type * as courses from "../courses.js";
 import type * as crons from "../crons.js";
 import type * as events from "../events.js";
+import type * as follows from "../follows.js";
 import type * as forum from "../forum.js";
 import type * as goals from "../goals.js";
 import type * as helpers from "../helpers.js";
@@ -77,6 +78,7 @@ declare const fullApi: ApiFromModules<{
   courses: typeof courses;
   crons: typeof crons;
   events: typeof events;
+  follows: typeof follows;
   forum: typeof forum;
   goals: typeof goals;
   helpers: typeof helpers;

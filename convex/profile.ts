@@ -261,6 +261,116 @@ export const setBio = mutation({
 });
 
 /**
+ * Update opt-in profile metadata: the "share overall stats" flag and social
+ * links. An empty string for any social field clears it. All fields optional so
+ * the modal can send partial updates.
+ */
+export const setProfileMeta = mutation({
+  args: {
+    shareStats: v.optional(v.boolean()),
+    socialX: v.optional(v.string()),
+    socialInstagram: v.optional(v.string()),
+    socialYoutube: v.optional(v.string()),
+    socialTelegram: v.optional(v.string()),
+    socialTiktok: v.optional(v.string()),
+    socialWebsite: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await requireUser(ctx);
+
+    const SOCIAL_FIELDS = [
+      "socialX", "socialInstagram", "socialYoutube",
+      "socialTelegram", "socialTiktok", "socialWebsite",
+    ] as const;
+
+    const patch: Record<string, unknown> = {};
+    if (args.shareStats !== undefined) patch.shareStats = args.shareStats;
+    for (const f of SOCIAL_FIELDS) {
+      const raw = args[f];
+      if (raw === undefined) continue;          // field not sent — leave untouched
+      const trimmed = raw.trim().slice(0, 200);
+      // Empty string → clear the field (patch to undefined removes it).
+      patch[f] = trimmed.length ? trimmed : undefined;
+    }
+
+    const existing = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, patch);
+    } else {
+      await ctx.db.insert("profiles", { userId, initialCapital: 0, ...patch });
+    }
+  },
+});
+
+/**
+ * Public aggregate stats for a profile. Two lanes:
+ *  - Trading (W/L + total P&L) — only returned if the user opted in via
+ *    `shareStats`; computed from their FULL account but exposes aggregates only,
+ *    never individual private trades.
+ *  - Signals (W/L + hit-rate + total R) — always public, since signals are
+ *    posted to the public feed by nature.
+ */
+export const getPublicStats = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const profile = await ctx.db
+      .query("profiles")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    const shareStats = profile?.shareStats ?? false;
+
+    let trading: {
+      wins: number; losses: number; total: number; winRate: number; totalPnL: number;
+    } | null = null;
+
+    if (shareStats) {
+      const trades = await ctx.db
+        .query("trades")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect();
+      const closed = trades.filter((t) => !t.isOpen && t.actualPnL !== null);
+      const wins = closed.filter((t) => (t.actualPnL ?? 0) > 0).length;
+      const losses = closed.filter((t) => (t.actualPnL ?? 0) < 0).length;
+      const totalPnL = closed.reduce((s, t) => s + (t.actualPnL ?? 0), 0);
+      trading = {
+        wins,
+        losses,
+        total: closed.length,
+        winRate: closed.length ? Math.round((wins / closed.length) * 100) : 0,
+        totalPnL: Math.round(totalPnL * 100) / 100,
+      };
+    }
+
+    const signals = await ctx.db
+      .query("signals")
+      .withIndex("by_poster", (q) => q.eq("posterId", userId))
+      .collect();
+    const closedSig = signals.filter((s) => s.status === "won" || s.status === "lost");
+    const wonSig = signals.filter((s) => s.status === "won").length;
+    const lostSig = signals.filter((s) => s.status === "lost").length;
+    const totalR = closedSig.reduce(
+      (sum, s) => sum + (s.actualR ?? (s.status === "won" ? s.rrRatio : -1)),
+      0,
+    );
+
+    return {
+      shareStats,
+      trading,
+      signals: {
+        wins: wonSig,
+        losses: lostSig,
+        total: closedSig.length,
+        hitRate: closedSig.length ? Math.round((wonSig / closedSig.length) * 100) : 0,
+        totalR: Math.round(totalR * 10) / 10,
+      },
+    };
+  },
+});
+
+/**
  * Resolve a /u/<slug> URL to the underlying public profile.
  * Looks up custom username first, then Clerk username, then treats the slug
  * as a raw Clerk subject id as a last-resort fallback.
@@ -304,6 +414,16 @@ export const getPublicBySlug = query({
       displayName: profile.displayName ?? null,
       avatarUrl: profile.avatarUrl ?? null,
       bio: profile.bio ?? null,
+      shareStats: profile.shareStats ?? false,
+      memberSince: new Date(profile._creationTime).toISOString(),
+      socials: {
+        x: profile.socialX ?? null,
+        instagram: profile.socialInstagram ?? null,
+        youtube: profile.socialYoutube ?? null,
+        telegram: profile.socialTelegram ?? null,
+        tiktok: profile.socialTiktok ?? null,
+        website: profile.socialWebsite ?? null,
+      },
     };
   },
 });
