@@ -27,6 +27,7 @@ import JournalTab, { type JournalSubTab } from '@/components/JournalTab';
 import Courses from '@/components/Courses';
 import Events from '@/components/Events';
 import Community from '@/components/Community';
+import FollowingFeed from '@/components/FollowingFeed';
 import Coaching from '@/components/Coaching';
 import Strategies from '@/components/Strategies';
 import TradingSignals from '@/components/TradingSignals';
@@ -507,6 +508,9 @@ function AppContent() {
           )}
           {activeTab === 'community' && (
             canAccessTab('community') ? <Community /> : <UpgradePrompt requiredTier={getRequiredTier('community')} />
+          )}
+          {activeTab === 'feed' && (
+            canAccessTab('feed') ? <FollowingFeed onOpenTab={setActiveTab} /> : <UpgradePrompt requiredTier={getRequiredTier('feed')} />
           )}
           {activeTab === 'coaching' && (
             canAccessTab('coaching') ? <Coaching /> : <UpgradePrompt requiredTier={getRequiredTier('coaching')} />

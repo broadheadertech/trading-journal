@@ -55,19 +55,6 @@ interface WorldData {
   videos: VideoItem[];
 }
 
-// Channels we deep-link to from each headline. user= form lets YT pick the canonical channel.
-const NEWS_CHANNELS = [
-  { name: 'CNN',        user: 'CNN',                color: 'text-red-400' },
-  { name: 'BBC',        user: 'BBCNews',            color: 'text-orange-400' },
-  { name: 'Reuters',    user: 'Reuters',            color: 'text-amber-400' },
-  { name: 'Al Jazeera', user: 'aljazeeraenglish',   color: 'text-emerald-400' },
-];
-
-function ytSearchUrl(query: string, channel: string) {
-  const q = encodeURIComponent(`${query} ${channel}`);
-  return `https://www.youtube.com/results?search_query=${q}`;
-}
-
 function timeAgo(ts: number) {
   const s = (Date.now() - ts) / 1000;
   if (s < 60) return `${Math.round(s)}s ago`;
@@ -160,12 +147,9 @@ export default function WorldMonitorLive() {
             <Section title="World News (live)" icon={<Newspaper size={14} className="text-fuchsia-400" />}>
               <div className="glass rounded-2xl divide-y divide-[var(--border)] overflow-hidden">
                 {data.news.map((n, i) => (
-                  <a
+                  <div
                     key={i}
-                    href={n.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-3 p-3 hover:bg-[var(--muted)]/40 transition-colors group"
+                    className="flex items-start gap-3 p-3"
                   >
                     <div className="shrink-0 flex flex-col items-center gap-0.5 w-10 pt-0.5">
                       <ArrowUp size={12} className="text-orange-400" />
@@ -183,33 +167,16 @@ export default function WorldMonitorLive() {
                         <span className="text-[10px] text-[var(--muted-foreground)]">{n.source}</span>
                         <span className="text-[10px] text-[var(--muted-foreground)]">· {timeAgo(n.publishedAt)}</span>
                       </div>
-                      <div className="text-sm text-[var(--foreground)] group-hover:text-fuchsia-400 transition-colors line-clamp-2">
+                      <div className="text-sm text-[var(--foreground)] line-clamp-2">
                         {n.title}
                       </div>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
                           <MessageCircle size={10} /> {n.comments}
                         </span>
-                        <span className="text-[10px] text-[var(--muted-foreground)]">·</span>
-                        <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1">
-                          <Youtube size={10} className="text-red-500" /> Watch on
-                        </span>
-                        {NEWS_CHANNELS.map(c => (
-                          <button
-                            key={c.name}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(ytSearchUrl(n.title, c.name), '_blank', 'noopener,noreferrer');
-                            }}
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-[var(--border)] hover:bg-[var(--muted)]/40 transition-colors ${c.color}`}
-                          >
-                            {c.name}
-                          </button>
-                        ))}
                       </div>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </Section>
@@ -220,12 +187,9 @@ export default function WorldMonitorLive() {
             <Section title="Latest Video Coverage" icon={<PlayCircle size={14} className="text-red-500" />}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {data.videos.slice(0, 12).map(v => (
-                  <a
+                  <div
                     key={v.videoId}
-                    href={v.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="glass rounded-2xl overflow-hidden card-lift group"
+                    className="glass rounded-2xl overflow-hidden group"
                   >
                     <div className="relative aspect-video bg-black overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -238,21 +202,16 @@ export default function WorldMonitorLive() {
                       <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur text-[10px] font-bold text-white">
                         <Youtube size={11} className="text-red-500" /> {v.source}
                       </div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-red-500/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <PlayCircle size={28} className="text-white" fill="white" stroke="rgb(239,68,68)" />
-                        </div>
-                      </div>
                     </div>
                     <div className="p-3">
-                      <div className="text-xs font-medium text-[var(--foreground)] line-clamp-2 group-hover:text-red-400 transition-colors">
+                      <div className="text-xs font-medium text-[var(--foreground)] line-clamp-2">
                         {v.title}
                       </div>
                       <div className="text-[10px] text-[var(--muted-foreground)] mt-1">
                         {timeAgo(new Date(v.publishedAt).getTime())}
                       </div>
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             </Section>
@@ -281,14 +240,14 @@ export default function WorldMonitorLive() {
                 ) : (
                   <div className="space-y-1.5">
                     {data.earthquakes.map((eq, i) => (
-                      <a key={i} href={eq.url} target="_blank" rel="noopener noreferrer"
-                         className="flex items-center gap-3 py-1.5 text-sm hover:bg-[var(--muted)]/40 rounded-lg px-2 transition-colors">
+                      <div key={i}
+                         className="flex items-center gap-3 py-1.5 text-sm rounded-lg px-2">
                         <span className={`font-mono font-bold ${eq.mag >= 6 ? 'text-red-400' : eq.mag >= 5 ? 'text-amber-400' : 'text-[var(--foreground)]'}`}>
                           M{eq.mag.toFixed(1)}
                         </span>
                         <span className="flex-1 truncate text-[var(--foreground)]">{eq.place}</span>
                         <span className="text-xs text-[var(--muted-foreground)]">{timeAgo(eq.time)}</span>
-                      </a>
+                      </div>
                     ))}
                   </div>
                 )}
