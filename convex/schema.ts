@@ -343,6 +343,24 @@ export default defineSchema({
     .index("by_following", ["followingId"])             // my followers
     .index("by_pair", ["followerId", "followingId"]),   // dedupe + isFollowing lookup
 
+  // ─── Signal engagement (likes + comments) ───────────────────────────
+  signalLikes: defineTable({
+    userId: v.string(),
+    signalId: v.id("signals"),
+    createdAt: v.string(),
+  })
+    .index("by_signal", ["signalId"])
+    .index("by_user_signal", ["userId", "signalId"]),   // dedupe + toggle
+
+  signalComments: defineTable({
+    signalId: v.id("signals"),
+    authorId: v.string(),
+    authorName: v.string(),
+    authorImage: v.optional(v.string()),
+    body: v.string(),
+    createdAt: v.string(),
+  }).index("by_signal", ["signalId"]),
+
   // ─── Admin back-office ─────────────────────────────────────────────
   adminSettings: defineTable({
     key: v.string(),

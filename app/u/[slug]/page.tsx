@@ -11,6 +11,7 @@ import {
   UserPlus, UserCheck, Twitter, Instagram, Youtube, Send, Music2, X,
 } from 'lucide-react';
 import EditProfileModal from '@/components/EditProfileModal';
+import SignalSocialBar from '@/components/SignalSocialBar';
 
 type TabKey = 'trades' | 'signals' | 'articles';
 
@@ -343,22 +344,25 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {signals.map(s => (
-        <div key={s._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <div className="font-mono font-bold">{s.symbol}</div>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-              s.status === 'won' ? 'bg-emerald-500/15 text-emerald-300' :
-              s.status === 'lost' ? 'bg-red-500/15 text-red-300' :
-              s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
-              'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-            }`}>{s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}</span>
+        <div key={s._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col">
+          <div className="p-4 flex-1">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <div className="font-mono font-bold">{s.symbol}</div>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                s.status === 'won' ? 'bg-emerald-500/15 text-emerald-300' :
+                s.status === 'lost' ? 'bg-red-500/15 text-red-300' :
+                s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
+                'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
+              }`}>{s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}</span>
+            </div>
+            <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums">
+              {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} TP{s.takeProfits.length > 1 ? 's' : ''}
+            </div>
+            {s.rationale && (
+              <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3">{s.rationale}</p>
+            )}
           </div>
-          <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums">
-            {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} TP{s.takeProfits.length > 1 ? 's' : ''}
-          </div>
-          {s.rationale && (
-            <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3">{s.rationale}</p>
-          )}
+          <SignalSocialBar signalId={s._id} />
         </div>
       ))}
     </div>

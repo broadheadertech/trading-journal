@@ -6,6 +6,7 @@ import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useSubscription } from '@/hooks/useSubscription';
+import SignalSocialBar from '@/components/SignalSocialBar';
 import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
 
 type Direction = 'long' | 'short';
@@ -513,6 +514,8 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
           <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} onEdit={() => onEdit(s)} />
         )}
       </div>
+
+      <SignalSocialBar signalId={s._id} />
     </div>
   );
 }

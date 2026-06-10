@@ -7,6 +7,38 @@ import { getUser, requireUser, getEffectivePlanId } from "./helpers";
 const PRO_PLUS_TIERS = new Set(["core", "pro", "elite"]);
 const TERMINAL_STATUSES = new Set(["won", "lost", "cancelled", "expired"]);
 
+// Fan a notification out to everyone following `posterId`. Capped so a single
+// mutation stays bounded; the bell UI (Sidebar) renders these.
+async function notifyFollowers(
+  ctx: any,
+  posterId: string,
+  n: { type: string; title: string; message: string; timestamp: string },
+) {
+  const followers = await ctx.db
+    .query("follows")
+    .withIndex("by_following", (q: any) => q.eq("followingId", posterId))
+    .take(500);
+  if (followers.length === 0) return;
+
+  const profile = await ctx.db
+    .query("profiles")
+    .withIndex("by_user", (q: any) => q.eq("userId", posterId))
+    .first();
+  const link = `/u/${profile?.username || profile?.clerkUsername || posterId}`;
+
+  for (const f of followers) {
+    await ctx.db.insert("notifications", {
+      userId: f.followerId,
+      type: n.type,
+      title: n.title,
+      message: n.message,
+      read: false,
+      link,
+      timestamp: n.timestamp,
+    });
+  }
+}
+
 // ─── List active + pending signals (any subscriber can read) ──────────
 export const list = query({
   args: {
@@ -154,7 +186,7 @@ export const post = mutation({
     const now = new Date();
     const defaultExpiry = new Date(now.getTime() + 1000 * 60 * 60 * 24).toISOString();
 
-    return await ctx.db.insert("signals", {
+    const signalId = await ctx.db.insert("signals", {
       posterId: userId,
       posterName: args.posterName,
       posterTier: planId,
@@ -176,6 +208,15 @@ export const post = mutation({
       lotSize: args.lotSize,
       showPips: args.showPips,
     });
+
+    await notifyFollowers(ctx, userId, {
+      type: "new_signal",
+      title: "New signal",
+      message: `${args.posterName} posted ${args.symbol.toUpperCase()} ${args.direction === "long" ? "BUY" : "SELL"}`,
+      timestamp: now.toISOString(),
+    });
+
+    return signalId;
   },
 });
 
@@ -324,6 +365,20 @@ export const updateStatus = mutation({
     }
 
     await ctx.db.patch(args.id, patch);
+
+    // Notify followers when a signal first resolves win/loss.
+    const freshOutcome =
+      !signal.closedAt && (args.status === "won" || args.status === "lost");
+    if (freshOutcome) {
+      await notifyFollowers(ctx, signal.posterId, {
+        type: "signal_outcome",
+        title: args.status === "won" ? "Signal hit target 🎯" : "Signal stopped out",
+        message: `${signal.posterName}'s ${signal.symbol} ${
+          args.status === "won" ? `hit TP${patch.tpHit ?? 1}` : "hit SL"
+        }`,
+        timestamp: patch.closedAt ?? new Date().toISOString(),
+      });
+    }
   },
 });
 

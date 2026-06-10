@@ -409,6 +409,7 @@ export type TabId =
   | 'courses'
   | 'events'
   | 'community'
+  | 'feed'
   | 'coaching'
   | 'strategies'
   | 'rewards'
