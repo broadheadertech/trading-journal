@@ -163,7 +163,7 @@ function FeedCard({ item }: { item: FeedItem }) {
                 won ? 'bg-emerald-500/15 text-emerald-300' :
                 lost ? 'bg-red-500/15 text-red-300' :
                 'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-              }`}>{item.status}{item.tpHit ? ` · TP${item.tpHit}` : ''}</span>
+              }`}>{item.status}</span>
               <span className="ml-auto text-[11px] font-bold tabular-nums text-pink-300">R:R {(item.rrRatio ?? 0).toFixed(1)}</span>
             </div>
             <div className="grid grid-cols-3 gap-2 mt-3">

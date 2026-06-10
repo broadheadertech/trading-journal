@@ -63,7 +63,7 @@ const STRATEGIES: StrategyDef[] = [
       'Look for entries inside the Golden Pocket only',
       'Combine with horizontal S/R for high-probability confluence',
       'Stop below 78.6% — invalidation if it breaks',
-      'TP at 1.272 → 1.618 extensions',
+      'Take profit at 1.272 → 1.618 extensions',
     ],
   },
   {

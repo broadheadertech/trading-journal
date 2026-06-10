@@ -353,10 +353,10 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
                 s.status === 'lost' ? 'bg-red-500/15 text-red-300' :
                 s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
                 'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-              }`}>{s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}</span>
+              }`}>{s.status}</span>
             </div>
             <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums">
-              {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} TP{s.takeProfits.length > 1 ? 's' : ''}
+              {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} target{s.takeProfits.length > 1 ? 's' : ''}
             </div>
             {s.rationale && (
               <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3">{s.rationale}</p>
