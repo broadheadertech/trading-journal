@@ -407,7 +407,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
           </div>
         </div>
         <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${statusColor}`}>
-          {s.status}{s.tpHit ? ` · TP${s.tpHit}` : ''}
+          {s.status}
         </span>
       </div>
 
@@ -435,11 +435,11 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
       {/* Levels */}
       <div className="px-5 py-4 space-y-1.5 font-mono text-sm">
         <div className="flex items-center gap-3">
-          <span className="text-[var(--muted-foreground)] w-14 shrink-0">ENTRY:</span>
+          <span className="text-[var(--muted-foreground)] w-20 shrink-0">ENTRY:</span>
           <span className="text-[var(--foreground)] font-bold tabular-nums">{entryLabel}</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[var(--muted-foreground)] w-14 shrink-0">SL:</span>
+          <span className="text-[var(--muted-foreground)] w-20 shrink-0">SL:</span>
           <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
           {showPips && (
             <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}</span>
@@ -459,8 +459,8 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
             const tpRR = tpRisk > 0 ? tpReward / tpRisk : 0;
             return (
               <div key={i} className={`flex items-center gap-3 ${hit ? 'text-emerald-300' : ''}`}>
-                <span className={`w-14 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
-                  {hit ? 'WON:' : `TP${i + 1}:`}
+                <span className={`w-20 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
+                  {hit ? 'WON:' : `Target ${i + 1}:`}
                 </span>
                 <span className={`font-bold tabular-nums ${hit ? 'text-emerald-300' : 'text-emerald-300/90'}`}>
                   {fmt(tp)}
@@ -474,7 +474,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
                   1:{tpRR.toFixed(1)}
                 </span>
                 {hit && (
-                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`Closed at TP${i + 1}`}>
+                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`Closed at target ${i + 1}`}>
                     <Target size={18} className="text-emerald-400" strokeWidth={2.5} />
                   </span>
                 )}
@@ -574,8 +574,8 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
 
       {takeProfits.length > 1 ? (
         <>
-          <button onClick={() => setTpPickerOpen(v => !v)} title="Mark TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
-            <Target size={10} strokeWidth={2.5} /> TP hit
+          <button onClick={() => setTpPickerOpen(v => !v)} title="Mark target hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+            <Target size={10} strokeWidth={2.5} /> Target hit
           </button>
           {tpPickerOpen && (
             <div className="absolute bottom-full right-0 mb-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg p-1 flex flex-col z-10">
@@ -585,15 +585,15 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
                   onClick={() => { onUpdate('won', i + 1); setTpPickerOpen(false); }}
                   className="px-3 py-1 text-[10px] text-emerald-300 hover:bg-emerald-500/15 rounded transition-colors text-left"
                 >
-                  TP{i + 1} hit
+                  Target {i + 1} hit
                 </button>
               ))}
             </div>
           )}
         </>
       ) : (
-        <button onClick={() => onUpdate('won', 1)} title="TP hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
-          <Target size={10} strokeWidth={2.5} /> TP hit
+        <button onClick={() => onUpdate('won', 1)} title="Target hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+          <Target size={10} strokeWidth={2.5} /> Target hit
         </button>
       )}
 
@@ -684,7 +684,7 @@ function PostSignalModal({
     e.preventDefault();
     setError(null);
     if (!symbol.trim()) { setError('Symbol is required.'); return; }
-    if (!allBaseValid) { setError('Entry, stop, and at least one TP must be positive numbers.'); return; }
+    if (!allBaseValid) { setError('Entry, stop, and at least one target must be positive numbers.'); return; }
     if (entryLowNum > entryHighNum) { setError('Entry low must be ≤ entry high.'); return; }
     if (tpNums.length === 0) { setError('At least one take-profit is required.'); return; }
     // Rationale is optional — posters can add or refine it later via the edit modal.
@@ -843,7 +843,7 @@ function PostSignalModal({
                 const tpRR = tpValid && tpRisk > 0 ? tpReward / tpRisk : 0;
                 return (
                   <div key={i} className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-10 shrink-0 tabular-nums">TP{i + 1}</span>
+                    <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-16 shrink-0 tabular-nums">Target {i + 1}</span>
                     <input
                       type="number"
                       step="any"
@@ -874,7 +874,7 @@ function PostSignalModal({
 
           {previewRR > 0 && (
             <div className="text-xs text-[var(--muted-foreground)] tabular-nums">
-              R:R (vs TP1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-amber-500'}`}>{previewRR.toFixed(2)}</span>
+              R:R (vs Target 1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-amber-500'}`}>{previewRR.toFixed(2)}</span>
             </div>
           )}
 
@@ -918,7 +918,7 @@ function PostSignalModal({
                 </div>
                 {showPips && effectivePip > 0 && allBaseValid && tpNums[0] && (
                   <div className="text-[10px] text-emerald-400/80 tabular-nums">
-                    Preview with current settings: TP1 = {fmtPips(market, symbol || 'X', entryRef, tpNums[0], effectivePip)}
+                    Preview with current settings: Target 1 = {fmtPips(market, symbol || 'X', entryRef, tpNums[0], effectivePip)}
                     {effectiveLot > 0 && (
                       <span className="ml-2 text-[var(--muted-foreground)]">
                         · ${(effectivePip * effectiveLot).toLocaleString(undefined, { maximumFractionDigits: 2 })} per pip
