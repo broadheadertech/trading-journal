@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
@@ -9,7 +9,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalRationale from '@/components/SignalRationale';
-import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil } from 'lucide-react';
+import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil, ChevronDown } from 'lucide-react';
 
 type Direction = 'long' | 'short';
 type OrderType = 'market' | 'stop' | 'limit';
@@ -186,30 +186,28 @@ export default function TradingSignals() {
         <main className="min-w-0 space-y-5">
       <div className="flex flex-wrap items-center gap-2">
         <Filter size={14} className="text-[var(--muted-foreground)] shrink-0" />
-        <select
+        <FilterDropdown
           value={marketFilter}
-          onChange={e => setMarketFilter(e.target.value as Market | 'all')}
-          style={{ colorScheme: 'dark' }}
-          className="w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
-        >
-          <option value="all">All markets</option>
-          <option value="crypto">Crypto</option>
-          <option value="forex">Forex</option>
-          <option value="stocks">Stocks</option>
-          <option value="commodities">Commodities</option>
-        </select>
-        <select
+          onChange={setMarketFilter}
+          options={[
+            { value: 'all', label: 'All markets' },
+            { value: 'crypto', label: 'Crypto' },
+            { value: 'forex', label: 'Forex' },
+            { value: 'stocks', label: 'Stocks' },
+            { value: 'commodities', label: 'Commodities' },
+          ]}
+        />
+        <FilterDropdown
           value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value as Status | 'all')}
-          style={{ colorScheme: 'dark' }}
-          className="w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] px-3 py-1.5 outline-none cursor-pointer hover:border-pink-500/40 transition-colors"
-        >
-          <option value="all">All status</option>
-          <option value="active">Active</option>
-          <option value="pending">Pending</option>
-          <option value="won">Won</option>
-          <option value="lost">Lost</option>
-        </select>
+          onChange={setStatusFilter}
+          options={[
+            { value: 'all', label: 'All status' },
+            { value: 'active', label: 'Active' },
+            { value: 'pending', label: 'Pending' },
+            { value: 'won', label: 'Won' },
+            { value: 'lost', label: 'Lost' },
+          ]}
+        />
       </div>
 
       {signals === undefined ? (
@@ -519,6 +517,61 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
       </div>
 
       <SignalSocialBar signalId={s._id} />
+    </div>
+  );
+}
+
+// Compact custom dropdown — a button + popover, NOT a native <select>, so the
+// global `select { width: 100% }` form rule can't stretch it.
+function FilterDropdown<T extends string>({
+  value, onChange, options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [open]);
+
+  const current = options.find(o => o.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="inline-flex items-center justify-between gap-2 w-40 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] hover:border-pink-500/40 transition-colors"
+      >
+        <span className="truncate">{current?.label ?? 'Select'}</span>
+        <ChevronDown size={14} className={`text-[var(--muted-foreground)] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute z-30 mt-1 w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-xl p-1">
+          {options.map(o => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => { onChange(o.value); setOpen(false); }}
+              className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
+                o.value === value
+                  ? 'bg-pink-500/15 text-pink-300 font-semibold'
+                  : 'text-[var(--foreground)] hover:bg-[var(--muted)]/40'
+              }`}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
