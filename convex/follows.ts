@@ -92,7 +92,7 @@ export const follow = mutation({
   args: { targetUserId: v.string() },
   handler: async (ctx, { targetUserId }) => {
     const followerId = await requireUser(ctx);
-    if (followerId === targetUserId) throw new Error("You can't follow yourself.");
+    if (followerId === targetUserId) return; // can't follow yourself — no-op rather than error
 
     const existing = await ctx.db
       .query("follows")

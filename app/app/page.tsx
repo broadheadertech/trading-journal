@@ -52,7 +52,7 @@ function AppContent() {
   const { user } = useUser();
   const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
   const { canAccessTab, hasTeamAccess } = useSubscription();
-  const [activeTab, setActiveTab] = useState<TabId>('dashboard');
+  const [activeTab, setActiveTab] = useLocalStorage<TabId>('crypto-journal-active-tab', 'dashboard');
   const [journalSubTab, setJournalSubTab] = useState<JournalSubTab>('trades');
   const [isDark, setIsDark] = useLocalStorage('crypto-journal-theme-dark', true);
   const [showAddTrade, setShowAddTrade] = useState(false);
