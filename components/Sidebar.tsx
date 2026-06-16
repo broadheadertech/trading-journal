@@ -42,7 +42,6 @@ const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={20} /> },
   { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={20} /> },
   { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={20} /> },
-  { id: 'feed',        label: 'Following',           icon: <Users size={20} /> },
   { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={20} /> },
   { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={20} /> },
   { id: 'journal',     label: 'Journal & Analytics', icon: <List size={20} /> },

@@ -1,6 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import AtmosphericBackground from './AtmosphericBackground';
 
 // Round-robin avatar gradients — keeps the grid visually varied without
@@ -85,76 +87,123 @@ const testimonials: Testimonial[] = [
   { quote: 'Most journals tell you what happened. Tradia tells you what’s recurring. Different category of tool entirely.', author: 'Beatrice O.', role: 'African Forex', initials: 'BO' },
 ];
 
-const containerVariants = {
-  hidden: {},
-  // Fast stagger — with 60 items at 0.1s each the last card would animate in
-  // 6 seconds after the first. 0.02s keeps the cascade snappy.
-  visible: { transition: { staggerChildren: 0.02 } },
-};
+// Show a curated handful in a carousel rather than the whole wall of quotes.
+const REVIEWS = testimonials.slice(0, 10);
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+const slideVariants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 60 : -60 }),
+  center: { opacity: 1, x: 0 },
+  exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -60 : 60 }),
 };
 
 export default function Testimonials() {
+  // [activeIndex, direction] — direction drives the slide-in/out animation.
+  const [[active, dir], setActive] = useState<[number, number]>([0, 0]);
+  const [paused, setPaused] = useState(false);
+
+  const go = (next: number) => {
+    const wrapped = (next + REVIEWS.length) % REVIEWS.length;
+    setActive(([prev]) => [wrapped, wrapped > prev || (prev === REVIEWS.length - 1 && wrapped === 0) ? 1 : -1]);
+  };
+
+  // Auto-advance every 6s unless the user is hovering the carousel.
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => setActive(([prev]) => [(prev + 1) % REVIEWS.length, 1]), 6000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  const t = REVIEWS[active];
+  const color = AVATAR_GRADIENTS[active % AVATAR_GRADIENTS.length];
+
   return (
     <section className="relative overflow-hidden py-20 sm:py-28">
       <AtmosphericBackground />
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          className="text-center mb-12"
         >
           <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
             Trusted by Traders
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-[var(--foreground)]">
-            What <span className="neon-headline">{testimonials.length}+ traders</span> are saying
+            What <span className="neon-headline">traders</span> are saying
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)]">
             See what crypto, stock, forex, futures, options, and metals traders find inside Tradia.
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          // CSS columns masonry — quotes flow into 1/2/3 columns by viewport and
-          // naturally arrange around variable heights without leaving gaps.
-          className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5"
+        {/* Carousel */}
+        <div
+          className="relative flex items-center gap-2 sm:gap-4"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
-          {testimonials.map((t, i) => {
-            const color = AVATAR_GRADIENTS[i % AVATAR_GRADIENTS.length];
-            return (
+          <CarouselButton dir="prev" onClick={() => go(active - 1)} />
+
+          <div className="relative flex-1 min-h-[260px] sm:min-h-[230px] flex items-center">
+            <AnimatePresence mode="wait" custom={dir}>
               <motion.div
-                key={`${t.author}-${i}`}
-                variants={itemVariants}
-                // break-inside-avoid keeps each card whole inside its column.
-                className="break-inside-avoid rounded-xl border border-[var(--border)] bg-[var(--card)] p-6 hover:border-pink-500/30 transition-colors"
+                key={active}
+                custom={dir}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] p-7 sm:p-9 text-center"
               >
-                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed italic">
+                <Quote size={26} className="mx-auto text-pink-400/60 mb-4" />
+                <p className="text-base sm:text-lg text-[var(--foreground)] leading-relaxed">
                   &ldquo;{t.quote}&rdquo;
                 </p>
-                <div className="flex items-center gap-3 mt-5">
-                  <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${color} flex items-center justify-center shrink-0`}>
-                    <span className="text-white text-xs font-bold">{t.initials}</span>
+                <div className="flex items-center justify-center gap-3 mt-6">
+                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${color} flex items-center justify-center shrink-0`}>
+                    <span className="text-white text-sm font-bold">{t.initials}</span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--foreground)]">{t.author}</p>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-[var(--foreground)]">{t.author}</p>
                     <p className="text-xs text-[var(--muted-foreground)]">{t.role}</p>
                   </div>
                 </div>
               </motion.div>
-            );
-          })}
-        </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <CarouselButton dir="next" onClick={() => go(active + 1)} />
+        </div>
+
+        {/* Dots */}
+        <div className="flex items-center justify-center gap-2 mt-7">
+          {REVIEWS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive([i, i > active ? 1 : -1])}
+              aria-label={`Go to review ${i + 1}`}
+              className={`h-2 rounded-full transition-all ${
+                i === active ? 'w-6 bg-pink-400' : 'w-2 bg-[var(--muted-foreground)]/40 hover:bg-[var(--muted-foreground)]/70'
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
+  );
+}
+
+function CarouselButton({ dir, onClick }: { dir: 'prev' | 'next'; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={dir === 'prev' ? 'Previous review' : 'Next review'}
+      className="shrink-0 w-10 h-10 rounded-full border border-[var(--border)] bg-[var(--card)] flex items-center justify-center text-[var(--muted-foreground)] hover:text-pink-300 hover:border-pink-500/40 transition-colors"
+    >
+      {dir === 'prev' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+    </button>
   );
 }

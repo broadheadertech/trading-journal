@@ -8,8 +8,8 @@ import { Loader2, UserPlus, UserCheck } from 'lucide-react';
 
 type Analyst = {
   posterId: string; name: string; handle: string; avatar: string | null;
-  tier: string; total: number; won: number; lost: number;
-  hitRate: number; avgR: number; followers: number; isFollowing: boolean;
+  tier: string; winRate: number; won: number; lost: number;
+  signals: number; trades: number; avgR: number; followers: number; isFollowing: boolean;
 };
 
 export default function TopAnalysts({ limit = 10 }: { limit?: number }) {
@@ -72,7 +72,7 @@ function AnalystRow({ a, rank }: { a: Analyst; rank: number }) {
           </span>
         </Link>
         <div className="min-w-0 flex-1">
-          <Link href={`/u/${a.handle}`} className="text-sm font-bold text-[var(--foreground)] hover:text-pink-300 transition-colors truncate block">
+          <Link href={`/u/${a.handle}`} className="text-sm font-bold text-[var(--foreground)] hover:text-pink-300 transition-colors leading-tight block">
             {a.name}
           </Link>
           <div className="text-[11px] text-[var(--muted-foreground)] truncate">
@@ -83,7 +83,7 @@ function AnalystRow({ a, rank }: { a: Analyst; rank: number }) {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-1.5">
-        <Stat value={`${a.hitRate}%`} label="Hit rate" tone="emerald" />
+        <Stat value={`${a.winRate}%`} label="Win rate" tone="emerald" />
         <Stat value={`${a.won}/${a.lost}`} label="W / L" />
         <Stat value={`${a.avgR >= 0 ? '+' : ''}${a.avgR}R`} label="Avg R" tone={a.avgR >= 0 ? 'emerald' : 'red'} />
       </div>

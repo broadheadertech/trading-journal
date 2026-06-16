@@ -9,6 +9,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalRationale from '@/components/SignalRationale';
+import SignalProviders from '@/components/SignalProviders';
 import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil, ChevronDown } from 'lucide-react';
 
 type Direction = 'long' | 'short';
@@ -147,8 +148,8 @@ export default function TradingSignals() {
               Trading <span className="gradient-text">signals</span>
             </h1>
             <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-              Telegram-style trade ideas from analysts and Pro+ subscribers — entry zone, single SL, and laddered take-profits.
-              Each signal carries the poster's lifetime hit-rate.
+              The traders posting signals on Tradia. Browse each provider's track record — hit-rate, win/loss, and average R —
+              and tap a name to open their full profile.
             </p>
           </div>
 
@@ -183,53 +184,20 @@ export default function TradingSignals() {
       {showLeaderboard && <Leaderboard rows={leaderboard} />}
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
-        <main className="min-w-0 space-y-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <Filter size={14} className="text-[var(--muted-foreground)] shrink-0" />
-        <FilterDropdown
-          value={marketFilter}
-          onChange={setMarketFilter}
-          options={[
-            { value: 'all', label: 'All markets' },
-            { value: 'crypto', label: 'Crypto' },
-            { value: 'forex', label: 'Forex' },
-            { value: 'stocks', label: 'Stocks' },
-            { value: 'commodities', label: 'Commodities' },
-          ]}
-        />
-        <FilterDropdown
-          value={statusFilter}
-          onChange={setStatusFilter}
-          options={[
-            { value: 'all', label: 'All status' },
-            { value: 'active', label: 'Active' },
-            { value: 'pending', label: 'Pending' },
-            { value: 'won', label: 'Won' },
-            { value: 'lost', label: 'Lost' },
-          ]}
-        />
+        <div className="min-w-0">
+          <SignalProviders />
+        </div>
+        <aside className="lg:sticky lg:top-4 lg:self-start">
+          <div className="flex items-center gap-2 mb-3">
+            <Award size={15} className="text-amber-400" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Top analysts</h2>
+          </div>
+          <p className="text-[11px] text-[var(--muted-foreground)] mb-3 leading-relaxed">
+            50%+ win-rate across their trades and signals.
+          </p>
+          <TopAnalysts limit={10} />
+        </aside>
       </div>
-
-      {signals === undefined ? (
-        <SignalsSkeleton />
-      ) : list.length === 0 ? (
-        <div className="text-center py-16 text-sm text-[var(--muted-foreground)]">
-          No signals match your filters. {canPost && 'Be the first to post one.'}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {list.map(s => (
-            <SignalCard
-              key={s._id}
-              signal={s}
-              isOwn={s.posterId === user?.id}
-              onUpdate={(status, tpHit) => updateStatus({ id: s._id, status, tpHit })}
-              onViewHistory={(id, name) => setHistoryPoster({ id, name })}
-              onEdit={(sig) => setEditingSignal(sig)}
-            />
-          ))}
-        </div>
-      )}
 
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex items-start gap-3">
         <ShieldAlert size={18} className="text-amber-400 mt-0.5 shrink-0" />
@@ -238,17 +206,6 @@ export default function TradingSignals() {
           Signals are user-posted research-driven trade ideas, not recommendations from Tradia. Run every signal through
           your playbook, your risk model, and your discipline check before sizing in.
         </div>
-      </div>
-        </main>
-
-        {/* Right rail — who to follow */}
-        <aside className="lg:sticky lg:top-4 lg:self-start">
-          <div className="flex items-center gap-2 mb-3">
-            <Award size={15} className="text-amber-400" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Top analysts to follow</h2>
-          </div>
-          <TopAnalysts limit={10} />
-        </aside>
       </div>
 
       {showPostModal && canPost && (
