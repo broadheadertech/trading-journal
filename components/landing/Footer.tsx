@@ -69,7 +69,7 @@ export default function Footer() {
             <div className="col-span-2 lg:col-span-1 space-y-4">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-3 group">
-                  <Image src="/tradia-brain-only.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain" />
+                  <Image src="/tradia-logo.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain rounded-md" />
                   <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
                 </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">

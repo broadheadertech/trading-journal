@@ -19,11 +19,11 @@ export default function BrainMascot({ size = 32, glow = false, beat = false, cla
         />
       )}
       <Image
-        src="/tradia-brain-only.png"
+        src="/tradia-logo.png"
         alt="Tradia"
         width={size}
         height={size}
-        className={`relative ${beat ? 'animate-[heartbeat_1.4s_ease-in-out_infinite]' : ''}`}
+        className={`relative rounded-lg ${beat ? 'animate-[heartbeat_1.4s_ease-in-out_infinite]' : ''}`}
         priority
       />
       <style jsx>{`
