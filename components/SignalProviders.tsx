@@ -58,7 +58,7 @@ export default function SignalProviders() {
       <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
         Signal providers <span className="text-[var(--muted-foreground)]/60">· {providers.length}</span>
       </h2>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
         {(providers as Provider[]).map(p => <ProviderCard key={p.posterId} p={p} />)}
       </div>
     </div>
@@ -89,63 +89,68 @@ function ProviderCard({ p }: { p: Provider }) {
   };
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col">
-      {/* Identity */}
-      <div className="flex items-start gap-3">
-        <Link href={`/u/${p.handle}`} className="shrink-0">
-          {p.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.avatar} alt={p.name} className="w-12 h-12 rounded-full object-cover border border-[var(--border)]" />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-lg font-bold text-white">
-              {p.name.slice(0, 1).toUpperCase()}
-            </div>
-          )}
-        </Link>
-        <div className="min-w-0 flex-1">
-          <Link href={`/u/${p.handle}`} className="text-base font-bold text-[var(--foreground)] hover:text-pink-300 transition-colors leading-tight block">
-            {p.name}
-          </Link>
-          <div className="text-[11px] text-[var(--muted-foreground)] truncate">
-            {tierLabel} · {p.followers} follower{p.followers === 1 ? '' : 's'}
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col items-center text-center">
+      {/* Large avatar */}
+      <Link href={`/u/${p.handle}`} className="shrink-0">
+        {p.avatar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={p.avatar} alt={p.name} className="w-24 h-24 rounded-full object-cover ring-2 ring-pink-500/40" />
+        ) : (
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-3xl font-bold text-white ring-2 ring-pink-500/40">
+            {p.name.slice(0, 1).toUpperCase()}
           </div>
-        </div>
+        )}
+      </Link>
+
+      <Link href={`/u/${p.handle}`} className="mt-3 text-base font-bold text-[var(--foreground)] hover:text-pink-300 transition-colors leading-tight">
+        {p.name}
+      </Link>
+      <div className="text-[11px] text-[var(--muted-foreground)] mt-0.5">
+        {tierLabel} · {p.followers} follower{p.followers === 1 ? '' : 's'}
+      </div>
+
+      {/* Win-rate showcase */}
+      <div className="mt-4 w-full rounded-xl border border-[var(--border)] bg-[var(--background)]/50 py-3">
+        <div className="text-4xl font-extrabold tabular-nums text-emerald-400 leading-none">{p.hitRate}%</div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-1.5">Win rate · {p.closed} closed</div>
+      </div>
+
+      {/* Supporting stats */}
+      <div className="grid grid-cols-3 gap-2 w-full mt-3">
+        <Stat value={`${p.won}/${p.lost}`} label="W / L" />
+        <Stat value={`${p.avgR >= 0 ? '+' : ''}${p.avgR}R`} label="Avg R" tone={p.avgR >= 0 ? 'emerald' : 'red'} />
+        <Stat value={`${p.total}`} label="Signals" />
+      </div>
+
+      {/* Activity */}
+      <div className="text-[11px] text-[var(--muted-foreground)] mt-3">
+        {p.active} active · {p.pending} pending{last ? ` · last ${last}` : ''}
+      </div>
+
+      {/* Follow / You */}
+      <div className="w-full mt-4">
         {p.isSelf ? (
-          <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 border border-[var(--border)] text-[var(--muted-foreground)]">
+          <span className="w-full inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold border border-[var(--border)] text-[var(--muted-foreground)]">
             You
           </span>
         ) : (
           <button
             onClick={toggle}
             disabled={busy}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all disabled:opacity-50 ${
+            className={`w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 ${
               following
                 ? 'border border-[var(--border)] text-[var(--foreground)] hover:border-red-500/40 hover:text-red-300'
                 : 'text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300'
             }`}
           >
-            {following ? <><UserCheck size={13} /> Following</> : <><UserPlus size={13} /> Follow</>}
+            {following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
           </button>
         )}
       </div>
 
-      {/* Signal summary */}
-      <div className="grid grid-cols-4 gap-2 mt-4">
-        <Stat value={`${p.hitRate}%`} label="Hit rate" tone="emerald" />
-        <Stat value={`${p.won}/${p.lost}`} label="W / L" />
-        <Stat value={`${p.avgR >= 0 ? '+' : ''}${p.avgR}R`} label="Avg R" tone={p.avgR >= 0 ? 'emerald' : 'red'} />
-        <Stat value={`${p.total}`} label="Signals" />
-      </div>
-
-      {/* Activity + link */}
-      <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-[var(--border)] text-[11px]">
-        <span className="text-[var(--muted-foreground)] truncate">
-          {p.active} active · {p.pending} pending{last ? ` · last ${last}` : ''}
-        </span>
-        <Link href={`/u/${p.handle}`} className="inline-flex items-center gap-1 font-semibold text-pink-300 hover:text-pink-200 shrink-0">
-          View profile <ArrowRight size={12} />
-        </Link>
-      </div>
+      <Link href={`/u/${p.handle}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-pink-300 hover:text-pink-200 mt-3">
+        View profile <ArrowRight size={12} />
+      </Link>
     </div>
   );
 }
