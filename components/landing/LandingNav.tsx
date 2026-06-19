@@ -120,12 +120,12 @@ export default function LandingNav() {
         {/* Logo — neural-brain brand mark + pink-aurora wordmark (legacy marketing variant) */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <Image
-            src="/tradia-brain-only.png"
+            src="/tradia-logo.png"
             alt="Tradia"
             width={36}
             height={36}
             priority
-            className="w-9 h-9 object-contain"
+            className="w-9 h-9 object-contain rounded-lg"
           />
           <span className="font-brand text-xl font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
             Tradia
