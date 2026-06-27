@@ -1,45 +1,45 @@
 ﻿'use client';
 
 import { motion } from 'framer-motion';
-import { Search, Activity, BarChart3, Shield, LayoutDashboard, Sparkles } from 'lucide-react';
+import { BookOpen, BarChart3, Activity, ShieldCheck, CalendarClock, GraduationCap } from 'lucide-react';
 import AtmosphericBackground from './AtmosphericBackground';
 
 const features = [
   {
-    icon: Search,
-    accent: 'from-rose-400 to-orange-400',
-    title: 'Leak Detection',
-    description: 'Identifies repeated trading mistakes and quantifies their financial impact. Auto-ranked by P&L cost with evidence linked to specific trades.',
-  },
-  {
-    icon: Activity,
+    icon: BookOpen,
     accent: 'from-pink-400 to-fuchsia-400',
-    title: 'Behavior Analysis',
-    description: 'A discipline score derived from actual trading data. Emotional pressure detection across sessions, with week-over-week trends.',
+    title: 'Trading Journal',
+    description: 'Record and review every trade.',
   },
   {
     icon: BarChart3,
-    accent: 'from-fuchsia-400 to-pink-500',
+    accent: 'from-fuchsia-400 to-purple-400',
     title: 'Performance Analytics',
-    description: '50+ automated metrics including win rate, profit factor, equity curve, symbol breakdown, and time-of-day analysis.',
+    description: 'Discover your strengths and weaknesses.',
   },
   {
-    icon: Shield,
-    accent: 'from-fuchsia-400 to-pink-500',
-    title: 'Playbook Rules',
-    description: 'Define custom rules for position sizing, session limits, timing, and behavior. Compliance scored trade by trade.',
+    icon: Activity,
+    accent: 'from-purple-400 to-pink-500',
+    title: 'Behavioral Tracking',
+    description: 'Measure discipline and emotional control.',
   },
   {
-    icon: LayoutDashboard,
-    accent: 'from-violet-400 to-fuchsia-400',
-    title: 'Dashboard Overview',
-    description: 'Net P&L, win rate, profit factor, equity curve, activity heatmap, and recent trade history — all updated automatically.',
+    icon: ShieldCheck,
+    accent: 'from-rose-400 to-pink-500',
+    title: 'Risk Management',
+    description: 'Protect capital with proper sizing and rules.',
   },
   {
-    icon: Sparkles,
-    accent: 'from-amber-400 to-yellow-400',
-    title: 'What-If Scenarios',
-    description: 'Replay your trades with different parameters. See how adjusting stops, entries, or rule compliance would have changed outcomes.',
+    icon: CalendarClock,
+    accent: 'from-cyan-400 to-fuchsia-400',
+    title: 'Economic Calendar',
+    description: 'Stay ahead of market-moving events.',
+  },
+  {
+    icon: GraduationCap,
+    accent: 'from-amber-400 to-orange-400',
+    title: 'Trading Academy',
+    description: 'Access structured educational content.',
   },
 ];
 
@@ -60,13 +60,12 @@ export default function Features() {
             Platform
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Find Your Leaks.{' '}
-            <span className="neon-headline">Track Your Discipline.</span>{' '}
-            <span className="neon-headline">Measure Your Edge.</span>
+            One Platform.{' '}
+            <span className="neon-headline">Every Tool A Trader Needs.</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Identifies costly patterns ranked by financial impact. Behavioral health scoring,
-            emotional pressure monitoring, and session-by-session discipline tracking — all in one platform.
+            Journaling, analytics, behavioral tracking, risk management, market intelligence, and education —
+            everything you need to learn, execute, and improve, all in one place.
           </p>
         </motion.div>
 

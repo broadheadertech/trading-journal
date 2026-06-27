@@ -356,6 +356,25 @@ export const getPublicStats = query({
       0,
     );
 
+    // Net pips across closed signals: + entry→hit-TP for wins, − entry→SL for
+    // losses. Pip value comes from the signal's own pipSize (with a per-market
+    // fallback). Anchor at the entry edge nearest the SL (long→low, short→high),
+    // matching how the imported pip results were measured.
+    const defaultPip = (m: string) =>
+      m === "crypto" ? 1 : m === "forex" ? 0.0001 : m === "stocks" ? 0.01 : 0.1;
+    let totalPips = 0;
+    for (const s of closedSig) {
+      const pipSize = s.pipSize ?? defaultPip(s.market);
+      if (!pipSize) continue;
+      const ref = s.direction === "long" ? s.entryLow : s.entryHigh;
+      if (s.status === "won") {
+        const tp = s.takeProfits[(s.tpHit ?? 1) - 1] ?? s.takeProfits[0] ?? ref;
+        totalPips += Math.abs(tp - ref) / pipSize;
+      } else {
+        totalPips += -Math.abs(s.stopLoss - ref) / pipSize;
+      }
+    }
+
     return {
       shareStats,
       trading,
@@ -365,6 +384,7 @@ export const getPublicStats = query({
         total: closedSig.length,
         hitRate: closedSig.length ? Math.round((wonSig / closedSig.length) * 100) : 0,
         totalR: Math.round(totalR * 10) / 10,
+        totalPips: Math.round(totalPips),
       },
     };
   },

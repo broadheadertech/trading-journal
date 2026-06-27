@@ -29,8 +29,8 @@ export default function PlatformStats() {
             By The Numbers
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Real numbers from{' '}
-            <span className="neon-headline">the platform</span>
+            Trusted By{' '}
+            <span className="neon-headline">Traders Worldwide</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Brokers integrated, detectors shipped, metrics computed. Live platform numbers — not marketing fluff.

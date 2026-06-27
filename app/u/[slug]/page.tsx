@@ -188,6 +188,11 @@ export default function PublicProfilePage() {
                     right={`${stats.signals.totalR >= 0 ? '+' : ''}${stats.signals.totalR}R`}
                     rightClass={stats.signals.totalR >= 0 ? 'text-emerald-400' : 'text-red-400'}
                   />
+                  <LaneRow
+                    left="net pips"
+                    right={`${stats.signals.totalPips >= 0 ? '+' : ''}${stats.signals.totalPips.toLocaleString()} pips`}
+                    rightClass={stats.signals.totalPips >= 0 ? 'text-emerald-400' : 'text-red-400'}
+                  />
                 </>
               ) : (
                 <div className="text-xs text-[var(--muted-foreground)]">No signals yet.</div>

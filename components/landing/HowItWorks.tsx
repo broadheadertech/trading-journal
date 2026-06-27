@@ -33,7 +33,7 @@ export default function HowItWorks() {
           <StepCard
             n="01"
             icon={Upload}
-            title="Upload your trades"
+            title="Connect Your Trading Data"
             desc="67+ brokers supported, CSV or API. Auto-detected, auto-normalized. Takes 60 seconds."
             delay={0}
           >
@@ -42,7 +42,7 @@ export default function HowItWorks() {
           <StepCard
             n="02"
             icon={Search}
-            title="See what's costing you money"
+            title="Discover Costly Habits"
             desc="28+ patterns detected and ranked by dollar impact — revenge trading, overtrading, bad sessions, with evidence."
             delay={0.1}
           >
@@ -51,7 +51,7 @@ export default function HowItWorks() {
           <StepCard
             n="03"
             icon={Wrench}
-            title="Fix it and prove it"
+            title="Build Consistency"
             desc="Set rules, track compliance, run what-if simulations. Watch your discipline score climb."
             delay={0.2}
           >
