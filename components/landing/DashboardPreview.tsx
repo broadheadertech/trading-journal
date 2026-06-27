@@ -19,11 +19,11 @@ export default function DashboardPreview() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Your dashboard after</span>{' '}
-            <span className="neon-headline">one CSV upload</span>
+            <span className="text-[var(--foreground)]">Everything You Need To Become A </span>
+            <span className="neon-headline">Better Trader</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Three core dashboards, each one purpose-built to surface what&apos;s draining your account and what&apos;s working.
+            Tradia combines education, performance analytics, journaling, discipline tracking, and community support into one powerful platform.
           </p>
         </motion.div>
 
@@ -78,11 +78,11 @@ function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
 
 function LeaksMock() {
   const leaks = [
-    { name: 'Revenge Trading',  cost: '−$1,420', sev: 'high',   pct: 100 },
-    { name: 'Oversized Position', cost: '−$890',  sev: 'high',   pct: 63 },
-    { name: 'FOMO Entries',     cost: '−$540',  sev: 'med',    pct: 38 },
-    { name: 'Late Session Drift', cost: '−$280', sev: 'med',    pct: 20 },
-    { name: 'No Stop Loss',     cost: '−$140',  sev: 'low',    pct: 10 },
+    { name: 'Overtrading',              cost: '−$1,420', sev: 'high', pct: 100 },
+    { name: 'Poor Risk Management',     cost: '−$890',   sev: 'high', pct: 63 },
+    { name: 'Emotional Decision Making', cost: '−$540',  sev: 'med',  pct: 38 },
+    { name: 'FOMO Entries',             cost: '−$280',   sev: 'med',  pct: 20 },
+    { name: 'No Stop Loss',             cost: '−$140',   sev: 'low',  pct: 10 },
   ];
   return (
     <div className="space-y-2">

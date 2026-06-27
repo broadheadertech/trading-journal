@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Zap, Database } from 'lucide-react';
+import { Check } from 'lucide-react';
 import HeroGlobe from './HeroGlobe';
 
 export default function Hero() {
@@ -37,7 +37,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 mb-4"
             >
               <span className="neon-eyebrow text-[10px] font-bold tracking-[0.2em] uppercase">
-                Behavioral Analytics for Active Traders
+                A Global Trading Community
               </span>
             </motion.div>
 
@@ -47,9 +47,9 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight"
             >
-              <span className="text-[var(--foreground)]">Find the trading mistakes costing you thousands </span>
-              <span className="aurora-text">— and prove </span>
-              <span className="aurora-text">you fixed them</span>
+              <span className="text-[var(--foreground)]">The Complete Trading </span>
+              <span className="aurora-text">ECOSYSTEM</span>
+              <span className="text-[var(--foreground)]"> for Modern Traders</span>
             </motion.h1>
 
             <motion.p
@@ -58,7 +58,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="mt-4 text-sm sm:text-base text-[var(--muted-foreground)] max-w-xl leading-relaxed"
             >
-              Upload your trade history and get a dollar-ranked breakdown of every costly pattern — then track whether your fixes stick.
+              Tradia is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.
             </motion.p>
 
             <motion.div
@@ -71,34 +71,32 @@ export default function Hero() {
                 href="/sign-up"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
               >
-                Start Free Trial
+                Join Tradia Now
               </Link>
               <Link
                 href="/demo"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors"
               >
-                See Demo
+                Watch Free Training
               </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[var(--muted-foreground)]"
-            >
-              <span>15 days free trial</span>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
-              className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-[var(--muted-foreground)]"
+              className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2 max-w-md"
             >
-              <span className="flex items-center gap-1.5"><Database size={11} className="text-pink-400" /> 70+ Brokers</span>
-              <span className="opacity-30">Â·</span>
-              <span className="flex items-center gap-1.5"><Zap size={11} className="text-pink-400" /> 30+ Detectors</span>
+              {[
+                'Daily Live Market Analysis',
+                'Trade Journal & Analytics',
+                'Funded Trader Roadmap',
+                'Global Trading Community',
+              ].map((f) => (
+                <span key={f} className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+                  <Check size={14} className="text-emerald-400 shrink-0" /> {f}
+                </span>
+              ))}
             </motion.div>
           </div>
 

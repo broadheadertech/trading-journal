@@ -53,7 +53,7 @@ const RINGS = POINTS.map(p => ({ lat: p.lat, lng: p.lng, color: p.color }));
 // to read as "growing platform" rather than "fake JS animation". Number
 // format is locked to en-US so the comma separators look the same for every
 // visitor regardless of locale.
-const COUNTER_START = 61_785;
+const COUNTER_START = 127_739;
 const COUNTER_MIN_DELAY_MS = 4_000;
 const COUNTER_MAX_DELAY_MS = 7_000;
 const COUNTER_MIN_DELTA = 1;
@@ -84,15 +84,15 @@ function TraderCounterBadge() {
   const count = useLiveTraderCount();
   return (
     <div
-      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass shadow-[0_0_30px_-4px_rgba(251,146,60,0.55)]"
+      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass shadow-[0_0_30px_-4px_rgba(255,46,179,0.55)]"
       aria-live="polite"
     >
       <span className="relative flex h-2 w-2" aria-hidden>
-        <span className="absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75 animate-ping" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500" />
+        <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
       </span>
-      <span className="text-sm tabular-nums font-extrabold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">
-        {NUMBER_FORMATTER.format(count)}
+      <span className="text-sm tabular-nums font-extrabold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">
+        {NUMBER_FORMATTER.format(count)}+
       </span>
       <span className="text-[10px] uppercase tracking-[0.18em] font-bold text-[var(--muted-foreground)]">
         traders worldwide
@@ -170,7 +170,7 @@ export default function HeroGlobe() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 50%, rgba(251,146,60,0.30) 0%, rgba(251,191,36,0.16) 35%, transparent 65%)',
+            'radial-gradient(circle at 50% 50%, rgba(255,46,179,0.28) 0%, rgba(34,211,238,0.14) 42%, transparent 68%)',
           filter: 'blur(40px)',
         }}
       />
@@ -180,7 +180,7 @@ export default function HeroGlobe() {
         className="absolute inset-[10%] pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 50%, rgba(255,138,28,0.24) 0%, transparent 60%)',
+            'radial-gradient(circle at 50% 50%, rgba(217,70,239,0.22) 0%, transparent 60%)',
           filter: 'blur(24px)',
         }}
       />
@@ -191,11 +191,11 @@ export default function HeroGlobe() {
           width={size.w}
           height={size.h}
           backgroundColor="rgba(0,0,0,0)"
-          globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg"
+          globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
           bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
-          // Neon orange atmosphere — replaces the prior pink halo.
-          atmosphereColor="#ff8a1c"
-          atmosphereAltitude={0.28}
+          // Neon pink atmosphere over the night-lights earth — a glowing "global network" look.
+          atmosphereColor="#ff2eb3"
+          atmosphereAltitude={0.32}
           showGlobe
           showAtmosphere
           /* ── Markers ───────────────────────────────────────────────── */
@@ -221,8 +221,8 @@ export default function HeroGlobe() {
           arcStartLng={(d: object) => (d as (typeof ARCS)[number]).startLng}
           arcEndLat={(d: object) => (d as (typeof ARCS)[number]).endLat}
           arcEndLng={(d: object) => (d as (typeof ARCS)[number]).endLng}
-          // Cyan → amber so arcs read as warm and stay coherent with the new orange theme.
-          arcColor={() => ['#22d3ee', '#fbbf24']}
+          // Pink → cyan neon so the routes read as a glowing global network.
+          arcColor={() => ['#ff2eb3', '#22d3ee']}
           arcStroke={0.4}
           arcAltitudeAutoScale={0.55}
           arcDashLength={0.5}
