@@ -1,6 +1,7 @@
 import LandingNav from '@/components/landing/LandingNav';
 import Hero from '@/components/landing/Hero';
 import DashboardPreview from '@/components/landing/DashboardPreview';
+import EfficiencySection from '@/components/landing/EfficiencySection';
 import TradiaMethod from '@/components/landing/TradiaMethod';
 import HowItWorks from '@/components/landing/HowItWorks';
 import PlatformStats from '@/components/landing/PlatformStats';
@@ -18,6 +19,7 @@ export default function LandingPage() {
       <LandingNav />
       <Hero />
       <DashboardPreview />
+      <EfficiencySection />
       <TradiaMethod />
       <HowItWorks />
       <PlatformStats />
