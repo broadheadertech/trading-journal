@@ -88,6 +88,13 @@ function AppContent() {
     setMounted(true);
   }, []);
 
+  // Suppress the site-wide forex-chart ambient backdrop (body::before) inside the
+  // authenticated app — it only belongs on the marketing/landing surface.
+  useEffect(() => {
+    document.body.classList.add('app-shell');
+    return () => document.body.classList.remove('app-shell');
+  }, []);
+
   // Ensure every authenticated user has a subscription record
   useEffect(() => {
     if (user) ensureFreeSub().catch(() => {});

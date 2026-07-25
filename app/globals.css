@@ -159,6 +159,12 @@ body::before {
   opacity: 0.22;
 }
 
+/* Authenticated app shell (/app) opts out of the ambient chart backdrop — the
+   `app-shell` class is toggled on <body> while app/app/page.tsx is mounted. */
+body.app-shell::before {
+  display: none;
+}
+
 /* Respect reduced-motion users' preference for calmer surfaces — slightly fainter. */
 body[data-reduced-motion="true"]::before {
   opacity: 0.35;
