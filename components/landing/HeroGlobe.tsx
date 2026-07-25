@@ -191,11 +191,12 @@ export default function HeroGlobe() {
           width={size.w}
           height={size.h}
           backgroundColor="rgba(0,0,0,0)"
-          globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
+          globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg"
           bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
-          // Neon pink atmosphere over the night-lights earth — a glowing "global network" look.
-          atmosphereColor="#ff2eb3"
-          atmosphereAltitude={0.32}
+          // Blue-marble day texture — vivid blue oceans + green/brown continents so the
+          // globe reads as a bright, "living" planet rather than the dark night-lights map.
+          atmosphereColor="#22d3ee"
+          atmosphereAltitude={0.28}
           showGlobe
           showAtmosphere
           /* ── Markers ───────────────────────────────────────────────── */
