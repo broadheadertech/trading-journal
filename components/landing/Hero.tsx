@@ -8,14 +8,6 @@ import HeroGlobe from './HeroGlobe';
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-[0.45]"
-        style={{
-          backgroundImage: "url('/tradia-background.png')",
-          filter: 'blur(8px) saturate(1.1) brightness(1.05)',
-          transform: 'scale(1.06)',
-        }}
-      />
       {/* Dark overlay so copy stays readable */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/70 to-[var(--background)]" />
       {/* Northern Lights aurora ambient pattern */}
