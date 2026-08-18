@@ -78,7 +78,7 @@ export default function UseCasesPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            How traders, prop firms, and coaches use Tradia to improve execution discipline.
+            How traders, prop firms, and coaches use Atlas to improve execution discipline.
           </motion.p>
         </div>
       </section>

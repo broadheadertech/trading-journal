@@ -114,7 +114,7 @@ export default function DemoPage() {
                       <span className="w-2 h-2 rounded-full bg-amber-500/50" />
                       <span className="w-2 h-2 rounded-full bg-pink-500/50" />
                       <div className="flex-1 mx-2 px-2 py-0.5 rounded bg-black/40 text-[9px] text-[var(--muted-foreground)] text-center font-mono">
-                        tradia.app/app
+                        atlas.app/app
                       </div>
                     </div>
                     <div className="p-4 sm:p-5 bg-black/20 min-h-[320px]">
@@ -209,15 +209,15 @@ function DashboardMock() {
         <svg className="w-full h-24" viewBox="0 0 300 80" preserveAspectRatio="none">
           <defs>
             <linearGradient id="eqA" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#34d399" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
+              <stop offset="0%" stopColor="#24c88a" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#24c88a" stopOpacity="0" />
             </linearGradient>
           </defs>
           <polygon
             fill="url(#eqA)"
             points="0,80 0,68 25,62 50,65 75,55 100,58 125,48 150,52 175,40 200,42 225,30 250,28 275,18 300,12 300,80"
           />
-          <polyline fill="none" stroke="#34d399" strokeWidth="1.5" points="0,68 25,62 50,65 75,55 100,58 125,48 150,52 175,40 200,42 225,30 250,28 275,18 300,12" />
+          <polyline fill="none" stroke="#24c88a" strokeWidth="1.5" points="0,68 25,62 50,65 75,55 100,58 125,48 150,52 175,40 200,42 225,30 250,28 275,18 300,12" />
         </svg>
       </div>
 
@@ -338,7 +338,7 @@ function BehaviorMock() {
               <defs>
                 <linearGradient id="discG">
                   <stop offset="0%" stopColor="#5eead4" />
-                  <stop offset="100%" stopColor="#22d3ee" />
+                  <stop offset="100%" stopColor="#2fd3c4" />
                 </linearGradient>
               </defs>
             </svg>

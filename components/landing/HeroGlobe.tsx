@@ -8,24 +8,24 @@ const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });
 
 // A curated point set — major financial hubs in brand-aurora colors.
 const POINTS = [
-  { name: 'NYSE',         lat: 40.70,  lng: -74.00,  color: '#ff2eb3' },
-  { name: 'NASDAQ',       lat: 40.80,  lng: -73.90,  color: '#ff2eb3' },
-  { name: 'Chicago',      lat: 41.88,  lng: -87.63,  color: '#fb923c' },
-  { name: 'Toronto',      lat: 43.65,  lng: -79.38,  color: '#22d3ee' },
-  { name: 'São Paulo',    lat: -23.55, lng: -46.63,  color: '#ff2eb3' },
-  { name: 'London',       lat: 51.51,  lng: -0.09,   color: '#22d3ee' },
-  { name: 'Frankfurt',    lat: 50.11,  lng: 8.68,    color: '#22d3ee' },
-  { name: 'Zurich',       lat: 47.37,  lng: 8.54,    color: '#34d399' },
-  { name: 'Dubai',        lat: 25.20,  lng: 55.27,   color: '#fbbf24' },
-  { name: 'Riyadh',       lat: 24.71,  lng: 46.67,   color: '#fbbf24' },
-  { name: 'Mumbai',       lat: 18.93,  lng: 72.83,   color: '#d946ef' },
-  { name: 'Singapore',    lat: 1.29,   lng: 103.85,  color: '#34d399' },
-  { name: 'HKEX',         lat: 22.28,  lng: 114.16,  color: '#fb923c' },
-  { name: 'Shanghai',     lat: 31.23,  lng: 121.47,  color: '#ff2eb3' },
-  { name: 'Tokyo',        lat: 35.68,  lng: 139.77,  color: '#fb923c' },
-  { name: 'Seoul',        lat: 37.55,  lng: 126.99,  color: '#d946ef' },
-  { name: 'Sydney',       lat: -33.87, lng: 151.21,  color: '#34d399' },
-  { name: 'Johannesburg', lat: -26.20, lng: 28.04,   color: '#22d3ee' },
+  { name: 'NYSE',         lat: 40.70,  lng: -74.00,  color: '#ff3d87' },
+  { name: 'NASDAQ',       lat: 40.80,  lng: -73.90,  color: '#ff3d87' },
+  { name: 'Chicago',      lat: 41.88,  lng: -87.63,  color: '#d99405' },
+  { name: 'Toronto',      lat: 43.65,  lng: -79.38,  color: '#2fd3c4' },
+  { name: 'São Paulo',    lat: -23.55, lng: -46.63,  color: '#ff3d87' },
+  { name: 'London',       lat: 51.51,  lng: -0.09,   color: '#2fd3c4' },
+  { name: 'Frankfurt',    lat: 50.11,  lng: 8.68,    color: '#2fd3c4' },
+  { name: 'Zurich',       lat: 47.37,  lng: 8.54,    color: '#24c88a' },
+  { name: 'Dubai',        lat: 25.20,  lng: 55.27,   color: '#f0a409' },
+  { name: 'Riyadh',       lat: 24.71,  lng: 46.67,   color: '#f0a409' },
+  { name: 'Mumbai',       lat: 18.93,  lng: 72.83,   color: '#d99405' },
+  { name: 'Singapore',    lat: 1.29,   lng: 103.85,  color: '#24c88a' },
+  { name: 'HKEX',         lat: 22.28,  lng: 114.16,  color: '#d99405' },
+  { name: 'Shanghai',     lat: 31.23,  lng: 121.47,  color: '#ff3d87' },
+  { name: 'Tokyo',        lat: 35.68,  lng: 139.77,  color: '#d99405' },
+  { name: 'Seoul',        lat: 37.55,  lng: 126.99,  color: '#d99405' },
+  { name: 'Sydney',       lat: -33.87, lng: 151.21,  color: '#24c88a' },
+  { name: 'Johannesburg', lat: -26.20, lng: 28.04,   color: '#2fd3c4' },
 ];
 
 const ARCS = [
@@ -195,7 +195,7 @@ export default function HeroGlobe() {
           bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
           // Blue-marble day texture — vivid blue oceans + green/brown continents so the
           // globe reads as a bright, "living" planet rather than the dark night-lights map.
-          atmosphereColor="#22d3ee"
+          atmosphereColor="#2fd3c4"
           atmosphereAltitude={0.28}
           showGlobe
           showAtmosphere
@@ -223,7 +223,7 @@ export default function HeroGlobe() {
           arcEndLat={(d: object) => (d as (typeof ARCS)[number]).endLat}
           arcEndLng={(d: object) => (d as (typeof ARCS)[number]).endLng}
           // Pink → cyan neon so the routes read as a glowing global network.
-          arcColor={() => ['#ff2eb3', '#22d3ee']}
+          arcColor={() => ['#ff3d87', '#2fd3c4']}
           arcStroke={0.4}
           arcAltitudeAutoScale={0.55}
           arcDashLength={0.5}

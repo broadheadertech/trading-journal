@@ -1,26 +1,26 @@
 //+------------------------------------------------------------------+
-//|                                                  tradia-sync.mq5 |
-//|                                            Tradia Trading Journal |
-//|                                          https://tradia.app       |
+//|                                                  atlas-sync.mq5 |
+//|                                            Atlas Trading Journal |
+//|                                          https://atlas.app       |
 //+------------------------------------------------------------------+
 //
-//  Auto-syncs closed MT5 deals to your Tradia journal via webhook.
+//  Auto-syncs closed MT5 deals to your Atlas journal via webhook.
 //  This EA does NOT place trades — it only reads your trade history.
 //
 //  Setup:
 //    1. Drop into MQL5/Experts folder
 //    2. In MT5: Tools → Options → Expert Advisors → enable
-//       "Allow WebRequest for listed URL" and add your Tradia webhook URL
+//       "Allow WebRequest for listed URL" and add your Atlas webhook URL
 //    3. Drag onto any chart, paste your sync token in inputs, click OK
 //+------------------------------------------------------------------+
 
-#property copyright "Tradia"
-#property link      "https://tradia.app"
+#property copyright "Atlas"
+#property link      "https://atlas.app"
 #property version   "1.00"
 #property strict
 
 input string  WebhookUrl       = "https://YOUR-DEPLOYMENT.convex.site/api/mt5-sync";
-input string  SyncToken        = "";        // paste your token from Tradia → Connect Broker
+input string  SyncToken        = "";        // paste your token from Atlas → Connect Broker
 input int     BackfillDays     = 90;        // how many days of history to send on startup
 input bool    EnableLogging    = true;      // print sync activity to Experts tab
 
@@ -33,22 +33,22 @@ int OnInit()
   {
    if(StringLen(SyncToken) < 8)
      {
-      Print("[Tradia] ERROR: SyncToken is required. Paste it from Tradia → Connect Broker.");
+      Print("[Atlas] ERROR: SyncToken is required. Paste it from Atlas → Connect Broker.");
       return(INIT_PARAMETERS_INCORRECT);
      }
    if(StringFind(WebhookUrl, "http") != 0)
      {
-      Print("[Tradia] ERROR: WebhookUrl must start with https://");
+      Print("[Atlas] ERROR: WebhookUrl must start with https://");
       return(INIT_PARAMETERS_INCORRECT);
      }
 
-   if(EnableLogging) PrintFormat("[Tradia] Starting backfill of last %d days...", BackfillDays);
+   if(EnableLogging) PrintFormat("[Atlas] Starting backfill of last %d days...", BackfillDays);
 
    datetime from = TimeCurrent() - BackfillDays * 86400;
    int sent = SendDealsSince(from);
 
    g_lastSyncedDealTime = TimeCurrent();
-   if(EnableLogging) PrintFormat("[Tradia] Backfill complete. %d deals queued. Listening for new trades.", sent);
+   if(EnableLogging) PrintFormat("[Atlas] Backfill complete. %d deals queued. Listening for new trades.", sent);
    EventSetTimer(60); // periodic safety net (re-sync any missed deals each minute)
    return(INIT_SUCCEEDED);
   }
@@ -85,7 +85,7 @@ void OnTimer()
    datetime since = g_lastSyncedDealTime > 0 ? g_lastSyncedDealTime - 300 : 0;
    if(since == 0) return;
    int sent = SendDealsSince(since);
-   if(sent > 0 && EnableLogging) PrintFormat("[Tradia] Re-sync caught %d deal(s).", sent);
+   if(sent > 0 && EnableLogging) PrintFormat("[Atlas] Re-sync caught %d deal(s).", sent);
    g_lastSyncedDealTime = TimeCurrent();
   }
 
@@ -155,7 +155,7 @@ bool SendDealById(ulong closeTicket)
 
    if(!foundOpen)
      {
-      if(EnableLogging) PrintFormat("[Tradia] No open deal for position %d, skipping.", positionId);
+      if(EnableLogging) PrintFormat("[Atlas] No open deal for position %d, skipping.", positionId);
       return false;
      }
 
@@ -196,7 +196,7 @@ bool PostJson(const string body)
    int n = StringToCharArray(body, post, 0, WHOLE_ARRAY, CP_UTF8);
    if(n > 0) ArrayResize(post, n - 1);
 
-   if(EnableLogging) PrintFormat("[Tradia DEBUG] Sending %d bytes: %s", ArraySize(post), body);
+   if(EnableLogging) PrintFormat("[Atlas DEBUG] Sending %d bytes: %s", ArraySize(post), body);
 
    char result[];
    string headers = "Content-Type: application/json\r\nX-Sync-Token: " + SyncToken + "\r\n";
@@ -209,16 +209,16 @@ bool PostJson(const string body)
    if(code == -1)
      {
       int err = GetLastError();
-      PrintFormat("[Tradia] WebRequest failed (err=%d). Did you allow the URL in Tools → Options → Expert Advisors?", err);
+      PrintFormat("[Atlas] WebRequest failed (err=%d). Did you allow the URL in Tools → Options → Expert Advisors?", err);
       return false;
      }
    if(code != 200)
      {
       string resBody = CharArrayToString(result, 0, ArraySize(result));
-      PrintFormat("[Tradia] Server responded %d: %s", code, resBody);
+      PrintFormat("[Atlas] Server responded %d: %s", code, resBody);
       return false;
      }
-   if(EnableLogging) PrintFormat("[Tradia] Synced deal OK.");
+   if(EnableLogging) PrintFormat("[Atlas] Synced deal OK.");
    return true;
   }
 

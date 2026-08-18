@@ -23,7 +23,7 @@ export default function DashboardPreview() {
             <span className="neon-headline">Better Trader</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Tradia combines education, performance analytics, journaling, discipline tracking, and community support into one powerful platform.
+            Atlas combines education, performance analytics, journaling, discipline tracking, and community support into one powerful platform.
           </p>
         </motion.div>
 

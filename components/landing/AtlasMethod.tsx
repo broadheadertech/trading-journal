@@ -12,7 +12,7 @@ const STEPS = [
   { icon: Rocket,        title: 'Scale',   desc: 'Pass funding challenges and grow capital.',    accent: 'from-emerald-400 to-green-400' },
 ];
 
-export default function TradiaMethod() {
+export default function AtlasMethod() {
   return (
     <section className="relative overflow-hidden py-20 sm:py-28 border-t border-[var(--border)]">
       <AtmosphericBackground />
@@ -29,7 +29,7 @@ export default function TradiaMethod() {
             A Proven Process
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-            The <span className="neon-headline">Tradia Method</span>
+            The <span className="neon-headline">Atlas Method</span>
             <span className="align-super text-xl text-[var(--muted-foreground)]">™</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">

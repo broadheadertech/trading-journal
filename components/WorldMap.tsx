@@ -57,10 +57,10 @@ const LAYERS: LayerDef[] = [
   { id: 'financialCenters', label: 'Financial Centers',  icon: Building2,  color: '#f59e0b', defaultOn: true },
   { id: 'centralBanks',     label: 'Central Banks',      icon: Banknote,   color: '#3b82f6', defaultOn: true },
   { id: 'commodityHubs',    label: 'Commodity Hubs',     icon: Coins,      color: '#a855f7', defaultOn: false },
-  { id: 'gccInvestments',   label: 'GCC Investments',    icon: DollarSign, color: '#ec4899', defaultOn: false },
+  { id: 'gccInvestments',   label: 'GCC Investments',    icon: DollarSign, color: '#ff3d87', defaultOn: false },
   { id: 'tradeRoutes',      label: 'Trade Routes',       icon: Anchor,     color: '#06b6d4', defaultOn: true },
-  { id: 'underseaCables',   label: 'Undersea Cables',    icon: Cable,      color: '#22d3ee', defaultOn: true },
-  { id: 'pipelines',        label: 'Pipelines',          icon: Pipette,    color: '#fb923c', defaultOn: true },
+  { id: 'underseaCables',   label: 'Undersea Cables',    icon: Cable,      color: '#2fd3c4', defaultOn: true },
+  { id: 'pipelines',        label: 'Pipelines',          icon: Pipette,    color: '#d99405', defaultOn: true },
 ];
 
 // ─── Marker data ────────────────────────────────────────────────────

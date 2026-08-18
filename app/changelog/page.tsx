@@ -71,7 +71,7 @@ export default function ChangelogPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
           >
-            <Sparkles size={12} /> Tradia ships fast
+            <Sparkles size={12} /> Atlas ships fast
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

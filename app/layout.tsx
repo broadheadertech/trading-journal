@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Brand font — used for the TRADIA wordmark and headlines
+// Brand font — used for the ATLAS wordmark and headlines
 const leagueSpartan = League_Spartan({
   variable: "--font-brand",
   subsets: ["latin"],
@@ -29,7 +29,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Tradia - Trading Journal & Analytics",
+  title: "Atlas - Trading Journal & Analytics",
   description: "Unlock the psychology behind every trade. AI-powered journal for crypto, stocks, and forex.",
 };
 

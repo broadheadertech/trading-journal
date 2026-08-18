@@ -11,7 +11,7 @@ const PILLARS = [
   {
     icon: Eye,
     title: 'Make trading review measurable',
-    body: 'Tradia turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
+    body: 'Atlas turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked week over week, rule compliance scored trade by trade.',
   },
   {
     icon: Target,
@@ -21,7 +21,7 @@ const PILLARS = [
   {
     icon: Shield,
     title: 'Read-only by design',
-    body: 'Tradia never holds funds, never executes orders, never asks for withdrawal permissions. Analytics-only is a hard product boundary, not a marketing line.',
+    body: 'Atlas never holds funds, never executes orders, never asks for withdrawal permissions. Analytics-only is a hard product boundary, not a marketing line.',
   },
   {
     icon: Globe,
@@ -46,7 +46,7 @@ const NOT_FOR = [
 
 const FAQ = [
   {
-    q: 'Who built Tradia?',
+    q: 'Who built Atlas?',
     a: 'A small team of traders and engineers tired of journals that were either pretty notebooks or unreadable spreadsheets. We built the tool we wanted to use ourselves.',
   },
   {
@@ -55,7 +55,7 @@ const FAQ = [
   },
   {
     q: 'Do you ever execute trades?',
-    a: 'No. Tradia is analytics software. It reads trade history; it does not submit, modify, or cancel orders.',
+    a: 'No. Atlas is analytics software. It reads trade history; it does not submit, modify, or cancel orders.',
   },
   {
     q: 'What markets do you support?',
@@ -88,7 +88,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Tradia exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.
+            Atlas exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.
           </motion.p>
         </div>
       </section>
@@ -121,7 +121,7 @@ export default function AboutPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
             <div className="flex items-center gap-2 mb-4">
               <Users size={16} className="text-pink-400" />
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Who Tradia is for</h2>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Who Atlas is for</h2>
             </div>
             <ul className="space-y-2">
               {FOR.map(item => (

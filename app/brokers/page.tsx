@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -47,12 +47,12 @@ const FEATURES = [
   {
     icon: Zap,
     title: 'Auto-sync trades',
-    body: 'Trades flow into Tradia within seconds of close. No manual logging.',
+    body: 'Trades flow into Atlas within seconds of close. No manual logging.',
   },
   {
     icon: CheckCircle2,
     title: 'CSV fallback',
-    body: 'No API? Upload a CSV from any broker — Tradia auto-detects the format.',
+    body: 'No API? Upload a CSV from any broker — Atlas auto-detects the format.',
   },
 ];
 
@@ -90,7 +90,7 @@ export default function BrokersPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Crypto, forex, stocks, futures, prop firms — Tradia speaks the language of every major broker. Read-only, secure, and instant.
+            Crypto, forex, stocks, futures, prop firms — Atlas speaks the language of every major broker. Read-only, secure, and instant.
           </motion.p>
         </div>
       </section>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ export default function Hero() {
       <div
         className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-[0.45]"
         style={{
-          backgroundImage: "url('/tradia-background.png')",
+          backgroundImage: "url('/atlas-background.png')",
           filter: 'blur(8px) saturate(1.1) brightness(1.05)',
           transform: 'scale(1.06)',
         }}
@@ -58,7 +58,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="mt-4 text-sm sm:text-base text-[var(--muted-foreground)] max-w-xl leading-relaxed"
             >
-              Tradia is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.
+              Atlas is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.
             </motion.p>
 
             <motion.div
@@ -71,7 +71,7 @@ export default function Hero() {
                 href="/sign-up"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
               >
-                Join Tradia Now
+                Join Atlas Now
               </Link>
               <Link
                 href="/demo"

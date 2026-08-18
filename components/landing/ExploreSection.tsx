@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ export default function ExploreSection() {
             Explore
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Explore <span className="neon-headline">Tradia</span>
+            Explore <span className="neon-headline">Atlas</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
             Everything you need to know — features, pricing, integrations, and where to go next.

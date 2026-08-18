@@ -8,10 +8,10 @@ import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 
 const ROUTES = [
-  { label: 'Product & onboarding',     email: 'support@tradia.app' },
-  { label: 'Pricing & plans',          email: 'sales@tradia.app' },
-  { label: 'Integrations & imports',   email: 'ops@tradia.app' },
-  { label: 'Security & privacy',       email: 'security@tradia.app' },
+  { label: 'Product & onboarding',     email: 'support@atlas.app' },
+  { label: 'Pricing & plans',          email: 'sales@atlas.app' },
+  { label: 'Integrations & imports',   email: 'ops@atlas.app' },
+  { label: 'Security & privacy',       email: 'security@atlas.app' },
 ];
 
 const SCOPE = [
@@ -45,7 +45,7 @@ const FAQ = [
   },
   {
     q: 'Can I request a new broker integration?',
-    a: 'Yes — email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
+    a: 'Yes — email ops@atlas.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
   },
 ];
 
@@ -66,7 +66,7 @@ export default function ContactPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Talk to the{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Tradia team</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Atlas team</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -10,7 +10,7 @@ const PILLARS = [
   {
     icon: Lock,
     title: 'Read-only account access',
-    body: 'Use read-only credentials wherever connectors require them. Tradia is designed for post-trade data retrieval only.',
+    body: 'Use read-only credentials wherever connectors require them. Atlas is designed for post-trade data retrieval only.',
   },
   {
     icon: ShieldOff,
@@ -79,7 +79,7 @@ export default function SecurityPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
           >
-            Tradia never holds funds, executes orders, or asks for withdrawal access. Here&apos;s how the platform is engineered to keep your trade history safe.
+            Atlas never holds funds, executes orders, or asks for withdrawal access. Here&apos;s how the platform is engineered to keep your trade history safe.
           </motion.p>
         </div>
       </section>
@@ -130,7 +130,7 @@ export default function SecurityPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Questions about security?</h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Reach our security team at <a href="mailto:security@tradia.app" className="text-pink-400 hover:text-pink-300">security@tradia.app</a> — or start with no commitment.
+            Reach our security team at <a href="mailto:security@atlas.app" className="text-pink-400 hover:text-pink-300">security@atlas.app</a> — or start with no commitment.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/sign-up" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors">

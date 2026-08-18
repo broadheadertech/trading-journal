@@ -51,8 +51,8 @@ const FAQ = [
   { q: 'Do I need a credit card to start the trial?', a: 'No. The 14-day free trial is genuinely no-card. You only enter payment details if you decide to continue after the trial ends.' },
   { q: 'What happens after my trial?',                a: 'You drop to the Free plan automatically — no surprise charges. Your data is preserved. You can upgrade any time.' },
   { q: 'Can I cancel anytime?',                       a: 'Yes. One click in Settings → Subscription. No retention calls, no questions asked. You keep access until the end of the billing period.' },
-  { q: 'Do you support my broker?',                   a: 'Probably yes — we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@tradia.app and we add new formats within 48 hours.' },
-  { q: 'Is my trade data safe?',                      a: 'API keys are read-only by design. Tradia never holds funds, never executes orders. Hosted in Europe under GDPR with isolated background tasks.' },
+  { q: 'Do you support my broker?',                   a: 'Probably yes — we cover 67+ brokers via CSV/XLSX and 5 native API integrations. If we don\'t, email ops@atlas.app and we add new formats within 48 hours.' },
+  { q: 'Is my trade data safe?',                      a: 'API keys are read-only by design. Atlas never holds funds, never executes orders. Hosted in Europe under GDPR with isolated background tasks.' },
   { q: 'Do you offer refunds?',                       a: 'If you cancel within 7 days of your first paid charge, we refund in full. After that, we prorate to the end of the billing period.' },
 ];
 

@@ -17,7 +17,7 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
 }> = {
   reinforcement: {
     icon: Trophy,
-    color: '#34d399',
+    color: '#24c88a',
     glow: 'rgba(52,211,153,0.2)',
     label: 'Great execution',
   },
@@ -35,7 +35,7 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
   },
   streak: {
     icon: Flame,
-    color: '#fbbf24',
+    color: '#f0a409',
     glow: 'rgba(251,191,36,0.2)',
     label: 'Streak bonus',
   },
@@ -47,13 +47,13 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
   },
   anti_gaming: {
     icon: ShieldAlert,
-    color: '#fb923c',
+    color: '#d99405',
     glow: 'rgba(251,146,60,0.2)',
     label: 'Flagged',
   },
   transition: {
     icon: Star,
-    color: '#e879f9',
+    color: '#f0a409',
     glow: 'rgba(232,121,249,0.25)',
     label: 'Stage transition',
   },

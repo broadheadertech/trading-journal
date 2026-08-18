@@ -62,7 +62,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
       if (provider === 'paymongo') {
         // For PayMongo subscriptions, there's no self-service portal
         // Open a mailto or support link instead
-        window.open('mailto:support@tradia.app?subject=Subscription%20Management', '_blank');
+        window.open('mailto:support@atlas.app?subject=Subscription%20Management', '_blank');
         setLoading(null);
         return;
       }

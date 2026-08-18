@@ -2,7 +2,7 @@ import LandingNav from '@/components/landing/LandingNav';
 import Hero from '@/components/landing/Hero';
 import DashboardPreview from '@/components/landing/DashboardPreview';
 import EfficiencySection from '@/components/landing/EfficiencySection';
-import TradiaMethod from '@/components/landing/TradiaMethod';
+import AtlasMethod from '@/components/landing/AtlasMethod';
 import HowItWorks from '@/components/landing/HowItWorks';
 import PlatformStats from '@/components/landing/PlatformStats';
 import Features from '@/components/landing/Features';
@@ -20,15 +20,15 @@ export default function LandingPage() {
       <Hero />
       <DashboardPreview />
       <EfficiencySection />
-      <TradiaMethod />
+      <AtlasMethod />
       <HowItWorks />
       <PlatformStats />
       <Features />
-      <ExploreSection />
-      <MidCTA />
       <WhyTradersFail />
+      <ExploreSection />
       <Pricing />
       <Testimonials />
+      <MidCTA />
       <Footer />
     </div>
   );

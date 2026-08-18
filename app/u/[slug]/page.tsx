@@ -75,7 +75,7 @@ export default function PublicProfilePage() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] px-4 text-center">
         <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">No such profile</h1>
         <p className="text-sm text-[var(--muted-foreground)] mb-6">
-          No Tradia user matches <span className="font-mono">/u/{slug}</span>.
+          No Atlas user matches <span className="font-mono">/u/{slug}</span>.
         </p>
         <button
           onClick={() => router.push('/app')}
@@ -93,7 +93,7 @@ export default function PublicProfilePage() {
       <header className="border-b border-[var(--border)]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href={currentUser ? '/app' : '/'} className="inline-flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            <ArrowLeft size={14} /> {currentUser ? 'Back to app' : 'Tradia home'}
+            <ArrowLeft size={14} /> {currentUser ? 'Back to app' : 'Atlas home'}
           </Link>
           {isOwnProfile && (
             <button

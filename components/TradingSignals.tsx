@@ -148,7 +148,7 @@ export default function TradingSignals() {
               Trading <span className="gradient-text">signals</span>
             </h1>
             <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-              The traders posting signals on Tradia. Browse each provider's track record — hit-rate, win/loss, and average R —
+              The traders posting signals on Atlas. Browse each provider's track record — hit-rate, win/loss, and average R —
               and tap a name to open their full profile.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function TradingSignals() {
         <ShieldAlert size={18} className="text-amber-400 mt-0.5 shrink-0" />
         <div className="text-xs text-[var(--muted-foreground)] leading-relaxed">
           <span className="font-semibold text-[var(--foreground)]">Not financial advice. </span>
-          Signals are user-posted research-driven trade ideas, not recommendations from Tradia. Run every signal through
+          Signals are user-posted research-driven trade ideas, not recommendations from Atlas. Run every signal through
           your playbook, your risk model, and your discipline check before sizing in.
         </div>
       </div>

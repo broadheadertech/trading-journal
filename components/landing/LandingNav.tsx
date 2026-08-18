@@ -80,7 +80,7 @@ const DROPDOWNS: Dropdown[] = [
       {
         heading: 'Company',
         items: [
-          { icon: FileText,  label: 'About',     desc: 'Why Tradia exists, who built it',     href: '/about' },
+          { icon: FileText,  label: 'About',     desc: 'Why Atlas exists, who built it',     href: '/about' },
           { icon: Shield,    label: 'Security',  desc: 'Read-only by design, EU-hosted',      href: '/security' },
           { icon: Mail,      label: 'Contact',   desc: 'Email-routed support, UTC business hours', href: '/contact' },
           { icon: GitBranch, label: 'Changelog', desc: 'What we shipped recently',            href: '/changelog' },
@@ -117,18 +117,18 @@ export default function LandingNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Logo — neural-brain brand mark + pink-aurora wordmark (legacy marketing variant) */}
+        {/* Logo — amber ATLAS "A" mark + wordmark */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <Image
-            src="/tradia-logo.png"
-            alt="Tradia"
+            src="/atlas-icon.svg"
+            alt="Atlas"
             width={36}
             height={36}
             priority
             className="w-9 h-9 object-contain rounded-lg"
           />
           <span className="font-brand text-xl font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
-            Tradia
+            Atlas
           </span>
         </Link>
 

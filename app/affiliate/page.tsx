@@ -60,11 +60,11 @@ const FAQ = [
   },
   {
     q: 'Is the commission really lifetime?',
-    a: 'Yes. As long as your referral keeps their Tradia subscription active, you keep earning the commission percentage.',
+    a: 'Yes. As long as your referral keeps their Atlas subscription active, you keep earning the commission percentage.',
   },
   {
     q: 'Can I run paid ads?',
-    a: 'Yes, but not on branded keywords (e.g., "Tradia", "Tradia review"). Full guidelines in the affiliate agreement.',
+    a: 'Yes, but not on branded keywords (e.g., "Atlas", "Atlas review"). Full guidelines in the affiliate agreement.',
   },
   {
     q: 'Do you offer custom deals for large audiences?',
@@ -98,7 +98,7 @@ export default function AffiliatePage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
           >
             Get paid to share{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Tradia</span>
+            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Atlas</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -261,7 +261,7 @@ export default function AffiliatePage() {
             Ready to start earning?
           </h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Free to join. Get your link in 60 seconds. Questions? <a href="mailto:affiliates@tradia.app" className="text-pink-400 hover:text-pink-300 transition-colors inline-flex items-center gap-1"><Mail size={12} /> affiliates@tradia.app</a>
+            Free to join. Get your link in 60 seconds. Questions? <a href="mailto:affiliates@atlas.app" className="text-pink-400 hover:text-pink-300 transition-colors inline-flex items-center gap-1"><Mail size={12} /> affiliates@atlas.app</a>
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

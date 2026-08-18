@@ -4,24 +4,24 @@
 @property --accent {
   syntax: "<color>";
   inherits: true;
-  /* Aurora fuchsia (was pure pink #ff2eb3) — sits in the middle of the brand
+  /* Aurora fuchsia (was pure pink #ff3d87) — sits in the middle of the brand
      gradient so chrome reads as part of the multi-color ramp rather than
      pink-dominant. The aurora ramp's pink/cyan/emerald stops still exist as
      --aurora-pink / --aurora-cyan / --aurora-emerald for spots that genuinely
      want pure pink. */
-  initial-value: #d946ef;
+  initial-value: #d99405;
 }
 
 @property --accent-glow {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(217, 70, 239, 0.18);
+  initial-value: rgba(217, 148, 5, 0.18);
 }
 
 @property --bg-tint {
   syntax: "<color>";
   inherits: true;
-  initial-value: #060a12;
+  initial-value: #05080d;
 }
 
 @property --brain-dimming {
@@ -37,64 +37,76 @@
 }
 
 :root {
-  --background: #060a12;
-  --foreground: #e4eaf4;
-  --card: #0c1220;
-  --card-hover: #111a2e;
-  --border: #152038;
-  --muted: #152038;
+  --background: #05080d;
+  --foreground: #edf2f7;
+  --card: #0a0f17;
+  --card-hover: #0c121b;
+  --border: #182432;
+  --muted: #182432;
   /* Lightened from #5a7194 for readability — this token drives every subtitle,
      caption, helper line and inactive-tab label, so the lift improves secondary
-     text contrast app-wide while staying clearly below --foreground (#e4eaf4). */
-  --muted-foreground: #8195b8;
+     text contrast app-wide while staying clearly below --foreground (#edf2f7). */
+  --muted-foreground: #7f8ea3;
   /* Secondary text tier — brighter than --muted-foreground, dimmer than
      --foreground. Use for page subtitles / lead copy that should read clearly. */
-  --fg-2: #c2cde0;
-  /* Accent — fuchsia (was pure pink #ff2eb3) so the chrome aligns with the
+  --fg-2: #c3cdda;
+  /* Accent — fuchsia (was pure pink #ff3d87) so the chrome aligns with the
      multi-color aurora ramp instead of reading as pink-dominant. */
-  --accent: #d946ef;
-  --accent-hover: #e879f9;
-  --accent-glow: rgba(217, 70, 239, 0.18);
-  --bg-tint: #060a12;
-  --green: #00e68a;
-  --red: #ff4d6a;
-  --yellow: #ffc233;
+  --accent: #d99405;
+  --accent-hover: #f0a409;
+  --accent-glow: rgba(217, 148, 5, 0.18);
+  --bg-tint: #05080d;
+  --green: #24c88a;
+  --red: #ff4d5e;
+  --yellow: #d99405;
   --blue: #0099ff;
   --purple: #7b61ff;
-  --gain: #00e68a;
-  --loss: #ff4d6a;
-  --input-bg: #080e1a;
-  --input-border: #152038;
+  --gain: #24c88a;
+  --loss: #ff4d5e;
+  --input-bg: #070c13;
+  --input-border: #182432;
 
-  /* ── Tradia Design System tokens (Aurora) ───────────────────────────
-     Formalized from the design-system handoff. Where the codebase used
-     hex literals scattered through Tailwind arbitrary values, the same
-     colors are now reachable via tokens so future surfaces stay in sync. */
-  --aurora-pink:    #ff2eb3;
-  --aurora-fuchsia: #d946ef;
-  --aurora-cyan:    #22d3ee;
-  --aurora-emerald: #34d399;
-  --cta-orange:     #fb923c;
-  --cta-amber:      #fbbf24;
-  --cta-glow:       rgba(251, 146, 60, 0.6);
+  /* ── ATLAS brand palette — lifted verbatim from uiux/atlass.html ─────────
+     These are the canonical values. Prefer them over the legacy --aurora-*
+     aliases below, which now just point back into this palette. */
+  --atlas-amber:     #d99405;
+  --atlas-amber-hi:  #f0a409;
+  --atlas-amber-dim: #8a6a18;
+  --atlas-teal:      #2fd3c4;
+  --atlas-pink:      #ff3d87;
+  --atlas-green:     #24c88a;
+  --atlas-red:       #ff4d5e;
+  --atlas-ink:       #0a0a0a;
+  --atlas-line:      #182432;
+  --atlas-line-2:    #24344a;
+
+  /* ── Legacy Aurora aliases — retained so existing var() call sites keep
+     resolving. Values now map onto the ATLAS palette above. */
+  --aurora-pink:    #ff3d87;
+  --aurora-fuchsia: #d99405;
+  --aurora-cyan:    #2fd3c4;
+  --aurora-emerald: #24c88a;
+  --cta-orange:     #d99405;
+  --cta-amber:      #f0a409;
+  --cta-glow:       rgba(217, 148, 5, 0.6);
 
   /* Severity (used by Leak Detection lists) */
-  --sev-high: #ff4d6a;
-  --sev-med:  #ffc233;
+  --sev-high: #ff4d5e;
+  --sev-med:  #d99405;
   --sev-low:  #5a7194;
 
   /* Glow signatures — three named treatments + one combined aurora ring.
      Use over the bare drop-shadow tokens whenever you want elevation on a
      dark surface; box-shadow alone is nearly invisible by design. */
-  --glow-pink:    0 0 30px -4px rgba(255, 46, 179, 0.50);
-  --glow-orange:  0 0 30px -4px rgba(251, 146, 60, 0.60);
-  --glow-cyan:    0 0 30px -8px rgba(34, 211, 238, 0.35);
-  --glow-emerald: 0 0 30px -8px rgba(52, 211, 153, 0.30);
+  --glow-pink:    0 0 30px -4px rgba(217, 148, 5, 0.50);
+  --glow-orange:  0 0 30px -4px rgba(217, 148, 5, 0.60);
+  --glow-cyan:    0 0 30px -8px rgba(47, 211, 196, 0.35);
+  --glow-emerald: 0 0 30px -8px rgba(36, 200, 138, 0.30);
   --aurora-ring:
-    0 0 0 1px rgba(255, 46, 179, 0.18),
-    0 0 30px -8px rgba(34, 211, 238, 0.30),
-    0 0 60px -20px rgba(52, 211, 153, 0.25);
-  --shadow-card-lift: 0 20px 40px -20px rgba(255, 46, 179, 0.40);
+    0 0 0 1px rgba(217, 148, 5, 0.18),
+    0 0 30px -8px rgba(47, 211, 196, 0.30),
+    0 0 60px -20px rgba(36, 200, 138, 0.25);
+  --shadow-card-lift: 0 20px 40px -20px rgba(217, 148, 5, 0.40);
 }
 
 .light {
@@ -107,9 +119,9 @@
   --muted-foreground: #5a6d85;
   --fg-2: #2c3a52;  /* secondary text tier (light mode) */
   /* Light-mode fuchsia (was pink #d6248c). Sibling tone to the dark-mode --accent. */
-  --accent: #c026d3;
+  --accent: #b07a04;
   --accent-hover: #a21caf;
-  --accent-glow: rgba(192, 38, 211, 0.14);
+  --accent-glow: rgba(176, 122, 4, 0.14);
   --bg-tint: #f4f7fb;
   --green: #00a86b;
   --red: #e02850;
@@ -127,6 +139,37 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-display);
   --font-mono: var(--font-geist-mono);
+}
+
+/* ── ATLAS rebrand: pink/fuchsia → amber compatibility shim ────────────────
+   COMPATIBILITY BRIDGE, NOT THE END STATE.
+
+   ~460 `pink-*` / `fuchsia-*` Tailwind utilities are hardcoded across 77
+   component files from the old Tradia identity. Rather than rewrite every
+   call site at once, we redefine what those two ramps *mean* so the whole
+   app renders in ATLAS amber immediately.
+
+   Both families map onto the amber ramp because the reference build uses
+   FLAT amber for CTAs (`.btn-amber{background:var(--amber)}`) — the old
+   `from-pink-400 to-fuchsia-400` gradients therefore collapse into a soft
+   amber sheen instead of a two-hue sweep.
+
+   Consequence: a class named `pink-400` now paints amber. That is a lie the
+   codebase should not keep. Replace call sites with `--accent` / the
+   `--atlas-*` tokens below, and delete this block once the count hits zero. */
+@theme {
+  --color-pink-200: #f7c56a;
+  --color-pink-300: #f0a409;
+  --color-pink-400: #d99405;
+  --color-pink-500: #d99405;
+  --color-pink-600: #b07a04;
+  --color-pink-700: #8a6a18;
+  --color-pink-900: #5a4a10;
+
+  --color-fuchsia-300: #f7c56a;
+  --color-fuchsia-400: #f0a409;
+  --color-fuchsia-500: #e09a06;
+  --color-fuchsia-600: #b07a04;
 }
 
 body {
@@ -344,7 +387,7 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--border);
 }
 
-/* Brand wordmark utility — wide-tracking geometric look matching the TRADIA logo */
+/* Brand wordmark utility — wide-tracking geometric look matching the ATLAS logo */
 .font-brand {
   font-family: var(--font-brand), system-ui, -apple-system, sans-serif !important;
   letter-spacing: 0.16em;
@@ -371,13 +414,13 @@ h1, h2, h3 {
 */
 .aurora-text {
   background: linear-gradient(120deg,
-    #ff2eb3 0%,
-    #d946ef 15%,
-    #22d3ee 32%,
-    #34d399 50%,
-    #fb923c 68%,
-    #d946ef 86%,
-    #ff2eb3 100%);
+    #ff3d87 0%,
+    #d99405 15%,
+    #2fd3c4 32%,
+    #24c88a 50%,
+    #d99405 68%,
+    #d99405 86%,
+    #ff3d87 100%);
   background-size: 220% 220%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -386,7 +429,7 @@ h1, h2, h3 {
 }
 
 .aurora-text-static {
-  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 38%, #34d399 68%, #fb923c 100%);
+  background: linear-gradient(120deg, #ff3d87 0%, #2fd3c4 38%, #24c88a 68%, #d99405 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -406,9 +449,9 @@ h1, h2, h3 {
   background-clip: text;
   color: transparent;
   filter:
-    drop-shadow(0 0 12px rgba(34, 211, 238, 0.35))
-    drop-shadow(0 0 22px rgba(255, 46, 179, 0.16))
-    drop-shadow(0 0 30px rgba(251, 146, 60, 0.16));
+    drop-shadow(0 0 12px rgba(47, 211, 196, 0.35))
+    drop-shadow(0 0 22px rgba(217, 148, 5, 0.16))
+    drop-shadow(0 0 30px rgba(217, 148, 5, 0.16));
 }
 
 /* Neon eyebrow — quieter, cyan-emerald tilted so it doesn't compete with the headline.
@@ -420,7 +463,7 @@ h1, h2, h3 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
+  filter: drop-shadow(0 0 8px rgba(47, 211, 196, 0.45));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -494,10 +537,10 @@ h1, h2, h3 {
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(ellipse 60% 40% at 18% 10%,  rgba(255, 46, 179, 0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 45% at 82% 18%,  rgba(34, 211, 238, 0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 35% at 50% 95%,  rgba(52, 211, 153, 0.13) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 92% 70%,  rgba(251, 146, 60, 0.10) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 40% at 18% 10%,  rgba(217, 148, 5, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 18%,  rgba(47, 211, 196, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 35% at 50% 95%,  rgba(36, 200, 138, 0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 92% 70%,  rgba(217, 148, 5, 0.10) 0%, transparent 60%);
   filter: blur(40px);
   animation: aurora-drift 22s ease-in-out infinite;
 }
@@ -521,14 +564,14 @@ h1, h2, h3 {
 /* Aurora-tinted border + soft glow for cards/CTAs you want to feature */
 .aurora-glow {
   box-shadow:
-    0 0 0 1px rgba(255, 46, 179, 0.18),
-    0 0 30px -8px rgba(34, 211, 238, 0.30),
-    0 0 60px -20px rgba(52, 211, 153, 0.25);
+    0 0 0 1px rgba(217, 148, 5, 0.18),
+    0 0 30px -8px rgba(47, 211, 196, 0.30),
+    0 0 60px -20px rgba(36, 200, 138, 0.25);
 }
 
 /* Gradient text accent — Northern Lights aurora */
 .gradient-text {
-  background: linear-gradient(120deg, #ff2eb3 0%, #22d3ee 38%, #34d399 68%, #fb923c 100%);
+  background: linear-gradient(120deg, #ff3d87 0%, #2fd3c4 38%, #24c88a 68%, #d99405 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -540,7 +583,7 @@ h1, h2, h3 {
   inset-inline: 0;
   top: -5rem;
   height: 18rem;
-  background: linear-gradient(to bottom, rgba(255,46,179,0.14), rgba(255,46,179,0.06), transparent);
+  background: linear-gradient(to bottom, rgba(217, 148, 5,0.14), rgba(217, 148, 5,0.06), transparent);
   filter: blur(60px);
   pointer-events: none;
   z-index: -1;
@@ -552,6 +595,6 @@ h1, h2, h3 {
 }
 .card-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -20px rgba(255, 46, 179, 0.40);
-  border-color: rgba(255, 46, 179, 0.30);
+  box-shadow: 0 20px 40px -20px rgba(217, 148, 5, 0.40);
+  border-color: rgba(217, 148, 5, 0.30);
 }

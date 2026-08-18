@@ -36,7 +36,7 @@ const SYMBOLS: Array<{ symbol: string; name: string; group: 'index' | 'commodity
 async function fetchYahoo(symbol: string, name: string): Promise<YahooQuote | null> {
   try {
     const r = await fetch(YAHOO(symbol), {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TradiaBot/1.0)' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AtlasBot/1.0)' },
       next: { revalidate: 60 },
     });
     if (!r.ok) return null;
@@ -65,7 +65,7 @@ async function fetchNews() {
     const r = await fetch(
       'https://www.reddit.com/r/worldnews/top.json?limit=12&t=day',
       {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TradiaBot/1.0)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AtlasBot/1.0)' },
         next: { revalidate: 300 }, // 5 min — news doesn't move that fast
       }
     );

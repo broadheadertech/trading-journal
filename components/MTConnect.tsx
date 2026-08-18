@@ -230,20 +230,20 @@ export default function MTConnect() {
             <ol className="space-y-3 text-sm">
               <Step n={1} title="Download the EA">
                 <div className="flex flex-wrap items-center gap-2">
-                  <a href="/tradia-sync.mq5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300 transition-all">
-                    <Download size={12} /> Download tradia-sync.mq5
+                  <a href="/atlas-sync.mq5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300 transition-all">
+                    <Download size={12} /> Download atlas-sync.mq5
                   </a>
-                  <a href="/tradia-sync.ex5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors">
-                    <Download size={12} /> tradia-sync.ex5 <span className="text-[10px] text-[var(--muted-foreground)]">(if compiled)</span>
+                  <a href="/atlas-sync.ex5" download className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors">
+                    <Download size={12} /> atlas-sync.ex5 <span className="text-[10px] text-[var(--muted-foreground)]">(if compiled)</span>
                   </a>
                 </div>
                 <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed">
-                  Most users want the <strong className="text-pink-400">.mq5</strong> source. Drop it in MT5's <code>MQL5/Experts</code> folder, then in MT5 right-click <code>tradia-sync</code> in Navigator → <strong>Modify</strong> → <strong>Compile (F7)</strong>. MT5 will produce the <code>.ex5</code> automatically. The <code>.ex5</code> button above is for cases where the developer pre-compiled and uploaded it.
+                  Most users want the <strong className="text-pink-400">.mq5</strong> source. Drop it in MT5's <code>MQL5/Experts</code> folder, then in MT5 right-click <code>atlas-sync</code> in Navigator → <strong>Modify</strong> → <strong>Compile (F7)</strong>. MT5 will produce the <code>.ex5</code> automatically. The <code>.ex5</code> button above is for cases where the developer pre-compiled and uploaded it.
                 </p>
               </Step>
 
               <Step n={2} title="Open MT5's data folder">
-                In MT5: <code className="text-pink-400">File → Open Data Folder</code>, then go into <code className="text-pink-400">MQL5 → Experts</code>. Drop <code>tradia-sync.ex5</code> in this folder.
+                In MT5: <code className="text-pink-400">File → Open Data Folder</code>, then go into <code className="text-pink-400">MQL5 → Experts</code>. Drop <code>atlas-sync.ex5</code> in this folder.
               </Step>
 
               <Step n={3} title="Allow the webhook URL">
@@ -257,11 +257,11 @@ export default function MTConnect() {
               </Step>
 
               <Step n={4} title="Restart MT5">
-                Close MT5 fully and reopen it. You should see <code>tradia-sync</code> in the Navigator panel under <code className="text-pink-400">Expert Advisors</code>.
+                Close MT5 fully and reopen it. You should see <code>atlas-sync</code> in the Navigator panel under <code className="text-pink-400">Expert Advisors</code>.
               </Step>
 
               <Step n={5} title="Attach to a chart + paste token">
-                Open any chart (any symbol). Drag <code>tradia-sync</code> from Navigator onto it. In the EA's <strong>"Inputs"</strong> tab, paste your token:
+                Open any chart (any symbol). Drag <code>atlas-sync</code> from Navigator onto it. In the EA's <strong>"Inputs"</strong> tab, paste your token:
                 {isConnected && (
                   <div className="mt-2 flex items-center gap-2 rounded-lg border border-[var(--border)] bg-black/30 p-2 font-mono text-[11px]">
                     <code className="flex-1 break-all">{conn?.syncToken}</code>

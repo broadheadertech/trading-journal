@@ -318,7 +318,7 @@ function AppContent() {
           <div className="mx-auto mb-4">
             <BrainMascot size={48} glow beat />
           </div>
-          <p className="text-[var(--muted-foreground)] text-sm">Loading Tradia...</p>
+          <p className="text-[var(--muted-foreground)] text-sm">Loading Atlas...</p>
         </div>
       </div>
     );

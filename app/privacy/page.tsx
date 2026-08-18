@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata = {
-  title: 'Privacy Policy - Tradia',
-  description: 'Tradia Privacy Policy — how we collect, use, and protect your personal data.',
+  title: 'Privacy Policy - Atlas',
+  description: 'Atlas Privacy Policy — how we collect, use, and protect your personal data.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">1. Introduction</h2>
             <p>
-              Tradia (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates the Tradia trading journal platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use our services. By registering for an account, you acknowledge that you have read and agree to this Privacy Policy.
+              Atlas (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates the Atlas trading journal platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use our services. By registering for an account, you acknowledge that you have read and agree to this Privacy Policy.
             </p>
           </section>
 
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">3. How We Use Your Data</h2>
             <ul className="list-disc pl-5 space-y-2">
-              <li>To provide, maintain, and improve the Tradia platform and its features.</li>
+              <li>To provide, maintain, and improve the Atlas platform and its features.</li>
               <li>To generate personalized trading analytics, psychology insights, AI coaching recommendations, and discipline scores.</li>
               <li>To process subscriptions and payments.</li>
               <li>To send account-related notifications and service updates.</li>
@@ -88,7 +88,7 @@ export default function PrivacyPolicyPage() {
               <li>Request a portable copy of your data.</li>
               <li>Withdraw consent at any time (where processing is based on consent).</li>
             </ul>
-            <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:support@tradia.app" className="text-[var(--accent)] hover:underline">support@tradia.app</a>.</p>
+            <p className="mt-3">To exercise any of these rights, contact us at <a href="mailto:support@atlas.app" className="text-[var(--accent)] hover:underline">support@atlas.app</a>.</p>
           </section>
 
           <section>
@@ -101,14 +101,14 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">9. Children&apos;s Privacy</h2>
             <p>
-              Tradia is not intended for users under the age of 18. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.
+              Atlas is not intended for users under the age of 18. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold mb-3">10. Changes to This Policy</h2>
             <p>
-              We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy on this page and updating the &quot;Last updated&quot; date. Your continued use of Tradia after changes are posted constitutes acceptance of the revised policy.
+              We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy on this page and updating the &quot;Last updated&quot; date. Your continued use of Atlas after changes are posted constitutes acceptance of the revised policy.
             </p>
           </section>
 
@@ -116,7 +116,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-lg font-semibold mb-3">11. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy or your personal data, contact us at:<br />
-              <a href="mailto:support@tradia.app" className="text-[var(--accent)] hover:underline">support@tradia.app</a>
+              <a href="mailto:support@atlas.app" className="text-[var(--accent)] hover:underline">support@atlas.app</a>
             </p>
           </section>
         </div>

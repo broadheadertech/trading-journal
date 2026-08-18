@@ -21,14 +21,14 @@ export default function AtmosphericBackground({ variant = 'subtle' }: { variant?
   const isHero = variant === 'hero';
   return (
     <>
-      {/* 1. Blurred photograph — the tradia bull/bear FX graphic, heavily blurred
+      {/* 1. Blurred photograph — the atlas bull/bear FX graphic, heavily blurred
           and desaturated so it reads as an on-brand green/pink wash rather than a
           literal scene, matching the site-wide body::before backdrop. */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none bg-cover bg-center"
         style={{
-          backgroundImage: "url('/tradia-background.png')",
+          backgroundImage: "url('/atlas-background.png')",
           filter: 'blur(8px) saturate(1.1) brightness(1.05)',
           transform: 'scale(1.06)',
           opacity: isHero ? 0.4 : 0.18,

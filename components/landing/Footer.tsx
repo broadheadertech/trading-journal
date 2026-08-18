@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -69,8 +69,8 @@ export default function Footer() {
             <div className="col-span-2 lg:col-span-1 space-y-4">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-3 group">
-                  <Image src="/tradia-logo.png" alt="Tradia" width={28} height={28} className="w-7 h-7 object-contain rounded-md" />
-                  <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Tradia</span>
+                  <Image src="/atlas-icon.svg" alt="Atlas" width={28} height={28} className="w-7 h-7 object-contain" />
+                  <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Atlas</span>
                 </Link>
                 <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
                   Find the trading mistakes costing you thousands — and prove you fixed them.
@@ -98,7 +98,7 @@ export default function Footer() {
           {/* Legal row */}
           <div className="pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-[var(--muted-foreground)]">
-              &copy; 2026 Tradia. All rights reserved.
+              &copy; 2026 Atlas. All rights reserved.
             </p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--muted-foreground)]">
               {LEGAL.map((l) => (

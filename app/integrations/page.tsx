@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ const FEATURES = [
   {
     icon: Zap,
     title: 'Live API sync',
-    body: 'Five direct connectors stream trades into Tradia within seconds of close. Read-only keys only — no withdrawal, no execution.',
+    body: 'Five direct connectors stream trades into Atlas within seconds of close. Read-only keys only — no withdrawal, no execution.',
   },
   {
     icon: FileSpreadsheet,
@@ -166,7 +166,7 @@ export default function IntegrationsPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Don&apos;t see your broker?</h2>
           <p className="mt-3 text-[var(--muted-foreground)]">
-            Email <a href="mailto:ops@tradia.app" className="text-pink-400 hover:text-pink-300">ops@tradia.app</a> with a sample export. We aim to add new formats within 48 hours.
+            Email <a href="mailto:ops@atlas.app" className="text-pink-400 hover:text-pink-300">ops@atlas.app</a> with a sample export. We aim to add new formats within 48 hours.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/sign-up" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors">

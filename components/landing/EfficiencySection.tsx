@@ -35,7 +35,7 @@ export default function EfficiencySection() {
             <span className="neon-headline">Trading Insight in Weeks</span>
           </h2>
           <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            What used to mean hours of spreadsheets and months of guesswork, Tradia does automatically — every trade
+            What used to mean hours of spreadsheets and months of guesswork, Atlas does automatically — every trade
             journaled, scored, and turned into a lesson the moment you close it.
           </p>
         </motion.div>

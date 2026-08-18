@@ -15,8 +15,8 @@ export default function SignUpPage() {
       {!proceeded ? (
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-8">
-            <Image src="/tradia-logo.png" alt="Tradia" width={56} height={56} className="mb-4 rounded-xl" />
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">Create your Tradia account</h1>
+            <Image src="/atlas-icon.svg" alt="Atlas" width={56} height={56} className="mb-4" />
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">Create your Atlas account</h1>
             <p className="text-sm text-[var(--muted-foreground)] mt-2 text-center">
               Before you get started, please review and accept our policies.
             </p>
@@ -30,7 +30,7 @@ export default function SignUpPage() {
               </p>
               <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
                 You may withdraw consent and request data deletion at any time by contacting{' '}
-                <a href="mailto:support@tradia.app" className="text-[var(--accent)] hover:underline">support@tradia.app</a>{' '}
+                <a href="mailto:support@atlas.app" className="text-[var(--accent)] hover:underline">support@atlas.app</a>{' '}
                 or deleting your account.
               </p>
             </div>

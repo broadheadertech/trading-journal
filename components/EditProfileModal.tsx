@@ -110,7 +110,7 @@ export default function EditProfileModal({
               Username
             </div>
             <div className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-black/20 px-3 py-2">
-              <span className="text-sm text-[var(--muted-foreground)] select-none">tradia.app/u/</span>
+              <span className="text-sm text-[var(--muted-foreground)] select-none">atlas.app/u/</span>
               <input
                 value={username}
                 onChange={e => setUsernameValue(e.target.value)}

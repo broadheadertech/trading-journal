@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 export const metadata = {
-  title: 'Terms of Service - Tradia',
-  description: 'Tradia Terms of Service — rules and conditions for using the platform.',
+  title: 'Terms of Service - Atlas',
+  description: 'Atlas Terms of Service — rules and conditions for using the platform.',
 };
 
 export default function TermsPage() {
@@ -21,14 +21,14 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">1. Acceptance of Terms</h2>
             <p>
-              By creating an account or using Tradia (&quot;the Service&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;) and our <Link href="/privacy" className="text-[var(--accent)] hover:underline">Privacy Policy</Link>. If you do not agree to these Terms, do not use the Service.
+              By creating an account or using Atlas (&quot;the Service&quot;), you agree to be bound by these Terms of Service (&quot;Terms&quot;) and our <Link href="/privacy" className="text-[var(--accent)] hover:underline">Privacy Policy</Link>. If you do not agree to these Terms, do not use the Service.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold mb-3">2. Description of Service</h2>
             <p>
-              Tradia is an AI-powered trading journal and analytics platform designed to help traders track, analyze, and improve their trading performance across crypto, stocks, and forex markets. The Service includes trade logging, psychology tracking, discipline scoring, AI coaching, and related features.
+              Atlas is an AI-powered trading journal and analytics platform designed to help traders track, analyze, and improve their trading performance across crypto, stocks, and forex markets. The Service includes trade logging, psychology tracking, discipline scoring, AI coaching, and related features.
             </p>
           </section>
 
@@ -46,7 +46,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">4. Consent to Data Collection</h2>
             <p>
-              By registering for Tradia, you expressly consent to the collection, processing, and storage of your personal data as described in our <Link href="/privacy" className="text-[var(--accent)] hover:underline">Privacy Policy</Link>. This includes but is not limited to:
+              By registering for Atlas, you expressly consent to the collection, processing, and storage of your personal data as described in our <Link href="/privacy" className="text-[var(--accent)] hover:underline">Privacy Policy</Link>. This includes but is not limited to:
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-3">
               <li>Your account information (name, email, profile data).</li>
@@ -55,14 +55,14 @@ export default function TermsPage() {
               <li>Usage analytics and interaction data.</li>
             </ul>
             <p className="mt-3">
-              You may withdraw consent and request data deletion at any time by contacting <a href="mailto:support@tradia.app" className="text-[var(--accent)] hover:underline">support@tradia.app</a> or deleting your account.
+              You may withdraw consent and request data deletion at any time by contacting <a href="mailto:support@atlas.app" className="text-[var(--accent)] hover:underline">support@atlas.app</a> or deleting your account.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold mb-3">5. Not Financial Advice</h2>
             <p>
-              Tradia is a journaling and analytics tool. Nothing provided by the Service constitutes financial, investment, or trading advice. All trading decisions are made solely by you. We are not responsible for any financial losses resulting from your trading activity. Past performance data displayed in the platform does not guarantee future results.
+              Atlas is a journaling and analytics tool. Nothing provided by the Service constitutes financial, investment, or trading advice. All trading decisions are made solely by you. We are not responsible for any financial losses resulting from your trading activity. Past performance data displayed in the platform does not guarantee future results.
             </p>
           </section>
 
@@ -94,14 +94,14 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold mb-3">8. Intellectual Property</h2>
             <p>
-              All content, features, and functionality of the Service (excluding user-generated data) are owned by Tradia and protected by intellectual property laws. Your trading data remains yours — we claim no ownership over your personal trading information.
+              All content, features, and functionality of the Service (excluding user-generated data) are owned by Atlas and protected by intellectual property laws. Your trading data remains yours — we claim no ownership over your personal trading information.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold mb-3">9. Limitation of Liability</h2>
             <p>
-              To the maximum extent permitted by law, Tradia shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or trading losses, arising from your use of the Service. Our total liability shall not exceed the amount you paid to us in the 12 months preceding the claim.
+              To the maximum extent permitted by law, Atlas shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or trading losses, arising from your use of the Service. Our total liability shall not exceed the amount you paid to us in the 12 months preceding the claim.
             </p>
           </section>
 
@@ -130,7 +130,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold mb-3">13. Contact</h2>
             <p>
               For questions about these Terms, contact us at:<br />
-              <a href="mailto:support@tradia.app" className="text-[var(--accent)] hover:underline">support@tradia.app</a>
+              <a href="mailto:support@atlas.app" className="text-[var(--accent)] hover:underline">support@atlas.app</a>
             </p>
           </section>
         </div>

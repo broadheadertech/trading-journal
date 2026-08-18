@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { TabId } from '@/lib/types';
 import {
@@ -87,7 +87,7 @@ export default function Navigation({
           <div className="flex items-center gap-2 sm:gap-3">
             <BrainMascot size={28} className="shrink-0" />
             <h1 className="neon-headline text-base sm:text-lg font-bold">
-              Tradia
+              Atlas
             </h1>
             <span className="hidden sm:inline text-[10px] font-medium text-[var(--muted-foreground)] opacity-60">{APP_VERSION}</span>
           </div>

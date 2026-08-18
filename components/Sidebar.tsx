@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { TabId, TimeRange } from '@/lib/types';
 import {
@@ -115,7 +115,7 @@ export default function Sidebar({
           <BrainMascot size={28} className="shrink-0" />
           {!collapsed && (
             <h1 className="neon-headline text-base font-bold truncate">
-              Tradia
+              Atlas
             </h1>
           )}
         </div>
@@ -263,7 +263,7 @@ export default function Sidebar({
               <div className="md:hidden flex items-center gap-2">
                 <BrainMascot size={24} className="shrink-0" />
                 <span className="neon-headline text-sm font-bold">
-                  Tradia
+                  Atlas
                 </span>
               </div>
               {/* Desktop: page title */}
@@ -336,7 +336,7 @@ export default function Sidebar({
                         <BookOpen size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
                         <div>
                           <p className="font-medium">Getting Started</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">Learn the basics of Tradia</p>
+                          <p className="text-[11px] text-[var(--muted-foreground)]">Learn the basics of Atlas</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
@@ -355,7 +355,7 @@ export default function Sidebar({
                       </div>
                     </div>
                     <div className="pt-2 border-t border-[var(--border)]">
-                      <p className="text-[11px] text-[var(--muted-foreground)]">Need more help? Contact support@tradia.app</p>
+                      <p className="text-[11px] text-[var(--muted-foreground)]">Need more help? Contact support@atlas.app</p>
                     </div>
                   </div>
                 )}

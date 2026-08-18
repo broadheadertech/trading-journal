@@ -64,7 +64,7 @@ export default function WhyTradersFail() {
         >
           <CheckCircle2 size={28} className="mx-auto text-emerald-400 mb-3" />
           <p className="text-xl sm:text-2xl font-bold text-[var(--foreground)]">
-            Tradia was built to <span className="neon-headline">solve all five.</span>
+            Atlas was built to <span className="neon-headline">solve all five.</span>
           </p>
           <p className="mt-3 text-[var(--muted-foreground)] max-w-xl mx-auto leading-relaxed">
             By combining education, analytics, accountability, and community, traders gain the tools needed to

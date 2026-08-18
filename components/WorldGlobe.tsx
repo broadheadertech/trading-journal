@@ -25,12 +25,12 @@ interface ArcEdge {
 }
 
 const LAYERS: { id: LayerId; label: string; color: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
-  { id: 'stockExchanges',   label: 'Stock Exchanges',    color: '#ec4899', icon: TrendingUp },
+  { id: 'stockExchanges',   label: 'Stock Exchanges',    color: '#ff3d87', icon: TrendingUp },
   { id: 'financialCenters', label: 'Financial Centers',  color: '#f472b6', icon: Building2 },
-  { id: 'centralBanks',     label: 'Central Banks',      color: '#fb923c', icon: Banknote },
-  { id: 'commodityHubs',    label: 'Commodity Hubs',     color: '#fbbf24', icon: Anchor },
+  { id: 'centralBanks',     label: 'Central Banks',      color: '#d99405', icon: Banknote },
+  { id: 'commodityHubs',    label: 'Commodity Hubs',     color: '#f0a409', icon: Anchor },
   { id: 'gccInvestments',   label: 'GCC Investments',    color: '#a855f7', icon: DollarSign },
-  { id: 'tradeRoutes',      label: 'Trade Routes',       color: '#22d3ee', icon: Anchor },
+  { id: 'tradeRoutes',      label: 'Trade Routes',       color: '#2fd3c4', icon: Anchor },
 ];
 
 const POINTS: PointMarker[] = [
@@ -146,7 +146,7 @@ export default function WorldGlobe() {
   }
 
   function colorFor(layer: LayerId) {
-    return LAYERS.find(l => l.id === layer)?.color ?? '#ec4899';
+    return LAYERS.find(l => l.id === layer)?.color ?? '#ff3d87';
   }
 
   return (
@@ -185,7 +185,7 @@ export default function WorldGlobe() {
           backgroundColor="rgba(0,0,0,0)"
           globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
           bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
-          atmosphereColor="#ec4899"
+          atmosphereColor="#ff3d87"
           atmosphereAltitude={0.18}
           showGlobe={true}
           pointsData={visiblePoints}
@@ -204,7 +204,7 @@ export default function WorldGlobe() {
           arcStartLng={(d: object) => (d as ArcEdge).startLng}
           arcEndLat={(d: object) => (d as ArcEdge).endLat}
           arcEndLng={(d: object) => (d as ArcEdge).endLng}
-          arcColor={() => ['#22d3ee', '#ec4899']}
+          arcColor={() => ['#2fd3c4', '#ff3d87']}
           arcStroke={0.4}
           arcAltitudeAutoScale={0.4}
           arcDashLength={0.4}
