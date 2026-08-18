@@ -84,14 +84,14 @@ function TraderCounterBadge() {
   const count = useLiveTraderCount();
   return (
     <div
-      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass shadow-[0_0_30px_-4px_rgba(255,46,179,0.55)]"
+      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass shadow-[0_0_30px_-4px_rgba(217,148,5,0.45)]"
       aria-live="polite"
     >
       <span className="relative flex h-2 w-2" aria-hidden>
-        <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
+        <span className="absolute inline-flex h-full w-full rounded-full bg-[#24c88a] opacity-75 animate-ping" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#24c88a]" />
       </span>
-      <span className="text-sm tabular-nums font-extrabold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">
+      <span className="text-sm tabular-nums font-extrabold text-[#d99405]">
         {NUMBER_FORMATTER.format(count)}+
       </span>
       <span className="text-[10px] uppercase tracking-[0.18em] font-bold text-[var(--muted-foreground)]">
@@ -164,24 +164,15 @@ export default function HeroGlobe() {
       ref={containerRef}
       className="relative w-full aspect-square sm:aspect-[4/5] lg:aspect-square max-h-[560px]"
     >
-      {/* Outer aurora halo — orange/amber neon wash bleeding past the globe */}
+      {/* Outer halo — teal wash bleeding past the globe, matching the ATLAS
+          atmosphere color below. The old pink/fuchsia aurora is removed. */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 50%, rgba(255,46,179,0.28) 0%, rgba(34,211,238,0.14) 42%, transparent 68%)',
+            'radial-gradient(circle at 50% 50%, rgba(47,211,196,0.16) 0%, rgba(47,211,196,0.08) 42%, transparent 68%)',
           filter: 'blur(40px)',
-        }}
-      />
-      {/* Inner rim glow — tighter, warmer */}
-      <div
-        aria-hidden
-        className="absolute inset-[10%] pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 50%, rgba(217,70,239,0.22) 0%, transparent 60%)',
-          filter: 'blur(24px)',
         }}
       />
 

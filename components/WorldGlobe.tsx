@@ -196,7 +196,7 @@ export default function WorldGlobe() {
           backgroundColor="rgba(0,0,0,0)"
           globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg"
           bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
-          atmosphereColor="#ff3d87"
+          atmosphereColor="#2fd3c4"
           atmosphereAltitude={0.18}
           showGlobe={true}
           pointsData={visiblePoints}
