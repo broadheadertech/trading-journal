@@ -10,7 +10,7 @@ export default function UseCasesPage() {
       <div className="phero" style={{ '--band': '400px', padding: '132px 0 0' } as React.CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1 className="light" style={{ fontSize: '62px', lineHeight: '67px' }}>Use<em>cases</em></h1>
+          <h1 className="light">Use<em>cases</em></h1>
           <p className="sub" style={{ marginTop: '50px' }}>How traders, prop firms, and coaches use Atlas to improve execution discipline.</p>
         </div>
       </div>

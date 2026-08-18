@@ -19,7 +19,7 @@ export default function BrokersPage() {
         <div className="panelgrid" style={{ width: '560px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ paddingLeft: '2px', marginBottom: '14px' }}>67+ supported brokers &amp; exchanges</p>
-          <h1 style={{ fontSize: '52px', lineHeight: '57px' }}>Connect every broker you<em>already trade on</em></h1>
+          <h1>Connect every broker you<em>already trade on</em></h1>
           <p className="sub" style={{ marginTop: '32px' }}>Crypto, forex, stocks, futures, prop firms — Atlas speaks the language of every major broker. Read-only, secure, and instant.</p>
           <div className="dirlist">
             <p className="hd">DIRECTORY</p>
@@ -40,7 +40,7 @@ export default function BrokersPage() {
           </div>
 
           <hr className="inset-rule" style={{ marginTop: '132px' }} />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '40px', lineHeight: '44px', margin: '19px 0 0' }}>Broker directory</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '19px 0 0' }}>Broker directory</h2>
 
           <div className="brokgroup" id="crypto" style={{ marginTop: '82px' }}>
             <div className="gh">CRYPTO EXCHANGES<em>12</em></div>

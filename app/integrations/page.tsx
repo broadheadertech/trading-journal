@@ -12,7 +12,7 @@ export default function IntegrationsPage() {
         <div className="panelgrid" style={{ width: '560px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ fontWeight: '300', paddingLeft: '5px', marginBottom: '11px' }}>67+ broker &amp; exchange integrations</p>
-          <h1 style={{ fontSize: '54px', lineHeight: '59px' }}>Connect every broker.<em>Read-only, instant.</em></h1>
+          <h1>Connect every broker.<em>Read-only, instant.</em></h1>
           <p className="sub" style={{ marginTop: '32px', maxWidth: '660px' }}>Five live API connectors plus 67+ broker CSV/XLSX formats — auto-detected and normalized into a single trade structure.</p>
           <div className="covstats">
             <p className="hd">COVERAGE</p>
@@ -33,7 +33,7 @@ export default function IntegrationsPage() {
           </div>
 
           <hr className="inset-rule" style={{ marginTop: '142px' }} />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '400', fontSize: '40px', lineHeight: '44px', margin: '19px 0 0' }}>Live API connectors</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '600', fontSize: '40px', lineHeight: '44px', margin: '19px 0 0' }}>Live API connectors</h2>
           <p className="lede-lg" style={{ marginTop: '16px' }}>Direct read-only connections. No withdrawal, no execution access.</p>
           <div className="conns">
             <div className="conn"><svg className="ic" width="24" height="24" viewBox="0 0 24 24" fill="#2fd3c4"><path d="M12 0l3.1 3.1L8.9 9.3 5.8 6.2 12 0zm6.2 6.2L21.3 9.3 12 18.6 2.7 9.3l3.1-3.1L12 12.4l6.2-6.2zM12 15.5l3.1 3.1L12 21.7l-3.1-3.1L12 15.5z" /></svg><b>Binance</b><span>Spot + Perp Futures</span></div>
@@ -47,7 +47,7 @@ export default function IntegrationsPage() {
 
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '52px', paddingTop: '74px' }}>
         <div className="wrap">
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '400', fontSize: '40px', lineHeight: '44px', margin: '0' }}>Supported markets</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '600', fontSize: '40px', lineHeight: '44px', margin: '0' }}>Supported markets</h2>
           <p className="lede-lg" style={{ marginTop: '16px' }}>Eight asset classes, one normalized schema.</p>
           <div className="markets">
             <div className="market"><h4>Crypto Spot</h4><span>12 brokers</span><div className="bar"><i style={{ width: '86%' }}></i></div></div>

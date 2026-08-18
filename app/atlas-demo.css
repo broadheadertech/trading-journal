@@ -1,0 +1,560 @@
+/* ============================================================================
+   ATLAS /demo — in-product dashboard preview
+
+   app/demo/page.tsx is a faithful port of uiux/atlass.html lines 1477-1697.
+   That reference file styles only its homepage, so every class below had no
+   rule anywhere and the route rendered as unstyled stacked text. This sheet
+   supplies the missing component layer.
+
+   Everything is derived from conventions already set in app/atlas.css:
+   1240px .wrap rail, 2-3px radii, hairline var(--line) borders, var(--mono)
+   numerals, uppercase micro labels, Archivo 600 headings. No new tokens, no
+   new visual language. Page chrome (.phero, .pcta, .corner, .lbl, .sub,
+   .gridwash, .body type role) comes from app/atlas-pages.css and is NOT
+   redefined here — only descendant-scoped additions inside .win.
+
+   Scoped under .atlas-site via CSS nesting: these names (.win, .bar, .copy,
+   .tile, .box, .g, .s, .t, .n, .on ...) are generic and must never leak into
+   the .atlas-dash app.
+   ========================================================================== */
+
+.atlas-site {
+
+  /* ── hero stat strip ────────────────────────────────────────────────────
+     WINDOW 30D / TRADES 78 / SYMBOLS 12 / MARKETS 4. Reads as one horizontal
+     rail under the lede, hairline-separated like .numbers on the homepage. */
+  .dstats {
+    margin-top: 52px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .dstats .hd { margin: 0; }
+
+  .dstats .g {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin-top: 16px;
+  }
+  .dstats .s {
+    position: relative;
+    padding-right: 46px;
+  }
+  .dstats .s b {
+    display: block;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+  .dstats .s em {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 27px;
+    color: var(--text);
+  }
+  /* the empty <i> is the divider hairline between stats */
+  .dstats .s i {
+    position: absolute;
+    right: 23px;
+    top: 2px;
+    bottom: 2px;
+    width: 1px;
+    background: var(--line);
+  }
+  .dstats .s:last-child { padding-right: 0; }
+  .dstats .s:last-child i { display: none; }
+
+  /* ── feature row: explanatory column + product screen ───────────────── */
+  .drow {
+    display: grid;
+    grid-template-columns: 372px minmax(0, 1fr);
+    gap: 56px;
+    align-items: center;
+  }
+  /* .flip rows put the screen first in source order, so only the track
+     widths swap — no order juggling needed. */
+  .drow.flip { grid-template-columns: minmax(0, 1fr) 372px; }
+
+  .copy { min-width: 0; }
+  .copy .rule {
+    width: 44px;
+    height: 2px;
+    background: var(--amber);
+  }
+  .copy h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 35px;
+    letter-spacing: -.01em;
+    color: var(--text);
+    margin: 22px 0 0;
+  }
+  .copy p {
+    font-size: 14.5px;
+    line-height: 24px;
+    color: var(--atlas-muted);
+    margin: 16px 0 0;
+    max-width: 46ch;
+  }
+
+  /* ── the fake app window ────────────────────────────────────────────── */
+  .win {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--card);
+  }
+  /* explicit corner-tick placement (atlas-pages keys these off :nth-of-type,
+     which the trailing .sample span would otherwise make fragile) */
+  .win .corner.c1 { top: -1px; left: -1px;  border-right: 0; border-bottom: 0; }
+  .win .corner.c2 { top: -1px; right: -1px; border-left: 0;  border-bottom: 0; }
+  .win .corner.c3 { bottom: -1px; left: -1px;  border-right: 0; border-top: 0; }
+  .win .corner.c4 { bottom: -1px; right: -1px; border-left: 0;  border-top: 0; }
+
+  /* browser chrome strip */
+  .win .bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--card-2);
+  }
+  .win .bar i {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line-2);
+  }
+  .win .bar span {
+    margin-left: 12px;
+    padding: 3px 12px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted-2);
+  }
+
+  /* window content area. .body's type role is defined in atlas-pages.css;
+     this only gives it box metrics inside the window. */
+  /* Each .win carries an inline `height:` (520/470/460/450/400px) so the
+     screens keep a consistent product-shot proportion. Their content is
+     taller than that, so the last visible row was being sliced clean through
+     the middle of a glyph or a heatmap square — it read as a broken card
+     rather than a cropped screenshot. Fade the final 44px instead, the same
+     mask technique .panelgrid already uses. */
+  .win > .body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 14px 16px 16px;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 44px), transparent 100%);
+  }
+  .win .body .lbl { margin: 0; }
+  .win .body svg { max-width: 100%; }
+
+  /* sample-data watermark */
+  .win .sample {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 2;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    /* was rgba(5,8,13,.82) — the heatmap squares and verdict bars showed
+       straight through the badge and read as overlapping text. Opaque. */
+    background: var(--card);
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 8.5px;
+    letter-spacing: .1em;
+    color: var(--muted-2);
+  }
+
+  /* ── in-app top bar + timeframe switch ──────────────────────────────── */
+  .appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .appbar h4 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+    color: var(--text);
+    margin: 0;
+  }
+  .tf {
+    display: inline-flex;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .tf span {
+    padding: 4px 9px;
+    border-right: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--muted-2);
+  }
+  .tf span:last-child { border-right: 0; }
+  .tf span.on {
+    background: rgba(217, 148, 5, .12);
+    color: var(--amber);
+  }
+
+  /* ── metric tiles ───────────────────────────────────────────────────── */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .tile {
+    min-width: 0;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--card-2);
+  }
+  .tile > b {
+    display: block;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+  .tile > em {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 25px;
+    color: var(--text);
+  }
+  .tile > span {
+    display: block;
+    margin-top: 3px;
+    font-size: 10.5px;
+    color: var(--muted-2);
+  }
+  /* header rows inside a tile: "LABEL ............ value" */
+  .tile > div > b {
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+
+  .mini3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .mini3 .tile { padding: 9px 12px; }
+  .mini3 .tile > em { margin-top: 4px; font-size: 16px; line-height: 21px; }
+
+  /* ── activity heatmap (56 cells = 2 rows of 28) ─────────────────────── */
+  .heat {
+    display: grid;
+    grid-template-columns: repeat(28, minmax(0, 1fr));
+    gap: 3px;
+    margin-top: 10px;
+  }
+  .heat i {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 1px;
+  }
+
+  /* ── hourly distribution bars ───────────────────────────────────────── */
+  .hours {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 66px;
+    margin-top: 12px;
+    padding-bottom: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .hours i {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    border-radius: 1px 1px 0 0;
+    opacity: .85;
+  }
+  .hourlbl {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 7px;
+  }
+  .hourlbl span {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted-2);
+  }
+
+  /* ── discipline dial + compliance streak ────────────────────────────── */
+  .dial2 {
+    position: relative;
+    flex: none;
+    width: 68px;
+    height: 68px;
+  }
+  .dial2 svg { display: block; }
+  .dial2 .v {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .dial2 .v b {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--teal);
+  }
+  .dial2 .v i {
+    margin-top: 3px;
+    font-style: normal;
+    font-size: 8px;
+    color: var(--muted-2);
+  }
+
+  .streak {
+    display: flex;
+    gap: 4px;
+    margin-top: 14px;
+  }
+  .streak i {
+    display: block;
+    flex: 1;
+    height: 9px;
+    border-radius: 1px;
+    background: var(--rail);
+  }
+  .streak i.on { background: var(--teal); }
+
+  /* ── shared meter track (emotions, symbols, playbook rules) ─────────── */
+  .track {
+    position: relative;
+    display: block;
+    height: 4px;
+    border-radius: 1px;
+    background: var(--rail);
+    overflow: hidden;
+  }
+  .track i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: block;
+    border-radius: 1px;
+  }
+  .pct {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted-2);
+    text-align: right;
+  }
+  .amt {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-align: right;
+  }
+
+  /* emotional pressure: label / meter / percent */
+  .emo {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) 32px;
+    align-items: center;
+    gap: 9px 12px;
+    margin-top: 12px;
+  }
+  .emo > span {
+    font-size: 11px;
+    color: var(--text-5);
+  }
+
+  /* by-symbol rows: symbol / meter / amount / trade count */
+  .sym {
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr) 60px 28px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 9px;
+  }
+  .sym b {
+    font-weight: 600;
+    font-size: 10.5px;
+    color: var(--text-5);
+  }
+  .sym .n {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--muted-2);
+    text-align: right;
+  }
+
+  /* ── verdict list ───────────────────────────────────────────────────── */
+  .verdict {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--line);
+  }
+  .verdict h4 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 22px;
+    color: var(--text);
+    margin: 0;
+  }
+  .verdict .tot {
+    font-family: var(--mono);
+    font-size: 17px;
+    color: var(--red);
+  }
+
+  .vrow {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .vrow:last-child { border-bottom: 0; }
+  .vrow .t {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .vrow .t h5 {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-4);
+    margin: 0;
+  }
+  .vrow .t em {
+    font-family: var(--micro);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 8.5px;
+    letter-spacing: .08em;
+  }
+  .vrow .t .amt { margin-left: auto; }
+  .vrow small {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--muted-2);
+  }
+  .bar2 {
+    position: relative;
+    height: 3px;
+    margin-top: 7px;
+    border-radius: 1px;
+    background: var(--rail);
+    overflow: hidden;
+  }
+  .bar2 i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: block;
+    opacity: .85;
+  }
+
+  /* ── playbook compliance rows ───────────────────────────────────────── */
+  .rule-row {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr) 96px 34px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 11.5px;
+  }
+  .rule-row:last-child { border-bottom: 0; }
+  /* .rule-row carries an inline status color; the checkbox inherits it */
+  .box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 13px;
+    height: 13px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+  }
+  .box i {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+
+  /* ── responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .drow,
+    .drow.flip {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+    .copy p { max-width: none; }
+  }
+  @media (max-width: 820px) {
+    /* the inline heights on .win assume a wide screen; let content set it */
+    .drow .win { height: auto !important; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dstats .s { padding-right: 34px; }
+    .dstats .s i { right: 17px; }
+  }
+  @media (max-width: 560px) {
+    .drow { gap: 26px; }
+    .mini3 { grid-template-columns: minmax(0, 1fr); }
+    .emo { grid-template-columns: 62px minmax(0, 1fr) 30px; }
+    .sym { grid-template-columns: 66px minmax(0, 1fr) 54px 26px; gap: 8px; }
+    .rule-row { grid-template-columns: 14px minmax(0, 1fr) 60px 30px; gap: 8px; }
+    .appbar { flex-wrap: wrap; }
+  }
+}

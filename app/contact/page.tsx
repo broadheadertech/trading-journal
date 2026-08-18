@@ -27,7 +27,7 @@ export default function ContactPage() {
       <div className="phero" style={{ '--band': '420px', padding: '132px 0 0' } as CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1 style={{ fontSize: '58px', lineHeight: '63px' }}>Talk to the<em>Atlas team</em></h1>
+          <h1>Talk to the<em>Atlas team</em></h1>
           <p className="sub" style={{ marginTop: '32px' }}>Email-routed support so your question lands with the right specialist on the first try.</p>
           <p style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '52px 0 0', fontSize: '12.5px', color: 'var(--text-4)' }}>
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x=".65" y=".65" width="11.7" height="11.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M6.5 4v.5M6.5 6.2v3" stroke="#2fd3c4" strokeWidth="1.3" strokeLinecap="round"/></svg>
@@ -90,7 +90,7 @@ export default function ContactPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '48px', paddingTop: '55px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '48px', lineHeight: '52px', margin: '35px 0 0' }}>Frequently asked</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '35px 0 0' }}>Frequently asked</h2>
           <div className="faq">
             {FAQ.map((item, i) => {
               const open = item.a !== undefined && openIdx === i;

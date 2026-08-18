@@ -15,7 +15,7 @@ export default function SecurityPage() {
             <svg width="24" height="24" viewBox="0 0 17 17" fill="none" style={{ marginLeft: '-32px' }}><circle cx="8.5" cy="8.5" r="8" stroke="#fff" strokeOpacity=".35"/><rect x="5" y="7.6" width="7" height="5.4" rx="1" stroke="#fff" strokeOpacity=".7"/><path d="M6.6 7.6V6.2a1.9 1.9 0 013.8 0v1.4" stroke="#fff" strokeOpacity=".7"/></svg>
             READ AND ANALYTICS ONLY
           </p>
-          <h1 className="light" style={{ fontSize: '52px', lineHeight: '57px' }}>Read-only analytics with explicit<em>non-trading boundaries</em></h1>
+          <h1 className="light">Read-only analytics with explicit<em>non-trading boundaries</em></h1>
           <p className="sub" style={{ marginTop: '33px' }}>Atlas never holds funds, executes orders, or asks for withdrawal access. Here&rsquo;s how the platform is engineered to keep your trade history safe.</p>
         </div>
       </div>

@@ -103,7 +103,7 @@ export default function BlogPage() {
         <div className="panelgrid" style={{ width: '520px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ color: '#fff', fontSize: '12.5px', marginBottom: '19px' }}>TRADING BLOG</p>
-          <h1 style={{ fontSize: '58px', lineHeight: '63px' }}>Real research on<em style={{ fontWeight: 400 }}>trading psychology</em></h1>
+          <h1>Real research on<em style={{ fontWeight: 400 }}>trading psychology</em></h1>
           <p className="sub" style={{ marginTop: '41px' }}>Expert articles on mistake patterns, behavioral analytics, and data-driven performance improvement.</p>
         </div>
       </div>

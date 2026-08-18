@@ -26,7 +26,7 @@ export default function AboutPage() {
       <div className="phero" style={{ '--band': '440px', padding: '140px 0 0' } as CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1 style={{ fontSize: '54px', lineHeight: '59px' }}>Built to make trading<em>review measurable</em></h1>
+          <h1>Built to make trading<em>review measurable</em></h1>
           <p className="sub" style={{ marginTop: '32px', maxWidth: '620px' }}>Atlas exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function AboutPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '52px', paddingTop: '55px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '48px', lineHeight: '52px', margin: '35px 0 0' }}>Frequently asked</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '35px 0 0' }}>Frequently asked</h2>
           <div className="faq">
             {FAQ.map((f, i) => {
               const isOpen = f.a ? open === i : false;

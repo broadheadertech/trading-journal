@@ -6,6 +6,12 @@ import "./globals.css";
 // ATLAS design system — see app/atlas.css. Loaded after globals so its
 // component classes win over the legacy Tailwind chrome on marketing routes.
 import "./atlas.css";
+// Sub-page chrome shared by the 11 marketing routes. atlass.html styles only
+// its homepage, so these rules are authored to match its conventions.
+import "./atlas-pages.css";
+import "./atlas-demo.css";
+import "./atlas-blog-pricing.css";
+import "./atlas-routes.css";
 // ATLAS dashboard design system, scoped under .atlas-dash. Must load after
 // atlas.css — 30 class names are shared between the two sheets.
 import "./atlas-dashboard.css";

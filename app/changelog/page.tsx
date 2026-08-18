@@ -10,7 +10,7 @@ export default function ChangelogPage() {
       <div className="phero" style={{ '--band': '400px', padding: '148px 0 0' } as React.CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1 style={{ fontSize: '62px', lineHeight: '67px' }}>Changelog</h1>
+          <h1>Changelog</h1>
           <p className="sub" style={{ marginTop: '20px', paddingLeft: '3px' }}>What we’ve shipped recently — features, fixes, and platform improvements.</p>
         </div>
       </div>

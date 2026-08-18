@@ -41,7 +41,7 @@ export default function PricingPage() {
       <div className="phero" style={{ '--band': '420px', padding: '118px 0 0' } as CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1 style={{ fontSize: '58px', lineHeight: '63px' }}>Plans for solo traders<em style={{ fontWeight: 500 }}>and teams</em></h1>
+          <h1>Plans for solo traders<em style={{ fontWeight: 500 }}>and teams</em></h1>
           <p className="sub" style={{ marginTop: '30px' }}>15-day free trial on every plan. No credit card to start.</p>
           <div className="toggle2" id="ptoggle" style={{ marginTop: '26px' }}>
             <button className={cycle === 'monthly' ? 'on' : undefined} data-cycle="monthly" onClick={() => setCycle('monthly')}>Monthly</button>
@@ -145,7 +145,7 @@ export default function PricingPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '88px', paddingTop: '75px' }}>
         <div className="wrap">
           <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--teal)', letterSpacing: '.03em' }}>COMPARE</p>
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>What&rsquo;s included on each tier</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>What&rsquo;s included on each tier</h2>
           <div className="cmpwrap">
             <table className="cmp">
               <thead><tr><th>FEATURE</th><th>FREE</th><th className="pro">PRO</th><th>TEAM</th><th>ELITE</th></tr></thead>
@@ -177,7 +177,7 @@ export default function PricingPage() {
       {/* first week */}
       <div className="wrap" style={{ marginTop: '126px' }}>
         <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--teal)', letterSpacing: '.03em' }}>YOUR FIRST WEEK</p>
-        <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '48px', lineHeight: '52px', margin: '27px 0 0' }}>From signup to measurable improvement</h2>
+        <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '27px 0 0' }}>From signup to measurable improvement</h2>
         <p className="lede-lg" style={{ marginTop: '22px' }}>The fastest path from &ldquo;I just signed up&rdquo; to &ldquo;I know exactly what&rsquo;s costing me money.&rdquo;</p>
         <div className="week3">
           <div className="day">
@@ -239,7 +239,7 @@ export default function PricingPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '82px', paddingTop: '76px' }}>
         <div className="wrap">
           <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--teal)', letterSpacing: '.03em' }}>FAQ</p>
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>Pricing questions</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>Pricing questions</h2>
           <div className="faq">
             {FAQ.map((item, i) => {
               const open = item.a !== undefined && openIdx === i;

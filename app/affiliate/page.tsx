@@ -32,7 +32,7 @@ export default function AffiliatePage() {
         <div className="panelgrid" style={{ width: '560px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ paddingLeft: '5px', marginBottom: '11px' }}>Lifetime recurring commissions</p>
-          <h1 style={{ fontSize: '58px', lineHeight: '63px' }}>Get paid to share<em>Atlas</em></h1>
+          <h1>Get paid to share<em>Atlas</em></h1>
           <p className="sub" style={{ marginTop: '32px' }}>Earn 30–50% recurring commission on every trader you refer. Lifetime. No caps. Monthly payouts.</p>
           <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginTop: '34px' }}>
             <Link className="btn btn-amber" href="/pricing">Become an Affiliate<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg></Link>
@@ -51,7 +51,7 @@ export default function AffiliatePage() {
           </div>
 
           <hr className="inset-rule" style={{ marginTop: '97px' }} />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '700', fontSize: '40px', lineHeight: '44px', margin: '19px 0 0' }}>How it works</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '19px 0 0' }}>How it works</h2>
           <p className="lede-lg" style={{ marginTop: '16px' }}>Three steps from sign-up to your first payout.</p>
           <div className="howsteps">
             <div className="howstep"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i><span className="n" style={{ color: 'var(--teal)' }}>STEP 1</span>
@@ -67,7 +67,7 @@ export default function AffiliatePage() {
       <div id="tiers" style={{ borderTop: '1px solid var(--line)', marginTop: '44px', paddingTop: '55px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '700', fontSize: '40px', lineHeight: '44px', margin: '19px 0 0' }}>Commission tiers</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '19px 0 0' }}>Commission tiers</h2>
           <p className="lede-lg" style={{ marginTop: '16px' }}>Earn more as you grow. Tiers unlock automatically.</p>
           <div className="tiers">
             <div className="tier">
@@ -110,7 +110,7 @@ export default function AffiliatePage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '20px', paddingTop: '55px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: '700', fontSize: '44px', lineHeight: '48px', margin: '21px 0 0' }}>Frequently asked</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '21px 0 0' }}>Frequently asked</h2>
           <div className="faq" style={{ marginTop: '94px' }}>
             {FAQ.map((f, i) => (
               <div
@@ -118,7 +118,15 @@ export default function AffiliatePage() {
                 className={openFaq.includes(i) ? 'faq-item open' : 'faq-item'}
                 onClick={() => toggleFaq(i)}
               >
-                <h4>{f.q}</h4><p>{f.a}</p>
+                <h4>{f.q}</h4>
+                <svg className="chev" viewBox="0 0 16 8" fill="none">
+                  <path
+                    d={openFaq.includes(i) ? 'M0 8 L8 0 L16 8' : 'M0 0 L8 8 L16 0'}
+                    stroke={openFaq.includes(i) ? '#d99405' : '#7f8ea3'}
+                    strokeWidth="1.6"
+                  />
+                </svg>
+                <p>{f.a}</p>
               </div>
             ))}
           </div>

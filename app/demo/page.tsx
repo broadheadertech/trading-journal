@@ -27,7 +27,7 @@ export default function DemoPage() {
         <div className="panelgrid" style={{ width: '560px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ color: '#fff', paddingLeft: '5px', marginBottom: '34px' }}>LIVE DEMO - TRADING ANALYTICS IN ACTION</p>
-          <h1 style={{ fontSize: '58px', lineHeight: '63px' }}><span style={{ fontWeight: 700 }}>This is what your</span><em style={{ fontWeight: 400 }}>dashboard looks like</em></h1>
+          <h1><span style={{ fontWeight: 700 }}>This is what your</span><em style={{ fontWeight: 400 }}>dashboard looks like</em></h1>
           <p className="sub" style={{ marginTop: '36px' }}>Real screens from the live app with sample data. Upload your own trades and see your actual numbers in under 60 seconds.</p>
           <div className="dstats">
             <p className="hd">SAMPLE DATASET</p>

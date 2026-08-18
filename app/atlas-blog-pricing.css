@@ -1,0 +1,646 @@
+/* ============================================================================
+   ATLAS sub-page system — /blog + /pricing COMPONENTS
+
+   app/atlas-pages.css supplies the chrome every sub-route shares (.phero,
+   .pcta, .faq, .corner, .lbl, …). This sheet supplies only the two routes
+   whose components have no rule anywhere: the editorial blog index and the
+   pricing comparison page.
+
+   Everything here is derived from app/atlas.css: same tokens, same 1240px
+   rail, 2–3px radii, hairline var(--line) rules, Archivo headings, mono
+   numerals, uppercase micro labels. Nothing new is invented — in particular
+   .toggle2 mirrors the homepage .toggle and the /pricing plan cards reuse the
+   homepage .plans/.plan/.price/.billed/.tick-list rules verbatim.
+
+   Scoped under .atlas-site via CSS nesting, exactly like atlas-pages.css:
+   these names (.art, .meta, .day, .pro, .hot) are generic and must never leak
+   into the .atlas-dash app.
+   ========================================================================== */
+
+.atlas-site {
+
+  /* ══════════════════════════════════════════════════════════════════════
+     BLOG
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ── thumbnails ────────────────────────────────────────────────────────
+     Every article thumb holds an absolutely-positioned inline sparkline SVG
+     with intrinsic width (394px / 724px / 104px). Without an explicit box +
+     overflow clip here those SVGs escape their column and blow the grid out,
+     so the height/overflow on .thumb is load-bearing, not decorative. */
+  .thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 176px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--card);
+  }
+  .thumb > svg { pointer-events: none; }
+
+  /* category chip / featured badge / mono path overlay riding on the thumb */
+  .thumb .chip,
+  .thumb .kicker {
+    position: absolute;
+    left: 18px;
+    top: 14px;
+    margin: 0;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .thumb .badge {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    height: 20px;
+    padding: 0 9px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 2px;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: .06em;
+  }
+  .slug {
+    position: absolute;
+    left: 18px;
+    bottom: 12px;
+    z-index: 1;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .02em;
+    color: var(--muted-2);
+    background: rgba(5, 8, 13, .72);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  /* ── shared editorial type ─────────────────────────────────────────── */
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .meta b {
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted-3);
+  }
+  .meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted-2);
+  }
+  .dek {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 23px;
+    color: var(--atlas-muted);
+    max-width: 62ch;
+  }
+  .readlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 18px;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .readlink svg { flex: none; }
+
+  /* ── featured row: one large article + three secondary ─────────────── */
+  .feat {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 52px;
+    margin-top: 44px;
+  }
+  /* .side3 is itself a `> div` of .feat, so a bare `.feat > div > a` also
+     matched the three secondary teasers — and at (0,3,1) it out-specified
+     `.side3 > a`'s display:grid, collapsing every teaser back to a stacked
+     block: full-bleed thumbnail with the text dumped underneath instead of
+     the intended 140px thumb + copy row. Exclude .side3 so each rule governs
+     only its own teaser. */
+  .feat > div:not(.side3) > a { display: block; }
+  .feat h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 40px;
+    letter-spacing: -.01em;
+    color: var(--text);
+    margin: 14px 0 0;
+    max-width: 20ch;
+  }
+  .feat > div:not(.side3) > a:hover h2 { color: var(--amber); }
+
+  .side3 {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .side3 > a,
+  /* Carry the .feat-qualified form too. `.feat > div > a` reaches these
+     anchors at (0,3,1); matching that weight here means the teaser layout
+     holds even if a display:block rule for the featured article is
+     reintroduced at that specificity. */
+  .feat > div.side3 > a {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+  /* The third teaser's thumb ships `style="height:110px"` while its two
+     siblings inherit 148px, so the stack read as three mismatched cards.
+     They are one repeated component and must share a height; an inline style
+     can only be answered with !important. */
+  .side3 .thumb { height: 148px !important; }
+  .side3 > a > div b {
+    display: block;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .side3 > a > div h4 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--text);
+    margin: 10px 0 0;
+  }
+  .side3 > a:hover > div h4 { color: var(--amber); }
+  .side3 > a > div > span {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted-2);
+  }
+
+  /* ── filter row ────────────────────────────────────────────────────── */
+  .searchbar {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--card);
+    min-width: 0;
+  }
+  .searchbar svg { flex: none; }
+  .searchbar input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 14px;
+  }
+  .searchbar input::placeholder { color: var(--muted-2); }
+  .searchbar input:focus { outline: none; }
+  .searchbar:focus-within { border-color: var(--line-2); }
+  .searchbar input::-webkit-search-cancel-button { filter: grayscale(1) opacity(.6); }
+
+  .count {
+    margin: 0;
+    flex: none;
+    font-size: 13px;
+    color: var(--muted-2);
+  }
+  .count b {
+    font-family: var(--mono);
+    font-weight: 400;
+    color: var(--text-4);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .chips button {
+    height: 32px;
+    padding: 0 15px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--card);
+    font-family: var(--micro);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--atlas-muted);
+  }
+  .chips button:hover { border-color: var(--line-2); color: var(--text); }
+  .chips button.on {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ── article grid + sidebar ────────────────────────────────────────── */
+  .artgrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 300px;
+    gap: 48px 40px;
+    margin-top: 44px;
+    align-items: start;
+  }
+  .artcol {
+    display: flex;
+    flex-direction: column;
+    gap: 46px;
+    min-width: 0;
+  }
+
+  .art { display: block; min-width: 0; }
+  .art .thumb { height: 176px; }
+  .art h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 26px;
+    color: var(--text);
+    margin: 12px 0 0;
+  }
+  .art:hover h3 { color: var(--amber); }
+  .art p {
+    margin: 10px 0 0;
+    font-size: 13.5px;
+    line-height: 22px;
+    color: var(--atlas-muted);
+  }
+  .art .readlink { margin-top: 14px; }
+
+  .blogside {
+    min-width: 0;
+    position: sticky;
+    top: 108px;
+    border-left: 1px solid var(--line);
+    padding-left: 28px;
+  }
+  .blogside h4 {
+    margin: 0 0 4px;
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted-3);
+  }
+  .trend {
+    display: flex;
+    flex-direction: column;
+    counter-reset: trend;
+  }
+  .trend a {
+    counter-increment: trend;
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--text-4);
+  }
+  .trend a::before {
+    content: counter(trend, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+  }
+  .trend a:hover { color: var(--amber); }
+
+  .cats { margin-top: 40px; }
+  .cats a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--text-4);
+    cursor: pointer;
+  }
+  .cats a:hover { color: var(--amber); }
+  .cats a span {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted-2);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     PRICING
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ── hero plan summary ─────────────────────────────────────────────── */
+  .pricelist {
+    display: flex;
+    flex-wrap: wrap;
+    width: max-content;
+    max-width: 100%;
+    margin-top: 36px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--card);
+  }
+  .pricelist .r {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 15px 30px 17px;
+  }
+  .pricelist .r + .r { border-left: 1px solid var(--line); }
+  .pricelist .r b {
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted-3);
+  }
+  .pricelist .r b.amber { color: var(--amber); }
+  .pricelist .r span {
+    font-family: var(--mono);
+    font-weight: 300;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  /* ── monthly / annual segmented control ────────────────────────────────
+     Mirrors the homepage .toggle exactly; position:relative anchors the
+     pre-existing .save badge from atlas.css. */
+  .toggle2 {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--card);
+    position: relative;
+  }
+  .toggle2 button {
+    height: 36px;
+    padding: 0 22px;
+    border-radius: 2px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--atlas-muted);
+  }
+  .toggle2 button:hover { color: var(--text); }
+  .toggle2 button.on {
+    background: var(--amber);
+    color: var(--ink);
+  }
+
+  /* ── plan card alignment ───────────────────────────────────────────────
+     .plans/.plan come from atlas.css (shared with the homepage) and are not
+     edited here. Two things go wrong when the sub-page fills them with a
+     longer feature list than the homepage does:
+
+     1. atlas.css sets `.plans{align-items:start}`, so each card is only as
+        tall as its own content. Atlas Elite carries eleven bullets to Core's
+        eight, so it grew past its siblings and its bottom edge, goal line and
+        CTA all sat lower than the other two. Stretching the tracks lets
+        `.plan .foot{margin-top:auto}` — already in atlas.css — do its job and
+        park all three CTAs on one baseline.
+     2. `.who` is a single unreserved line. Elite's descriptor wraps to two,
+        which pushed its $59, its hairline and everything under it down by a
+        line relative to Core and Pro. Reserving two lines locks the price
+        row to a shared baseline whether the descriptor wraps or not. */
+  .plans { align-items: stretch; }
+  .plan .who { min-height: 34px; }
+
+  /* ── feature comparison table ──────────────────────────────────────────
+     The yes/no cells are intentionally EMPTY in the markup; the glyph is
+     supplied here so the table never reads blank. */
+  .cmpwrap {
+    margin-top: 46px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--card);
+    overflow-x: auto;
+  }
+  .cmp {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .cmp th {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-2);
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted-3);
+    white-space: nowrap;
+  }
+  .cmp th + th { text-align: center; width: 15%; }
+  .cmp td {
+    padding: 13px 20px;
+    border-top: 1px solid var(--line);
+    color: var(--text-4);
+    vertical-align: middle;
+  }
+  .cmp tbody tr:first-child td { border-top: 0; }
+  .cmp td + td {
+    text-align: center;
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--muted-4);
+  }
+  .cmp tbody tr:not(.grp):hover td { background: rgba(217, 148, 5, .03); }
+
+  /* group header rows */
+  .grp td {
+    padding: 10px 20px;
+    background: var(--card-2);
+    border-top: 1px solid var(--line-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--micro);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+
+  /* the highlighted PRO column */
+  .cmp .pro { background: rgba(217, 148, 5, .045); }
+  .cmp th.pro { color: var(--amber); box-shadow: inset 0 -2px 0 var(--amber); }
+  .cmp .grp td { background: var(--card-2); }
+
+  /* check / cross glyphs for the empty data cells */
+  .cmp td[data-cell] {
+    font-family: var(--body);
+    font-size: 0;
+    line-height: 0;
+  }
+  .cmp td[data-cell]::before {
+    content: "\2715";
+    display: inline-block;
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--muted-2);
+  }
+  .cmp td[data-cell="yes"]::before {
+    content: "\2713";
+    font-size: 14px;
+    color: var(--teal);
+  }
+  .cmp td[data-cell="yes-pro"]::before {
+    content: "\2713";
+    font-size: 14px;
+    color: var(--amber);
+  }
+  .cmp td[data-cell="no"]::before {
+    content: "\2715";
+    color: var(--muted-2);
+  }
+
+  /* ── "your first week" timeline ────────────────────────────────────── */
+  .week3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 30px;
+    margin-top: 66px;
+  }
+  .day {
+    position: relative;
+    padding-top: 28px;
+    border-top: 1px solid var(--line-2);
+  }
+  .day::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 46px;
+    height: 2px;
+    background: var(--amber);
+  }
+  .dl {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .day h4 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 24px;
+    color: var(--text);
+    margin: 13px 0 0;
+  }
+  .day p {
+    margin: 11px 0 0;
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--atlas-muted);
+  }
+  /* .panel matches .hiw .panel on the homepage; scoped to .day so the
+     absolutely-positioned .drop/.tick-list/.leaklist/.bars from atlas.css
+     have a containing block. */
+  .day .panel {
+    position: relative;
+    height: 190px;
+    margin-top: 22px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: rgba(10, 15, 23, .2);
+    overflow: hidden;
+  }
+
+  /* ── highlighted-plan treatment (shared with /affiliate .tier) ─────── */
+  .hot {
+    border-color: var(--amber);
+    background: var(--card-pro);
+    position: relative;
+  }
+  .hot::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: -1px;
+    height: 2px;
+    background: var(--amber);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     RESPONSIVE
+     ══════════════════════════════════════════════════════════════════════ */
+  @media (max-width: 1180px) {
+    .artgrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .blogside {
+      grid-column: 1 / -1;
+      position: static;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      padding-left: 0;
+      padding-top: 32px;
+    }
+  }
+  @media (max-width: 1080px) {
+    .feat { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+    .side3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .side3 > a { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .side3 .thumb { height: 120px !important; }
+    .week3 { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 820px) {
+    .feat h2 { font-size: 26px; line-height: 32px; }
+    .artgrid { grid-template-columns: minmax(0, 1fr); gap: 46px; }
+    .side3 { grid-template-columns: minmax(0, 1fr); }
+    .side3 > a { grid-template-columns: 130px minmax(0, 1fr); }
+    .pricelist { width: 100%; }
+    .pricelist .r { flex: 1; padding: 14px 18px; }
+  }
+  @media (max-width: 560px) {
+    .thumb, .art .thumb { height: 150px; }
+    .side3 > a { grid-template-columns: minmax(0, 1fr); }
+    .side3 .thumb { height: 130px !important; }
+    .toggle2 button { padding: 0 16px; }
+  }
+}
