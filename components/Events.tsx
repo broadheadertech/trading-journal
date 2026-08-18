@@ -16,6 +16,25 @@ type Mode = 'online' | 'in_person' | 'hybrid';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
+// ATLAS form-control chrome (matches .field .box / .codebox in app/atlas-dashboard.css)
+const atlasInput: React.CSSProperties = {
+  width: '100%',
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  color: 'var(--text)',
+  padding: '10px 14px',
+  fontSize: 13,
+};
+const atlasLabel: React.CSSProperties = {
+  display: 'block',
+  fontWeight: 700,
+  fontSize: 9.5,
+  color: 'var(--muted-2)',
+  letterSpacing: '.04em',
+  marginBottom: 9,
+};
+
 const MODE_LABEL: Record<Mode, { label: string; icon: React.ReactNode; color: string }> = {
   online:    { label: 'Online',    icon: <Globe size={12} />,  color: 'bg-blue-500/15 text-blue-500' },
   in_person: { label: 'In-Person', icon: <MapPin size={12} />, color: 'bg-emerald-500/15 text-emerald-500' },
@@ -80,88 +99,79 @@ export default function Events() {
   }
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          Live trainings & meetups
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Learn together, <span className="gradient-text">grow faster</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-          Workshops, group sessions, and meetups — online or in-person.
-        </p>
-      </header>
+    <div>
+      <div className="phead">
+        <p className="eyebrow" style={{ fontWeight: 500 }}>Live trainings &amp; meetups</p>
+        <h2>Learn together, grow faster</h2>
+        <p className="sub">Workshops, group sessions, and meetups — online or in-person.</p>
+      </div>
 
       {events.length === 0 ? (
-        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
-            <CalendarDays size={28} className="text-pink-400" />
-          </div>
-          <p className="text-[var(--foreground)] font-medium">No events yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">New trainings drop monthly — stay tuned.</p>
+        <div className="blank" style={{ height: 300 }}>
+          <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+            <CalendarDays size={26} style={{ color: 'var(--amber)' }} />
+          </span>
+          <h4>No events yet</h4>
+          <p>New trainings drop monthly — stay tuned.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((e: any, idx: number) => {
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+          {events.map((e: any) => {
             const reg = registeredIds.has(e.id);
             const isFree = e.priceUsd === 0 && e.pricePhp === 0;
             const m = MODE_LABEL[e.mode as Mode];
             return (
               <article
                 key={e.id}
-                style={{ animationDelay: `${idx * 60}ms` }}
-                className="group relative flex flex-col overflow-hidden rounded-3xl glass card-lift anim-fade-up cursor-pointer"
+                className="course"
+                style={{ cursor: 'pointer' }}
                 onClick={() => { setSelectedId(e.id); setView('detail'); }}
               >
-                <div className="relative h-44 overflow-hidden">
+                <span className="accent" />
+                <div className="art">
                   {e.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={e.coverImage} alt={e.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img src={e.coverImage} alt={e.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
-                      <CalendarDays size={56} className="text-[var(--foreground)]/40" />
-                    </div>
+                    <CalendarDays size={56} style={{ color: 'var(--amber)', opacity: 0.5 }} />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
+
+                  <span
+                    className="chip"
+                    style={{ position: 'absolute', left: 16, top: 16, height: 22, zIndex: 1, textTransform: 'uppercase', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em' }}
+                  >
+                    {m.icon} {m.label}
+                  </span>
 
                   {reg && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide shadow-lg">
+                    <span
+                      className="chip"
+                      style={{ position: 'absolute', right: 16, top: 16, height: 22, zIndex: 1, color: 'var(--green)', borderColor: 'var(--green)', textTransform: 'uppercase', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em' }}
+                    >
                       <Check size={11} strokeWidth={3} /> Registered
-                    </div>
+                    </span>
                   )}
 
-                  <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                    <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide`}>
-                      {m.icon} {m.label}
-                    </span>
-                    {isFree ? (
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide">Free</span>
-                    ) : (
-                      <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-xs font-semibold">
-                        ${e.priceUsd} · ₱{e.pricePhp}
-                      </span>
-                    )}
-                  </div>
+                  <span className="price" style={{ zIndex: 1 }}>{isFree ? 'Free' : `$${e.priceUsd} · ₱${e.pricePhp}`}</span>
                 </div>
 
-                <div className="flex-1 flex flex-col p-5 gap-2">
-                  <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight leading-snug line-clamp-2">{e.title}</h3>
-                  <p className="text-sm text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">{e.description}</p>
+                <div className="body">
+                  <h4 className="line-clamp-2">{e.title}</h4>
+                  <p className="line-clamp-2" style={{ margin: '12px 0 0', fontSize: 13, lineHeight: '19px', color: 'var(--muted)' }}>
+                    {e.description}
+                  </p>
 
-                  <div className="mt-auto pt-4 flex items-center justify-between">
-                    <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1.5">
+                  <div className="foot">
+                    <span className="life" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
                       <Clock size={12} /> {formatDate(e.startsAt)}
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
-                      View <ArrowRight size={14} />
-                    </div>
+                    </span>
+                    <span className="go">
+                      View <ArrowRight size={12} />
+                    </span>
                   </div>
                 </div>
               </article>
@@ -196,57 +206,58 @@ function EventDetail({
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to Events
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back to Events
       </button>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         {ev.coverImage && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={ev.coverImage} alt={ev.title} className="w-full h-64 object-cover" />
         )}
-        <div className="p-6 space-y-4">
+        <div className="space-y-4" style={{ padding: '24px 28px 28px' }}>
           <div className="flex items-start gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[var(--foreground)] flex-1">{ev.title}</h1>
-            <span className={`text-xs uppercase px-2 py-1 rounded-full font-medium flex items-center gap-1 ${m.color}`}>
+            <h3 className="flex-1">{ev.title}</h3>
+            <span className="chip" style={{ textTransform: 'uppercase', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em' }}>
               {m.icon} {m.label}
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-sm text-[var(--muted-foreground)]">
+          <div className="flex flex-wrap gap-4" style={{ fontSize: 12.5, color: 'var(--muted-2)' }}>
             <span className="flex items-center gap-1.5"><Clock size={14} /> {formatDate(ev.startsAt)} – {formatDate(ev.endsAt)}</span>
             {ev.timezone && <span>{ev.timezone}</span>}
             {ev.capacity && <span>Capacity: {ev.capacity}</span>}
           </div>
 
-          <p className="text-[var(--foreground)] whitespace-pre-wrap">{ev.description}</p>
+          <p className="whitespace-pre-wrap" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{ev.description}</p>
 
           {ev.gallery && ev.gallery.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {ev.gallery.map((url: string, i: number) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={url} alt="" className="w-full h-32 object-cover rounded-lg border border-[var(--border)]" />
+                <img key={i} src={url} alt="" className="w-full h-32 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
               ))}
             </div>
           )}
 
           {/* Location / meeting — only after registration */}
           {showLocation && (
-            <div className="border border-[var(--border)] rounded-xl p-4 bg-[var(--background)] space-y-2">
-              <div className="text-xs font-semibold uppercase text-[var(--muted-foreground)]">Access details</div>
+            <div className="inset space-y-2">
+              <p className="lbl" style={{ textTransform: 'uppercase' }}>Access details</p>
               {(ev.mode === 'online' || ev.mode === 'hybrid') && ev.meetingUrl && (
-                <a href={ev.meetingUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[var(--accent)] hover:underline">
+                <a href={ev.meetingUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2" style={{ color: 'var(--amber)', fontWeight: 700, fontSize: 12.5 }}>
                   <Globe size={14} /> Join {ev.platform || 'meeting'} <ExternalLink size={12} />
                 </a>
               )}
               {(ev.mode === 'in_person' || ev.mode === 'hybrid') && (ev.venueName || ev.address) && (
-                <div className="text-sm text-[var(--foreground)]">
-                  <div className="flex items-center gap-2 font-medium"><MapPin size={14} /> {ev.venueName}</div>
-                  <div className="text-[var(--muted-foreground)] text-xs ml-6">
+                <div style={{ fontSize: 13, color: '#c0ccda' }}>
+                  <div className="flex items-center gap-2" style={{ fontWeight: 700, color: 'var(--text)' }}><MapPin size={14} /> {ev.venueName}</div>
+                  <div className="ml-6" style={{ fontSize: 11.5, color: 'var(--muted-2)' }}>
                     {ev.address}{ev.city ? `, ${ev.city}` : ''}{ev.country ? `, ${ev.country}` : ''}
                   </div>
                   {ev.mapUrl && (
-                    <a href={ev.mapUrl} target="_blank" rel="noreferrer" className="text-xs text-[var(--accent)] hover:underline ml-6">
+                    <a href={ev.mapUrl} target="_blank" rel="noreferrer" className="ml-6" style={{ fontSize: 11.5, color: 'var(--amber)', fontWeight: 700 }}>
                       View on map ↗
                     </a>
                   )}
@@ -255,30 +266,21 @@ function EventDetail({
             </div>
           )}
 
-          <div className="border-t border-[var(--border)] pt-4">
+          <div className="pt-4" style={{ borderTop: '1px solid var(--line)' }}>
             {registered ? (
-              <div className="text-emerald-500 font-medium flex items-center gap-2">
-                <Check size={16} /> You're registered for this event.
+              <div className="flex items-center gap-2" style={{ color: 'var(--green)', fontWeight: 700, fontSize: 13 }}>
+                <Check size={16} /> You&apos;re registered for this event.
               </div>
             ) : isFree ? (
-              <button
-                onClick={onRegisterFree}
-                className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
-              >
+              <button onClick={onRegisterFree} className="btn-a">
                 Register (Free)
               </button>
             ) : (
               <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => onBuy('stripe')}
-                  className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
-                >
+                <button onClick={() => onBuy('stripe')} className="btn-a">
                   Pay ${ev.priceUsd} with Card (Stripe)
                 </button>
-                <button
-                  onClick={() => onBuy('paymongo')}
-                  className="px-5 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--muted)]"
-                >
+                <button onClick={() => onBuy('paymongo')} className="btn-g">
                   Pay ₱{ev.pricePhp} with GCash/Card (PayMongo)
                 </button>
               </div>
@@ -314,49 +316,49 @@ export function AdminEvents({ onBack }: { onBack?: () => void }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         {onBack ? (
-          <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-            <ArrowLeft size={16} /> Back to Catalog
+          <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+            <ArrowLeft size={14} /> Back to Catalog
           </button>
         ) : <span />}
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
-        >
-          <Plus size={16} /> New Event
+        <button onClick={() => setCreating(true)} className="btn-a">
+          <Plus size={12} /> New Event
         </button>
       </div>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">Manage Events</h1>
+      <div className="phead" style={{ marginBottom: 0 }}>
+        <h2>Manage Events</h2>
+      </div>
 
       <div className="space-y-2">
         {events.map((e: any) => (
-          <div key={e.id} className="flex items-center gap-3 bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <div key={e.id} className="inset flex items-center gap-3">
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[var(--foreground)] truncate">{e.title}</div>
-              <div className="text-xs text-[var(--muted-foreground)]">
+              <div className="truncate" style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{e.title}</div>
+              <div style={{ fontSize: 11.5, color: 'var(--muted-2)' }}>
                 {MODE_LABEL[e.mode as Mode].label} · {formatDate(e.startsAt)} · {e.priceUsd === 0 && e.pricePhp === 0 ? 'Free' : `$${e.priceUsd} / ₱${e.pricePhp}`} · {e.isPublished ? 'Published' : 'Draft'}
               </div>
             </div>
             <button
               onClick={() => updateEvent({ id: e.id, isPublished: !e.isPublished })}
-              className="text-xs px-3 py-1 rounded-lg border border-[var(--border)]"
+              className="chip"
             >
               {e.isPublished ? 'Unpublish' : 'Publish'}
             </button>
-            <button onClick={() => setEditingId(e.id)} className="p-2 rounded-lg hover:bg-[var(--muted)]"><Edit2 size={14} /></button>
+            <button onClick={() => setEditingId(e.id)} className="p-2"><Edit2 size={14} /></button>
             <button
               onClick={async () => {
                 if (!confirm(`Delete "${e.title}"?`)) return;
                 await deleteEvent({ id: e.id });
                 showToast('Event deleted', 'success');
               }}
-              className="p-2 rounded-lg hover:bg-[var(--red)]/10 text-[var(--red)]"
+              className="p-2"
+              style={{ color: 'var(--red)' }}
             >
               <Trash2 size={14} />
             </button>
           </div>
         ))}
-        {events.length === 0 && <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No events yet.</p>}
+        {events.length === 0 && <p className="empty-line">No events yet.</p>}
       </div>
     </div>
   );
@@ -434,13 +436,16 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back
       </button>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">{event ? 'Edit Event' : 'New Event'}</h1>
+      <div className="phead" style={{ marginBottom: 0 }}>
+        <h2>{event ? 'Edit Event' : 'New Event'}</h2>
+      </div>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 space-y-4">
+      <div className="card space-y-4">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <Field label="Title" value={title} onChange={setTitle} />
         <Field label="Slug" value={slug} onChange={setSlug} placeholder="my-event" />
         <Field label="Description" value={description} onChange={setDescription} multiline />
@@ -448,17 +453,15 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
         <FileUpload label="Cover image" value={coverImage} onChange={setCoverImage} accept="image/*" />
         <MultiImageUpload label="Gallery" value={gallery} onChange={setGallery} />
 
-        <div>
-          <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Format</div>
+        <div className="field">
+          <label style={atlasLabel}>Format</label>
           <div className="flex gap-2">
             {(['online', 'in_person', 'hybrid'] as Mode[]).map((mm) => (
               <button
                 key={mm}
                 type="button"
                 onClick={() => setMode(mm)}
-                className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 ${
-                  mode === mm ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'border border-[var(--border)] text-[var(--muted-foreground)]'
-                }`}
+                className={`chip${mode === mm ? ' on' : ''}`}
               >
                 {MODE_LABEL[mm].icon} {MODE_LABEL[mm].label}
               </button>
@@ -473,16 +476,16 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
         <Field label="Timezone (optional)" value={timezone} onChange={setTimezone} placeholder="Asia/Manila" />
 
         {(mode === 'online' || mode === 'hybrid') && (
-          <div className="border-t border-[var(--border)] pt-4 space-y-3">
-            <div className="text-xs font-semibold uppercase text-[var(--muted-foreground)]">Online details</div>
+          <div className="pt-4 space-y-3" style={{ borderTop: '1px solid var(--line)' }}>
+            <p className="lbl" style={{ textTransform: 'uppercase' }}>Online details</p>
             <Field label="Meeting URL" value={meetingUrl} onChange={setMeetingUrl} placeholder="https://zoom.us/j/..." />
             <Field label="Platform" value={platform} onChange={setPlatform} placeholder="Zoom, Google Meet, etc." />
           </div>
         )}
 
         {(mode === 'in_person' || mode === 'hybrid') && (
-          <div className="border-t border-[var(--border)] pt-4 space-y-3">
-            <div className="text-xs font-semibold uppercase text-[var(--muted-foreground)]">Venue details</div>
+          <div className="pt-4 space-y-3" style={{ borderTop: '1px solid var(--line)' }}>
+            <p className="lbl" style={{ textTransform: 'uppercase' }}>Venue details</p>
             <Field label="Venue name" value={venueName} onChange={setVenueName} />
             <Field label="Address" value={address} onChange={setAddress} />
             <div className="grid grid-cols-2 gap-3">
@@ -493,7 +496,7 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
           </div>
         )}
 
-        <div className="border-t border-[var(--border)] pt-4 space-y-3">
+        <div className="pt-4 space-y-3" style={{ borderTop: '1px solid var(--line)' }}>
           <Field label="Capacity (optional)" value={capacity} onChange={setCapacity} type="number" />
           <div className="grid grid-cols-2 gap-3">
             <Field label="Price USD (0 = free)" value={priceUsd} onChange={setPriceUsd} type="number" />
@@ -501,17 +504,17 @@ function EventForm({ event, onBack }: { event?: any; onBack: () => void }) {
           </div>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+        <label className="flex items-center gap-2" style={{ fontSize: 13, color: 'var(--text)' }}>
           <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} />
           Published
         </label>
 
         <div className="flex gap-2 pt-2">
-          <button onClick={onBack} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
+          <button onClick={onBack} className="btn-g flex-1">Cancel</button>
           <button
             disabled={busy}
             onClick={submit}
-            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium disabled:opacity-50"
+            className="btn-a flex-1 disabled:opacity-50"
           >
             {busy ? 'Saving…' : event ? 'Save changes' : 'Create event'}
           </button>
@@ -531,15 +534,15 @@ function Field({
   type?: string; multiline?: boolean; placeholder?: string;
 }) {
   return (
-    <label className="block">
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <label className="field block">
+      <span style={atlasLabel}>{label}</span>
       {multiline ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={3}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          style={atlasInput}
         />
       ) : (
         <input
@@ -547,7 +550,7 @@ function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          style={atlasInput}
         />
       )}
     </label>
@@ -587,15 +590,16 @@ function FileUpload({
   };
 
   return (
-    <div>
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label style={atlasLabel}>{label}</label>
       <div className="flex gap-2">
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Paste URL or upload"
-          className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          className="flex-1"
+          style={atlasInput}
         />
         <input
           ref={inputRef}
@@ -612,7 +616,7 @@ function FileUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm flex items-center gap-1.5 hover:bg-[var(--muted)] disabled:opacity-50"
+          className="btn-g disabled:opacity-50"
         >
           {busy ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           Upload
@@ -620,7 +624,7 @@ function FileUpload({
       </div>
       {value && accept.startsWith('image') && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={value} alt="" className="mt-2 h-24 rounded-lg object-cover border border-[var(--border)]" />
+        <img src={value} alt="" className="mt-2 h-24 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
       )}
     </div>
   );
@@ -663,17 +667,18 @@ function MultiImageUpload({
   };
 
   return (
-    <div>
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label style={atlasLabel}>{label}</label>
       <div className="flex flex-wrap gap-2">
         {value.map((url, i) => (
           <div key={i} className="relative group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt="" className="h-20 w-20 rounded-lg object-cover border border-[var(--border)]" />
+            <img src={url} alt="" className="h-20 w-20 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="absolute -top-1 -right-1 bg-[var(--red)] text-[var(--foreground)] rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              style={{ background: 'var(--red)', color: 'var(--ink)' }}
             >
               <Trash2 size={10} />
             </button>
@@ -683,7 +688,8 @@ function MultiImageUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="h-20 w-20 flex flex-col items-center justify-center gap-1 border border-dashed border-[var(--border)] rounded-lg text-xs text-[var(--muted-foreground)] hover:bg-[var(--muted)] disabled:opacity-50"
+          className="h-20 w-20 flex flex-col items-center justify-center gap-1 disabled:opacity-50"
+          style={{ border: '1px dashed var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', fontSize: 11.5, color: 'var(--muted-2)' }}
         >
           {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
           {busy ? 'Uploading' : 'Add'}

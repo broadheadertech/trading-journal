@@ -1,337 +1,143 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import {
-  Menu, X, Zap, ChevronDown,
-  Sparkles, Workflow, Plug, Users,
-  Database, Gift, Calculator, Scale,
-  Shield, FileText, Mail, GitBranch, Lock, ScrollText,
-  Search, Activity, BarChart3, LayoutDashboard,
-} from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
-type NavItem = { label: string; href: string };
-type Dropdown = {
-  label: string;
-  groups: { heading?: string; items: { icon: React.ComponentType<{ size?: number; className?: string }>; label: string; desc: string; href: string }[] }[];
-};
+const WORDMARK = 'M 6.21 0.13 L 7.56 0.13 L 13.77 13.63 L 11.34 13.63 L 6.88 2.69 L 2.43 13.63 L 0 13.63 L 6.21 0.13 Z M 2.43 8.77 L 11.34 8.77 L 11.34 11.2 L 2.43 11.2 L 2.43 8.77 Z M 16.15 0.13 L 28.16 0.13 L 28.16 2.43 L 23.3 2.43 L 23.3 13.63 L 21.01 13.63 L 21.01 2.43 L 16.15 2.43 L 16.15 0.13 Z M 33.26 0.13 L 35.56 0.13 L 35.56 11.33 L 43.12 11.33 L 43.12 13.63 L 33.26 13.63 L 33.26 0.13 Z M 54.19 0.13 L 55.54 0.13 L 61.75 13.63 L 59.32 13.63 L 54.86 2.69 L 50.41 13.63 L 47.98 13.63 L 54.19 0.13 Z M 50.41 8.77 L 59.32 8.77 L 59.32 11.2 L 50.41 11.2 L 50.41 8.77 Z M 76.85 2.32 C 76.82 2.27 76.73 2.13 76.65 2.03 C 76.57 1.93 76.48 1.81 76.38 1.71 C 76.28 1.61 76.18 1.51 76.08 1.42 C 75.97 1.33 75.86 1.24 75.74 1.16 C 75.63 1.07 75.51 0.99 75.38 0.92 C 75.26 0.84 75.13 0.77 75 0.71 C 74.87 0.64 74.73 0.58 74.6 0.52 C 74.46 0.47 74.32 0.41 74.18 0.37 C 74.03 0.32 73.89 0.28 73.74 0.24 C 73.59 0.2 73.44 0.16 73.29 0.13 C 73.14 0.11 72.99 0.08 72.84 0.06 C 72.68 0.04 72.53 0.02 72.37 0.01 C 72.22 0 72.06 0 71.91 0 C 71.75 -0.01 71.6 0 71.44 0 C 71.29 0.01 71.13 0.03 70.98 0.04 C 70.82 0.06 70.67 0.08 70.52 0.11 C 70.37 0.13 70.22 0.17 70.07 0.2 C 69.92 0.24 69.77 0.28 69.63 0.32 C 69.49 0.37 69.34 0.42 69.2 0.47 C 69.07 0.52 68.93 0.58 68.8 0.65 C 68.66 0.71 68.53 0.78 68.41 0.85 C 68.28 0.92 68.16 1 68.04 1.08 C 67.92 1.16 67.81 1.24 67.7 1.33 C 67.59 1.42 67.48 1.52 67.38 1.62 C 67.28 1.71 67.19 1.82 67.1 1.93 C 67.01 2.03 66.93 2.14 66.85 2.26 C 66.77 2.38 66.71 2.5 66.64 2.62 C 66.58 2.74 66.53 2.87 66.48 3 C 66.44 3.13 66.4 3.26 66.37 3.4 C 66.34 3.53 66.32 3.67 66.31 3.8 C 66.3 3.94 66.3 4.08 66.3 4.22 C 66.31 4.36 66.33 4.49 66.35 4.63 C 66.38 4.76 66.42 4.9 66.46 5.03 C 66.5 5.16 66.55 5.29 66.61 5.41 C 66.67 5.54 66.74 5.66 66.81 5.77 C 66.89 5.89 66.97 6 67.06 6.11 C 67.14 6.22 67.24 6.33 67.33 6.43 C 67.43 6.53 67.53 6.62 67.64 6.71 C 67.75 6.8 67.86 6.89 67.98 6.97 C 68.1 7.06 68.22 7.13 68.34 7.21 C 68.47 7.28 68.6 7.35 68.73 7.41 C 68.86 7.48 69 7.54 69.14 7.59 C 69.28 7.65 69.42 7.7 69.56 7.75 C 69.7 7.79 69.85 7.83 70 7.87 C 70.15 7.91 70.3 7.94 70.45 7.97 C 70.6 8 70.75 8.02 70.9 8.04 C 71.06 8.06 71.16 8.08 71.37 8.08 C 71.57 8.08 71.96 8.1 72.15 8.05 C 72.34 8 72.46 7.83 72.52 7.8 C 72.58 7.77 72.46 7.85 72.51 7.87 C 72.56 7.89 72.73 7.9 72.84 7.92 C 72.94 7.94 73.05 7.96 73.15 7.99 C 73.26 8.01 73.36 8.04 73.45 8.07 C 73.55 8.11 73.65 8.14 73.74 8.18 C 73.83 8.21 73.92 8.25 74 8.3 C 74.09 8.34 74.17 8.38 74.24 8.43 C 74.32 8.47 74.39 8.52 74.46 8.56 C 74.53 8.61 74.59 8.66 74.65 8.71 C 74.7 8.76 74.76 8.81 74.8 8.86 C 74.85 8.91 74.9 8.96 74.93 9.01 C 74.97 9.06 75.01 9.11 75.04 9.15 C 75.07 9.2 75.09 9.25 75.11 9.29 C 75.13 9.34 75.15 9.39 75.16 9.43 C 75.18 9.47 75.19 9.51 75.19 9.56 C 75.2 9.6 75.21 9.64 75.21 9.68 C 75.21 9.72 75.21 9.76 75.2 9.8 C 75.2 9.84 75.19 9.89 75.18 9.93 C 75.17 9.97 75.16 10.01 75.14 10.06 C 75.13 10.1 75.11 10.15 75.08 10.2 C 75.06 10.24 75.03 10.29 74.99 10.34 C 74.96 10.39 74.92 10.44 74.88 10.49 C 74.84 10.54 74.79 10.59 74.74 10.64 C 74.69 10.69 74.63 10.74 74.57 10.78 C 74.51 10.83 74.44 10.88 74.37 10.93 C 74.3 10.97 74.22 11.02 74.14 11.06 C 74.06 11.11 73.98 11.15 73.89 11.19 C 73.8 11.23 73.71 11.27 73.62 11.3 C 73.52 11.34 73.42 11.37 73.32 11.4 C 73.22 11.43 73.12 11.45 73.01 11.48 C 72.91 11.5 72.8 11.52 72.69 11.54 C 72.58 11.56 72.47 11.57 72.36 11.58 C 72.25 11.59 72.14 11.6 72.02 11.6 C 71.91 11.61 71.8 11.61 71.68 11.6 C 71.57 11.6 71.46 11.59 71.35 11.58 C 71.23 11.57 71.12 11.56 71.01 11.54 C 70.9 11.53 70.8 11.51 70.69 11.49 C 70.58 11.46 70.48 11.44 70.38 11.41 C 70.28 11.38 70.18 11.35 70.08 11.31 C 69.99 11.28 69.9 11.24 69.81 11.2 C 69.72 11.16 69.64 11.12 69.55 11.08 C 69.47 11.04 69.4 10.99 69.33 10.94 C 69.25 10.9 69.19 10.85 69.12 10.8 C 69.06 10.75 69 10.7 68.95 10.65 C 68.89 10.6 68.85 10.55 68.8 10.5 C 68.76 10.46 68.72 10.41 68.69 10.36 C 68.65 10.3 68.58 10.19 68.56 10.16 L 66.73 11.3 C 66.76 11.35 66.85 11.5 66.92 11.6 C 67 11.71 67.09 11.83 67.18 11.93 C 67.27 12.04 67.37 12.14 67.48 12.24 C 67.58 12.33 67.69 12.42 67.8 12.51 C 67.92 12.6 68.04 12.68 68.16 12.76 C 68.28 12.84 68.41 12.91 68.54 12.98 C 68.67 13.05 68.8 13.12 68.94 13.18 C 69.07 13.24 69.21 13.29 69.35 13.35 C 69.5 13.4 69.64 13.44 69.79 13.49 C 69.94 13.53 70.08 13.56 70.24 13.6 C 70.39 13.63 70.54 13.66 70.69 13.68 C 70.85 13.7 71 13.72 71.16 13.74 C 71.31 13.75 71.47 13.76 71.63 13.76 C 71.78 13.77 71.94 13.77 72.1 13.76 C 72.25 13.76 72.41 13.75 72.57 13.73 C 72.72 13.72 72.88 13.7 73.03 13.67 C 73.18 13.65 73.34 13.62 73.49 13.58 C 73.64 13.55 73.79 13.51 73.93 13.47 C 74.08 13.43 74.22 13.38 74.36 13.33 C 74.51 13.27 74.65 13.22 74.78 13.16 C 74.92 13.09 75.05 13.03 75.18 12.96 C 75.31 12.89 75.43 12.81 75.55 12.73 C 75.67 12.65 75.79 12.57 75.9 12.48 C 76.02 12.39 76.13 12.3 76.23 12.2 C 76.33 12.1 76.43 12 76.52 11.89 C 76.61 11.79 76.7 11.68 76.78 11.56 C 76.85 11.45 76.93 11.33 76.99 11.2 C 77.06 11.08 77.11 10.95 77.16 10.82 C 77.21 10.69 77.25 10.56 77.29 10.43 C 77.32 10.29 77.34 10.15 77.35 10.01 C 77.37 9.88 77.37 9.74 77.37 9.6 C 77.36 9.46 77.35 9.32 77.32 9.18 C 77.3 9.05 77.26 8.91 77.22 8.78 C 77.18 8.65 77.13 8.52 77.07 8.39 C 77.01 8.26 76.95 8.14 76.88 8.02 C 76.8 7.9 76.72 7.79 76.64 7.68 C 76.55 7.57 76.46 7.46 76.36 7.36 C 76.26 7.26 76.16 7.16 76.05 7.07 C 75.94 6.98 75.83 6.89 75.71 6.8 C 75.59 6.72 75.47 6.64 75.35 6.57 C 75.22 6.49 75.09 6.42 74.96 6.36 C 74.83 6.29 74.69 6.23 74.55 6.17 C 74.41 6.12 74.27 6.07 74.12 6.02 C 73.98 5.97 73.83 5.93 73.68 5.89 C 73.53 5.85 73.38 5.82 73.23 5.79 C 73.08 5.76 72.98 5.73 72.77 5.72 C 72.56 5.71 72.16 5.67 71.95 5.72 C 71.74 5.76 71.59 5.95 71.52 5.98 C 71.44 6.02 71.56 5.94 71.5 5.92 C 71.44 5.91 71.27 5.91 71.16 5.89 C 71.06 5.88 70.95 5.86 70.84 5.84 C 70.73 5.83 70.63 5.8 70.52 5.78 C 70.42 5.75 70.32 5.72 70.22 5.69 C 70.13 5.66 70.03 5.62 69.94 5.59 C 69.85 5.55 69.76 5.51 69.68 5.47 C 69.59 5.43 69.51 5.39 69.44 5.34 C 69.36 5.3 69.29 5.25 69.22 5.21 C 69.16 5.16 69.09 5.11 69.04 5.06 C 68.98 5.01 68.92 4.96 68.88 4.91 C 68.83 4.86 68.78 4.81 68.74 4.77 C 68.71 4.72 68.67 4.67 68.64 4.62 C 68.61 4.57 68.59 4.53 68.56 4.48 C 68.54 4.44 68.52 4.39 68.51 4.35 C 68.49 4.3 68.48 4.26 68.48 4.22 C 68.47 4.18 68.46 4.14 68.46 4.1 C 68.46 4.06 68.46 4.02 68.46 3.97 C 68.46 3.93 68.47 3.89 68.48 3.85 C 68.49 3.81 68.5 3.77 68.52 3.72 C 68.53 3.68 68.55 3.63 68.57 3.59 C 68.6 3.54 68.62 3.49 68.66 3.45 C 68.69 3.4 68.72 3.35 68.76 3.3 C 68.8 3.25 68.85 3.2 68.9 3.15 C 68.95 3.1 69 3.05 69.06 3.01 C 69.12 2.96 69.19 2.91 69.26 2.86 C 69.32 2.81 69.4 2.77 69.47 2.73 C 69.55 2.68 69.63 2.64 69.72 2.6 C 69.8 2.56 69.89 2.52 69.99 2.48 C 70.08 2.45 70.17 2.42 70.27 2.38 C 70.37 2.35 70.47 2.33 70.57 2.3 C 70.68 2.28 70.78 2.25 70.89 2.24 C 71 2.22 71.11 2.2 71.22 2.19 C 71.33 2.18 71.44 2.17 71.55 2.16 C 71.66 2.16 71.78 2.15 71.89 2.16 C 72 2.16 72.11 2.16 72.22 2.17 C 72.33 2.18 72.45 2.19 72.56 2.2 C 72.66 2.22 72.77 2.23 72.88 2.25 C 72.99 2.28 73.09 2.3 73.19 2.33 C 73.29 2.35 73.39 2.38 73.49 2.42 C 73.59 2.45 73.68 2.48 73.77 2.52 C 73.86 2.56 73.95 2.6 74.03 2.64 C 74.11 2.68 74.19 2.72 74.27 2.77 C 74.34 2.81 74.41 2.86 74.48 2.91 C 74.54 2.95 74.6 3 74.66 3.05 C 74.72 3.1 74.77 3.15 74.81 3.2 C 74.86 3.25 74.9 3.29 74.94 3.35 C 74.98 3.4 75.05 3.51 75.07 3.54 L 76.85 2.32 Z';
 
-const TOP_LINKS: NavItem[] = [
-  { label: 'Home',    href: '/' },
-  { label: 'Demo',    href: '/demo' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Blog',    href: '/blog' },
-];
-
-const DROPDOWNS: Dropdown[] = [
-  {
-    label: 'Features',
-    groups: [
-      {
-        heading: 'What you get',
-        items: [
-          { icon: Search,          label: 'Leak Detection',        desc: 'Costly trading mistakes ranked by $ impact',     href: '/#features' },
-          { icon: Activity,        label: 'Behavior Analysis',     desc: 'Discipline score + emotional pressure tracking', href: '/#features' },
-          { icon: BarChart3,       label: 'Performance Analytics', desc: '50+ metrics computed automatically every import', href: '/#features' },
-          { icon: Shield,          label: 'Playbook Rules',        desc: 'Custom rules scored compliance trade-by-trade',  href: '/#features' },
-          { icon: LayoutDashboard, label: 'Dashboard Overview',    desc: 'Net P&L, equity curve, heatmap, recent trades',  href: '/#features' },
-          { icon: Sparkles,        label: 'What-If Scenarios',     desc: 'Replay trades with adjusted stops or rules',     href: '/#features' },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Platform',
-    groups: [
-      {
-        items: [
-          { icon: Sparkles, label: 'Features',     desc: 'Leak detection, behavior scoring, 50+ metrics', href: '/#features' },
-          { icon: Workflow, label: 'How It Works', desc: 'Three steps from CSV upload to improvement',   href: '/#how-it-works' },
-          { icon: Plug,     label: 'Integrations', desc: '67+ broker formats and 5 live API connectors', href: '/integrations' },
-          { icon: Users,    label: 'Use Cases',    desc: 'Solo traders, prop firms, coaches, risk',      href: '/use-cases' },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Explore',
-    groups: [
-      {
-        heading: 'Browse',
-        items: [
-          { icon: Database,   label: 'Brokers',   desc: 'All 67+ supported brokers and exchanges',  href: '/brokers' },
-          { icon: Gift,       label: 'Affiliate', desc: 'Earn 30–50% recurring commission',         href: '/affiliate' },
-        ],
-      },
-      {
-        heading: 'Free Tools',
-        items: [
-          { icon: Calculator, label: 'Position Size Calculator', desc: 'Size positions to your risk budget', href: '#' },
-          { icon: Scale,      label: 'Risk/Reward Calculator',   desc: 'Plan trade RR before you click buy',  href: '#' },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Trust',
-    groups: [
-      {
-        heading: 'Company',
-        items: [
-          { icon: FileText,  label: 'About',     desc: 'Why Atlas exists, who built it',     href: '/about' },
-          { icon: Shield,    label: 'Security',  desc: 'Read-only by design, EU-hosted',      href: '/security' },
-          { icon: Mail,      label: 'Contact',   desc: 'Email-routed support, UTC business hours', href: '/contact' },
-          { icon: GitBranch, label: 'Changelog', desc: 'What we shipped recently',            href: '/changelog' },
-        ],
-      },
-      {
-        heading: 'Legal',
-        items: [
-          { icon: Lock,       label: 'Privacy Policy',   desc: 'How we handle your data',  href: '/privacy' },
-          { icon: ScrollText, label: 'Terms of Service', desc: 'Service terms and limits', href: '/terms' },
-        ],
-      },
-    ],
-  },
-];
+const CHEV = (
+  <svg className="chev" viewBox="0 0 8 4.5" fill="none" aria-hidden="true"><path d="M0 0 L4 4.5 L8 0" stroke="#7f8ea3" strokeWidth="1.3" strokeLinecap="round" /></svg>
+);
 
 export default function LandingNav() {
-  const { isSignedIn } = useUser();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
-  const handleEnter = (label: string) => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    setOpenDropdown(label);
-  };
-  const handleLeave = () => {
-    closeTimer.current = setTimeout(() => setOpenDropdown(null), 120);
-  };
-
-  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
+  const cls = (base: string, href: string) =>
+    pathname === href ? base + ' is-active' : base;
+  const act = (href: string) => (pathname === href ? 'is-active' : undefined);
+  const closeMenu = () => setMenuOpen(false);
+  const ddStyle = (group: string) =>
+    openGroup === group ? ({ display: 'block' } as const) : undefined;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Logo — amber ATLAS "A" mark + wordmark */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <Image
-            src="/atlas-icon.svg"
-            alt="Atlas"
-            width={36}
-            height={36}
-            priority
-            className="w-9 h-9 object-contain rounded-lg"
-          />
-          <span className="font-brand text-xl font-extrabold tracking-[0.18em] uppercase bg-gradient-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
-            Atlas
-          </span>
-        </Link>
+    <>
+      {/* ============================= HEADER ============================= */}
+      <header className="nav">
+        <div className="wrap nav-in">
+          <Link className="brand" href="/" aria-label="Atlas home">
+            <svg width="27" height="27" viewBox="0 0 27.06 26.24" fill="none" aria-hidden="true">
+              <path d="M 13.53 0 L 27.06 26.24 L 0 26.24 L 13.53 0 Z M 13.53 9.23 L 17.32 16.81 L 10.66 20.91 L 8.61 26.24 L 4.72 26.24 L 13.53 9.23 Z M 19.17 20.5 L 11.48 26.24 L 22.04 26.24 L 19.17 20.5 Z" fill="#d99405" fillRule="evenodd" />
+            </svg>
+            <svg width="78" height="14" viewBox="0 0 77.37 13.77" fill="none" aria-hidden="true">
+              <path d={WORDMARK} fill="#edf2f7" fillRule="evenodd" />
+            </svg>
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {TOP_LINKS.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-pink-400 transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-          {DROPDOWNS.map(d => (
+          <nav className="nav-links" aria-label="Primary">
+            <div className="nav-item"><Link className={cls('nav-link', '/')} href="/">Home</Link></div>
+            <div className="nav-item"><Link className={cls('nav-link', '/demo')} href="/demo">Demo</Link></div>
+            <div className="nav-item"><Link className={cls('nav-link', '/pricing')} href="/pricing">Pricing</Link></div>
+            <div className="nav-item"><Link className={cls('nav-link', '/blog')} href="/blog">Blog</Link></div>
+
             <div
-              key={d.label}
-              className="relative"
-              onMouseEnter={() => handleEnter(d.label)}
-              onMouseLeave={handleLeave}
+              className="nav-item"
+              onMouseEnter={() => setOpenGroup('platform')}
+              onMouseLeave={() => setOpenGroup(null)}
+              onFocus={() => setOpenGroup('platform')}
+              onBlur={() => setOpenGroup(null)}
             >
-              <button
-                className={`px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1 ${
-                  openDropdown === d.label ? 'text-pink-400' : 'text-[var(--muted-foreground)] hover:text-pink-400'
-                }`}
-              >
-                {d.label}
-                <ChevronDown size={13} className={`transition-transform ${openDropdown === d.label ? 'rotate-180' : ''}`} />
+              <button className="nav-link" aria-expanded={openGroup === 'platform'}>Platform
+                {CHEV}
               </button>
-              {openDropdown === d.label && (
-                <DropdownPanel dropdown={d} onClose={() => setOpenDropdown(null)} />
-              )}
+              <div className="dd" style={ddStyle('platform')}>
+                <Link className={act('/integrations')} href="/integrations">Integrations</Link>
+                <Link className={act('/use-cases')} href="/use-cases">Use Cases</Link>
+              </div>
             </div>
-          ))}
-        </nav>
 
-        {/* Right cluster */}
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
-          {isSignedIn ? (
-            <Link
-              href="/app"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all"
+            <div
+              className="nav-item"
+              onMouseEnter={() => setOpenGroup('explore')}
+              onMouseLeave={() => setOpenGroup(null)}
+              onFocus={() => setOpenGroup('explore')}
+              onBlur={() => setOpenGroup(null)}
             >
-              <Zap size={14} className="fill-current" />
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className="text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all"
-              >
-                <Zap size={14} className="fill-current" />
-                Start Free Trial
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors"
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="lg:hidden border-t border-[var(--border)] bg-[var(--background)] max-h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="px-4 py-4 space-y-1">
-            {TOP_LINKS.map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="block px-3 py-2.5 text-sm font-medium text-[var(--muted-foreground)] hover:text-pink-400 hover:bg-[var(--muted)]/30 rounded-lg transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-            {DROPDOWNS.map(d => {
-              const isOpen = openMobileGroup === d.label;
-              return (
-                <div key={d.label} className="rounded-lg">
-                  <button
-                    onClick={() => setOpenMobileGroup(isOpen ? null : d.label)}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                      isOpen ? 'bg-[var(--muted)]/30 text-pink-400' : 'text-[var(--muted-foreground)] hover:text-pink-400 hover:bg-[var(--muted)]/30'
-                    }`}
-                  >
-                    {d.label}
-                    <ChevronDown size={14} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isOpen && (
-                    <div className="mt-1 ml-2 pl-3 border-l border-[var(--border)] space-y-1 py-1">
-                      {d.groups.map(g => (
-                        <div key={g.heading || 'g'} className="space-y-0.5">
-                          {g.heading && (
-                            <div className="px-2 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/60">
-                              {g.heading}
-                            </div>
-                          )}
-                          {g.items.map(it => (
-                            <Link
-                              key={it.label}
-                              href={it.href}
-                              onClick={() => setMenuOpen(false)}
-                              className="flex items-start gap-2.5 px-2 py-2 rounded-md hover:bg-[var(--muted)]/30 transition-colors group"
-                            >
-                              <it.icon size={14} className="mt-0.5 text-pink-400 shrink-0" />
-                              <div>
-                                <div className="text-xs font-bold text-[var(--foreground)]">{it.label}</div>
-                                <div className="text-[10px] text-[var(--muted-foreground)] leading-snug">{it.desc}</div>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <div className="px-4 py-4 border-t border-[var(--border)] flex flex-col gap-2">
-            {isSignedIn ? (
-              <Link
-                href="/app"
-                onClick={() => setMenuOpen(false)}
-                className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400"
-              >
-                <Zap size={14} className="fill-current" /> Go to Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/sign-in"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full text-center px-4 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--muted)] transition-colors"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/sign-up"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full text-center inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400"
-                >
-                  <Zap size={14} className="fill-current" /> Start Free Trial
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </header>
-  );
-}
-
-function DropdownPanel({ dropdown, onClose }: { dropdown: Dropdown; onClose: () => void }) {
-  const wide = dropdown.groups.length > 1;
-  return (
-    <div
-      className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 ${wide ? 'w-[480px]' : 'w-[340px]'}`}
-    >
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl overflow-hidden backdrop-blur-xl">
-        {/* Top accent line */}
-        <div className="h-px bg-gradient-to-r from-transparent via-pink-400/50 to-transparent" />
-        <div className={`p-2 ${wide ? 'grid grid-cols-2 gap-1' : ''}`}>
-          {dropdown.groups.map(g => (
-            <div key={g.heading || 'group'} className="space-y-0.5">
-              {g.heading && (
-                <div className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]/60">
-                  {g.heading}
-                </div>
-              )}
-              {g.items.map(it => (
-                <Link
-                  key={it.label}
-                  href={it.href}
-                  onClick={onClose}
-                  className="flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-pink-500/10 transition-colors group"
-                >
-                  <div className="w-8 h-8 rounded-md bg-gradient-to-br from-pink-500/15 to-fuchsia-500/10 border border-pink-500/20 flex items-center justify-center shrink-0 group-hover:border-pink-500/40 transition-colors">
-                    <it.icon size={14} className="text-pink-400" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-bold text-[var(--foreground)] group-hover:text-pink-400 transition-colors">{it.label}</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)] leading-snug mt-0.5">{it.desc}</div>
-                  </div>
-                </Link>
-              ))}
+              <button className="nav-link" aria-expanded={openGroup === 'explore'}>Explore
+                {CHEV}
+              </button>
+              <div className="dd" style={ddStyle('explore')}>
+                <Link className={act('/brokers')} href="/brokers">Brokers</Link>
+                <Link className={act('/affiliate')} href="/affiliate">Affiliate</Link>
+              </div>
             </div>
-          ))}
+
+            <div
+              className="nav-item"
+              onMouseEnter={() => setOpenGroup('about')}
+              onMouseLeave={() => setOpenGroup(null)}
+              onFocus={() => setOpenGroup('about')}
+              onBlur={() => setOpenGroup(null)}
+            >
+              <button className="nav-link" aria-expanded={openGroup === 'about'}>About
+                {CHEV}
+              </button>
+              <div className="dd" style={ddStyle('about')}>
+                <Link className={act('/about')} href="/about">About Atlas</Link>
+                <Link className={act('/security')} href="/security">Security</Link>
+                <Link className={act('/contact')} href="/contact">Contact</Link>
+                <Link className={act('/changelog')} href="/changelog">Changelog</Link>
+              </div>
+            </div>
+          </nav>
+
+          <div className="nav-right">
+            {/* The reference mockup has no auth, so it points these at / and
+                /pricing. Real routes restored — visual treatment unchanged. */}
+            <Link className="nav-login" href="/sign-in">Log in</Link>
+            <Link className="nav-cta" href="/sign-up">
+              <svg width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M6 0 L0 9 L5 9 L3 16 L10 7 L5 7 L6 0 Z" fill="#0a0a0a" /></svg>
+              Start Free Trial
+            </Link>
+            <button
+              className="burger"
+              id="burger"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* mobile menu */}
+      <div className={menuOpen ? 'mnav open' : 'mnav'} id="mnav">
+        <div className="wrap">
+          <Link onClick={closeMenu} className={act('/')} href="/">Home</Link>
+          <Link onClick={closeMenu} className={act('/demo')} href="/demo">Demo</Link>
+          <Link onClick={closeMenu} className={act('/pricing')} href="/pricing">Pricing</Link>
+          <Link onClick={closeMenu} className={act('/blog')} href="/blog">Blog</Link>
+          <h4>PLATFORM</h4>
+          <Link onClick={closeMenu} className={act('/integrations')} href="/integrations">Integrations</Link>
+          <Link onClick={closeMenu} className={act('/use-cases')} href="/use-cases">Use Cases</Link>
+          <h4>EXPLORE</h4>
+          <Link onClick={closeMenu} className={act('/brokers')} href="/brokers">Brokers</Link>
+          <Link onClick={closeMenu} className={act('/affiliate')} href="/affiliate">Affiliate</Link>
+          <h4>ABOUT</h4>
+          <Link onClick={closeMenu} className={act('/about')} href="/about">About Atlas</Link>
+          <Link onClick={closeMenu} className={act('/security')} href="/security">Security</Link>
+          <Link onClick={closeMenu} className={act('/contact')} href="/contact">Contact</Link>
+          <Link onClick={closeMenu} className={act('/changelog')} href="/changelog">Changelog</Link>
+          <div className="mnav-cta">
+            <Link onClick={closeMenu} className="btn btn-ghost" href="/sign-in">Log in</Link>
+            <Link onClick={closeMenu} className="btn btn-amber" href="/sign-up">Start Free Trial</Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

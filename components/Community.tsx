@@ -19,6 +19,25 @@ type SortMode = 'hot' | 'new' | 'top';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
+// ATLAS form-control chrome (matches .field .box / .codebox in app/atlas-dashboard.css)
+const atlasInput: React.CSSProperties = {
+  width: '100%',
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  color: 'var(--text)',
+  padding: '10px 14px',
+  fontSize: 13,
+};
+const atlasLabel: React.CSSProperties = {
+  display: 'block',
+  fontWeight: 700,
+  fontSize: 9.5,
+  color: 'var(--muted-2)',
+  letterSpacing: '.04em',
+  marginBottom: 9,
+};
+
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
   if (diff < 60) return 'just now';
@@ -51,73 +70,57 @@ export default function Community() {
   }
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      <header className="flex items-end justify-between flex-wrap gap-4 anim-fade-up">
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            Live discussions
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-            Join the <span className="gradient-text">conversation</span>
-          </h1>
-          <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-            Discuss trades, share insights, ask questions. Read freely, post when logged in.
-          </p>
-        </div>
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow">Live discussions</p>
+        <h2>Join the conversation</h2>
+        <p className="sub">
+          Discuss trades, share insights, ask questions. Read freely, post when logged in.
+        </p>
         {user && (
-          <button
-            onClick={() => setShowNew(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5"
-          >
-            <Plus size={16} /> New Post
-          </button>
+          <div className="actions" style={{ top: 34 }}>
+            <button onClick={() => setShowNew(true)} className="btn-a" style={{ height: 44 }}>
+              <Plus size={12} /> New Post
+            </button>
+          </div>
         )}
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
         {/* Categories sidebar */}
-        <div className="glass rounded-2xl p-3 space-y-1 h-fit anim-fade-up" style={{ animationDelay: '80ms' }}>
-          <button
+        <div className="listnav">
+          <a
             onClick={() => setActiveCategoryId(null)}
-            className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
-              activeCategoryId === null ? 'bg-[var(--accent)]/15 text-[var(--foreground)] font-medium' : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-            }`}
+            className={activeCategoryId === null ? 'on' : undefined}
+            style={{ cursor: 'pointer' }}
           >
             All Posts
-          </button>
+          </a>
           {categories.map((c: any) => (
-            <button
+            <a
               key={c.id}
               onClick={() => setActiveCategoryId(c.id)}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
-                activeCategoryId === c.id ? 'bg-[var(--accent)]/15 text-[var(--foreground)] font-medium' : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-              }`}
+              className={activeCategoryId === c.id ? 'on' : undefined}
+              style={{ cursor: 'pointer' }}
             >
-              {c.color && <span className="w-2 h-2 rounded-full" style={{ background: c.color }} />}
+              {c.color && <i style={{ background: c.color }} />}
               {c.name}
-            </button>
+            </a>
           ))}
           {categories.length === 0 && (
-            <p className="text-xs text-[var(--muted-foreground)] p-2">No categories yet.</p>
+            <p style={{ margin: '4px 14px', fontSize: 12, color: 'var(--muted-2)' }}>No categories yet.</p>
           )}
         </div>
 
         {/* Posts list */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-1 border-b border-[var(--border)]">
+        <div>
+          <div className="tabs line" style={{ marginBottom: 20 }}>
             {(['hot', 'new', 'top'] as SortMode[]).map((s) => (
               <button
                 key={s}
                 onClick={() => setSort(s)}
-                className={`px-4 py-2 text-sm font-medium border-b-2 capitalize ${
-                  sort === s ? 'border-[var(--accent)] text-[var(--foreground)]' : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
+                className={sort === s ? 'on' : undefined}
+                style={{ textTransform: 'capitalize' }}
               >
                 {s}
               </button>
@@ -125,67 +128,72 @@ export default function Community() {
           </div>
 
           {posts.length === 0 ? (
-            <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
-                <MessagesSquare size={28} className="text-pink-400" />
-              </div>
-              <p className="text-[var(--foreground)] font-medium">No posts yet</p>
-              <p className="text-sm text-[var(--muted-foreground)] mt-1">Be the first to start the conversation.</p>
+            <div className="blank" style={{ height: 300 }}>
+              <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+              <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+              <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+                <MessagesSquare size={26} style={{ color: 'var(--amber)' }} />
+              </span>
+              <h4>No posts yet</h4>
+              <p>Be the first to start the conversation.</p>
             </div>
           ) : (
-            posts.map((p: any, idx: number) => {
+            posts.map((p: any) => {
               const myVote = (myVotes as any)[p.id];
               const cat = categories.find((c: any) => c.id === p.categoryId);
               return (
                 <div
                   key={p.id}
-                  style={{ animationDelay: `${idx * 40}ms` }}
-                  className="glass rounded-2xl p-4 flex gap-3 card-lift anim-fade-up"
+                  className="post"
+                  style={{
+                    height: 'auto',
+                    padding: '16px 20px',
+                    borderLeftColor: cat?.color ?? 'var(--amber)',
+                  }}
                 >
                   {/* Vote column */}
-                  <div className="flex flex-col items-center gap-1 shrink-0">
+                  <div className="vote">
                     <button
                       onClick={() => vote({ targetType: 'post', targetId: p.id, value: myVote === 1 ? 0 : 1 })}
-                      className={`p-1 rounded ${myVote === 1 ? 'text-[var(--accent)]' : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}
+                      style={{ display: 'flex', color: myVote === 1 ? 'var(--amber)' : 'inherit' }}
                     >
-                      <ChevronUp size={20} />
+                      <ChevronUp size={16} />
                     </button>
-                    <span className="text-sm font-bold text-[var(--foreground)]">{p.score}</span>
+                    <b>{p.score}</b>
                     <button
                       onClick={() => vote({ targetType: 'post', targetId: p.id, value: myVote === -1 ? 0 : -1 })}
-                      className={`p-1 rounded ${myVote === -1 ? 'text-[var(--red)]' : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}
+                      style={{ display: 'flex', color: myVote === -1 ? 'var(--red)' : 'inherit' }}
                     >
-                      <ChevronDown size={20} />
+                      <ChevronDown size={16} />
                     </button>
                   </div>
 
                   {/* Body */}
                   <div
-                    className="flex-1 min-w-0 cursor-pointer"
+                    style={{ minWidth: 0, cursor: 'pointer' }}
                     onClick={() => { setActivePostId(p.id); setView('detail'); }}
                   >
-                    <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mb-1 flex-wrap">
+                    <div className="meta">
                       {cat && (
-                        <span
-                          className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-                          style={{ background: (cat.color ?? 'var(--accent)') + '22', color: cat.color ?? 'var(--accent)' }}
-                        >
+                        <span className="cat" style={{ color: cat.color ?? 'var(--amber)' }}>
                           {cat.name}
                         </span>
                       )}
-                      <span>by <span className="font-medium text-[var(--foreground)]">{p.authorName}</span></span>
+                      <span>by <strong>{p.authorName}</strong></span>
                       <TierBadge tier={p.authorTier} />
                       <span>·</span>
                       <span>{timeAgo(p.createdAt)}</span>
-                      {p.isPinned && <span className="flex items-center gap-1 text-amber-500"><Pin size={11} /> Pinned</span>}
-                      {p.isLocked && <span className="flex items-center gap-1 text-[var(--muted-foreground)]"><Lock size={11} /> Locked</span>}
+                      {p.isPinned && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--amber)' }}><Pin size={11} /> Pinned</span>}
+                      {p.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={11} /> Locked</span>}
                     </div>
-                    <h3 className="font-bold text-[var(--foreground)] mb-1">{p.title}</h3>
-                    <p className="text-sm text-[var(--muted-foreground)] line-clamp-2">{p.body}</p>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-[var(--muted-foreground)]">
-                      <span className="flex items-center gap-1"><MessageCircle size={12} /> {p.commentCount} comments</span>
+                    <h5>{p.title}</h5>
+                    <p className="body line-clamp-2">{p.body}</p>
+                    <div className="foot">
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><MessageCircle size={12} /> {p.commentCount} comments</span>
                       {p.images && p.images.length > 0 && (
-                        <span className="flex items-center gap-1"><ImageIcon size={12} /> {p.images.length}</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ImageIcon size={12} /> {p.images.length}</span>
                       )}
                     </div>
                   </div>
@@ -226,16 +234,17 @@ function NewPostModal({
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">New Post</h2>
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+      <div className="card max-w-2xl w-full space-y-4 max-h-[90vh] overflow-y-auto">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>New Post</h3>
 
-        <div>
-          <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Category</div>
+        <div className="field">
+          <label style={atlasLabel}>Category</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            style={atlasInput}
           >
             <option value="">Select category…</option>
             {categories.map((c: any) => (
@@ -244,29 +253,29 @@ function NewPostModal({
           </select>
         </div>
 
-        <div>
-          <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Title</div>
+        <div className="field">
+          <label style={atlasLabel}>Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            style={atlasInput}
           />
         </div>
 
-        <div>
-          <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Body</div>
+        <div className="field">
+          <label style={atlasLabel}>Body</label>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={6}
-            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            style={atlasInput}
           />
         </div>
 
         <ImageUploader images={images} onChange={setImages} />
 
         <div className="flex gap-2 pt-2">
-          <button onClick={onClose} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
+          <button onClick={onClose} className="btn-g flex-1">Cancel</button>
           <button
             disabled={busy || !title || !body || !categoryId}
             onClick={async () => {
@@ -290,7 +299,7 @@ function NewPostModal({
                 setBusy(false);
               }
             }}
-            className="flex-1 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
+            className="btn-a flex-1 disabled:opacity-50"
           >
             {busy ? 'Posting…' : 'Post'}
           </button>
@@ -347,29 +356,31 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
     return list.map((c: any) => {
       const cmVote = (myCommentVotes as any)[c.id];
       return (
-        <div key={c.id} style={{ marginLeft: depth * 16 }} className="border-l border-[var(--border)] pl-3 py-2">
-          <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mb-1">
-            <span className="font-medium text-[var(--foreground)]">{c.authorName}</span>
+        <div key={c.id} style={{ marginLeft: depth * 16, borderLeft: '1px solid var(--line)' }} className="pl-3 py-2">
+          <div className="flex items-center gap-2 mb-1" style={{ fontSize: 11.5, color: 'var(--muted-2)' }}>
+            <strong style={{ color: 'var(--text)', fontWeight: 700 }}>{c.authorName}</strong>
             <TierBadge tier={c.authorTier} />
             <span>·</span>
             <span>{timeAgo(c.createdAt)}</span>
           </div>
-          <p className="text-sm text-[var(--foreground)] whitespace-pre-wrap mb-2">{c.body}</p>
-          <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+          <p className="whitespace-pre-wrap mb-2" style={{ fontSize: 13, lineHeight: '19px', color: '#c0ccda' }}>{c.body}</p>
+          <div className="flex items-center gap-3" style={{ fontSize: 11, color: 'var(--muted-2)' }}>
             <button
               onClick={() => vote({ targetType: 'comment', targetId: c.id, value: cmVote === 1 ? 0 : 1 })}
-              className={`flex items-center gap-1 ${cmVote === 1 ? 'text-[var(--accent)]' : 'hover:text-[var(--foreground)]'}`}
+              className="flex items-center gap-1"
+              style={{ color: cmVote === 1 ? 'var(--amber)' : 'inherit' }}
             >
               <ChevronUp size={14} /> {c.score}
             </button>
             <button
               onClick={() => vote({ targetType: 'comment', targetId: c.id, value: cmVote === -1 ? 0 : -1 })}
-              className={`flex items-center gap-1 ${cmVote === -1 ? 'text-[var(--red)]' : 'hover:text-[var(--foreground)]'}`}
+              className="flex items-center gap-1"
+              style={{ color: cmVote === -1 ? 'var(--red)' : 'inherit' }}
             >
               <ChevronDown size={14} />
             </button>
             {!post.isLocked && user && (
-              <button onClick={() => setReplyParent(c.id)} className="hover:text-[var(--foreground)]">Reply</button>
+              <button onClick={() => setReplyParent(c.id)}>Reply</button>
             )}
             {(isAdmin || c.authorId === user?.id) && (
               <button
@@ -377,7 +388,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
                   if (!confirm('Delete this comment?')) return;
                   await deleteComment({ id: c.id });
                 }}
-                className="text-[var(--red)] hover:opacity-80"
+                style={{ color: 'var(--red)' }}
               >
                 Delete
               </button>
@@ -406,57 +417,58 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
 
   return (
     <div className="space-y-4">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to Community
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back to Community
       </button>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="flex items-start gap-4">
-          <div className="flex flex-col items-center gap-1 shrink-0">
+          <div className="vote" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: 'var(--muted)', flex: 'none' }}>
             <button
               onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === 1 ? 0 : 1 })}
-              className={`p-1 ${myVote === 1 ? 'text-[var(--accent)]' : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}
+              style={{ display: 'flex', color: myVote === 1 ? 'var(--amber)' : 'inherit' }}
             >
-              <ChevronUp size={22} />
+              <ChevronUp size={18} />
             </button>
-            <span className="text-base font-bold text-[var(--foreground)]">{post.score}</span>
+            <b style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{post.score}</b>
             <button
               onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === -1 ? 0 : -1 })}
-              className={`p-1 ${myVote === -1 ? 'text-[var(--red)]' : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}
+              style={{ display: 'flex', color: myVote === -1 ? 'var(--red)' : 'inherit' }}
             >
-              <ChevronDown size={22} />
+              <ChevronDown size={18} />
             </button>
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] mb-2 flex-wrap">
-              <span>by <span className="font-medium text-[var(--foreground)]">{post.authorName}</span></span>
+            <div className="meta" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', fontSize: 11.5, color: 'var(--muted-2)', marginBottom: 10 }}>
+              <span>by <strong style={{ color: 'var(--text)', fontWeight: 700 }}>{post.authorName}</strong></span>
               <TierBadge tier={post.authorTier} />
               <span>·</span>
               <span>{timeAgo(post.createdAt)}</span>
-              {post.isPinned && <span className="flex items-center gap-1 text-amber-500"><Pin size={11} /> Pinned</span>}
-              {post.isLocked && <span className="flex items-center gap-1"><Lock size={11} /> Locked</span>}
+              {post.isPinned && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--amber)' }}><Pin size={11} /> Pinned</span>}
+              {post.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={11} /> Locked</span>}
             </div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-3">{post.title}</h1>
-            <p className="text-[var(--foreground)] whitespace-pre-wrap mb-4">{post.body}</p>
+            <h3 style={{ marginBottom: 12 }}>{post.title}</h3>
+            <p className="whitespace-pre-wrap mb-4" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
 
             {post.images && post.images.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                 {post.images.map((url: string, i: number) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={url} alt="" className="w-full h-40 object-cover rounded-lg border border-[var(--border)]" />
+                  <img key={i} src={url} alt="" className="w-full h-40 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
                 ))}
               </div>
             )}
 
             {/* Mod actions */}
-            <div className="flex items-center gap-2 pt-3 border-t border-[var(--border)]">
+            <div className="flex items-center gap-2 pt-3" style={{ borderTop: '1px solid var(--line)' }}>
               {isAdmin && (
                 <>
-                  <button onClick={() => togglePin({ id: postId })} className="text-xs px-3 py-1 rounded-lg border border-[var(--border)] flex items-center gap-1">
+                  <button onClick={() => togglePin({ id: postId })} className="chip">
                     <Pin size={12} /> {post.isPinned ? 'Unpin' : 'Pin'}
                   </button>
-                  <button onClick={() => toggleLock({ id: postId })} className="text-xs px-3 py-1 rounded-lg border border-[var(--border)] flex items-center gap-1">
+                  <button onClick={() => toggleLock({ id: postId })} className="chip">
                     <Lock size={12} /> {post.isLocked ? 'Unlock' : 'Lock'}
                   </button>
                 </>
@@ -469,7 +481,8 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
                     showToast('Post deleted', 'success');
                     onBack();
                   }}
-                  className="text-xs px-3 py-1 rounded-lg border border-[var(--border)] text-[var(--red)] flex items-center gap-1"
+                  className="chip"
+                  style={{ color: 'var(--red)' }}
                 >
                   <Trash2 size={12} /> Delete
                 </button>
@@ -480,8 +493,8 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
       </div>
 
       {/* Comments */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 space-y-4">
-        <h2 className="font-bold text-[var(--foreground)]">{post.commentCount} Comments</h2>
+      <div className="card space-y-4">
+        <h4>{post.commentCount} Comments</h4>
 
         {!post.isLocked && user && replyParent === null && (
           <div className="space-y-2">
@@ -490,12 +503,12 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
               onChange={(e) => setReplyBody(e.target.value)}
               placeholder="Write a comment…"
               rows={3}
-              className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+              style={atlasInput}
             />
             <button
               onClick={submitReply}
               disabled={!replyBody.trim()}
-              className="px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+              className="btn-a disabled:opacity-50"
             >
               <Send size={14} /> Comment
             </button>
@@ -503,22 +516,22 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
         )}
 
         {replyParent !== null && (
-          <div className="space-y-2 border-l-2 border-[var(--accent)] pl-3">
-            <div className="text-xs text-[var(--muted-foreground)]">Replying to comment</div>
+          <div className="space-y-2 pl-3" style={{ borderLeft: '2px solid var(--amber)' }}>
+            <div style={{ fontSize: 11.5, color: 'var(--muted-2)' }}>Replying to comment</div>
             <textarea
               value={replyBody}
               onChange={(e) => setReplyBody(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+              style={atlasInput}
             />
             <div className="flex gap-2">
-              <button onClick={() => { setReplyParent(null); setReplyBody(''); }} className="px-3 py-1.5 border border-[var(--border)] rounded-lg text-sm">Cancel</button>
-              <button onClick={submitReply} disabled={!replyBody.trim()} className="px-4 py-1.5 bg-[var(--accent)] text-white rounded-lg text-sm disabled:opacity-50">Reply</button>
+              <button onClick={() => { setReplyParent(null); setReplyBody(''); }} className="btn-g">Cancel</button>
+              <button onClick={submitReply} disabled={!replyBody.trim()} className="btn-a disabled:opacity-50">Reply</button>
             </div>
           </div>
         )}
 
-        {post.isLocked && <p className="text-sm text-[var(--muted-foreground)] italic">This post is locked. New comments are disabled.</p>}
+        {post.isLocked && <p style={{ fontSize: 12.5, color: 'var(--muted)', fontStyle: 'italic' }}>This post is locked. New comments are disabled.</p>}
 
         <div className="space-y-1">
           {renderComments('root', 0)}
@@ -545,33 +558,36 @@ export function AdminCommunity({ onBack }: { onBack?: () => void }) {
   return (
     <div className="space-y-6">
       {onBack && (
-        <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-          <ArrowLeft size={16} /> Back
+        <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+          <ArrowLeft size={14} /> Back
         </button>
       )}
 
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Manage Categories</h1>
-        <button
-          onClick={async () => {
-            const r = await seedDefaults();
-            showToast(`Seeded ${r.inserted} default categories`, 'success');
-          }}
-          className="px-4 py-2 border border-[var(--border)] rounded-xl text-sm"
-        >
-          Seed default categories
-        </button>
+      <div className="phead pwrap" style={{ marginBottom: 0 }}>
+        <h2>Manage Categories</h2>
+        <div className="actions">
+          <button
+            onClick={async () => {
+              const r = await seedDefaults();
+              showToast(`Seeded ${r.inserted} default categories`, 'success');
+            }}
+            className="btn-g"
+          >
+            Seed default categories
+          </button>
+        </div>
       </div>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 space-y-3">
-        <h2 className="font-semibold text-[var(--foreground)]">New Category</h2>
+      <div className="card space-y-3">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h4>New Category</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm" />
-          <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="slug" className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm" />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" style={atlasInput} />
+          <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="slug" style={atlasInput} />
         </div>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={2} className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm" />
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={2} style={atlasInput} />
         <div className="flex items-center gap-2">
-          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-9 w-14 rounded border border-[var(--border)]" />
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-9 w-14" style={{ border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)' }} />
           <button
             disabled={!name || !slug}
             onClick={async () => {
@@ -583,7 +599,7 @@ export function AdminCommunity({ onBack }: { onBack?: () => void }) {
               setName(''); setSlug(''); setDescription('');
               showToast('Category created', 'success');
             }}
-            className="px-4 py-2 bg-[var(--accent)] text-white rounded-xl text-sm font-medium disabled:opacity-50"
+            className="btn-a disabled:opacity-50"
           >
             Add Category
           </button>
@@ -592,18 +608,19 @@ export function AdminCommunity({ onBack }: { onBack?: () => void }) {
 
       <div className="space-y-2">
         {categories.map((c: any) => (
-          <div key={c.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex items-center gap-3">
-            <span className="w-3 h-3 rounded-full" style={{ background: c.color ?? '#888' }} />
+          <div key={c.id} className="inset flex items-center gap-3">
+            <span style={{ width: 8, height: 8, borderRadius: 1, flex: 'none', background: c.color ?? '#888' }} />
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[var(--foreground)] truncate">{c.name}</div>
-              <div className="text-xs text-[var(--muted-foreground)] truncate">{c.description}</div>
+              <div className="truncate" style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{c.name}</div>
+              <div className="truncate" style={{ fontSize: 11.5, color: 'var(--muted-2)' }}>{c.description}</div>
             </div>
             <button
               onClick={async () => {
                 if (!confirm(`Delete category "${c.name}"? Posts will remain but lose category.`)) return;
                 await deleteCategory({ id: c.id });
               }}
-              className="p-2 rounded-lg text-[var(--red)] hover:bg-[var(--red)]/10"
+              className="p-2"
+              style={{ color: 'var(--red)' }}
             >
               <Trash2 size={14} />
             </button>
@@ -647,17 +664,18 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (urls
   };
 
   return (
-    <div>
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Images (optional)</div>
+    <div className="field">
+      <label style={atlasLabel}>Images (optional)</label>
       <div className="flex flex-wrap gap-2">
         {images.map((url, i) => (
           <div key={i} className="relative group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt="" className="h-20 w-20 rounded-lg object-cover border border-[var(--border)]" />
+            <img src={url} alt="" className="h-20 w-20 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
             <button
               type="button"
               onClick={() => onChange(images.filter((_, j) => j !== i))}
-              className="absolute -top-1 -right-1 bg-[var(--red)] text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              style={{ background: 'var(--red)', color: 'var(--ink)' }}
             >
               <Trash2 size={10} />
             </button>
@@ -667,7 +685,8 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (urls
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="h-20 w-20 flex flex-col items-center justify-center gap-1 border border-dashed border-[var(--border)] rounded-lg text-xs text-[var(--muted-foreground)] hover:bg-[var(--muted)] disabled:opacity-50"
+          className="h-20 w-20 flex flex-col items-center justify-center gap-1 disabled:opacity-50"
+          style={{ border: '1px dashed var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', fontSize: 11.5, color: 'var(--muted-2)' }}
         >
           {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
           {busy ? 'Uploading' : 'Add'}

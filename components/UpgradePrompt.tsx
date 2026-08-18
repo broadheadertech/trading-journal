@@ -14,22 +14,29 @@ export default function UpgradePrompt({ requiredTier }: UpgradePromptProps) {
   const tierLabel = TIERS[requiredTier].label;
 
   return (
-    <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-[var(--muted)] flex items-center justify-center mb-5">
-        <Lock size={28} className="text-[var(--muted-foreground)]" />
-      </div>
-      <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">
-        {tierLabel} Plan Required
-      </h2>
-      <p className="text-sm text-[var(--muted-foreground)] mb-6 max-w-sm">
+    <div className="blank" style={{ minHeight: 380 }}>
+      <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+      <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+      <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+      <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+
+      <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+        <Lock size={24} style={{ color: 'var(--amber)' }} />
+      </span>
+
+      <h4>{tierLabel} Plan Required</h4>
+      <p style={{ maxWidth: 380 }}>
         This feature is available on the {tierLabel} plan and above. Upgrade to unlock it.
       </p>
+
       <button
         onClick={() => setPricingOpen(true)}
-        className="px-6 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
+        className="btn-a"
+        style={{ marginTop: 28 }}
       >
         View Plans
       </button>
+
       <PricingPlans open={pricingOpen} onClose={() => setPricingOpen(false)} />
     </div>
   );

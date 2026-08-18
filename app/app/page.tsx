@@ -421,7 +421,7 @@ function AppContent() {
   }
 
   return (
-    <>
+    <div className="atlas-dash">
       <input
         ref={importRef}
         type="file"
@@ -445,7 +445,7 @@ function AppContent() {
         onTimeRangeChange={setTimeRange}
         lastSyncedAt={lastSyncedAt}
       >
-        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <section className="page on">
           {activeTab === 'dashboard' && (
             <Dashboard
               trades={filteredTrades}
@@ -557,10 +557,10 @@ function AppContent() {
               <Tools />
             ) : <UpgradePrompt requiredTier={getRequiredTier('tools')} />
           )}
-        </main>
+        </section>
       </Sidebar>
 
-    </>
+    </div>
   );
 }
 

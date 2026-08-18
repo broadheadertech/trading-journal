@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import { Trade, Strategy, EmotionState, MarketType } from '@/lib/types';
@@ -199,189 +199,154 @@ export default function TradesLog({
   const handleDeleteConfirm = (id: string) => { onDelete(id); setDeleteConfirm(null); showToast('Trade deleted'); };
 
   return (
-    <div className="relative space-y-6 anim-fade-up">
-      <div className="hero-glow" />
+    <div>
 
       {/* ── Hero Section ── */}
-      <div className="glass rounded-2xl p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">
-              <Calendar size={12} /> Interactive Trade Journal
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3">Journal Every Trade With Click-to-Review Flow</h1>
-            <p className="text-[var(--muted-foreground)] text-sm max-w-2xl">
-              This is your interactive journal. Filter by behavior pattern, click any trade row, and open full root-cause review with notes, setup tags, emotions, and evidence.
-            </p>
-          </div>
-          <button onClick={() => setIsAddOpen(true)} disabled={usage.trades.isAtLimit}
-            className="flex items-center gap-2 px-5 py-2.5 text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] rounded-lg text-sm font-semibold transition-all disabled:opacity-50 shrink-0">
-            <Plus size={14} /> Add New Trade
-          </button>
-        </div>
-        <div className="flex gap-2 flex-wrap">
+      <div className="card pwrap" style={{ padding: '39px 28px 34px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <p style={{ margin: 0, fontWeight: 500, fontSize: '9.5px', color: 'var(--green)', letterSpacing: '.04em' }}>INTERACTIVE TRADE JOURNAL</p>
+        <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 28, lineHeight: '32px', margin: '20px 0 0' }}>
+          Journal Every Trade With Click-to-Review Flow
+        </h3>
+        <p style={{ margin: '22px 0 0', fontSize: '13.5px', lineHeight: '21px', color: 'var(--muted)', maxWidth: 640 }}>
+          This is your interactive journal. Filter by behavior pattern, click any trade row, and open full root-cause review with notes, setup tags, emotions, and evidence.
+        </p>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 28 }}>
           {['1. Use filters to isolate one pattern', '2. Click a trade to open review details', '3. Log lesson and move to next trade'].map((step, i) => (
-            <span key={i} className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-medium">{step}</span>
+            <span key={i} className="chip" style={{ height: 32 }}>{step}</span>
           ))}
         </div>
         {!usage.trades.isUnlimited && (
-          <div className="max-w-xs mt-4">
+          <div style={{ maxWidth: 292, marginTop: 32 }}>
             <UsageBar label="Trades" current={usage.trades.current} max={usage.trades.max} isUnlimited={false} />
           </div>
         )}
+        <button onClick={() => setIsAddOpen(true)} disabled={usage.trades.isAtLimit}
+          className="btn-a"
+          style={{ position: 'absolute', right: 28, top: 30, height: 47, padding: '0 22px', opacity: usage.trades.isAtLimit ? 0.5 : 1 }}>
+          <Plus size={14} /> Add New Trade
+        </button>
       </div>
 
       {/* ── Top 4 Stat Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Filtered Net P&L</p>
-            <TrendingUp size={14} className="text-[var(--muted-foreground)]" />
-          </div>
-          <p className={`text-2xl font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trades &middot; {metrics.winRate}% win rate &middot; Avg {formatCurrency(metrics.avgPnL)}</p>
+      <div className="stats" style={{ marginTop: 35 }}>
+        <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <b>FILTERED NET P&amp;L</b>
+          <em style={{ color: metrics.netPnL >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.netPnL)}</em>
+          <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
+            {metrics.total} trades · {metrics.winRate}% win rate · Avg {formatCurrency(metrics.avgPnL)}
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Review Coverage (Filtered)</p>
-            <Eye size={14} className="text-[var(--muted-foreground)]" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">{metrics.reviewCoverage}%</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.reviewed}/{metrics.total} reviewed &middot; Queue pressure {100 - metrics.reviewCoverage}%</p>
+        <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
+          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <b>REVIEW COVERAGE (FILTERED)</b>
+          <em style={{ color: 'var(--green)' }}>{metrics.reviewCoverage}%</em>
+          <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
+            {metrics.reviewed}/{metrics.total} reviewed · Queue pressure {100 - metrics.reviewCoverage}%
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Execution Queue (Filtered)</p>
-            <Clock size={14} className="text-[var(--muted-foreground)]" />
-          </div>
-          <p className="text-2xl font-bold text-yellow-400">{metrics.total - metrics.reviewed}</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Period pending {metrics.total - metrics.reviewed} &middot; Weekly progress {metrics.reviewCoverage}%</p>
+        <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>EXECUTION QUEUE (FILTERED)</b>
+          <em style={{ color: 'var(--amber)' }}>{metrics.total - metrics.reviewed}</em>
+          <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
+            Period pending {metrics.total - metrics.reviewed} · Weekly progress {metrics.reviewCoverage}%
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Process Health</p>
-            <Shield size={14} className="text-[var(--muted-foreground)]" />
-          </div>
-          <p className="text-2xl font-bold">{metrics.processHealth}</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Plan adherence &middot; Documentation {metrics.reviewCoverage}%</p>
+        <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
+          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <b>PROCESS HEALTH</b>
+          <em>{metrics.processHealth}</em>
+          <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
+            Plan adherence · Documentation {metrics.reviewCoverage}%
+          </small>
         </div>
       </div>
 
-      {/* ── Secondary Stats Row ──
-          Each card uses the same internal layout: a top label row with optional
-          icon/glyph, then a flex-1 block that vertically + horizontally centers
-          the value group. The grid stretches all cards to equal height, so this
-          keeps the primary value at the same eye-line across the row regardless
-          of whether the card has 1 line, 2 lines, or 3 lines of content. */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Period P&L</p>
-            <TrendingDown size={12} className="text-[var(--muted-foreground)]" />
-          </div>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className={`text-lg font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
-          </div>
+      {/* ── Secondary Stats Row ── */}
+      <div className="jstats">
+        <div className="jstat">
+          <b>PERIOD P&amp;L</b>
+          <em style={{ color: metrics.netPnL >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.netPnL)}</em>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Win Rate</p>
-            <span className="text-[10px] text-[var(--muted-foreground)]">%</span>
-          </div>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-lg font-bold">{metrics.winRate}%</p>
-          </div>
+        <div className="jstat">
+          <b>WIN RATE</b>
+          <em>{metrics.winRate}%</em>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Best Trade</p>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-sm font-bold">{metrics.bestTrade?.coin ?? '--'}</p>
-            {metrics.bestTrade && <p className="text-[10px] text-green-400">{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</p>}
-          </div>
+        <div className="jstat">
+          <b>BEST TRADE</b>
+          <em style={metrics.bestTrade ? undefined : { fontFamily: 'var(--display)', color: 'var(--muted)' }}>{metrics.bestTrade?.coin ?? '--'}</em>
+          {metrics.bestTrade && <small style={{ color: 'var(--green)' }}>{formatCurrency(metrics.bestTrade.actualPnL ?? 0)}</small>}
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Worst Trade</p>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-sm font-bold">{metrics.worstTrade?.coin ?? '--'}</p>
-            {metrics.worstTrade && <p className="text-[10px] text-red-400">{formatCurrency(metrics.worstTrade.actualPnL ?? 0)}</p>}
-          </div>
+        <div className="jstat">
+          <b>WORST TRADE</b>
+          <em style={metrics.worstTrade ? undefined : { fontFamily: 'var(--display)', color: 'var(--muted)' }}>{metrics.worstTrade?.coin ?? '--'}</em>
+          {metrics.worstTrade && <small style={{ color: 'var(--red)' }}>{formatCurrency(metrics.worstTrade.actualPnL ?? 0)}</small>}
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Avg R</p>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-lg font-bold">{metrics.avgR.toFixed(2)} <span className="text-xs text-[var(--muted-foreground)]">R:R</span></p>
-            <p className="text-[10px] text-[var(--muted-foreground)]">Avg win / avg loss</p>
-          </div>
+        <div className="jstat">
+          <b>AVG R</b>
+          <em>{metrics.avgR.toFixed(2)}</em>
+          <small>Avg win / avg loss</small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Fees + Funding</p>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-lg font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</p>
-          </div>
+        <div className="jstat">
+          <b>FEES + FUNDING</b>
+          <em>{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</em>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-col">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Lots/Qty/Size</p>
-          <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <p className="text-lg font-bold">{filtered.reduce((s, t) => s + t.capital, 0).toFixed(2)}</p>
-            <p className="text-[10px] text-[var(--muted-foreground)]">{metrics.total} trade{metrics.total !== 1 ? 's' : ''}</p>
-          </div>
+        <div className="jstat">
+          <b>LOTS/QTY/SIZE</b>
+          <em>{filtered.reduce((s, t) => s + t.capital, 0).toFixed(2)}</em>
+          <small>{metrics.total} trade{metrics.total !== 1 ? 's' : ''}</small>
         </div>
       </div>
 
       {/* ── Monthly Calendar ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Calendar size={20} />
-            <div>
-              <h2 className="text-xl font-bold">Monthly Calendar</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Independent from timeframe. Jump quickly between months.</p>
-            </div>
+      <div className="card" style={{ marginTop: 22, padding: '25px 28px 34px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
+          <Calendar size={16} style={{ marginTop: 4, color: 'var(--amber)', flex: 'none' }} />
+          <div>
+            <h3 style={{ fontSize: 17 }}>Monthly Calendar</h3>
+            <p className="sub">Independent from timeframe. Jump quickly between months.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setCalendarMonth(prev => subMonths(prev, 1))} className="p-1.5 rounded-lg hover:bg-[var(--muted)]"><ChevronLeft size={16} /></button>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button onClick={() => setCalendarMonth(prev => subMonths(prev, 1))} className="chip" style={{ height: 36, width: 36, padding: 0, justifyContent: 'center' }} aria-label="Previous month">
+              <ChevronLeft size={14} />
+            </button>
             <select value={calendarMonth.getMonth()} onChange={e => setCalendarMonth(new Date(calendarMonth.getFullYear(), parseInt(e.target.value), 1))}
-              className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm">
+              className="chip" style={{ height: 36, width: 110, appearance: 'none', color: '#c0ccda' }}>
               {Array.from({ length: 12 }, (_, i) => <option key={i} value={i}>{format(new Date(2024, i), 'MMMM')}</option>)}
             </select>
             <select value={calendarMonth.getFullYear()} onChange={e => setCalendarMonth(new Date(parseInt(e.target.value), calendarMonth.getMonth(), 1))}
-              className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm">
+              className="chip" style={{ height: 36, width: 88, appearance: 'none', color: '#c0ccda' }}>
               {Array.from({ length: 5 }, (_, i) => { const y = new Date().getFullYear() - 2 + i; return <option key={y} value={y}>{y}</option>; })}
             </select>
-            <button onClick={() => setCalendarMonth(prev => addMonths(prev, 1))} className="p-1.5 rounded-lg hover:bg-[var(--muted)]"><ChevronRight size={16} /></button>
+            <button onClick={() => setCalendarMonth(prev => addMonths(prev, 1))} className="chip" style={{ height: 36, width: 36, padding: 0, justifyContent: 'center' }} aria-label="Next month">
+              <ChevronRight size={14} />
+            </button>
           </div>
         </div>
-        <div className="inline-flex px-3 py-1 rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-medium mb-4">
-          {format(calendarMonth, 'MMMM yyyy')}
-        </div>
-        {/* Day headers */}
-        <div className="grid grid-cols-7 gap-1 mb-1">
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', height: 28, padding: '0 14px', borderRadius: 2, background: '#2a1f0a',
+          fontWeight: 700, fontSize: '11.5px', color: 'var(--amber)', marginTop: 28,
+        }}>{format(calendarMonth, 'MMMM yyyy')}</span>
+
+        <div className="jcal">
           {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(d => (
-            <div key={d} className="text-center text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] py-1">{d}</div>
+            <div key={d} className="dow">{d}</div>
           ))}
-        </div>
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-1">
           {calendarDays.map(({ day, dateStr, trades: dayTrades, pnl, inMonth }) => {
             const isToday = isSameDay(day, new Date());
             return (
-              <div key={dateStr}
-                className={`rounded-lg p-2 min-h-[70px] border transition-colors cursor-default ${
-                  !inMonth ? 'opacity-30 border-transparent' :
-                  isToday ? 'border-[var(--accent)] bg-[var(--accent)]/5' :
-                  dayTrades.length > 0 ? 'border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/30' :
-                  'border-[var(--border)]'
-                }`}>
-                <p className={`text-sm font-bold ${isToday ? 'text-[var(--accent)]' : ''}`}>{format(day, 'd')}</p>
-                {inMonth && (
+              <div key={dateStr} className={`day${inMonth ? '' : ' out'}${isToday ? ' today' : ''}`} style={{ height: 'auto', minHeight: 57 }}>
+                <b>{format(day, 'd')}</b>
+                {inMonth ? (
                   <>
-                    <p className={`text-[10px] font-bold ${pnl > 0 ? 'text-green-400' : pnl < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
-                      {formatCurrency(pnl)}
-                    </p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</p>
+                    <em style={{ color: pnl > 0 ? 'var(--green)' : pnl < 0 ? 'var(--red)' : 'var(--muted-2)' }}>{formatCurrency(pnl)}</em>
+                    <small>{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</small>
                   </>
+                ) : (
+                  <em>--</em>
                 )}
-                {!inMonth && <p className="text-[10px] text-[var(--muted-foreground)]">--</p>}
               </div>
             );
           })}
@@ -389,188 +354,180 @@ export default function TradesLog({
       </div>
 
       {/* ── Trade Journal + Sidebar ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+      <div className="split-2u" style={{ marginTop: 32 }}>
 
-        {/* Main: Trade Journal (3/4) */}
-        <div className="xl:col-span-3 space-y-4">
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold">Trade Journal</h2>
-                <p className="text-xs text-[var(--muted-foreground)]">Click any trade card to open full review, violations context, and evidence.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-lg bg-[var(--muted)] text-xs">{dayGroups.length} day groups &middot; {filtered.length}/{filtered.length} rows loaded</span>
-                {onBulkImport && (
-                  <button onClick={() => setShowImport(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg text-xs">
-                    <Upload size={12} /> Import
-                  </button>
-                )}
-              </div>
+        {/* Main: Trade Journal */}
+        <div className="card" style={{ padding: '36px 28px 30px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <h3 style={{ fontSize: 19 }}>Trade Journal</h3>
+              <p className="sub">Click any trade card to open full review, violations context, and evidence.</p>
             </div>
-            {/* Asset class filter */}
-            <div className="flex gap-1 mb-3 flex-wrap">
-              <button
-                onClick={() => setMarketFilter('all')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                  marketFilter === 'all' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
-              >All Assets</button>
-              {MARKET_TYPE_LIST.map(mt => {
-                const m = marketMeta(mt);
-                const active = marketFilter === mt;
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: '11.5px', color: 'var(--muted)' }}>
+                {dayGroups.length} day groups · {filtered.length}/{filtered.length} rows loaded
+              </span>
+              {onBulkImport && (
+                <button onClick={() => setShowImport(true)} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}>
+                  <Upload size={12} /> Import
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Asset class filter */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 44 }}>
+            <button onClick={() => setMarketFilter('all')} className={`chip${marketFilter === 'all' ? ' on' : ''}`} style={{ height: 32 }}>All Assets</button>
+            {MARKET_TYPE_LIST.map(mt => {
+              const m = marketMeta(mt);
+              const active = marketFilter === mt;
+              return (
+                <button key={mt} onClick={() => setMarketFilter(mt)} className={`chip${active ? ' on' : ''}`} style={{ height: 32 }}>
+                  <span>{m.icon}</span> {m.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* View toggle */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 12 }}>
+            <button onClick={() => setJournalView('day-cards')} className="chip"
+              style={journalView === 'day-cards'
+                ? { height: 32, borderColor: 'var(--amber)', color: 'var(--text)', fontWeight: 700 }
+                : { height: 32 }}>
+              <LayoutGrid size={13} /> Day Cards
+            </button>
+            <button onClick={() => setJournalView('timeline')} className="chip"
+              style={journalView === 'timeline'
+                ? { height: 32, borderColor: 'var(--amber)', color: 'var(--text)', fontWeight: 700 }
+                : { height: 32 }}>
+              <List size={13} /> Timeline
+            </button>
+          </div>
+
+          {/* Day groups */}
+          {dayGroups.length === 0 ? (
+            <p className="empty-line" style={{ marginTop: 40 }}>No closed trades in this period. Add your first trade to get started.</p>
+          ) : (
+            <div>
+              {dayGroups.map(group => {
+                const hidden = hiddenDays.has(group.date);
+                const winRate = group.trades.length > 0 ? Math.round((group.wins / group.trades.length) * 100) : 0;
                 return (
-                  <button
-                    key={mt}
-                    onClick={() => setMarketFilter(mt)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                      active ? 'bg-[var(--accent)] text-white' : `${m.colorClass} hover:opacity-80`
-                    }`}
-                  >
-                    <span>{m.icon}</span> {m.label}
-                  </button>
+                  <div key={group.date} className="daygroup">
+                    {/* Day header */}
+                    <div className="dh">
+                      <b>{group.date}</b>
+                      <span>{group.trades.length} trades</span>
+                      <em>
+                        Win rate {winRate}% · Wins {group.wins} · Losses {group.losses} · Size {group.totalSize.toFixed(2)}
+                        <b style={{ marginLeft: 16, color: group.pnl >= 0 ? 'var(--green)' : 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(group.pnl)}</b>
+                      </em>
+                      <button onClick={() => setHiddenDays(prev => { const n = new Set(prev); hidden ? n.delete(group.date) : n.add(group.date); return n; })}
+                        style={{ fontSize: '11px', color: 'var(--muted-2)' }}>
+                        {hidden ? 'Show' : 'Hide'}
+                      </button>
+                    </div>
+
+                    {/* Trade cards */}
+                    {!hidden && (
+                      <div style={{
+                        display: 'grid', gap: 12, marginTop: 12,
+                        gridTemplateColumns: journalView === 'day-cards' ? 'repeat(auto-fill,minmax(210px,1fr))' : '1fr',
+                      }}>
+                        {group.trades.map(trade => (
+                          <div key={trade.id} onClick={() => setDetailTrade(trade)}
+                            style={{
+                              border: '1px solid var(--line)', borderLeftWidth: 3,
+                              borderLeftColor: (trade.actualPnL ?? 0) >= 0 ? 'var(--green)' : 'var(--red)',
+                              borderRadius: 2, background: 'var(--panel-2)', padding: '14px 16px', cursor: 'pointer',
+                            }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                              <b style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15 }}>
+                                {trade.coin.length > 6 ? trade.coin.slice(0, 6) + '...' : trade.coin}
+                              </b>
+                              <MarketTypeBadge type={trade.marketType} />
+                              {trade.direction && (
+                                <span className="chip" style={{
+                                  height: 18, padding: '0 10px', fontWeight: 700, fontSize: '9px',
+                                  color: trade.direction === 'long' ? 'var(--green)' : 'var(--red)',
+                                  borderColor: 'currentColor', background: 'none',
+                                }}>{trade.direction === 'long' ? 'LONG' : 'SHORT'}</span>
+                              )}
+                              <span style={{
+                                marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 14,
+                                color: (trade.actualPnL ?? 0) >= 0 ? 'var(--green)' : 'var(--red)',
+                              }}>{formatCurrency(trade.actualPnL ?? 0)}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, fontSize: '10.5px', color: 'var(--muted-2)' }}>
+                              <span>{format(new Date(trade.createdAt), 'dd/MM')}</span>
+                              <span>{trade.capital.toFixed(2)} size</span>
+                              {trade.actualPnLPercent !== null && (
+                                <span style={{ color: trade.actualPnLPercent >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatPercent(trade.actualPnLPercent)}</span>
+                              )}
+                            </div>
+                            <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: 'var(--muted)' }}>{trade.strategy || 'No strategy'}</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                              {trade.tags.slice(0, 3).map(tag => (
+                                <span key={tag} className="chip" style={{ height: 20, padding: '0 10px', fontSize: '9.5px' }}>{tag}</span>
+                              ))}
+                              {trade.tags.length > 3 && <span style={{ fontSize: '9.5px', color: 'var(--muted-2)' }}>+{trade.tags.length - 3}</span>}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+                              {trade.verdict ? (
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '10px', fontWeight: 700, color: 'var(--green)' }}><Eye size={10} /> REVIEWED</span>
+                              ) : (
+                                <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--amber)' }}>PENDING REVIEW</span>
+                              )}
+                              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const next = trade.visibility === 'public' ? 'private' : 'public';
+                                    onUpdate(trade.id, { visibility: next })
+                                      .then(() => showToast(next === 'public' ? 'Trade is now public — visible on your profile' : 'Trade hidden from your profile', 'success'))
+                                      .catch((err: unknown) => showToast(err instanceof Error ? err.message : 'Failed to update visibility', 'error'));
+                                  }}
+                                  title={trade.visibility === 'public' ? 'Make this trade private' : 'Share this trade on your public profile'}
+                                  style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '10px', fontWeight: 700,
+                                    color: trade.visibility === 'public' ? 'var(--green)' : 'var(--muted-2)',
+                                  }}
+                                >
+                                  {trade.visibility === 'public' ? <><Globe size={10} /> PUBLIC</> : <><Lock size={10} /> PRIVATE</>}
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); setDetailTrade(trade); }}
+                                  style={{ fontSize: '11px', fontWeight: 700, color: 'var(--amber)', borderBottom: '1px solid var(--amber)', lineHeight: '14px' }}>
+                                  Open review
+                                </button>
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
-
-            {/* View toggle */}
-            <div className="flex gap-1 mb-4">
-              <button onClick={() => setJournalView('day-cards')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  journalView === 'day-cards' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                }`}><LayoutGrid size={14} /> Day Cards</button>
-              <button onClick={() => setJournalView('timeline')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  journalView === 'timeline' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                }`}><List size={14} /> Timeline</button>
-            </div>
-
-            {/* Day groups */}
-            {dayGroups.length === 0 ? (
-              <div className="py-12 text-center text-[var(--muted-foreground)] text-sm">
-                No closed trades in this period. Add your first trade to get started.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {dayGroups.map(group => {
-                  const hidden = hiddenDays.has(group.date);
-                  const winRate = group.trades.length > 0 ? Math.round((group.wins / group.trades.length) * 100) : 0;
-                  return (
-                    <div key={group.date}>
-                      {/* Day header */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <p className="text-sm font-bold">{group.date}</p>
-                          <span className="px-2 py-0.5 rounded text-[10px] bg-[var(--muted)] text-[var(--muted-foreground)]">{group.trades.length} trades</span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <p className="text-xs text-[var(--muted-foreground)]">
-                            Win rate {winRate}% &middot; Wins {group.wins} &middot; Losses {group.losses} &middot; Size {group.totalSize.toFixed(2)}
-                          </p>
-                          <p className={`text-sm font-bold ${group.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(group.pnl)}</p>
-                          <button onClick={() => setHiddenDays(prev => { const n = new Set(prev); hidden ? n.delete(group.date) : n.add(group.date); return n; })}
-                            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                            {hidden ? 'Show' : 'Hide'}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Trade cards */}
-                      {!hidden && (
-                        <div className={`grid gap-3 ${journalView === 'day-cards' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                          {group.trades.map(trade => (
-                            <div key={trade.id} onClick={() => setDetailTrade(trade)}
-                              className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 cursor-pointer hover:border-[var(--accent)]/30 transition-colors">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className="text-sm font-bold">{trade.coin.length > 6 ? trade.coin.slice(0, 6) + '...' : trade.coin}</p>
-                                  <MarketTypeBadge type={trade.marketType} />
-                                  {trade.direction && (
-                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                                      trade.direction === 'long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                                    }`}>{trade.direction === 'long' ? 'Long' : 'Short'}</span>
-                                  )}
-                                </div>
-                                <p className={`text-sm font-bold ${(trade.actualPnL ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                  {formatCurrency(trade.actualPnL ?? 0)}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3 text-[10px] text-[var(--muted-foreground)] mb-2">
-                                <span>{format(new Date(trade.createdAt), 'dd/MM')}</span>
-                                <span>{trade.capital.toFixed(2)} size</span>
-                                {trade.actualPnLPercent !== null && <span className={trade.actualPnLPercent >= 0 ? 'text-green-400' : 'text-red-400'}>{formatPercent(trade.actualPnLPercent)}</span>}
-                              </div>
-                              <p className="text-xs text-[var(--muted-foreground)] mb-2">{trade.strategy || 'No strategy'}</p>
-                              <div className="flex flex-wrap gap-1 mb-2">
-                                {trade.tags.slice(0, 3).map(tag => (
-                                  <span key={tag} className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]">{tag}</span>
-                                ))}
-                                {trade.tags.length > 3 && <span className="text-[10px] text-[var(--muted-foreground)]">+{trade.tags.length - 3}</span>}
-                              </div>
-                              <div className="flex items-center justify-between">
-                                {trade.verdict ? (
-                                  <span className="flex items-center gap-1 text-[10px] text-green-400"><Eye size={10} /> Reviewed</span>
-                                ) : (
-                                  <span className="text-[10px] text-yellow-400">Pending review</span>
-                                )}
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      const next = trade.visibility === 'public' ? 'private' : 'public';
-                                      onUpdate(trade.id, { visibility: next })
-                                        .then(() => showToast(next === 'public' ? 'Trade is now public — visible on your profile' : 'Trade hidden from your profile', 'success'))
-                                        .catch((err: unknown) => showToast(err instanceof Error ? err.message : 'Failed to update visibility', 'error'));
-                                    }}
-                                    title={trade.visibility === 'public' ? 'Make this trade private' : 'Share this trade on your public profile'}
-                                    className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded transition-colors ${
-                                      trade.visibility === 'public'
-                                        ? 'bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25'
-                                        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                                    }`}
-                                  >
-                                    {trade.visibility === 'public' ? <><Globe size={10} /> Public</> : <><Lock size={10} /> Private</>}
-                                  </button>
-                                  <button onClick={(e) => { e.stopPropagation(); setDetailTrade(trade); }}
-                                    className="text-[10px] text-[var(--accent)] hover:underline">Open review</button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* ── Right Sidebar (1/4) ── */}
-        <div className="space-y-4">
+        {/* ── Right Sidebar ── */}
+        <div>
           {/* Review Queue Focus */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1 rounded bg-green-500/20"><Eye size={14} className="text-green-400" /></div>
-              <h3 className="text-sm font-bold">Review Queue Focus</h3>
+          <div className="card" style={{ padding: '24px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Eye size={14} style={{ color: 'var(--green)', flex: 'none' }} />
+              <h4>Review Queue Focus</h4>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">Pending in view</p>
-                <span className="text-xs font-bold text-red-400">{metrics.total - metrics.reviewed}</span>
-              </div>
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">Unknown side</p>
-                <span className="text-xs font-bold text-red-400">{filtered.filter(t => !t.direction).length}</span>
-              </div>
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">High-fee trades</p>
-                <span className="text-xs font-bold text-red-400">0</span>
-              </div>
-            </div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mt-3 mb-1">Top Pending Symbols</p>
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="qrow">Pending in view<em style={{ color: 'var(--amber)' }}>{metrics.total - metrics.reviewed}</em></div>
+            <div className="qrow">Unknown side<em style={{ color: 'var(--amber)' }}>{filtered.filter(t => !t.direction).length}</em></div>
+            <div className="qrow">High-fee trades<em style={{ color: 'var(--amber)' }}>0</em></div>
+            <p className="lbl b95" style={{ marginTop: 26 }}>TOP PENDING SYMBOLS</p>
+          </div>
+          <div className="card" style={{ marginTop: 14, padding: '16px 18px' }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
               {filtered.filter(t => !t.verdict).length === 0
                 ? 'No pending clusters in current filters.'
                 : `${[...new Set(filtered.filter(t => !t.verdict).map(t => t.coin))].slice(0, 3).join(', ')} pending`}
@@ -578,67 +535,53 @@ export default function TradesLog({
           </div>
 
           {/* Process Diagnostics */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={14} className="text-[var(--accent)]" />
-              <h3 className="text-sm font-bold">Process Diagnostics</h3>
+          <div className="card" style={{ marginTop: 25, padding: '22px 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Sparkles size={14} style={{ color: 'var(--amber)', flex: 'none' }} />
+              <h4>Process Diagnostics</h4>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">Current streak</p>
-                <span className="text-xs font-bold">0 days</span>
-              </div>
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">Average review rating</p>
-                <span className="text-xs font-bold">--/5</span>
-              </div>
-              <div className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2">
-                <p className="text-xs">Cost drag (fees+funding)</p>
-                <span className="text-xs font-bold">{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</span>
-              </div>
-            </div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mt-3 mb-1">Setup Quality</p>
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="qrow">Current streak<em>0 days</em></div>
+            <div className="qrow">Average review rating<em style={{ color: 'var(--muted)' }}>--/5</em></div>
+            <div className="qrow">Cost drag (fees+funding)<em>{formatCurrency(filtered.reduce((s, t) => s + (t.fees ?? 0) + (t.funding ?? 0), 0))}</em></div>
+            <p className="lbl b95" style={{ marginTop: 24 }}>SETUP QUALITY</p>
+            <p style={{ margin: '9px 0 0', fontSize: '11.5px', color: 'var(--muted)' }}>
               {metrics.total < 5 ? 'Not enough setup sample yet. Add more reviewed trades to rank setup quality.' : `${metrics.processHealth}% process health across ${metrics.total} trades.`}
             </p>
           </div>
 
           {/* Patterns Discovered */}
-          <div className="bg-[var(--card)] border border-[var(--accent)]/20 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles size={14} className="text-[var(--accent)]" />
-              <h3 className="text-sm font-bold">Patterns Discovered</h3>
+          <div className="card" style={{ marginTop: 22, padding: '22px 18px' }}>
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Sparkles size={14} style={{ color: 'var(--amber)', flex: 'none' }} />
+              <h4>Patterns Discovered</h4>
             </div>
-            <p className="text-xs text-[var(--muted-foreground)] mb-3">Insights based on your trades in the selected period</p>
+            <p style={{ margin: '12px 0 0', fontSize: 12, color: 'var(--muted-2)' }}>Insights based on your trades in the selected period</p>
             {patterns.length === 0 ? (
-              <p className="text-xs text-[var(--muted-foreground)]">Not enough data to detect patterns yet.</p>
+              <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--muted)' }}>Not enough data to detect patterns yet.</p>
             ) : (
-              <div className="space-y-3">
-                {patterns.map((p, i) => (
-                  <div key={i} className={`rounded-xl p-3 border-l-2 ${
-                    p.color === 'green' ? 'border-green-400 bg-green-500/5' :
-                    p.color === 'red' ? 'border-red-400 bg-red-500/5' :
-                    'border-cyan-400 bg-fuchsia-500/5'
-                  }`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className={`text-sm font-bold ${
-                        p.color === 'green' ? 'text-green-400' : p.color === 'red' ? 'text-red-400' : 'text-fuchsia-400'
-                      }`}>{p.name}</p>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        p.winRate >= 50 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                      }`}>{p.winRate}% Win</span>
-                    </div>
-                    <p className="text-xs text-[var(--muted-foreground)] mb-2">Net {formatCurrency(p.net)} across {p.count} trades.</p>
-                    <div className="flex items-center justify-between">
-                      <div className="h-1.5 flex-1 rounded-full bg-[var(--card)] overflow-hidden mr-3">
-                        <div className={`h-full rounded-full ${
-                          p.color === 'green' ? 'bg-green-400' : p.color === 'red' ? 'bg-red-400' : 'bg-fuchsia-400'
-                        }`} style={{ width: `${p.share}%` }} />
+              <div>
+                {patterns.map((p, i) => {
+                  const tone = p.color === 'green' ? 'var(--green)' : p.color === 'red' ? 'var(--red)' : 'var(--teal)';
+                  return (
+                    <div key={i} className="inset" style={{ marginTop: 12, borderLeft: `3px solid ${tone}`, padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <b style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '12.5px', color: tone }}>{p.name}</b>
+                        <span style={{
+                          marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '10.5px',
+                          color: p.winRate >= 50 ? 'var(--green)' : 'var(--red)',
+                        }}>{p.winRate}% Win</span>
                       </div>
-                      <span className="text-[10px] text-[var(--muted-foreground)]">Share {p.share}%</span>
+                      <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: 'var(--muted)' }}>Net {formatCurrency(p.net)} across {p.count} trades.</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10 }}>
+                        <span style={{ flex: 1, height: 2, background: 'var(--rail)', display: 'block' }}>
+                          <i style={{ display: 'block', width: `${p.share}%`, height: 2, background: tone }} />
+                        </span>
+                        <span style={{ fontSize: '10px', color: 'var(--muted-2)' }}>Share {p.share}%</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -669,10 +612,11 @@ export default function TradesLog({
 
       {/* ── Delete Confirmation ── */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Trade" size="sm">
-        <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure? This cannot be undone.</p>
-        <div className="flex justify-end gap-3">
-          <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-white rounded-lg">Delete</button>
+        <p style={{ margin: '0 0 20px', fontSize: '12.5px', color: 'var(--muted)' }}>Are you sure? This cannot be undone.</p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+          <button onClick={() => setDeleteConfirm(null)} className="btn-g" style={{ height: 36 }}>Cancel</button>
+          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="btn-a"
+            style={{ height: 36, background: 'var(--red)', color: '#fff' }}>Delete</button>
         </div>
       </Modal>
     </div>

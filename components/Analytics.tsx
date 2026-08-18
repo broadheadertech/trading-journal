@@ -232,13 +232,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   // formatCurrency already prepends '+' for positives and '-' for negatives —
   // calling it on the raw value avoids the double-sign bug ('-+$X.XX').
   const fmtPnl = (v: number) => formatCurrency(v);
-  const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
+  const pnlColor = (v: number) => v > 0 ? 'text-[var(--green)]' : v < 0 ? 'text-[var(--red)]' : 'text-[var(--muted)]';
   const barMaxAbs = Math.max(...m.sessionData.map(s => Math.abs(s.pnl)), 1);
 
   if (showMetrics) {
     return (
       <div>
-        <button onClick={() => setShowMetrics(false)} className="mb-4 flex items-center gap-1 text-sm text-[var(--accent)] hover:text-[var(--accent-hover)]">
+        <button onClick={() => setShowMetrics(false)} className="viewall" style={{ marginLeft: 0, marginBottom: 16 }}>
           <ChevronLeft size={16} /> Back to Performance
         </button>
         <PerformanceMetrics trades={trades} initialCapital={initialCapital} />
@@ -247,407 +247,427 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   }
 
   return (
-    <div className="relative space-y-5 anim-fade-up">
-      <div className="hero-glow" />
+    <div className="pwrap">
       {/* ── Header ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center shrink-0">
-              <TrendingDown size={24} className="text-[var(--accent)]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">Performance Command Center</h1>
-              <p className="text-sm text-[var(--muted-foreground)] mt-1">One page to diagnose outcome quality, identify drag sources, and prioritize the next execution change.</p>
-            </div>
+      <div className="phead" style={{ marginBottom: 26 }}>
+        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
+          <TrendingDown size={12} /> Performance Command Center
+        </p>
+        <h2>Performance Command Center</h2>
+        <p className="sub">One page to diagnose outcome quality, identify drag sources, and prioritize the next execution change.</p>
+      </div>
+
+      <div className="card" style={{ padding: '19px 24px 20px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h4>How to Use</h4>
+            <p className="sub sm">Work top-down; change one thing at a time.</p>
           </div>
-          <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 rounded-xl p-4 shrink-0">
-            <div className="text-xs font-semibold text-[var(--accent)] uppercase tracking-wider mb-2">How to Use</div>
-            <ol className="text-xs text-[var(--foreground)] space-y-1">
-              <li>1. Validate net and drawdown first.</li>
-              <li>2. Check symbol/session/duration drivers.</li>
-              <li>3. Execute one top action for 5-7 sessions.</li>
-            </ol>
-          </div>
+          <button onClick={() => setShowMetrics(true)} className="viewall">
+            <BarChart3 size={14} /> 50+ Metrics <ArrowRight size={12} />
+          </button>
+        </div>
+        <div className="klist num" style={{ marginTop: 14 }}>
+          <div><b>1</b><span>Validate net and drawdown first.</span></div>
+          <div><b>2</b><span>Check symbol/session/duration drivers.</span></div>
+          <div><b>3</b><span>Execute one top action for 5-7 sessions.</span></div>
         </div>
       </div>
 
-      {/* ── Metrics shortcut ── */}
-      <div className="flex items-center justify-end gap-2">
-        <button onClick={() => setShowMetrics(true)} className="flex items-center gap-1 text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium shrink-0">
-          <BarChart3 size={14} /> <span className="hidden sm:inline">50+ Metrics</span> <ArrowRight size={12} />
-        </button>
-      </div>
-
       {/* ── Outcome Snapshot + Action Priority ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <Activity size={20} className="text-[var(--muted-foreground)]" />
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,360px)] gap-6 items-start mt-6">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Outcome Snapshot</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Current result vs realistic recovery from detected leaks</p>
+              <h3>Outcome Snapshot</h3>
+              <p className="sub">Current result vs realistic recovery from detected leaks</p>
+            </div>
+            <Activity size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+          </div>
+          <div className="nba">
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              <p className="lbl">CURRENT NET</p>
+              <em className={pnlColor(m.totalPnL)}>{fmtPnl(m.totalPnL)}</em>
+              <small>Realized result for selected range</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--green)' }} />
+              <p className="lbl">RECOVERABLE LEAK DRAG</p>
+              <em style={{ color: 'var(--green)' }}>{formatCurrency(m.leakAmount.conservative)}</em>
+              <small>{initialCapital > 0 ? `${((m.leakAmount.conservative / Math.abs(m.totalPnL || 1)) * 100).toFixed(1)}% of current net magnitude` : 'Set initial capital for %'}</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--red)' }} />
+              <p className="lbl">PROJECTED NET AFTER FIXES</p>
+              <em className={pnlColor(m.projectedPnL)}>{fmtPnl(m.projectedPnL)}</em>
+              <small>{m.leakAmount.conservative > 0 ? 'Low confidence' : 'No leaks detected'}</small>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-[var(--muted)]/50 border border-[var(--border)] rounded-xl px-4 py-3">
-              <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Current Net</div>
-              <div className={`text-lg font-bold ${pnlColor(m.totalPnL)}`}>{fmtPnl(m.totalPnL)}</div>
-              <div className="text-[10px] text-[var(--muted-foreground)]">Realized result for selected range</div>
-            </div>
-            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3">
-              <div className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">Recoverable Leak Drag</div>
-              <div className="text-lg font-bold text-emerald-400">{formatCurrency(m.leakAmount.conservative)}</div>
-              <div className="text-[10px] text-[var(--muted-foreground)]">{initialCapital > 0 ? `${((m.leakAmount.conservative / Math.abs(m.totalPnL || 1)) * 100).toFixed(1)}% of current net magnitude` : 'Set initial capital for %'}</div>
-            </div>
-            <div className="bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3">
-              <div className="text-[10px] text-red-400 uppercase tracking-wider font-semibold">Projected Net After Fixes</div>
-              <div className={`text-lg font-bold ${pnlColor(m.projectedPnL)}`}>{fmtPnl(m.projectedPnL)}</div>
-              <div className="text-[10px] text-[var(--muted-foreground)]">{m.leakAmount.conservative > 0 ? 'Low confidence' : 'No leaks detected'}</div>
-            </div>
-          </div>
-          <div className="text-[10px] text-[var(--muted-foreground)] bg-[var(--muted)]/30 rounded-lg px-3 py-2">
-            Gross detected leak burden: <span className="text-red-400">{formatCurrency(m.leakAmount.gross)}</span> &bull;
-            Overlap-adjusted: <span className="text-amber-400">{formatCurrency(m.leakAmount.overlap)}</span> &bull;
-            Conservative recovery: <span className="text-emerald-400">{formatCurrency(m.leakAmount.conservative)}</span>
+          <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', lineHeight: '18px' }}>
+            <span>
+              Gross detected leak burden: <span style={{ color: 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.gross)}</span> &bull;
+              Overlap-adjusted: <span style={{ color: 'var(--amber)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.overlap)}</span> &bull;
+              Conservative recovery: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.conservative)}</span>
+            </span>
           </div>
         </div>
 
         {/* Action Priority */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <Target size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Action Priority</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Execute one change at a time</p>
+              <h3>Action Priority</h3>
+              <p className="sub">Execute one change at a time</p>
             </div>
+            <Target size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
           </div>
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
             {m.actions.map((a, i) => (
-              <div key={i} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
-                <div className="text-[10px] text-[var(--accent)] uppercase tracking-wider font-semibold mb-1">Action {i + 1}</div>
-                <div className="text-sm font-semibold text-[var(--foreground)]">{a.title}</div>
-                <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{a.description}</p>
+              <div key={i} className="inset" style={{ position: 'relative', padding: '13px 16px' }}>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: 'var(--amber)' }} />
+                <p className="lbl" style={{ color: 'var(--amber)' }}>ACTION {i + 1}</p>
+                <p style={{ margin: '9px 0 0', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{a.title}</p>
+                <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>{a.description}</p>
               </div>
             ))}
           </div>
-          <button className="mt-4 w-full py-2.5 bg-fuchsia-500 hover:bg-fuchsia-400 text-black rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+          <button className="btn-a" style={{ width: '100%', marginTop: 16 }}>
             Open Detailed Verdicts <ChevronRight size={14} />
           </button>
         </div>
       </div>
 
       {/* ── Stat Cards Row ── */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+      <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', marginTop: 24 }}>
         {[
-          { label: 'Net P&L', icon: '$', value: fmtPnl(m.totalPnL), sub: 'Realized outcome', color: pnlColor(m.totalPnL) },
-          { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--foreground)]' },
-          { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-emerald-400' : 'text-red-400' },
-          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400' },
-          { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-red-400' },
-          { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--foreground)]' },
+          { label: 'Net P&L', icon: '$', value: fmtPnl(m.totalPnL), sub: 'Realized outcome', color: pnlColor(m.totalPnL), accent: 'var(--green)' },
+          { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--text)]', accent: 'var(--teal)' },
+          { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--amber)' },
+          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--pink)' },
+          { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-[var(--red)]', accent: 'var(--red)' },
+          { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--text)]', accent: 'var(--teal)' },
         ].map(card => (
-          <div key={card.label} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-medium">{card.label}</span>
-              <span className="text-[var(--muted-foreground)]">{card.icon}</span>
+          <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
+            <span className="accent" style={{ background: card.accent }} />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <b>{card.label.toUpperCase()}</b>
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}>{card.icon}</span>
             </div>
-            <div className={`text-xl font-bold ${card.color}`}>{card.value}</div>
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-1">{card.sub}</div>
+            <em className={card.color} style={{ fontSize: 22, lineHeight: '28px' }}>{card.value}</em>
+            <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{card.sub}</small>
           </div>
         ))}
       </div>
 
       {/* ── Equity Trajectory & Fix Projection ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-1">
-            <TrendingUp size={20} className="text-[var(--muted-foreground)]" />
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,320px)] gap-6 items-start mt-6">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Equity Trajectory & Fix Projection</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Validate whether process changes are improving slope and reducing drawdown</p>
+              <h3>Equity Trajectory &amp; Fix Projection</h3>
+              <p className="sub">Validate whether process changes are improving slope and reducing drawdown</p>
             </div>
+            <TrendingUp size={16} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
           </div>
           {m.equityData.length > 1 ? (
-            <div className="h-[280px] mt-4">
+            <div style={{ height: 280, marginTop: 20 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={m.equityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#24c88a" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#24c88a" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                  <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', color: 'var(--foreground)' }} formatter={(v: unknown) => [formatCurrency(v as number), 'Equity']} />
-                  <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#eqGrad)" dot={false} isAnimationActive={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#182432" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#7f8ea3' }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#7f8ea3' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <Tooltip contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7' }} formatter={(v: unknown) => [formatCurrency(v as number), 'Equity']} />
+                  <Area type="monotone" dataKey="pnl" stroke="#24c88a" strokeWidth={2} fill="url(#eqGrad)" dot={false} isAnimationActive={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          ) : <div className="h-[280px] flex items-center justify-center text-sm text-[var(--muted-foreground)]">Need 2+ closed trades</div>}
+          ) : (
+            <div className="plot"><span className="empty">Need 2+ closed trades</span></div>
+          )}
         </div>
-        <div className="space-y-4">
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Current vs Projected</div>
-            <div className="flex items-center gap-2 text-sm">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <p className="lbl">CURRENT VS PROJECTED</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, fontFamily: 'var(--mono)', fontSize: 14 }}>
               <span className={pnlColor(m.totalPnL)}>{fmtPnl(m.totalPnL)}</span>
-              <ArrowRight size={14} className="text-[var(--muted-foreground)]" />
+              <ArrowRight size={14} style={{ color: 'var(--muted-3)' }} />
               <span className={pnlColor(m.projectedPnL)}>{fmtPnl(m.projectedPnL)}</span>
             </div>
-            <div className="text-xs text-[var(--muted-foreground)] mt-1">
-              Modeled improvement: <span className="text-emerald-400">{formatCurrency(m.leakAmount.conservative)}</span>
-            </div>
+            <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
+              Modeled improvement: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.conservative)}</span>
+            </p>
           </div>
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Session Signal</div>
-            <div className="text-xs text-[var(--foreground)]">
-              Best: <span className="text-emerald-400 font-semibold">{m.bestSession?.label}</span> ({fmtPnl(m.bestSession?.pnl ?? 0)})
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <p className="lbl">SESSION SIGNAL</p>
+            <div className="mrow" style={{ marginTop: 10 }}>
+              <span className="lb" style={{ marginLeft: 0 }}>Best · {m.bestSession?.label}</span>
+              <span className="val" style={{ color: 'var(--green)' }}>{fmtPnl(m.bestSession?.pnl ?? 0)}</span>
             </div>
-            <div className="text-xs text-[var(--foreground)] mt-1">
-              Worst: <span className="text-red-400 font-semibold">{m.worstSession?.label}</span> ({fmtPnl(m.worstSession?.pnl ?? 0)})
+            <div className="mrow">
+              <span className="lb" style={{ marginLeft: 0 }}>Worst · {m.worstSession?.label}</span>
+              <span className="val" style={{ color: 'var(--red)' }}>{fmtPnl(m.worstSession?.pnl ?? 0)}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Symbol Leaders & Session Diagnostics ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="split" style={{ marginTop: 24 }}>
         {/* Symbol Leaders & Drags */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <Clock size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Symbol Leaders & Drags</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Where edge is concentrated vs leaking</p>
+              <h3>Symbol Leaders &amp; Drags</h3>
+              <p className="sub">Where edge is concentrated vs leaking</p>
             </div>
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 24, marginTop: 22 }}>
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs text-[var(--muted-foreground)] uppercase">Top Symbols</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold">Edge</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 6 }}>
+                <span className="lbl">TOP SYMBOLS</span>
+                <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)', borderColor: 'var(--line)' }}>EDGE</span>
               </div>
               {m.topSymbols.length > 0 ? m.topSymbols.slice(0, 5).map(c => (
-                <div key={c.coin} className="flex items-center justify-between py-1.5 border-b border-[var(--border)] last:border-0">
+                <div key={c.coin} className="mrow">
                   <div>
-                    <div className="text-sm font-medium text-[var(--foreground)]">{c.coin}</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">{c.total} trades &bull; {c.winRate}% &bull; avg {fmtPnl(c.avgPnl)}</div>
+                    <div style={{ fontWeight: 700, color: 'var(--text)' }}>{c.coin}</div>
+                    <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 3 }}>{c.total} trades &bull; {c.winRate}% &bull; avg {fmtPnl(c.avgPnl)}</div>
                   </div>
-                  <span className={`text-sm font-semibold ${pnlColor(c.pnl)}`}>{fmtPnl(c.pnl)}</span>
+                  <span className="val" style={{ color: c.pnl > 0 ? 'var(--green)' : c.pnl < 0 ? 'var(--red)' : 'var(--muted)' }}>{fmtPnl(c.pnl)}</span>
                 </div>
-              )) : <p className="text-xs text-[var(--muted-foreground)]">No positive symbol edge detected in this range.</p>}
+              )) : <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No positive symbol edge detected in this range.</p>}
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs text-[var(--muted-foreground)] uppercase">Weak Symbols</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 font-semibold">Leak</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 6 }}>
+                <span className="lbl">WEAK SYMBOLS</span>
+                <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--red)', borderColor: 'var(--line)' }}>LEAK</span>
               </div>
               {m.weakSymbols.length > 0 ? m.weakSymbols.slice(0, 5).map(c => (
-                <div key={c.coin} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2 mb-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-[var(--foreground)]">{c.coin}</span>
-                    <span className={`text-sm font-semibold ${pnlColor(c.pnl)}`}>{fmtPnl(c.pnl)}</span>
+                <div key={c.coin} className="inset" style={{ padding: '10px 14px', marginTop: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{c.coin}</span>
+                    <span className={`${pnlColor(c.pnl)}`} style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 12.5 }}>{fmtPnl(c.pnl)}</span>
                   </div>
-                  <div className="text-[10px] text-[var(--muted-foreground)]">{c.total} trades &bull; {c.winRate}% &bull; avg {fmtPnl(c.avgPnl)}</div>
+                  <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 4 }}>{c.total} trades &bull; {c.winRate}% &bull; avg {fmtPnl(c.avgPnl)}</div>
                 </div>
-              )) : <p className="text-xs text-[var(--muted-foreground)]">No weak symbols detected.</p>}
+              )) : <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No weak symbols detected.</p>}
             </div>
           </div>
         </div>
 
         {/* Session & Hourly Diagnostics */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <Clock size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Session & Hourly Diagnostics</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Timing quality and trade concentration by UTC window</p>
+              <h3>Session &amp; Hourly Diagnostics</h3>
+              <p className="sub">Timing quality and trade concentration by UTC window</p>
             </div>
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
           </div>
-          <div className="space-y-2 mb-4">
+          <div style={{ marginTop: 20 }}>
             {m.sessionData.map(s => (
-              <div key={s.label} className="flex items-center gap-2 sm:gap-3">
-                <div className="w-20 sm:w-24 shrink-0">
-                  <div className="text-xs sm:text-sm font-medium text-[var(--foreground)]">{s.label}</div>
-                  <div className="text-[9px] sm:text-[10px] text-[var(--muted-foreground)]">{s.time}</div>
+              <div key={s.label} className="mrow">
+                <div style={{ width: 104, flex: 'none' }}>
+                  <div style={{ fontWeight: 700, color: 'var(--text)' }}>{s.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted-2)', marginTop: 3 }}>{s.time}</div>
                 </div>
-                <div className="flex-1">
-                  <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${s.pnl >= 0 ? 'bg-emerald-500' : 'bg-red-500'}`}
-                      style={{ width: `${Math.min((Math.abs(s.pnl) / barMaxAbs) * 100, 100)}%` }}
+                <div style={{ flex: 1, margin: '0 14px' }}>
+                  <div style={{ height: 4, background: 'var(--rail)' }}>
+                    <i
+                      style={{
+                        display: 'block', height: 4,
+                        background: s.pnl >= 0 ? 'var(--green)' : 'var(--red)',
+                        width: `${Math.min((Math.abs(s.pnl) / barMaxAbs) * 100, 100)}%`,
+                      }}
                     />
                   </div>
                 </div>
-                <span className={`text-xs sm:text-sm font-semibold shrink-0 w-16 sm:w-24 text-right ${pnlColor(s.pnl)}`}>
-                  {fmtPnl(s.pnl)}
-                </span>
+                <span className="val" style={{ width: 92, textAlign: 'right', color: s.pnl > 0 ? 'var(--green)' : s.pnl < 0 ? 'var(--red)' : 'var(--muted)' }}>{fmtPnl(s.pnl)}</span>
               </div>
             ))}
           </div>
           {m.hourlyData.some(h => h.pnl !== 0) && (
-            <div className="h-[160px]">
+            <div style={{ height: 160, marginTop: 18 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={m.hourlyData}>
-                  <XAxis dataKey="hour" tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                  <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} formatter={(v: unknown) => [formatCurrency(v as number), 'P&L']} />
+                  <XAxis dataKey="hour" tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <Tooltip contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '11px', color: '#edf2f7' }} formatter={(v: unknown) => [formatCurrency(v as number), 'P&L']} />
                   <Bar dataKey="pnl" radius={[2, 2, 0, 0]}>
                     {m.hourlyData.map((d, i) => (
-                      <rect key={i} fill={d.pnl >= 0 ? '#22c55e' : '#ef4444'} />
+                      <rect key={i} fill={d.pnl >= 0 ? '#24c88a' : '#ff4d5e'} />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           )}
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-2">
+          <p className="footnote" style={{ marginTop: 14, textAlign: 'left' }}>
             Hourly coverage: {m.closed.length} trades ({m.closed.length > 0 ? '100.0' : '0'}% of sample)
-          </div>
+          </p>
         </div>
       </div>
 
       {/* ── Hold Profile + Size & Cost ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <Clock size={20} className="text-[var(--muted-foreground)]" />
+      <div className="split" style={{ marginTop: 24 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Hold Profile Quality</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Which hold durations create or destroy P&L</p>
+              <h3>Hold Profile Quality</h3>
+              <p className="sub">Which hold durations create or destroy P&amp;L</p>
             </div>
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
           </div>
-          <div className="space-y-2">
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {m.holdData.map(h => {
               const maxPnl = Math.max(...m.holdData.map(d => Math.abs(d.pnl)), 1);
               return (
-                <div key={h.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-4 py-2.5 flex items-center gap-3">
-                  <div className="w-24 sm:w-36 shrink-0">
-                    <div className="text-xs sm:text-sm font-medium text-[var(--foreground)]">{h.label}</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">{h.count} trades</div>
+                <div key={h.label} className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 16px' }}>
+                  <div style={{ width: 128, flex: 'none' }}>
+                    <div style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{h.label}</div>
+                    <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 3 }}>{h.count} trades</div>
                   </div>
-                  <div className="flex-1">
-                    <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
-                      <div className={`h-full rounded-full ${h.pnl >= 0 ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${(Math.abs(h.pnl) / maxPnl) * 100}%` }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ height: 4, background: 'var(--rail)' }}>
+                      <i style={{ display: 'block', height: 4, background: h.pnl >= 0 ? 'var(--green)' : 'var(--red)', width: `${(Math.abs(h.pnl) / maxPnl) * 100}%` }} />
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold shrink-0 ${pnlColor(h.pnl)}`}>{fmtPnl(h.pnl)}</span>
+                  <span className={pnlColor(h.pnl)} style={{ flex: 'none', fontFamily: 'var(--mono)', fontSize: 12.5 }}>{fmtPnl(h.pnl)}</span>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-[var(--muted-foreground)] text-lg">$</span>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Size & Cost Efficiency</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Position-size buckets and execution cost drag</p>
+              <h3>Size &amp; Cost Efficiency</h3>
+              <p className="sub">Position-size buckets and execution cost drag</p>
             </div>
+            <span style={{ marginLeft: 'auto', color: 'var(--amber)', fontFamily: 'var(--mono)', fontSize: 16 }}>$</span>
           </div>
-          <div className="space-y-2">
+          <div style={{ marginTop: 20 }}>
             {m.sizeData.map(s => (
-              <div key={s.label} className="flex items-center justify-between py-2 border-b border-[var(--border)] last:border-0">
+              <div key={s.label} className="mrow">
                 <div>
-                  <div className="text-sm text-[var(--foreground)]">{s.label}</div>
-                  <div className="text-[10px] text-[var(--muted-foreground)]">{s.count} trades</div>
+                  <div style={{ color: 'var(--text)' }}>{s.label}</div>
+                  <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 3 }}>{s.count} trades</div>
                 </div>
-                <span className={`text-sm font-semibold ${pnlColor(s.pnl)}`}>{fmtPnl(s.pnl)}</span>
+                <span className="val" style={{ color: s.pnl > 0 ? 'var(--green)' : s.pnl < 0 ? 'var(--red)' : 'var(--muted)' }}>{fmtPnl(s.pnl)}</span>
               </div>
             ))}
           </div>
-          <div className="mt-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg px-3 py-2.5">
-            <div className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">Cost Drag</div>
-            <div className="text-lg font-bold text-[var(--foreground)]">$0.00</div>
-            <div className="text-[10px] text-[var(--muted-foreground)]">Fees: $0.00 &bull; Funding: $0.00 &bull; ~$0.00/trade</div>
+          <div className="inset" style={{ position: 'relative', marginTop: 16, padding: '14px 16px' }}>
+            <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+            <p className="lbl" style={{ color: 'var(--green)' }}>COST DRAG</p>
+            <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontSize: 20, lineHeight: '26px', color: 'var(--text)' }}>$0.00</p>
+            <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>Fees: $0.00 &bull; Funding: $0.00 &bull; ~$0.00/trade</p>
           </div>
         </div>
       </div>
 
       {/* ── Bottom Cards: Loss Streak, Revenge, Process, Direction ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <Flame size={20} className="text-[var(--muted-foreground)]" />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 16, marginTop: 24 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 44, background: 'var(--red)' }} />
+          <div className="cardhead">
             <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">Loss Streak Risk</h3>
-              <p className="text-[10px] text-[var(--muted-foreground)]">Consecutive-loss exposure</p>
+              <h4>Loss Streak Risk</h4>
+              <p className="sub sm">Consecutive-loss exposure</p>
             </div>
+            <Flame size={16} style={{ marginLeft: 'auto', color: 'var(--red)' }} />
           </div>
-          <div className="text-3xl font-bold text-[var(--foreground)]">{m.maxLossStreak}</div>
-          <div className="text-xs text-[var(--muted-foreground)] mt-1">{m.fivePlusStreaks} streaks with 5+ losses</div>
+          <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 14 }}>{m.maxLossStreak}</p>
+          <p style={{ margin: '4px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>{m.fivePlusStreaks} streaks with 5+ losses</p>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <Zap size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+          <div className="cardhead">
             <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">Revenge Signal</h3>
-              <p className="text-[10px] text-[var(--muted-foreground)]">Post-loss impulse risk</p>
+              <h4>Revenge Signal</h4>
+              <p className="sub sm">Post-loss impulse risk</p>
             </div>
+            <Zap size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
-          <div className={`text-2xl font-bold ${m.revengeCount === 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <p className="bignum" style={{ fontSize: 26, lineHeight: '38px', marginTop: 14, color: m.revengeCount === 0 ? 'var(--green)' : 'var(--red)' }}>
             {m.revengeCount === 0 ? 'Clear' : `${m.revengeCount} detected`}
-          </div>
-          <div className="text-xs text-[var(--muted-foreground)] mt-1">
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
             {m.revengeCount === 0 ? 'No revenge trading cluster detected in this range.' : `${m.revengeCount} trades entered within 30min of a loss.`}
-          </div>
+          </p>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <Shield size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+          <div className="cardhead">
             <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">Process Stability</h3>
-              <p className="text-[10px] text-[var(--muted-foreground)]">Consistency and volatility blend</p>
+              <h4>Process Stability</h4>
+              <p className="sub sm">Consistency and volatility blend</p>
             </div>
+            <Shield size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
           </div>
-          <div className="text-3xl font-bold text-[var(--foreground)]">{m.processScore}/100</div>
-          <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden mt-2 mb-1">
-            <div className="h-full rounded-full bg-blue-500" style={{ width: `${m.processScore}%` }} />
+          <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 14 }}>{m.processScore}<span style={{ fontSize: 16, color: 'var(--muted-2)' }}>/100</span></p>
+          <div style={{ height: 2, background: 'var(--rail)', marginTop: 10 }}>
+            <i style={{ display: 'block', height: 2, background: 'var(--teal)', width: `${m.processScore}%` }} />
           </div>
-          <div className="text-xs text-[var(--muted-foreground)]">Daily volatility: {formatCurrency(m.dailyVolatility)}</div>
+          <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Daily volatility: {formatCurrency(m.dailyVolatility)}</p>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <Activity size={20} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+          <div className="cardhead">
             <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">Directional Mix</h3>
-              <p className="text-[10px] text-[var(--muted-foreground)]">Long vs short quality</p>
+              <h4>Directional Mix</h4>
+              <p className="sub sm">Long vs short quality</p>
+            </div>
+            <Activity size={16} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <div className="mrow">
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--green)' }}>Long</div>
+                <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 3 }}>{m.longTrades.length} trades &bull; {m.longWR}%</div>
+              </div>
+              <span className="val" style={{ color: m.longPnL > 0 ? 'var(--green)' : m.longPnL < 0 ? 'var(--red)' : 'var(--muted)' }}>{fmtPnl(m.longPnL)}</span>
+            </div>
+            <div className="mrow">
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--red)' }}>Short</div>
+                <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 3 }}>{m.shortTrades.length} trades &bull; {m.shortWR}%</div>
+              </div>
+              <span className="val" style={{ color: m.shortPnL > 0 ? 'var(--green)' : m.shortPnL < 0 ? 'var(--red)' : 'var(--muted)' }}>{fmtPnl(m.shortPnL)}</span>
             </div>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-green-400">Long</div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">{m.longTrades.length} trades &bull; {m.longWR}%</div>
-              </div>
-              <span className={`text-sm font-semibold ${pnlColor(m.longPnL)}`}>{fmtPnl(m.longPnL)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm font-medium text-red-400">Short</div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">{m.shortTrades.length} trades &bull; {m.shortWR}%</div>
-              </div>
-              <span className={`text-sm font-semibold ${pnlColor(m.shortPnL)}`}>{fmtPnl(m.shortPnL)}</span>
-            </div>
-          </div>
-          <div className="h-2 rounded-full overflow-hidden flex mt-3 mb-2">
+          <div style={{ display: 'flex', height: 2, background: 'var(--rail)', marginTop: 14 }}>
             {m.longTrades.length + m.shortTrades.length > 0 && (
               <>
-                <div className="h-full bg-green-500" style={{ width: `${(m.longTrades.length / (m.longTrades.length + m.shortTrades.length)) * 100}%` }} />
-                <div className="h-full bg-red-500 flex-1" />
+                <div style={{ height: 2, background: 'var(--green)', width: `${(m.longTrades.length / (m.longTrades.length + m.shortTrades.length)) * 100}%` }} />
+                <div style={{ height: 2, background: 'var(--red)', flex: 1 }} />
               </>
             )}
           </div>
           {m.longPnL < 0 && m.shortPnL >= m.longPnL && (
-            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg px-3 py-2 mt-2">
-              <div className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">Short Outperforms</div>
-              <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
+            <div className="inset" style={{ marginTop: 14, padding: '11px 14px' }}>
+              <p className="lbl" style={{ color: 'var(--green)' }}>SHORT OUTPERFORMS</p>
+              <p style={{ margin: '7px 0 0', fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>
                 LONG setup quality is the main drag. Reduce LONG size/frequency until win-rate and expectancy stabilize.
               </p>
             </div>
@@ -656,37 +676,38 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       </div>
 
       {/* ── Daily Execution Calendar ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <Calendar size={20} className="text-[var(--muted-foreground)] shrink-0" />
+      <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead" style={{ flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', gap: 14 }}>
+            <Calendar size={16} style={{ color: 'var(--amber)', flex: 'none', marginTop: 2 }} />
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Daily Execution Calendar</h2>
-              <p className="text-xs text-[var(--muted-foreground)]">Inspect each day: result, quality score, and trade-level drivers.</p>
+              <h3>Daily Execution Calendar</h3>
+              <p className="sub">Inspect each day: result, quality score, and trade-level drivers.</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setCalMonth(subMonths(calMonth, 1))} className="p-1 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)]"><ChevronLeft size={18} /></button>
-            <div className="text-right">
-              <div className="text-[10px] text-[var(--muted-foreground)] uppercase">Active Month</div>
-              <div className="text-sm font-semibold text-[var(--foreground)]">{format(calMonth, 'MMMM yyyy')}</div>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <button onClick={() => setCalMonth(subMonths(calMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronLeft size={16} /></button>
+            <div style={{ textAlign: 'right' }}>
+              <p className="lbl">ACTIVE MONTH</p>
+              <p style={{ margin: '5px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{format(calMonth, 'MMMM yyyy')}</p>
             </div>
-            <button onClick={() => setCalMonth(addMonths(calMonth, 1))} className="p-1 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)]"><ChevronRight size={18} /></button>
+            <button onClick={() => setCalMonth(addMonths(calMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronRight size={16} /></button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
+        <div className={`grid gap-6 items-start mt-6 grid-cols-1 ${selectedDay ? 'xl:grid-cols-[minmax(0,1fr)_minmax(0,320px)]' : ''}`}>
           {/* Calendar grid */}
           <div>
-            <div className="grid grid-cols-7 gap-1 mb-1">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 6, marginBottom: 6 }}>
               {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(d => (
-                <div key={d} className="text-center text-[10px] text-[var(--muted-foreground)] font-medium py-1">{d}</div>
+                <div key={d} className="lbl" style={{ textAlign: 'center', padding: '4px 0' }}>{d}</div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-1">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 6 }}>
               {/* Empty cells before first day */}
               {Array.from({ length: (getDay(calendarData.start) + 6) % 7 }, (_, i) => (
-                <div key={`empty-${i}`} className="h-[68px]" />
+                <div key={`empty-${i}`} style={{ height: 70 }} />
               ))}
               {calendarData.days.map(day => {
                 const key = format(day, 'yyyy-MM-dd');
@@ -696,25 +717,32 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
                   <button
                     key={key}
                     onClick={() => setSelectedDay(key)}
-                    className={`h-[68px] rounded-lg border text-left p-1.5 transition-colors relative ${
-                      isSelected ? 'border-[var(--accent)] bg-[var(--accent)]/10'
-                        : data ? (data.pnl >= 0 ? 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/40' : 'border-red-500/20 bg-red-500/5 hover:border-red-500/40')
-                        : 'border-[var(--border)] hover:border-[var(--muted-foreground)]/30'
-                    }`}
+                    className="inset"
+                    style={{
+                      height: 70,
+                      textAlign: 'left',
+                      padding: '7px 9px',
+                      position: 'relative',
+                      borderColor: isSelected ? 'var(--amber)' : data ? (data.pnl >= 0 ? 'rgba(36,200,138,.35)' : 'rgba(255,77,94,.35)') : 'var(--line)',
+                    }}
                   >
-                    <div className="text-xs text-[var(--foreground)] font-medium">{format(day, 'd')}</div>
+                    <div style={{ fontWeight: 700, fontSize: 11.5, color: 'var(--text)' }}>{format(day, 'd')}</div>
                     {data ? (
                       <>
-                        <div className={`text-[10px] font-semibold ${pnlColor(data.pnl)}`}>{fmtPnl(data.pnl)}</div>
-                        <div className="text-[8px] text-[var(--muted-foreground)]">{data.trades} trades &bull; {data.winRate}%</div>
+                        <div className={pnlColor(data.pnl)} style={{ fontFamily: 'var(--mono)', fontSize: 10.5, marginTop: 3 }}>{fmtPnl(data.pnl)}</div>
+                        <div style={{ fontSize: 8.5, color: 'var(--muted-2)', marginTop: 2 }}>{data.trades} trades &bull; {data.winRate}%</div>
                       </>
                     ) : (
-                      <div className="text-[9px] text-[var(--muted-foreground)]">No activity</div>
+                      <div style={{ fontSize: 9, color: 'var(--muted-3)', marginTop: 3 }}>No activity</div>
                     )}
                     {data && data.trades > 0 && (
-                      <div className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-[var(--accent)] text-white text-[8px] flex items-center justify-center font-bold">
+                      <span style={{
+                        position: 'absolute', right: 6, bottom: 6, width: 14, height: 14, borderRadius: 2,
+                        background: 'var(--amber)', color: 'var(--ink)', fontSize: 8, fontWeight: 700,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
                         {data.trades}
-                      </div>
+                      </span>
                     )}
                   </button>
                 );
@@ -722,75 +750,75 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
             </div>
 
             {/* Month summary */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-4">
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-2 sm:px-3 py-2">
-                <div className="text-[9px] sm:text-[10px] text-[var(--muted-foreground)] uppercase">Month Net</div>
-                <div className={`text-sm sm:text-base font-bold ${pnlColor(calendarData.monthPnL)}`}>{fmtPnl(calendarData.monthPnL)}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 12, marginTop: 18 }}>
+              <div className="inset">
+                <p className="lbl">MONTH NET</p>
+                <p className={pnlColor(calendarData.monthPnL)} style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18 }}>{fmtPnl(calendarData.monthPnL)}</p>
               </div>
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-2 sm:px-3 py-2">
-                <div className="text-[9px] sm:text-[10px] text-[var(--muted-foreground)] uppercase">Month Trades</div>
-                <div className="text-sm sm:text-base font-bold text-[var(--foreground)]">{calendarData.monthTrades}</div>
+              <div className="inset">
+                <p className="lbl">MONTH TRADES</p>
+                <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, color: 'var(--text)' }}>{calendarData.monthTrades}</p>
               </div>
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-2 sm:px-3 py-2">
-                <div className="text-[9px] sm:text-[10px] text-[var(--muted-foreground)] uppercase">Month Win Rate</div>
-                <div className={`text-sm sm:text-base font-bold ${calendarData.monthWR >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>{calendarData.monthWR}%</div>
+              <div className="inset">
+                <p className="lbl">MONTH WIN RATE</p>
+                <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, color: calendarData.monthWR >= 50 ? 'var(--green)' : 'var(--red)' }}>{calendarData.monthWR}%</p>
               </div>
             </div>
           </div>
 
           {/* Selected day detail */}
           {selectedDay && (
-            <div className="space-y-3">
-              <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Selected Day</div>
-              <div className="text-lg font-semibold text-[var(--foreground)]">{format(new Date(selectedDay), 'dd MMM yyyy')}</div>
+            <div>
+              <p className="lbl">SELECTED DAY</p>
+              <p style={{ margin: '9px 0 0', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, color: 'var(--text)' }}>{format(new Date(selectedDay), 'dd MMM yyyy')}</p>
               {selectedDayData ? (
                 <>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[var(--muted-foreground)]">Net</div>
-                      <div className={`text-sm font-bold ${pnlColor(selectedDayData.pnl)}`}>{fmtPnl(selectedDayData.pnl)}</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 14 }}>
+                    <div className="inset">
+                      <p className="lbl">NET</p>
+                      <p className={pnlColor(selectedDayData.pnl)} style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 15 }}>{fmtPnl(selectedDayData.pnl)}</p>
                     </div>
-                    <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[var(--muted-foreground)]">Trades</div>
-                      <div className="text-sm font-bold text-[var(--foreground)]">{selectedDayData.trades}</div>
+                    <div className="inset">
+                      <p className="lbl">TRADES</p>
+                      <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 15, color: 'var(--text)' }}>{selectedDayData.trades}</p>
                     </div>
-                    <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[var(--muted-foreground)]">Win Rate</div>
-                      <div className="text-sm font-bold text-[var(--foreground)]">{selectedDayData.winRate}%</div>
+                    <div className="inset">
+                      <p className="lbl">WIN RATE</p>
+                      <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 15, color: 'var(--text)' }}>{selectedDayData.winRate}%</p>
                     </div>
-                    <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2">
-                      <div className="text-[10px] text-[var(--muted-foreground)]">Quality</div>
-                      <div className="text-sm font-bold text-[var(--foreground)]">-</div>
+                    <div className="inset">
+                      <p className="lbl">QUALITY</p>
+                      <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 15, color: 'var(--muted)' }}>-</p>
                     </div>
                   </div>
                   {selectedDayData.topCoin && (
-                    <div className="text-xs text-[var(--foreground)]">
-                      Top symbol: <span className="font-semibold">{selectedDayData.topCoin}</span>{' '}
+                    <p style={{ margin: '14px 0 0', fontSize: 12, color: 'var(--text-2)' }}>
+                      Top symbol: <span style={{ fontWeight: 700, color: 'var(--text)' }}>{selectedDayData.topCoin}</span>{' '}
                       (<span className={pnlColor(selectedDayData.topCoinPnl)}>{fmtPnl(selectedDayData.topCoinPnl)}</span>)
-                    </div>
+                    </p>
                   )}
-                  <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mt-2">Top Trades</div>
-                  <div className="space-y-1.5">
+                  <p className="lbl" style={{ marginTop: 18 }}>TOP TRADES</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 9 }}>
                     {selectedDayData.tradeList
                       .sort((a, b) => Math.abs(b.actualPnL!) - Math.abs(a.actualPnL!))
                       .slice(0, 5)
                       .map(t => (
-                        <div key={t.id} className="flex items-center justify-between bg-[var(--muted)]/20 rounded-lg px-3 py-1.5">
-                          <div className="min-w-0 flex-1 mr-2">
-                            <div className="text-xs text-[var(--foreground)] truncate">
+                        <div key={t.id} className="inset" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 14px' }}>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ fontSize: 11.5, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {t.exitDate ? format(new Date(t.exitDate), 'HH:mm') : '-'} &bull; {t.coin}
                             </div>
-                            <div className="text-[10px] text-[var(--muted-foreground)] truncate">
-                              <span className={(t.direction ?? 'long') === 'long' ? 'text-green-400' : 'text-red-400'}>{(t.direction ?? 'long').toUpperCase()}</span> &bull; In {formatCurrency(t.entryPrice)} &bull; Out {t.exitPrice ? formatCurrency(t.exitPrice) : '-'}
+                            <div style={{ fontSize: 10, color: 'var(--muted-2)', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <span style={{ color: (t.direction ?? 'long') === 'long' ? 'var(--green)' : 'var(--red)' }}>{(t.direction ?? 'long').toUpperCase()}</span> &bull; In {formatCurrency(t.entryPrice)} &bull; Out {t.exitPrice ? formatCurrency(t.exitPrice) : '-'}
                             </div>
                           </div>
-                          <span className={`text-sm font-semibold shrink-0 ${pnlColor(t.actualPnL ?? 0)}`}>{fmtPnl(t.actualPnL ?? 0)}</span>
+                          <span className={pnlColor(t.actualPnL ?? 0)} style={{ flex: 'none', fontFamily: 'var(--mono)', fontSize: 12.5 }}>{fmtPnl(t.actualPnL ?? 0)}</span>
                         </div>
                       ))}
                   </div>
                 </>
               ) : (
-                <p className="text-xs text-[var(--muted-foreground)]">No trading activity on this day.</p>
+                <p style={{ margin: '14px 0 0', fontSize: 12, color: 'var(--muted)' }}>No trading activity on this day.</p>
               )}
             </div>
           )}

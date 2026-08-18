@@ -88,98 +88,99 @@ const CONTEXT: MonitorLink[] = [
   },
 ];
 
+// Presentational only — maps an existing tag to its ATLAS accent colour.
+const TAG_ACCENT: Record<string, string> = {
+  Markets: '#2fd3c4',
+  Energy: '#d99405',
+  Commodities: '#d99405',
+  Geopolitics: '#ff3d87',
+  Aerospace: '#2fd3c4',
+  Maritime: '#2fd3c4',
+  Infrastructure: '#d99405',
+  Civil: '#ff4d5e',
+  Tech: '#24c88a',
+};
+
 export default function WorldMonitoring() {
   const [view, setView] = useState<MapView>('globe');
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
+    <div>
       {/* Hero */}
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <span
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: 1,
+              background: 'var(--green)',
+              display: 'inline-block',
+              flex: 'none',
+            }}
+          />
           Powered by World Monitor · 190+ countries · 435+ sources
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          World <span className="gradient-text">monitoring</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
+        </p>
+        <h2>World monitoring</h2>
+        <p className="sub">
           Real-time global intelligence — financial centers, central banks, trade routes, undersea cables, and pipelines.
           Toggle layers to explore.
         </p>
-      </header>
+        <div className="actions" style={{ top: 34, gap: 8 }}>
+          <button
+            onClick={() => setView('globe')}
+            className={view === 'globe' ? 'btn-a' : 'chip'}
+            style={{ height: 34, padding: '0 18px', fontWeight: 700 }}
+          >
+            <Globe size={13} /> 3D Globe
+          </button>
+          <button
+            onClick={() => setView('flat')}
+            className={view === 'flat' ? 'btn-a' : 'chip'}
+            style={{ height: 34, padding: '0 18px', fontWeight: 700 }}
+          >
+            <MapIcon size={13} /> Flat Map
+          </button>
+        </div>
+      </div>
 
       {/* 1. Layers — interactive world map / 3D globe */}
-      <div className="anim-fade-up space-y-3">
-        <div className="flex items-center justify-end">
-          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
-            <button
-              onClick={() => setView('globe')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                view === 'globe'
-                  ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              <Globe size={13} /> 3D Globe
-            </button>
-            <button
-              onClick={() => setView('flat')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                view === 'flat'
-                  ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              <MapIcon size={13} /> Flat Map
-            </button>
-          </div>
-        </div>
+      <div className="card" style={{ padding: '20px' }}>
         {view === 'globe' ? <WorldGlobe /> : <WorldMap />}
       </div>
 
       {/* 2. Live data widgets */}
-      <div className="anim-fade-up">
+      <div style={{ marginTop: 32 }}>
         <WorldMonitorLive />
       </div>
 
       {/* Markets section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Markets & Commodities</h2>
-          <div className="flex-1 h-px bg-[var(--border)]" />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {PRIMARY.map((m, idx) => <Card key={m.title} m={m} idx={idx} />)}
-        </div>
-      </section>
+      <p className="sect" style={{ marginTop: 38 }}>MARKETS &amp; COMMODITIES</p>
+      <div className="split-3">
+        {PRIMARY.map((m, idx) => <Card key={m.title} m={m} idx={idx} />)}
+      </div>
 
       {/* Context section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Macro & Geopolitical Context</h2>
-          <div className="flex-1 h-px bg-[var(--border)]" />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CONTEXT.map((m, idx) => <Card key={m.title} m={m} idx={idx + PRIMARY.length} />)}
-        </div>
-      </section>
+      <p className="sect">MACRO &amp; GEOPOLITICAL CONTEXT</p>
+      <div className="split-3">
+        {CONTEXT.map((m, idx) => <Card key={m.title} m={m} idx={idx + PRIMARY.length} />)}
+      </div>
 
       {/* Footer attribution */}
-      <div className="glass rounded-3xl p-6 flex items-center gap-4 flex-wrap">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-          <Globe size={20} className="text-pink-400" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-[var(--foreground)]">Open intelligence by World Monitor</div>
-          <div className="text-xs text-[var(--muted-foreground)]">
-            We don&apos;t host or modify their data.
-          </div>
+      <div className="srcbar">
+        <span
+          className="ic"
+          style={{
+            border: '1px solid rgba(47,211,196,.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Globe size={16} color="#2fd3c4" />
+        </span>
+        <div>
+          <h4>Open intelligence by World Monitor</h4>
+          <p>We don&apos;t host or modify their data.</p>
         </div>
       </div>
     </div>
@@ -188,19 +189,24 @@ export default function WorldMonitoring() {
 
 function Card({ m, idx }: { m: MonitorLink; idx: number }) {
   const Icon = m.icon;
+  const accent = TAG_ACCENT[m.tag] ?? '#2fd3c4';
   return (
-    <div
-      style={{ animationDelay: `${idx * 60}ms` }}
-      className="glass rounded-3xl p-6 anim-fade-up flex flex-col"
-    >
-      <div className="flex items-start mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-          <Icon size={20} className="text-pink-400" />
-        </div>
-      </div>
-      <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium self-start">{m.tag}</span>
-      <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight mt-2">{m.title}</h3>
-      <p className="text-sm text-[var(--muted-foreground)] mt-1 flex-1">{m.desc}</p>
+    <div className="domain" style={{ animationDelay: `${idx * 60}ms` }}>
+      <span
+        className="ic"
+        style={{
+          border: `1px solid ${accent}8c`,
+          color: accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Icon size={16} />
+      </span>
+      <p className="kick" style={{ color: accent, textTransform: 'uppercase' }}>{m.tag}</p>
+      <h4>{m.title}</h4>
+      <p>{m.desc}</p>
     </div>
   );
 }

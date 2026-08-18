@@ -59,101 +59,75 @@ export default function Courses() {
   }
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      {/* Hero header */}
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
+    <div className="pwrap">
+      <div className="phead">
+        <p className="eyebrow">
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)', display: 'inline-block' }} />
           New courses every month
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Level up your <span className="gradient-text">trading edge</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+        </p>
+        <h2>Level up your trading edge</h2>
+        <p className="sub">
           Buy individual courses to unlock lifetime access. Learn at your pace, from your dashboard.
         </p>
-      </header>
+      </div>
 
       {courses.length === 0 ? (
-        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
-            <GraduationCap size={28} className="text-pink-400" />
-          </div>
-          <p className="text-[var(--foreground)] font-medium">No courses yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — new content drops monthly.</p>
+        <div className="blank">
+          <span className="corner" style={{ left: -1, top: -1, borderWidth: '1px 0 0 1px' }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderWidth: '0 1px 1px 0' }} />
+          <span className="badge" style={{ border: '1px solid var(--amber)', color: 'var(--amber)' }}>
+            <GraduationCap size={24} />
+          </span>
+          <h4>No courses yet</h4>
+          <p>Check back soon — new content drops monthly.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((c: any, idx: number) => {
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+          {courses.map((c: any) => {
             const owned = purchasedIds.has(c.id);
             return (
               <article
                 key={c.id}
-                style={{ animationDelay: `${idx * 60}ms` }}
-                className="group relative flex flex-col overflow-hidden rounded-3xl glass card-lift anim-fade-up cursor-pointer"
+                className="course"
+                style={{ cursor: 'pointer' }}
                 onClick={() => { setSelectedCourseId(c.id); setView('detail'); }}
               >
-                {/* Cover */}
-                <div className="relative h-44 overflow-hidden">
+                <span className="accent" />
+                <div className="art">
                   {c.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={c.coverImage}
                       alt={c.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
-                      <GraduationCap size={56} className="text-[var(--foreground)]/40" />
-                    </div>
+                    <GraduationCap size={56} style={{ color: 'var(--amber)', opacity: 0.7 }} />
                   )}
-                  {/* Gradient overlay for legibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
 
-                  {/* Owned badge */}
                   {owned && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide shadow-lg">
-                      <Check size={11} strokeWidth={3} /> Owned
-                    </div>
+                    <span className="pill" style={{ position: 'absolute', right: 16, top: 16 }}>
+                      <Check size={10} strokeWidth={3} style={{ marginRight: 6 }} /> OWNED
+                    </span>
                   )}
 
-                  {/* Floating price chip */}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-xs font-semibold">
-                    <span>${c.priceUsd}</span>
-                    <span className="text-[var(--foreground)]/60">·</span>
-                    <span className="text-[var(--foreground)]/80">₱{c.pricePhp}</span>
-                  </div>
+                  <span className="price">${c.priceUsd} · ₱{c.pricePhp}</span>
                 </div>
 
-                {/* Body */}
-                <div className="flex-1 flex flex-col p-5 gap-2">
-                  <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight leading-snug line-clamp-2">
-                    {c.title}
-                  </h3>
-                  <p className="text-sm text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
+                <div className="body">
+                  <h4>{c.title}</h4>
+                  <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '19px', color: 'var(--muted)' }}>
                     {c.description}
                   </p>
 
-                  {/* CTA row */}
-                  <div className="mt-auto pt-4 flex items-center justify-between">
-                    <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-pink-400" />
-                      Lifetime access
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
+                  <div className="foot">
+                    <span className="life">Lifetime access</span>
+                    <span className="go">
                       {owned ? 'Continue' : 'View course'}
-                      <ArrowRight size={14} />
-                    </div>
+                      <ArrowRight size={12} />
+                    </span>
                   </div>
                 </div>
-
-                {/* Hover sheen */}
-                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-tr from-pink-500/0 via-teal-500/0 to-emerald-500/0 group-hover:from-pink-500/[0.05] group-hover:via-teal-500/[0.03] group-hover:to-emerald-500/[0.05] transition-all duration-500" />
               </article>
             );
           })}
@@ -202,53 +176,43 @@ function CourseDetail({
 
   if (!purchased) {
     return (
-      <div className="space-y-6">
-        <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-          <ArrowLeft size={16} /> Back to Courses
+      <div className="pwrap">
+        <button onClick={onBack} className="doclink" style={{ marginTop: 0, marginBottom: 22 }}>
+          <ArrowLeft size={14} /> Back to Courses
         </button>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           {course.coverImage && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={course.coverImage} alt={course.title} className="w-full h-64 object-cover" />
+            <img src={course.coverImage} alt={course.title} style={{ width: '100%', height: 256, objectFit: 'cover', display: 'block' }} />
           )}
-          <div className="p-6 space-y-4">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{course.title}</h1>
-            <p className="text-[var(--muted-foreground)] whitespace-pre-wrap">{course.description}</p>
+          <div style={{ padding: '25px 28px 34px' }}>
+            <h3 style={{ fontSize: 26, lineHeight: '28px' }}>{course.title}</h3>
+            <p className="sub" style={{ fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>{course.description}</p>
 
             {course.gallery && course.gallery.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 10, marginTop: 22 }}>
                 {course.gallery.map((url: string, i: number) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={url} alt="" className="w-full h-32 object-cover rounded-lg border border-[var(--border)]" />
+                  <img key={i} src={url} alt="" style={{ width: '100%', height: 128, objectFit: 'cover', border: '1px solid var(--line)', borderRadius: 2 }} />
                 ))}
               </div>
             )}
 
-            <div className="border-t border-[var(--border)] pt-4 space-y-3">
-              <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
-                <Lock size={14} /> Buy this course to unlock {modules.length} modules / {structure.lessons.length} lessons
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => onBuy('stripe')}
-                  className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
-                >
+            <div style={{ marginTop: 26, paddingTop: 22, borderTop: '1px solid var(--line)' }}>
+              <span className="chip">
+                <Lock size={12} /> Buy this course to unlock {modules.length} modules / {structure.lessons.length} lessons
+              </span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 20 }}>
+                <button onClick={() => onBuy('stripe')} className="btn-a">
                   Pay ${course.priceUsd} with Card (Stripe)
                 </button>
-                <button
-                  onClick={() => onBuy('paymongo')}
-                  className="px-5 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--muted)]"
-                >
+                <button onClick={() => onBuy('paymongo')} className="btn-g">
                   Pay ₱{course.pricePhp} with GCash/Card (PayMongo)
                 </button>
               </div>
               {course.externalUrl && (
-                <a
-                  href={course.externalUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:underline"
-                >
+                <a href={course.externalUrl} target="_blank" rel="noreferrer" className="doclink">
                   Preview course externally <ExternalLink size={12} />
                 </a>
               )}
@@ -261,24 +225,24 @@ function CourseDetail({
 
   // Purchased — show learning view
   return (
-    <div className="space-y-4">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to Courses
+    <div className="pwrap">
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back to Courses
       </button>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">{course.title}</h1>
+      <div className="phead" style={{ marginTop: 18, marginBottom: 24 }}>
+        <h2 style={{ fontSize: 32, lineHeight: '36px' }}>{course.title}</h2>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,280px) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
         {/* Sidebar: modules + lessons */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3 space-y-3 max-h-[70vh] overflow-y-auto">
+        <div className="card" style={{ padding: '19px 16px 20px', maxHeight: '70vh', overflowY: 'auto' }}>
           {modules.length === 0 ? (
-            <p className="text-sm text-[var(--muted-foreground)] p-2">No modules yet.</p>
+            <p className="sub">No modules yet.</p>
           ) : modules.map((m: any) => (
-            <div key={m.id}>
-              <div className="text-xs font-semibold uppercase text-[var(--muted-foreground)] px-2 mb-1">
-                {m.title}
-              </div>
-              <div className="space-y-0.5">
+            <div key={m.id} style={{ marginBottom: 18 }}>
+              <p className="lbl b10" style={{ marginBottom: 10, textTransform: 'uppercase' }}>{m.title}</p>
+              <div>
                 {lessonsByModule(m.id).map((l: any) => {
                   const done = completedSet.has(l.id);
                   const active = activeLessonId === l.id;
@@ -286,14 +250,13 @@ function CourseDetail({
                     <button
                       key={l.id}
                       onClick={() => setActiveLessonId(l.id)}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-left ${
-                        active ? 'bg-[var(--accent)]/15 text-[var(--foreground)]' : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-                      }`}
+                      className={active ? 'chip on' : 'chip'}
+                      style={{ display: 'flex', width: '100%', justifyContent: 'flex-start', marginBottom: 6, height: 32 }}
                     >
-                      {done ? <Check size={14} className="text-emerald-500" /> :
-                        l.contentType === 'video' ? <PlayCircle size={14} /> :
-                        l.contentType === 'link' ? <LinkIcon size={14} /> : <FileText size={14} />}
-                      <span className="flex-1 truncate">{l.title}</span>
+                      {done ? <Check size={12} style={{ color: active ? 'var(--ink)' : 'var(--green)' }} /> :
+                        l.contentType === 'video' ? <PlayCircle size={12} /> :
+                        l.contentType === 'link' ? <LinkIcon size={12} /> : <FileText size={12} />}
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{l.title}</span>
                     </button>
                   );
                 })}
@@ -303,24 +266,25 @@ function CourseDetail({
         </div>
 
         {/* Lesson content */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 min-h-[400px]">
+        <div className="card" style={{ padding: '25px 28px 34px', minHeight: 400 }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           {!activeLesson ? (
-            <p className="text-[var(--muted-foreground)] text-sm">Select a lesson to begin.</p>
+            <p className="sub">Select a lesson to begin.</p>
           ) : (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-[var(--foreground)]">{activeLesson.title}</h2>
+            <>
+              <h3 style={{ fontSize: 22, lineHeight: '24px' }}>{activeLesson.title}</h3>
 
               {activeLesson.contentType === 'video' && activeLesson.videoUrl && (
-                <div className="aspect-video bg-black rounded-xl overflow-hidden">
+                <div style={{ aspectRatio: '16 / 9', background: '#070c13', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', marginTop: 20 }}>
                   {/youtube\.com|youtu\.be|vimeo\.com/.test(activeLesson.videoUrl) ? (
                     <iframe
                       src={activeLesson.videoUrl}
-                      className="w-full h-full"
+                      style={{ width: '100%', height: '100%', border: 0 }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   ) : (
-                    <video src={activeLesson.videoUrl} controls className="w-full h-full" />
+                    <video src={activeLesson.videoUrl} controls style={{ width: '100%', height: '100%' }} />
                   )}
                 </div>
               )}
@@ -330,36 +294,39 @@ function CourseDetail({
                   href={activeLesson.externalUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl"
+                  className="btn-a"
+                  style={{ marginTop: 20 }}
                 >
                   Open external resource <ExternalLink size={14} />
                 </a>
               )}
 
               {activeLesson.body && (
-                <div className="prose prose-sm max-w-none text-[var(--foreground)] whitespace-pre-wrap">
+                <p style={{ margin: '20px 0 0', fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>
                   {activeLesson.body}
-                </div>
+                </p>
               )}
 
-              <div className="pt-4 border-t border-[var(--border)]">
+              <div style={{ marginTop: 26, paddingTop: 22, borderTop: '1px solid var(--line)' }}>
                 {completedSet.has(activeLesson.id) ? (
                   <button
                     onClick={() => unmarkComplete({ lessonId: activeLesson.id })}
-                    className="px-4 py-2 border border-[var(--border)] rounded-xl text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                    className="btn-g"
+                    style={{ height: 36, fontSize: 12.5 }}
                   >
                     Mark as incomplete
                   </button>
                 ) : (
                   <button
                     onClick={() => markComplete({ lessonId: activeLesson.id, courseId })}
-                    className="px-4 py-2 bg-emerald-500 text-[var(--foreground)] rounded-xl text-sm font-medium"
+                    className="btn-a"
+                    style={{ height: 36, fontSize: 12.5 }}
                   >
-                    Mark as complete
+                    <Check size={13} /> Mark as complete
                   </button>
                 )}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

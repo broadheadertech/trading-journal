@@ -1,113 +1,82 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import NewsletterSignup from './NewsletterSignup';
 
-const COLS = [
-  {
-    heading: 'Product',
-    links: [
-      { label: 'Features',         href: '/#features' },
-      { label: 'How It Works',     href: '/#how-it-works' },
-      { label: 'Pricing',          href: '/pricing' },
-      { label: 'Integrations',     href: '/integrations' },
-      { label: 'Use Cases',        href: '/use-cases' },
-      { label: 'Interactive Demo', href: '/demo' },
-    ],
-  },
-  {
-    heading: 'Company',
-    links: [
-      { label: 'About',     href: '/about' },
-      { label: 'Security',  href: '/security' },
-      { label: 'Contact',   href: '/contact' },
-      { label: 'Blog',      href: '/blog' },
-      { label: 'Brokers',   href: '/brokers' },
-      { label: 'Affiliate', href: '/affiliate' },
-      { label: 'Changelog', href: '/changelog' },
-    ],
-  },
-  {
-    heading: 'Free Tools',
-    links: [
-      { label: 'Position Size Calculator', href: '#' },
-      { label: 'Risk/Reward Calculator',   href: '#' },
-      { label: 'Economic Calendar',        href: '/app' },
-      { label: 'World Monitoring',         href: '/app' },
-    ],
-  },
-  {
-    heading: 'Popular Articles',
-    links: [
-      { label: 'What Is Revenge Trading?',         href: '/blog/revenge-trading-cost' },
-      { label: 'The Hidden Cost of Overtrading',   href: '/blog/overtrading-hidden-cost' },
-      { label: 'Find Your Worst Trading Hours',    href: '/blog/worst-trading-hours' },
-      { label: 'Journal vs Behavioral Analytics',  href: '/blog/trading-journal-vs-behavioral-analytics' },
-      { label: 'Best Trading Journal 2026',        href: '/blog/best-trading-journal-2026' },
-      { label: '50 Trading Metrics Guide',         href: '/blog/50-trading-metrics-every-trader-should-track' },
-    ],
-  },
-];
-
-const LEGAL = [
-  { label: 'Privacy Policy',   href: '/privacy' },
-  { label: 'Terms of Service', href: '/terms' },
-  { label: 'Risk Disclosure',  href: '#' },
-  { label: 'Cookie Policy',    href: '#' },
-];
+const WORDMARK = 'M 6.21 0.13 L 7.56 0.13 L 13.77 13.63 L 11.34 13.63 L 6.88 2.69 L 2.43 13.63 L 0 13.63 L 6.21 0.13 Z M 2.43 8.77 L 11.34 8.77 L 11.34 11.2 L 2.43 11.2 L 2.43 8.77 Z M 16.15 0.13 L 28.16 0.13 L 28.16 2.43 L 23.3 2.43 L 23.3 13.63 L 21.01 13.63 L 21.01 2.43 L 16.15 2.43 L 16.15 0.13 Z M 33.26 0.13 L 35.56 0.13 L 35.56 11.33 L 43.12 11.33 L 43.12 13.63 L 33.26 13.63 L 33.26 0.13 Z M 54.19 0.13 L 55.54 0.13 L 61.75 13.63 L 59.32 13.63 L 54.86 2.69 L 50.41 13.63 L 47.98 13.63 L 54.19 0.13 Z M 50.41 8.77 L 59.32 8.77 L 59.32 11.2 L 50.41 11.2 L 50.41 8.77 Z M 76.85 2.32 C 76.82 2.27 76.73 2.13 76.65 2.03 C 76.57 1.93 76.48 1.81 76.38 1.71 C 76.28 1.61 76.18 1.51 76.08 1.42 C 75.97 1.33 75.86 1.24 75.74 1.16 C 75.63 1.07 75.51 0.99 75.38 0.92 C 75.26 0.84 75.13 0.77 75 0.71 C 74.87 0.64 74.73 0.58 74.6 0.52 C 74.46 0.47 74.32 0.41 74.18 0.37 C 74.03 0.32 73.89 0.28 73.74 0.24 C 73.59 0.2 73.44 0.16 73.29 0.13 C 73.14 0.11 72.99 0.08 72.84 0.06 C 72.68 0.04 72.53 0.02 72.37 0.01 C 72.22 0 72.06 0 71.91 0 C 71.75 -0.01 71.6 0 71.44 0 C 71.29 0.01 71.13 0.03 70.98 0.04 C 70.82 0.06 70.67 0.08 70.52 0.11 C 70.37 0.13 70.22 0.17 70.07 0.2 C 69.92 0.24 69.77 0.28 69.63 0.32 C 69.49 0.37 69.34 0.42 69.2 0.47 C 69.07 0.52 68.93 0.58 68.8 0.65 C 68.66 0.71 68.53 0.78 68.41 0.85 C 68.28 0.92 68.16 1 68.04 1.08 C 67.92 1.16 67.81 1.24 67.7 1.33 C 67.59 1.42 67.48 1.52 67.38 1.62 C 67.28 1.71 67.19 1.82 67.1 1.93 C 67.01 2.03 66.93 2.14 66.85 2.26 C 66.77 2.38 66.71 2.5 66.64 2.62 C 66.58 2.74 66.53 2.87 66.48 3 C 66.44 3.13 66.4 3.26 66.37 3.4 C 66.34 3.53 66.32 3.67 66.31 3.8 C 66.3 3.94 66.3 4.08 66.3 4.22 C 66.31 4.36 66.33 4.49 66.35 4.63 C 66.38 4.76 66.42 4.9 66.46 5.03 C 66.5 5.16 66.55 5.29 66.61 5.41 C 66.67 5.54 66.74 5.66 66.81 5.77 C 66.89 5.89 66.97 6 67.06 6.11 C 67.14 6.22 67.24 6.33 67.33 6.43 C 67.43 6.53 67.53 6.62 67.64 6.71 C 67.75 6.8 67.86 6.89 67.98 6.97 C 68.1 7.06 68.22 7.13 68.34 7.21 C 68.47 7.28 68.6 7.35 68.73 7.41 C 68.86 7.48 69 7.54 69.14 7.59 C 69.28 7.65 69.42 7.7 69.56 7.75 C 69.7 7.79 69.85 7.83 70 7.87 C 70.15 7.91 70.3 7.94 70.45 7.97 C 70.6 8 70.75 8.02 70.9 8.04 C 71.06 8.06 71.16 8.08 71.37 8.08 C 71.57 8.08 71.96 8.1 72.15 8.05 C 72.34 8 72.46 7.83 72.52 7.8 C 72.58 7.77 72.46 7.85 72.51 7.87 C 72.56 7.89 72.73 7.9 72.84 7.92 C 72.94 7.94 73.05 7.96 73.15 7.99 C 73.26 8.01 73.36 8.04 73.45 8.07 C 73.55 8.11 73.65 8.14 73.74 8.18 C 73.83 8.21 73.92 8.25 74 8.3 C 74.09 8.34 74.17 8.38 74.24 8.43 C 74.32 8.47 74.39 8.52 74.46 8.56 C 74.53 8.61 74.59 8.66 74.65 8.71 C 74.7 8.76 74.76 8.81 74.8 8.86 C 74.85 8.91 74.9 8.96 74.93 9.01 C 74.97 9.06 75.01 9.11 75.04 9.15 C 75.07 9.2 75.09 9.25 75.11 9.29 C 75.13 9.34 75.15 9.39 75.16 9.43 C 75.18 9.47 75.19 9.51 75.19 9.56 C 75.2 9.6 75.21 9.64 75.21 9.68 C 75.21 9.72 75.21 9.76 75.2 9.8 C 75.2 9.84 75.19 9.89 75.18 9.93 C 75.17 9.97 75.16 10.01 75.14 10.06 C 75.13 10.1 75.11 10.15 75.08 10.2 C 75.06 10.24 75.03 10.29 74.99 10.34 C 74.96 10.39 74.92 10.44 74.88 10.49 C 74.84 10.54 74.79 10.59 74.74 10.64 C 74.69 10.69 74.63 10.74 74.57 10.78 C 74.51 10.83 74.44 10.88 74.37 10.93 C 74.3 10.97 74.22 11.02 74.14 11.06 C 74.06 11.11 73.98 11.15 73.89 11.19 C 73.8 11.23 73.71 11.27 73.62 11.3 C 73.52 11.34 73.42 11.37 73.32 11.4 C 73.22 11.43 73.12 11.45 73.01 11.48 C 72.91 11.5 72.8 11.52 72.69 11.54 C 72.58 11.56 72.47 11.57 72.36 11.58 C 72.25 11.59 72.14 11.6 72.02 11.6 C 71.91 11.61 71.8 11.61 71.68 11.6 C 71.57 11.6 71.46 11.59 71.35 11.58 C 71.23 11.57 71.12 11.56 71.01 11.54 C 70.9 11.53 70.8 11.51 70.69 11.49 C 70.58 11.46 70.48 11.44 70.38 11.41 C 70.28 11.38 70.18 11.35 70.08 11.31 C 69.99 11.28 69.9 11.24 69.81 11.2 C 69.72 11.16 69.64 11.12 69.55 11.08 C 69.47 11.04 69.4 10.99 69.33 10.94 C 69.25 10.9 69.19 10.85 69.12 10.8 C 69.06 10.75 69 10.7 68.95 10.65 C 68.89 10.6 68.85 10.55 68.8 10.5 C 68.76 10.46 68.72 10.41 68.69 10.36 C 68.65 10.3 68.58 10.19 68.56 10.16 L 66.73 11.3 C 66.76 11.35 66.85 11.5 66.92 11.6 C 67 11.71 67.09 11.83 67.18 11.93 C 67.27 12.04 67.37 12.14 67.48 12.24 C 67.58 12.33 67.69 12.42 67.8 12.51 C 67.92 12.6 68.04 12.68 68.16 12.76 C 68.28 12.84 68.41 12.91 68.54 12.98 C 68.67 13.05 68.8 13.12 68.94 13.18 C 69.07 13.24 69.21 13.29 69.35 13.35 C 69.5 13.4 69.64 13.44 69.79 13.49 C 69.94 13.53 70.08 13.56 70.24 13.6 C 70.39 13.63 70.54 13.66 70.69 13.68 C 70.85 13.7 71 13.72 71.16 13.74 C 71.31 13.75 71.47 13.76 71.63 13.76 C 71.78 13.77 71.94 13.77 72.1 13.76 C 72.25 13.76 72.41 13.75 72.57 13.73 C 72.72 13.72 72.88 13.7 73.03 13.67 C 73.18 13.65 73.34 13.62 73.49 13.58 C 73.64 13.55 73.79 13.51 73.93 13.47 C 74.08 13.43 74.22 13.38 74.36 13.33 C 74.51 13.27 74.65 13.22 74.78 13.16 C 74.92 13.09 75.05 13.03 75.18 12.96 C 75.31 12.89 75.43 12.81 75.55 12.73 C 75.67 12.65 75.79 12.57 75.9 12.48 C 76.02 12.39 76.13 12.3 76.23 12.2 C 76.33 12.1 76.43 12 76.52 11.89 C 76.61 11.79 76.7 11.68 76.78 11.56 C 76.85 11.45 76.93 11.33 76.99 11.2 C 77.06 11.08 77.11 10.95 77.16 10.82 C 77.21 10.69 77.25 10.56 77.29 10.43 C 77.32 10.29 77.34 10.15 77.35 10.01 C 77.37 9.88 77.37 9.74 77.37 9.6 C 77.36 9.46 77.35 9.32 77.32 9.18 C 77.3 9.05 77.26 8.91 77.22 8.78 C 77.18 8.65 77.13 8.52 77.07 8.39 C 77.01 8.26 76.95 8.14 76.88 8.02 C 76.8 7.9 76.72 7.79 76.64 7.68 C 76.55 7.57 76.46 7.46 76.36 7.36 C 76.26 7.26 76.16 7.16 76.05 7.07 C 75.94 6.98 75.83 6.89 75.71 6.8 C 75.59 6.72 75.47 6.64 75.35 6.57 C 75.22 6.49 75.09 6.42 74.96 6.36 C 74.83 6.29 74.69 6.23 74.55 6.17 C 74.41 6.12 74.27 6.07 74.12 6.02 C 73.98 5.97 73.83 5.93 73.68 5.89 C 73.53 5.85 73.38 5.82 73.23 5.79 C 73.08 5.76 72.98 5.73 72.77 5.72 C 72.56 5.71 72.16 5.67 71.95 5.72 C 71.74 5.76 71.59 5.95 71.52 5.98 C 71.44 6.02 71.56 5.94 71.5 5.92 C 71.44 5.91 71.27 5.91 71.16 5.89 C 71.06 5.88 70.95 5.86 70.84 5.84 C 70.73 5.83 70.63 5.8 70.52 5.78 C 70.42 5.75 70.32 5.72 70.22 5.69 C 70.13 5.66 70.03 5.62 69.94 5.59 C 69.85 5.55 69.76 5.51 69.68 5.47 C 69.59 5.43 69.51 5.39 69.44 5.34 C 69.36 5.3 69.29 5.25 69.22 5.21 C 69.16 5.16 69.09 5.11 69.04 5.06 C 68.98 5.01 68.92 4.96 68.88 4.91 C 68.83 4.86 68.78 4.81 68.74 4.77 C 68.71 4.72 68.67 4.67 68.64 4.62 C 68.61 4.57 68.59 4.53 68.56 4.48 C 68.54 4.44 68.52 4.39 68.51 4.35 C 68.49 4.3 68.48 4.26 68.48 4.22 C 68.47 4.18 68.46 4.14 68.46 4.1 C 68.46 4.06 68.46 4.02 68.46 3.97 C 68.46 3.93 68.47 3.89 68.48 3.85 C 68.49 3.81 68.5 3.77 68.52 3.72 C 68.53 3.68 68.55 3.63 68.57 3.59 C 68.6 3.54 68.62 3.49 68.66 3.45 C 68.69 3.4 68.72 3.35 68.76 3.3 C 68.8 3.25 68.85 3.2 68.9 3.15 C 68.95 3.1 69 3.05 69.06 3.01 C 69.12 2.96 69.19 2.91 69.26 2.86 C 69.32 2.81 69.4 2.77 69.47 2.73 C 69.55 2.68 69.63 2.64 69.72 2.6 C 69.8 2.56 69.89 2.52 69.99 2.48 C 70.08 2.45 70.17 2.42 70.27 2.38 C 70.37 2.35 70.47 2.33 70.57 2.3 C 70.68 2.28 70.78 2.25 70.89 2.24 C 71 2.22 71.11 2.2 71.22 2.19 C 71.33 2.18 71.44 2.17 71.55 2.16 C 71.66 2.16 71.78 2.15 71.89 2.16 C 72 2.16 72.11 2.16 72.22 2.17 C 72.33 2.18 72.45 2.19 72.56 2.2 C 72.66 2.22 72.77 2.23 72.88 2.25 C 72.99 2.28 73.09 2.3 73.19 2.33 C 73.29 2.35 73.39 2.38 73.49 2.42 C 73.59 2.45 73.68 2.48 73.77 2.52 C 73.86 2.56 73.95 2.6 74.03 2.64 C 74.11 2.68 74.19 2.72 74.27 2.77 C 74.34 2.81 74.41 2.86 74.48 2.91 C 74.54 2.95 74.6 3 74.66 3.05 C 74.72 3.1 74.77 3.15 74.81 3.2 C 74.86 3.25 74.9 3.29 74.94 3.35 C 74.98 3.4 75.05 3.51 75.07 3.54 L 76.85 2.32 Z';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[var(--border)]">
-      {/* Footer link columns */}
-
-      {/* Footer link columns */}
-      <div className="border-t border-[var(--border)] py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
-            <div className="col-span-2 lg:col-span-1 space-y-4">
-              <div>
-                <Link href="/" className="flex items-center gap-2 mb-3 group">
-                  <Image src="/atlas-icon.svg" alt="Atlas" width={28} height={28} className="w-7 h-7 object-contain" />
-                  <span className="text-base font-bold bg-gradient-to-r from-pink-300 to-fuchsia-300 bg-clip-text text-transparent">Atlas</span>
-                </Link>
-                <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                  Find the trading mistakes costing you thousands — and prove you fixed them.
-                </p>
-              </div>
-              <NewsletterSignup />
-            </div>
-
-            {COLS.map((col) => (
-              <div key={col.heading}>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] mb-3">{col.heading}</h3>
-                <ul className="space-y-2">
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <Link href={l.href} className="text-xs text-[var(--muted-foreground)] hover:text-pink-400 transition-colors">
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Legal row */}
-          <div className="pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[var(--muted-foreground)]">
-              &copy; 2026 Atlas. All rights reserved.
-            </p>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--muted-foreground)]">
-              {LEGAL.map((l) => (
-                <Link key={l.label} href={l.href} className="hover:text-pink-400 transition-colors">
-                  {l.label}
-                </Link>
-              ))}
+    /* ============================= FOOTER ============================= */
+    <footer className="footer">
+      <div className="wrap">
+        <div className="footcols">
+          <div className="foot-brand">
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '14px' }} aria-label="Atlas home">
+              <svg width="25" height="25" viewBox="0 0 27.06 26.24" fill="none" aria-hidden="true">
+                <path d="M 13.53 0 L 27.06 26.24 L 0 26.24 L 13.53 0 Z M 13.53 9.23 L 17.32 16.81 L 10.66 20.91 L 8.61 26.24 L 4.72 26.24 L 13.53 9.23 Z M 19.17 20.5 L 11.48 26.24 L 22.04 26.24 L 19.17 20.5 Z" fill="#d99405" fillRule="evenodd" />
+              </svg>
+              <svg width="72" height="13" viewBox="0 0 77.37 13.77" fill="none" aria-hidden="true">
+                <path d={WORDMARK} fill="#edf2f7" fillRule="evenodd" />
+              </svg>
+            </Link>
+            <p>Find the trading mistakes costing you thousands &mdash; and prove you fixed them.</p>
+            <div className="news">
+              <h5>NEWSLETTER</h5>
+              <p>Weekly insights from the trading desk. No spam.</p>
+              <form onSubmit={(e) => e.preventDefault()}>
+                <input type="email" placeholder="you@email.com" aria-label="Email address" />
+                <button type="submit">Subscribe</button>
+              </form>
             </div>
           </div>
+
+          <div className="footcol">
+            <h5>PRODUCT</h5>
+            <span className="dead">Features</span>
+            <span className="dead">How It Works</span>
+            <Link href="/pricing">Pricing</Link>
+            <Link href="/integrations">Integrations</Link>
+            <Link href="/use-cases">Use Cases</Link>
+            <Link href="/demo">Interactive Demo</Link>
+          </div>
+
+          <div className="footcol">
+            <h5>COMPANY</h5>
+            <Link href="/about">About</Link>
+            <Link href="/security">Security</Link>
+            <Link href="/contact">Contact</Link>
+            <Link href="/blog">Blog</Link>
+            <Link href="/brokers">Brokers</Link>
+            <Link href="/affiliate">Affiliate</Link>
+            <Link href="/changelog">Changelog</Link>
+          </div>
+
+          <div className="footcol">
+            <h5>FREE TOOLS</h5>
+            <span className="dead">Position Size Calculator</span>
+            <span className="dead">Risk/Reward Calculator</span>
+            <span className="dead">Economic Calendar</span>
+            <span className="dead">World Monitoring</span>
+          </div>
+
+          <div className="footcol">
+            <h5>POPULAR ARTICLES</h5>
+            <Link href="/blog">What Is Revenge Trading?</Link>
+            <Link href="/blog">The Hidden Cost of Overtrading</Link>
+            <Link href="/blog">Find Your Worst Trading Hours</Link>
+            <Link href="/blog">Journal vs Behavioral Analytics</Link>
+            <Link href="/blog">50 Trading Metrics Guide</Link>
+          </div>
+        </div>
+
+        <div className="footbar">
+          <span>&copy; 2026 Atlas. All rights reserved.</span>
+          <nav>
+            <span className="dead">Privacy Policy</span>
+            <span className="dead">Terms of Service</span>
+            <span className="dead">Risk Disclosure</span>
+            <span className="dead">Cookie Policy</span>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,202 +1,90 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Search, Activity, BarChart3, AlertTriangle, TrendingUp, Flame } from 'lucide-react';
-import AtmosphericBackground from './AtmosphericBackground';
 
 export default function DashboardPreview() {
   return (
-    <section id="dashboard-preview" className="relative overflow-hidden py-20 sm:py-28 border-t border-[var(--border)]">
-      <AtmosphericBackground />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            <span className="text-[var(--foreground)]">Everything You Need To Become A </span>
-            <span className="neon-headline">Better Trader</span>
-          </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] max-w-2xl mx-auto">
-            Atlas combines education, performance analytics, journaling, discipline tracking, and community support into one powerful platform.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-10">
-          <PillarCard delay={0} icon={Search} accent="from-rose-400 to-orange-400" title="Find Your Leaks" desc="Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.">
-            <LeaksMock />
-          </PillarCard>
-          <PillarCard delay={0.1} icon={Activity} accent="from-pink-400 to-fuchsia-400" title="Track Your Discipline" desc="Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.">
-            <DisciplineMock />
-          </PillarCard>
-          <PillarCard delay={0.2} icon={BarChart3} accent="from-fuchsia-400 to-pink-500" title="Measure Your Edge" desc="Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.">
-            <EdgeMock />
-          </PillarCard>
-        </div>
-
-        <div className="flex justify-center">
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
-          >
-            Start Free — See Your Own Dashboard
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PillarCard({ icon: Icon, accent, title, desc, children, delay }: {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  accent: string; title: string; desc: string; children: React.ReactNode; delay: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.5, delay }}
-      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-pink-500/30 transition-colors"
-    >
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} bg-opacity-20 flex items-center justify-center`}>
-          <Icon size={18} className="text-slate-900" />
-        </div>
-        <h3 className="text-base font-bold text-[var(--foreground)]">{title}</h3>
-      </div>
-      <div className="rounded-xl border border-[var(--border)] bg-black/30 p-4 mb-4 min-h-[200px]">{children}</div>
-      <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{desc}</p>
-    </motion.div>
-  );
-}
-
-function LeaksMock() {
-  const leaks = [
-    { name: 'Overtrading',              cost: '−$1,420', sev: 'high', pct: 100 },
-    { name: 'Poor Risk Management',     cost: '−$890',   sev: 'high', pct: 63 },
-    { name: 'Emotional Decision Making', cost: '−$540',  sev: 'med',  pct: 38 },
-    { name: 'FOMO Entries',             cost: '−$280',   sev: 'med',  pct: 20 },
-    { name: 'No Stop Loss',             cost: '−$140',   sev: 'low',  pct: 10 },
-  ];
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-rose-400/80 mb-2">
-        <Flame size={10} /> Leaks ranked by $ impact
-      </div>
-      {leaks.map((l, i) => (
-        <div key={l.name} className="space-y-1">
-          <div className="flex items-center justify-between text-[10px]">
-            <span className="text-[var(--foreground)] font-medium">{l.name}</span>
-            <span className={`tabular-nums font-bold ${l.sev === 'high' ? 'text-rose-400' : l.sev === 'med' ? 'text-amber-400' : 'text-[var(--muted-foreground)]'}`}>
-              {l.cost}
-            </span>
+    <div className="sec01" style={{ borderTop: '1px solid var(--line)' }}>
+      <div className="wrap">
+        <div className="sechead">
+          <div>
+            <p className="eyebrow">CAPABILITY MAP</p>
+            <h2 className="h2" style={{ marginTop: '13px' }}>Everything You Need To<br />Become A Better Trader</h2>
           </div>
-          <div className="h-1 rounded-full bg-white/5 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: `${l.pct}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1 * i }}
-              className={`h-full ${l.sev === 'high' ? 'bg-gradient-to-r from-rose-500 to-orange-400' : l.sev === 'med' ? 'bg-gradient-to-r from-amber-500 to-yellow-400' : 'bg-[var(--muted-foreground)]/40'}`}
-            />
-          </div>
+          <div className="right"><p className="lede">Atlas combines education, performance analytics, journaling, discipline tracking, and community support into one powerful platform.</p></div>
         </div>
-      ))}
-    </div>
-  );
-}
 
-function DisciplineMock() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-pink-400/80">
-        <Activity size={10} /> 30-day discipline score
-      </div>
-      <div className="flex items-center justify-center py-2">
-        <div className="relative">
-          <svg width="120" height="120" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
-            <motion.circle
-              cx="60" cy="60" r="50"
-              fill="none"
-              stroke="url(#discGrad)"
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={`${(78 / 100) * 314} 314`}
-              transform="rotate(-90 60 60)"
-              initial={{ strokeDasharray: '0 314' }}
-              whileInView={{ strokeDasharray: `${(78 / 100) * 314} 314` }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
-            />
-            <defs>
-              <linearGradient id="discGrad">
-                <stop offset="0%" stopColor="#22c55e" />
-                <stop offset="100%" stopColor="#22c55e" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent tabular-nums">78</span>
-            <span className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]">/ 100</span>
+        <div className="grid">
+          <div className="card leakcard">
+            <i className="accent"></i>
+            <h3>Find Your Leaks</h3>
+            <p className="kicker">LEAKS RANKED BY $ IMPACT</p>
+            <div className="leakrow"><span>Overtrading</span><span className="v" style={{ color: 'var(--red)' }}>−$1,420</span></div>
+            <div className="leakbar"><i style={{ width: '100%', background: 'var(--amber)' }}></i></div>
+            <div className="leakrow"><span>Poor Risk Management</span><span className="v" style={{ color: 'var(--red)' }}>−$890</span></div>
+            <div className="leakbar"><i style={{ width: '63%', background: 'var(--amber)' }}></i></div>
+            <div className="leakrow"><span>Emotional Decision Making</span><span className="v" style={{ color: 'var(--text-3)' }}>−$540</span></div>
+            <div className="leakbar"><i style={{ width: '38%', background: 'var(--amber-dim)' }}></i></div>
+            <div className="leakrow"><span>FOMO Entries</span><span className="v" style={{ color: 'var(--text-3)' }}>−$280</span></div>
+            <div className="leakbar"><i style={{ width: '20%', background: 'var(--amber-dim)' }}></i></div>
+            <div className="leakrow"><span>No Stop Loss</span><span className="v" style={{ color: 'var(--text-3)' }}>−$140</span></div>
+            <div className="leakbar"><i style={{ width: '10%', background: 'var(--amber-dim)' }}></i></div>
+            <p>Every costly pattern ranked by dollar impact. Revenge trading, overtrading, FOMO — each measured in real money lost.</p>
           </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-7 gap-1">
-        {[0.6, 0.4, 0.7, 0.85, 0.3, 0.9, 0.78].map((v, i) => (
-          <div key={i} className="text-center">
-            <div className="h-10 flex items-end justify-center">
-              <div className="w-full rounded-sm bg-gradient-to-t from-green-500 to-green-400" style={{ height: `${v * 100}%` }} />
+
+          <div className="sidecards">
+            <div>
+              <div className="card minicard" style={{ height: '162px' }}>
+                <h4>Track Your Discipline</h4>
+                <p className="kicker">30-DAY DISCIPLINE SCORE</p>
+                <div className="disc">
+                  <div className="dial">
+                    <svg viewBox="0 0 64 64" width="64" height="64" fill="none">
+                      <circle cx="32" cy="32" r="29" stroke="#16202c" strokeWidth="6" />
+                      <circle cx="32" cy="32" r="30.5" stroke="#24c88a" strokeWidth="3" strokeLinecap="round"
+                        strokeDasharray="191.6" strokeDashoffset="42.2" transform="rotate(-90 32 32)" />
+                    </svg>
+                    <div className="score"><b>78</b><i>/100</i></div>
+                  </div>
+                  <div className="week">
+                    <div><i style={{ height: '16px' }}></i><span>M</span></div>
+                    <div><i style={{ height: '10px' }}></i><span>T</span></div>
+                    <div><i style={{ height: '20px' }}></i><span>W</span></div>
+                    <div><i style={{ height: '26px' }}></i><span>T</span></div>
+                    <div><i style={{ height: '12px' }}></i><span>F</span></div>
+                    <div><i style={{ height: '24px' }}></i><span>S</span></div>
+                    <div><i style={{ height: '22px' }}></i><span>S</span></div>
+                  </div>
+                </div>
+              </div>
+              <p className="note" style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--atlas-muted)', margin: '14px 0 0' }}>Your behavioral health score, emotional pressure tracking, and session-by-session discipline monitoring.</p>
             </div>
-            <div className="text-[8px] text-[var(--muted-foreground)] mt-0.5">{['M','T','W','T','F','S','S'][i]}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function EdgeMock() {
-  const points = [10, 18, 14, 22, 28, 24, 32, 30, 38, 42, 46, 44, 52, 56, 54, 62];
-  const max = Math.max(...points);
-  const path = points.map((p, i) => `${(i / (points.length - 1)) * 100},${100 - (p / max) * 100}`).join(' ');
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-pink-400/80">
-        <TrendingUp size={10} /> Equity curve · 30d
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
-          <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Win Rate</div>
-          <div className="text-lg font-bold text-pink-300 tabular-nums">93%</div>
+            <div>
+              <div className="card minicard" style={{ height: '156px' }}>
+                <h4>Measure Your Edge</h4>
+                <p className="kicker">EQUITY CURVE · 30D</p>
+                <div className="edge">
+                  <div className="kpi"><b style={{ color: 'var(--green)' }}>93%</b><span>WIN RATE</span></div>
+                  <div className="kpi"><b>2.14</b><span>PROFIT FACTOR</span></div>
+                  <div className="spark">
+                    <svg viewBox="0 0 180 50" width="100%" height="50" fill="none" preserveAspectRatio="none">
+                      <defs><linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#24c88a" stopOpacity=".28" /><stop offset="1" stopColor="#24c88a" stopOpacity="0" />
+                      </linearGradient></defs>
+                      <path d="M0 38 L18 32 L36 35 L54 26 L72 28 L90 18 L108 22 L126 10 L144 14 L162 4 L180 0 L180 50 L0 50 Z" fill="url(#sparkfill)" />
+                      <path d="M0 38 L18 32 L36 35 L54 26 L72 28 L90 18 L108 22 L126 10 L144 14 L162 4 L180 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="edgefoot"><span>Sharpe 1.84</span><span>Max DD 8.2%</span><span className="neg">−$4,230</span></div>
+              </div>
+              <p className="note" style={{ fontSize: '13px', lineHeight: '18px', color: 'var(--atlas-muted)', margin: '16px 0 0' }}>Win rate, profit factor, equity curve, symbol breakdown — all the metrics that matter, computed automatically.</p>
+            </div>
+          </div>
         </div>
-        <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
-          <div className="text-[8px] uppercase tracking-widest text-[var(--muted-foreground)]/70">Profit Factor</div>
-          <div className="text-lg font-bold text-pink-300 tabular-nums">2.14</div>
-        </div>
-      </div>
-      <div className="rounded-lg border border-[var(--border)] bg-black/30 p-2">
-        <svg className="w-full h-20" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="edgeFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <polygon fill="url(#edgeFill)" points={`0,100 ${path} 100,100`} />
-          <polyline fill="none" stroke="#22c55e" strokeWidth="1.2" points={path} />
-        </svg>
-      </div>
-      <div className="flex items-center justify-between text-[9px]">
-        <span className="text-[var(--muted-foreground)]">Sharpe 1.84</span>
-        <span className="text-[var(--muted-foreground)]">Max DD 8.2%</span>
-        <span className="text-pink-400">+$4,230</span>
+
+        <Link className="btn btn-amber" style={{ marginTop: '60px' }} href="/pricing">{'Start Free  · See Your Own Dashboard'}
+          <svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg>
+        </Link>
       </div>
     </div>
   );

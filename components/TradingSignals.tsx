@@ -131,81 +131,75 @@ export default function TradingSignals() {
   const pendingCount = list.filter(s => s.status === 'pending').length;
 
   return (
-    <div className="relative space-y-6 anim-fade-up">
-      <div className="hero-glow" />
-
-      <header className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
-          </span>
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow" style={{ fontWeight: 500 }}>
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--pink)', flex: 'none' }} />
           {activeCount} active · {pendingCount} pending · community + AI signals
-        </div>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="space-y-2">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-              Trading <span className="gradient-text">signals</span>
-            </h1>
-            <p className="text-base text-[var(--muted-foreground)] max-w-2xl">
-              The traders posting signals on Atlas. Browse each provider's track record — hit-rate, win/loss, and average R —
-              and tap a name to open their full profile.
-            </p>
-          </div>
+        </p>
+        <h2>Trading signals</h2>
+        <p className="sub" style={{ fontSize: 16, maxWidth: 660 }}>
+          The traders posting signals on Atlas. Browse each provider's track record — hit-rate, win/loss, and average R —
+          and tap a name to open their full profile.
+        </p>
 
-          <div className="flex flex-col sm:flex-row gap-2">
-            <button
-              onClick={() => setShowLeaderboard(v => !v)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:bg-[var(--muted)]/50 transition-all"
-            >
-              <Award size={14} />
-              {showLeaderboard ? 'Hide' : 'Show'} Leaderboard
+        <div className="actions">
+          <button className="btn-g" onClick={() => setShowLeaderboard(v => !v)}>
+            <Award size={14} />
+            {showLeaderboard ? 'Hide' : 'Show'} Leaderboard
+          </button>
+          {canPost ? (
+            <button className="btn-a" onClick={() => setShowPostModal(true)}>
+              <Plus size={14} /> Post a Signal
             </button>
-            {canPost ? (
-              <button
-                onClick={() => setShowPostModal(true)}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all"
-              >
-                <Plus size={14} /> Post a Signal
-              </button>
-            ) : (
-              <button
-                disabled
-                title="Posting signals requires a paid subscription (Core, Pro, or Elite)"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[var(--muted-foreground)] border border-[var(--border)] bg-[var(--card)] opacity-60 cursor-not-allowed"
-              >
-                <Lock size={14} /> Post (Core+)
-              </button>
-            )}
-          </div>
+          ) : (
+            <button
+              className="btn-d"
+              disabled
+              title="Posting signals requires a paid subscription (Core, Pro, or Elite)"
+            >
+              <Lock size={14} style={{ marginRight: 9 }} /> Post (Core+)
+            </button>
+          )}
         </div>
-      </header>
-
-      {showLeaderboard && <Leaderboard rows={leaderboard} />}
-
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
-        <div className="min-w-0">
-          <SignalProviders />
-        </div>
-        <aside className="lg:sticky lg:top-4 lg:self-start">
-          <div className="flex items-center gap-2 mb-3">
-            <Award size={15} className="text-amber-400" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Top analysts</h2>
-          </div>
-          <p className="text-[11px] text-[var(--muted-foreground)] mb-3 leading-relaxed">
-            50%+ win-rate across their trades and signals.
-          </p>
-          <TopAnalysts limit={10} />
-        </aside>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex items-start gap-3">
-        <ShieldAlert size={18} className="text-amber-400 mt-0.5 shrink-0" />
-        <div className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-          <span className="font-semibold text-[var(--foreground)]">Not financial advice. </span>
+      {showLeaderboard && (
+        <div style={{ marginBottom: 38 }}>
+          <Leaderboard rows={leaderboard} />
+        </div>
+      )}
+
+      <div className="split-2u">
+        <div>
+          <p style={{ margin: '0 0 22px', fontWeight: 700, fontSize: 10, color: 'var(--muted-2)', letterSpacing: '.04em' }}>
+            SIGNAL PROVIDERS
+          </p>
+          <div style={{ borderTop: '1px solid var(--line-2)', paddingTop: 28 }}>
+            <SignalProviders />
+          </div>
+        </div>
+
+        <div>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 10, letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Award size={12} style={{ color: 'var(--amber)' }} /> TOP ANALYSTS
+          </p>
+          <p style={{ margin: '10px 0 22px', fontSize: 11.5, color: 'var(--muted-2)' }}>
+            50%+ win-rate across their trades and signals.
+          </p>
+          <div style={{ borderTop: '1px solid var(--line-2)', paddingTop: 28 }}>
+            <TopAnalysts limit={10} />
+          </div>
+        </div>
+      </div>
+
+      <div className="disclaim" style={{ maxWidth: 720 }}>
+        <ShieldAlert size={18} style={{ color: 'var(--amber)', flex: 'none', marginTop: 2 }} />
+        <p style={{ margin: 0 }}>
+          <b>Not financial advice.</b>{' '}
           Signals are user-posted research-driven trade ideas, not recommendations from Atlas. Run every signal through
           your playbook, your risk model, and your discipline check before sizing in.
-        </div>
+        </p>
       </div>
 
       {showPostModal && canPost && (
@@ -241,14 +235,15 @@ export default function TradingSignals() {
 
 function SignalsSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 20 }}>
       {[0, 1, 2, 3].map(i => (
-        <div key={i} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 animate-pulse h-80">
-          <div className="h-10 w-40 rounded bg-[var(--muted)]/40 mb-3" />
-          <div className="h-3 rounded bg-[var(--muted)]/30 mb-2 w-2/3" />
-          <div className="space-y-2 mt-4">
-            {[0, 1, 2, 3].map(j => <div key={j} className="h-3 rounded bg-[var(--muted)]/20" />)}
-          </div>
+        <div key={i} className="card animate-pulse" style={{ height: 320 }}>
+          <span className="accent" style={{ width: 60, background: 'var(--line-2)' }} />
+          <div style={{ height: 34, width: 160, borderRadius: 2, background: 'var(--grid)', marginBottom: 14 }} />
+          <div style={{ height: 10, width: '66%', borderRadius: 2, background: 'var(--hair)', marginBottom: 18 }} />
+          {[0, 1, 2, 3].map(j => (
+            <div key={j} style={{ height: 10, borderRadius: 2, background: 'var(--hair)', marginTop: 10 }} />
+          ))}
         </div>
       ))}
     </div>
@@ -258,47 +253,46 @@ function SignalsSkeleton() {
 function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; tier: string; total: number; won: number; lost: number; activeOrPending: number; hitRate: number; avgR: number }[] }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 text-center text-sm text-[var(--muted-foreground)]">
-        No closed signals yet — leaderboard fills as outcomes get marked.
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Analyst Leaderboard</h3>
+        <p className="empty-line">No closed signals yet — leaderboard fills as outcomes get marked.</p>
       </div>
     );
   }
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
-      <div className="px-4 py-3 border-b border-[var(--border)] bg-black/20 flex items-center gap-2">
-        <Award size={14} className="text-pink-400" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Analyst Leaderboard</span>
+    <div className="card">
+      <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+      <div className="cardhead">
+        <div>
+          <h3>Analyst Leaderboard</h3>
+          <p className="sub">Hit-rate and average R across closed signals.</p>
+        </div>
       </div>
-      <div className="divide-y divide-[var(--border)]">
+      <div style={{ marginTop: 18 }}>
         {rows.slice(0, 10).map((r, i) => (
-          <div key={r.posterId} className="px-4 py-3 flex items-center gap-3 hover:bg-[var(--muted)]/20 transition-colors">
-            <span className={`w-6 text-center text-xs font-bold tabular-nums ${i === 0 ? 'text-amber-300' : i < 3 ? 'text-pink-300' : 'text-[var(--muted-foreground)]'}`}>
-              #{i + 1}
+          <div key={r.posterId} className="qrow">
+            <span style={{ width: 22, fontFamily: 'var(--mono)', color: i === 0 ? 'var(--amber)' : 'var(--muted-2)', flex: 'none' }}>
+              {i + 1}
             </span>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-[var(--foreground)] truncate">{r.posterName}</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-pink-500/15 text-pink-400 border border-pink-500/30">
-                  {r.tier}
-                </span>
-                {r.activeOrPending > 0 && (
-                  <span className="text-[9px] text-emerald-400 inline-flex items-center gap-1">
-                    <Flame size={9} />{r.activeOrPending} live
-                  </span>
-                )}
-              </div>
-              <div className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
-                {r.won}W / {r.lost}L · {r.total} closed
-              </div>
-            </div>
-            <div className="text-right">
-              <div className={`text-sm font-bold tabular-nums ${r.hitRate >= 0.6 ? 'text-emerald-400' : r.hitRate >= 0.4 ? 'text-amber-400' : 'text-amber-500'}`}>
-                {(r.hitRate * 100).toFixed(0)}%
-              </div>
-              <div className="text-[9px] text-[var(--muted-foreground)] tabular-nums">
-                {r.avgR >= 0 ? '+' : ''}{r.avgR.toFixed(2)}R avg
-              </div>
-            </div>
+            <span style={{ fontWeight: 700, color: 'var(--text)' }}>{r.posterName}</span>
+            <span style={{ marginLeft: 10, height: 20, padding: '0 8px', borderRadius: 2, display: 'inline-flex', alignItems: 'center', fontWeight: 700, fontSize: 9, letterSpacing: '.03em', textTransform: 'uppercase', border: '1px solid var(--line-2)', color: 'var(--muted-2)' }}>
+              {r.tier}
+            </span>
+            {r.activeOrPending > 0 && (
+              <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10.5, color: 'var(--green)' }}>
+                <Flame size={9} />{r.activeOrPending} live
+              </span>
+            )}
+            <span style={{ marginLeft: 14, fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)' }}>
+              {r.won}W / {r.lost}L · {r.total} closed
+            </span>
+            <em style={{ color: r.hitRate >= 0.6 ? 'var(--green)' : r.hitRate >= 0.4 ? 'var(--amber)' : 'var(--red)' }}>
+              {(r.hitRate * 100).toFixed(0)}%
+            </em>
+            <em style={{ marginLeft: 16, minWidth: 76, textAlign: 'right', color: r.avgR >= 0 ? 'var(--green)' : 'var(--red)' }}>
+              {r.avgR >= 0 ? '+' : ''}{r.avgR.toFixed(2)}R avg
+            </em>
           </div>
         ))}
       </div>
@@ -319,20 +313,20 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
   const showPips = s.showPips !== false;
   const isLong = s.direction === 'long';
   const DirIcon = isLong ? ArrowUpRight : ArrowDownRight;
-  const dirColor = isLong ? 'text-emerald-400' : 'text-red-400';
+  const dirColor = isLong ? 'var(--green)' : 'var(--red)';
   const action = orderLabel(s.direction, s.orderType);
 
   const riskBadge =
-    s.riskLevel === 'high' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: '⚠️ High Risk ⚠️' } :
-    s.riskLevel === 'medium' ? { color: 'text-amber-300 bg-amber-500/15 border-amber-500/40', label: 'Medium Risk' } :
-    { color: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/40', label: 'Low Risk' };
+    s.riskLevel === 'high' ? { color: 'var(--amber)', label: 'High Risk' } :
+    s.riskLevel === 'medium' ? { color: 'var(--amber)', label: 'Medium Risk' } :
+    { color: 'var(--green)', label: 'Low Risk' };
 
   const statusColor =
-    s.status === 'active' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
-    s.status === 'pending' ? 'text-amber-300 bg-amber-500/10 border-amber-500/30' :
-    s.status === 'won' ? 'text-emerald-300 bg-emerald-500/15 border-emerald-500/40' :
-    s.status === 'lost' ? 'text-red-300 bg-red-500/15 border-red-500/40' :
-    'text-[var(--muted-foreground)] bg-[var(--muted)]/30 border-[var(--border)]';
+    s.status === 'active' ? 'var(--green)' :
+    s.status === 'pending' ? 'var(--amber)' :
+    s.status === 'won' ? 'var(--green)' :
+    s.status === 'lost' ? 'var(--red)' :
+    'var(--muted-2)';
 
   const posterStats = useQuery(api.signals.posterStats, { posterId: s.posterId });
 
@@ -340,50 +334,60 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
   const entryRef = refEntry(s.direction, s.entryLow, s.entryHigh);
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col hover:border-pink-500/30 transition-colors">
-      {/* Header: date + risk badge */}
-      <div className="px-5 py-3 border-b border-[var(--border)] bg-black/20 flex items-center justify-between gap-3">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+    <div className="card" style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <span className="accent" style={{ width: 60, background: dirColor }} />
+
+      {/* Header: date + risk chip */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', padding: '18px 24px 0' }}>
+        <span style={{ fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: 'var(--muted-2)', textTransform: 'uppercase' }}>
           {new Date(s.postedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </span>
-        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border inline-flex items-center gap-1 ${riskBadge.color}`}>
+        <span className="chip" style={{ height: 22, padding: '0 10px', gap: 6, fontSize: 10, fontWeight: 700, letterSpacing: '.03em', color: riskBadge.color, borderColor: riskBadge.color }}>
           {s.riskLevel === 'high' && <AlertTriangle size={10} />}
           {riskBadge.label}
         </span>
       </div>
 
       {/* Symbol + action */}
-      <div className="px-5 pt-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <DirIcon size={22} className={dirColor} />
-          <div>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl font-bold text-[var(--foreground)] tabular-nums tracking-tight">{s.symbol}</h3>
-              <span className={`text-base font-bold tracking-widest ${dirColor}`}>{action}</span>
+      <div className="cardhead" style={{ gap: 12, padding: '16px 24px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, minWidth: 0 }}>
+          <DirIcon size={20} style={{ color: dirColor, flex: 'none', marginTop: 3 }} />
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '26px', margin: 0, color: 'var(--text)' }}>
+                {s.symbol}
+              </h3>
+              <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 13, letterSpacing: '.04em', color: dirColor }}>
+                {action}
+              </span>
             </div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-0.5">{s.market}</div>
+            <p className="lbl" style={{ marginTop: 8, textTransform: 'uppercase' }}>{s.market}</p>
           </div>
         </div>
-        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${statusColor}`}>
+        <span
+          className="pill"
+          style={{ marginLeft: 'auto', flex: 'none', background: 'var(--panel-2)', border: `1px solid ${statusColor}`, color: statusColor, textTransform: 'uppercase', letterSpacing: '.04em', fontWeight: 700 }}
+        >
           {s.status}
         </span>
       </div>
 
       {/* Poster + winrate badge */}
-      <div className="px-5 pt-2 flex items-center gap-2 flex-wrap">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', padding: '14px 24px 0' }}>
         <a
           href={`/u/${s.posterId}`}
           title={`Open ${s.posterName}'s profile`}
-          className="flex items-center gap-1.5 text-[11px] text-[var(--muted-foreground)] hover:text-pink-300 transition-colors group"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, color: 'var(--text-2)' }}
         >
-          <Radio size={11} className="text-pink-400" />
-          <span className="font-semibold text-[var(--foreground)] group-hover:text-pink-300 group-hover:underline">{s.posterName}</span>
+          <Radio size={11} style={{ color: 'var(--amber)' }} />
+          <span style={{ fontWeight: 700, color: 'var(--text)' }}>{s.posterName}</span>
         </a>
         <button
           type="button"
           onClick={() => onViewHistory(s.posterId, s.posterName)}
           title={`View ${s.posterName}'s signal history inline`}
-          className="inline-flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-pink-300 transition-colors px-1.5 py-0.5 rounded hover:bg-[var(--muted)]/30"
+          className="chip"
+          style={{ height: 24, padding: '0 10px', gap: 6, fontSize: 11 }}
         >
           <History size={10} /> History
         </button>
@@ -391,82 +395,99 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
       </div>
 
       {/* Levels */}
-      <div className="px-5 py-4 space-y-1.5 font-mono text-sm">
-        <div className="flex items-center gap-3">
-          <span className="text-[var(--muted-foreground)] w-20 shrink-0">ENTRY:</span>
-          <span className="text-[var(--foreground)] font-bold tabular-nums">{entryLabel}</span>
+      <div style={{ padding: '14px 24px 4px' }}>
+        <div className="mrow">
+          <span className="ic"><Target size={13} /></span>
+          <span className="lb">ENTRY</span>
+          <span className="val">{entryLabel}</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[var(--muted-foreground)] w-20 shrink-0">SL:</span>
-          <span className="text-red-300 font-bold tabular-nums">{fmt(s.stopLoss)}</span>
-          {showPips && (
-            <span className="text-[10px] text-red-400/70 tabular-nums">{fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}</span>
-          )}
+        <div className="mrow">
+          <span className="ic"><ShieldAlert size={13} /></span>
+          <span className="lb">STOP LOSS</span>
+          <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+            {showPips && (
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
+                {fmtPips(s.market, s.symbol, entryRef, s.stopLoss, s.pipSize)}
+              </span>
+            )}
+            <span className="val" style={{ color: 'var(--red)' }}>{fmt(s.stopLoss)}</span>
+          </span>
         </div>
 
-        <div className="pt-1.5 mt-1.5 border-t border-[var(--border)] space-y-1">
-          {s.takeProfits.map((tp, i) => {
-            // Only the specific TP the poster marked as the closing fill gets the
-            // emerald "hit" treatment. Earlier TPs stay neutral — the bullseye now
-            // means "this is where the position closed", not "the market passed here".
-            const hit = s.tpHit === i + 1;
-            // Per-TP R:R — risk anchored at entryLow → SL, reward at this TP. Shown
-            // as "1:N.N" so posters and followers can see how R:R climbs with each TP.
-            const tpRisk = Math.abs(s.entryLow - s.stopLoss);
-            const tpReward = Math.abs(tp - s.entryLow);
-            const tpRR = tpRisk > 0 ? tpReward / tpRisk : 0;
-            return (
-              <div key={i} className={`flex items-center gap-3 ${hit ? 'text-emerald-300' : ''}`}>
-                <span className={`w-20 shrink-0 ${hit ? 'text-emerald-400 font-bold' : 'text-[var(--muted-foreground)]'}`}>
-                  {hit ? 'WON:' : `Target ${i + 1}:`}
-                </span>
-                <span className={`font-bold tabular-nums ${hit ? 'text-emerald-300' : 'text-emerald-300/90'}`}>
-                  {fmt(tp)}
-                </span>
+        {s.takeProfits.map((tp, i) => {
+          // Only the specific TP the poster marked as the closing fill gets the
+          // emerald "hit" treatment. Earlier TPs stay neutral — the bullseye now
+          // means "this is where the position closed", not "the market passed here".
+          const hit = s.tpHit === i + 1;
+          // Per-TP R:R — risk anchored at entryLow → SL, reward at this TP. Shown
+          // as "1:N.N" so posters and followers can see how R:R climbs with each TP.
+          const tpRisk = Math.abs(s.entryLow - s.stopLoss);
+          const tpReward = Math.abs(tp - s.entryLow);
+          const tpRR = tpRisk > 0 ? tpReward / tpRisk : 0;
+          return (
+            <div key={i} className="mrow" style={hit ? { background: 'rgba(36,200,138,.07)' } : undefined}>
+              <span className="ic" style={hit ? { color: 'var(--green)' } : undefined}>
+                <Target size={13} strokeWidth={hit ? 2.5 : 2} />
+              </span>
+              <span className="lb" style={hit ? { color: 'var(--green)', fontWeight: 700 } : undefined}>
+                {hit ? `WON · TARGET ${i + 1}` : `TARGET ${i + 1}`}
+              </span>
+              <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
                 {showPips && (
-                  <span className="text-[10px] text-emerald-400/60 tabular-nums">
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
                     {fmtPips(s.market, s.symbol, entryRef, tp, s.pipSize)}
                   </span>
                 )}
-                <span className={`text-[10px] tabular-nums px-1.5 py-0.5 rounded ${hit ? 'bg-emerald-500/25 text-emerald-200 font-bold' : 'text-pink-300/80 bg-pink-500/10'}`}>
+                <span
+                  style={{
+                    height: 18, padding: '0 8px', borderRadius: 2, display: 'inline-flex', alignItems: 'center',
+                    fontFamily: 'var(--mono)', fontSize: 10,
+                    background: hit ? 'var(--green)' : 'var(--panel-2)',
+                    border: `1px solid ${hit ? 'var(--green)' : 'var(--line)'}`,
+                    color: hit ? 'var(--ink)' : 'var(--muted)',
+                  }}
+                >
                   1:{tpRR.toFixed(1)}
                 </span>
-                {hit && (
-                  <span className="ml-auto inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 ring-2 ring-emerald-400/60 animate-[pulse_2.5s_ease-in-out_infinite]" title={`Closed at target ${i + 1}`}>
-                    <Target size={18} className="text-emerald-400" strokeWidth={2.5} />
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
+                <span className="val" style={{ color: 'var(--green)' }}>{fmt(tp)}</span>
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Rationale */}
       {s.rationale && (
-        <div className="px-5 pb-3 text-xs text-[var(--muted-foreground)] leading-relaxed border-t border-[var(--border)] pt-3">
+        <div style={{ padding: '14px 24px 0', fontSize: 12.5, lineHeight: '20px', color: 'var(--muted)' }}>
           <SignalRationale text={s.rationale} symbol={s.symbol} />
         </div>
       )}
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-[var(--border)] flex items-center justify-between text-[10px] mt-auto bg-black/10">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
-            <Target size={10} className="text-pink-400" />
-            <span className="tabular-nums">R:R {s.rrRatio.toFixed(1)}</span>
-            {s.actualR !== undefined && (
-              <span className={`tabular-nums ml-1 ${s.actualR > 0 ? 'text-emerald-400' : s.actualR < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
-                ({s.actualR >= 0 ? '+' : ''}{s.actualR.toFixed(1)}R)
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1 text-[var(--muted-foreground)]">
-            <Clock size={10} />
-            <span>{timeAgo(s.postedAt)}</span>
-          </div>
-        </div>
+      <div
+        style={{
+          marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+          padding: '14px 24px', borderTop: '1px solid var(--line)', background: 'var(--panel-2)',
+        }}
+      >
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11.5, color: 'var(--muted-2)' }}>
+          <Target size={11} style={{ color: 'var(--amber)' }} />
+          <span style={{ fontFamily: 'var(--mono)' }}>R:R {s.rrRatio.toFixed(1)}</span>
+          {s.actualR !== undefined && (
+            <span
+              style={{
+                fontFamily: 'var(--mono)',
+                color: s.actualR > 0 ? 'var(--green)' : s.actualR < 0 ? 'var(--red)' : 'var(--muted-2)',
+              }}
+            >
+              ({s.actualR >= 0 ? '+' : ''}{s.actualR.toFixed(1)}R)
+            </span>
+          )}
+        </span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 11.5, color: 'var(--muted-2)' }}>
+          <Clock size={11} />
+          {timeAgo(s.postedAt)}
+        </span>
 
         {isOwn && (s.status === 'pending' || s.status === 'active') && (
           <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} onEdit={() => onEdit(s)} />
@@ -502,27 +523,34 @@ function FilterDropdown<T extends string>({
   const current = options.find(o => o.value === value);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} style={{ position: 'relative' }}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="inline-flex items-center justify-between gap-2 w-40 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm font-medium text-[var(--foreground)] hover:border-pink-500/40 transition-colors"
+        className="chip"
+        style={{ width: 168, justifyContent: 'space-between', color: 'var(--text)' }}
       >
-        <span className="truncate">{current?.label ?? 'Select'}</span>
-        <ChevronDown size={14} className={`text-[var(--muted-foreground)] shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{current?.label ?? 'Select'}</span>
+        <ChevronDown size={13} style={{ color: 'var(--muted-2)', flex: 'none', transform: open ? 'rotate(180deg)' : undefined }} />
       </button>
       {open && (
-        <div className="absolute z-30 mt-1 w-40 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-xl p-1">
+        <div
+          style={{
+            position: 'absolute', zIndex: 30, marginTop: 4, width: 168,
+            border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel)', padding: 4,
+          }}
+        >
           {options.map(o => (
             <button
               key={o.value}
               type="button"
               onClick={() => { onChange(o.value); setOpen(false); }}
-              className={`w-full text-left px-3 py-1.5 rounded-md text-sm transition-colors ${
-                o.value === value
-                  ? 'bg-pink-500/15 text-pink-300 font-semibold'
-                  : 'text-[var(--foreground)] hover:bg-[var(--muted)]/40'
-              }`}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left', padding: '7px 12px', borderRadius: 2, fontSize: 12.5,
+                ...(o.value === value
+                  ? { background: 'var(--amber)', color: 'var(--ink)', fontWeight: 700 }
+                  : { color: 'var(--text-2)' }),
+              }}
             >
               {o.label}
             </button>
@@ -539,7 +567,7 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   // Loading state — query in flight
   if (stats === undefined) {
     return (
-      <span className="text-xs px-2.5 py-1 rounded-full bg-[var(--muted)]/30 border border-[var(--border)] text-[var(--muted-foreground)] animate-pulse">
+      <span className="chip animate-pulse" style={{ height: 24, padding: '0 10px', fontSize: 11, color: 'var(--muted-2)' }}>
         Loading…
       </span>
     );
@@ -548,25 +576,25 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   // New poster — no closed signals yet
   if (stats.total === 0) {
     return (
-      <span className="text-xs font-bold px-2.5 py-1 rounded-full border bg-pink-500/10 text-pink-300 border-pink-500/30 inline-flex items-center gap-1">
-        ✨ New analyst
+      <span className="chip" style={{ height: 24, padding: '0 10px', fontSize: 11, fontWeight: 700, color: 'var(--teal)', borderColor: 'var(--teal)' }}>
+        New analyst
       </span>
     );
   }
 
-  // Tier the badge color by hit rate — emerald (great), pink (good), amber (mediocre)
+  // Tier the badge color by hit rate — green (great), teal (good), amber (mediocre)
   const pct = Math.round(stats.hitRate * 100);
   const tone =
-    stats.hitRate >= 0.6 ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40' :
-    stats.hitRate >= 0.4 ? 'bg-pink-500/10 text-pink-300 border-pink-500/30' :
-                            'bg-amber-500/10 text-amber-300 border-amber-500/30';
+    stats.hitRate >= 0.6 ? 'var(--green)' :
+    stats.hitRate >= 0.4 ? 'var(--teal)' :
+                            'var(--amber)';
 
   return (
-    <span className={`px-3 py-1 rounded-full border tabular-nums inline-flex items-baseline gap-1.5 ${tone}`}>
-      <span className="text-base leading-none">🎯</span>
-      <span className="text-lg font-extrabold leading-none">{pct}%</span>
-      <span className="text-[10px] font-bold uppercase tracking-wider leading-none">win rate</span>
-      <span className="text-[10px] opacity-60 font-normal leading-none">· {stats.won}/{stats.total}</span>
+    <span className="chip" style={{ height: 24, padding: '0 10px', gap: 7, borderColor: tone }}>
+      <Target size={11} style={{ color: tone }} />
+      <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5, color: tone }}>{pct}%</span>
+      <span style={{ fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>WIN RATE</span>
+      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-2)' }}>· {stats.won}/{stats.total}</span>
     </span>
   );
 }
@@ -574,29 +602,37 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
 function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status; onEdit: () => void }) {
   const [tpPickerOpen, setTpPickerOpen] = useState(false);
 
+  const act: React.CSSProperties = { height: 24, padding: '0 10px', gap: 6, fontSize: 11 };
+
   return (
-    <div className="flex items-center gap-1 relative">
-      <button onClick={onEdit} title="Edit signal" className="px-2 py-0.5 rounded text-[10px] bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors inline-flex items-center gap-1">
+    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', position: 'relative' }}>
+      <button onClick={onEdit} title="Edit signal" className="chip" style={{ ...act, color: 'var(--amber)', borderColor: 'var(--amber)' }}>
         <Pencil size={10} /> Edit
       </button>
       {status === 'pending' && (
-        <button onClick={() => onUpdate('active')} title="Mark active" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors">
+        <button onClick={() => onUpdate('active')} title="Mark active" className="chip" style={{ ...act, color: 'var(--teal)', borderColor: 'var(--teal)' }}>
           Activate
         </button>
       )}
 
       {takeProfits.length > 1 ? (
         <>
-          <button onClick={() => setTpPickerOpen(v => !v)} title="Mark target hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+          <button onClick={() => setTpPickerOpen(v => !v)} title="Mark target hit" className="chip" style={{ ...act, color: 'var(--green)', borderColor: 'var(--green)' }}>
             <Target size={10} strokeWidth={2.5} /> Target hit
           </button>
           {tpPickerOpen && (
-            <div className="absolute bottom-full right-0 mb-1 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-lg p-1 flex flex-col z-10">
+            <div
+              style={{
+                position: 'absolute', bottom: '100%', right: 0, marginBottom: 6, zIndex: 10,
+                border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel)',
+                padding: 4, display: 'flex', flexDirection: 'column',
+              }}
+            >
               {takeProfits.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => { onUpdate('won', i + 1); setTpPickerOpen(false); }}
-                  className="px-3 py-1 text-[10px] text-emerald-300 hover:bg-emerald-500/15 rounded transition-colors text-left"
+                  style={{ padding: '6px 14px', borderRadius: 2, fontSize: 11.5, color: 'var(--green)', textAlign: 'left', whiteSpace: 'nowrap' }}
                 >
                   Target {i + 1} hit
                 </button>
@@ -605,15 +641,15 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
           )}
         </>
       ) : (
-        <button onClick={() => onUpdate('won', 1)} title="Target hit" className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition-colors inline-flex items-center gap-1">
+        <button onClick={() => onUpdate('won', 1)} title="Target hit" className="chip" style={{ ...act, color: 'var(--green)', borderColor: 'var(--green)' }}>
           <Target size={10} strokeWidth={2.5} /> Target hit
         </button>
       )}
 
-      <button onClick={() => onUpdate('lost')} title="SL hit" className="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors inline-flex items-center gap-1">
+      <button onClick={() => onUpdate('lost')} title="SL hit" className="chip" style={{ ...act, color: 'var(--red)', borderColor: 'var(--red)' }}>
         <XCircle size={10} /> SL
       </button>
-      <button onClick={() => onUpdate('cancelled')} title="Cancel signal" className="px-2 py-0.5 rounded text-[10px] bg-[var(--muted)]/40 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 transition-colors inline-flex items-center gap-1">
+      <button onClick={() => onUpdate('cancelled')} title="Cancel signal" className="chip" style={{ ...act, color: 'var(--muted-2)' }}>
         <Ban size={10} />
       </button>
     </div>
@@ -754,25 +790,37 @@ function PostSignalModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <form onSubmit={submit} className="relative w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--card)] z-10">
-          <div className="flex items-center gap-2">
-            {isEdit ? <Pencil size={16} className="text-pink-400" /> : <Radio size={16} className="text-pink-400" />}
-            <h2 className="text-lg font-bold text-[var(--foreground)]">{isEdit ? 'Edit signal' : 'Post a trading signal'}</h2>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,.72)', backdropFilter: 'blur(4px)' }}>
+      <form
+        onSubmit={submit}
+        className="modal"
+        style={{ width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', padding: 0, textAlign: 'left' }}
+      >
+        <span className="accent" />
+        <div
+          style={{
+            position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            gap: 12, padding: '20px 24px', borderBottom: '1px solid var(--line)', background: '#080d14',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {isEdit ? <Pencil size={15} style={{ color: 'var(--amber)' }} /> : <Radio size={15} style={{ color: 'var(--amber)' }} />}
+            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>
+              {isEdit ? 'Edit signal' : 'Post a trading signal'}
+            </h3>
           </div>
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
-            <X size={18} className="text-[var(--muted-foreground)]" />
+          <button type="button" onClick={onClose} aria-label="Close" style={{ display: 'inline-flex', color: 'var(--muted-2)' }}>
+            <X size={18} />
           </button>
         </div>
 
-        <div className="p-5 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+        <div style={{ padding: '22px 24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <Field label="Symbol">
-              <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())} placeholder="XAUUSD" maxLength={20} />
+              <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())} placeholder="XAUUSD" maxLength={20} style={CONTROL} />
             </Field>
             <Field label="Market">
-              <select value={market} onChange={e => setMarket(e.target.value as Market)}>
+              <select value={market} onChange={e => setMarket(e.target.value as Market)} style={CONTROL}>
                 <option value="commodities">Commodities</option>
                 <option value="forex">Forex</option>
                 <option value="crypto">Crypto</option>
@@ -782,20 +830,25 @@ function PostSignalModal({
           </div>
 
           <Field label="Order">
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl border border-[var(--border)] bg-black/20">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7 }}>
               {([
-                { dir: 'long',  type: 'market', label: 'BUY (Market)',  cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                { dir: 'long',  type: 'stop',   label: 'BUY STOP',      cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                { dir: 'long',  type: 'limit',  label: 'BUY LIMIT',     cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                { dir: 'short', type: 'market', label: 'SELL (Market)', cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                { dir: 'short', type: 'stop',   label: 'SELL STOP',     cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                { dir: 'short', type: 'limit',  label: 'SELL LIMIT',    cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
-              ] as { dir: Direction; type: OrderType; label: string; cls: string }[]).map(o => {
+                { dir: 'long',  type: 'market', label: 'BUY (Market)',  tone: 'var(--green)' },
+                { dir: 'long',  type: 'stop',   label: 'BUY STOP',      tone: 'var(--green)' },
+                { dir: 'long',  type: 'limit',  label: 'BUY LIMIT',     tone: 'var(--green)' },
+                { dir: 'short', type: 'market', label: 'SELL (Market)', tone: 'var(--red)' },
+                { dir: 'short', type: 'stop',   label: 'SELL STOP',     tone: 'var(--red)' },
+                { dir: 'short', type: 'limit',  label: 'SELL LIMIT',    tone: 'var(--red)' },
+              ] as { dir: Direction; type: OrderType; label: string; tone: string }[]).map(o => {
                 const active = direction === o.dir && orderType === o.type;
                 return (
                   <button key={o.label} type="button"
                     onClick={() => { setDirection(o.dir); setOrderType(o.type); }}
-                    className={`px-2 py-2 rounded-xl text-[11px] font-bold tracking-wide transition-all border ${active ? o.cls : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}`}>
+                    style={{
+                      height: 34, borderRadius: 2, fontWeight: 700, fontSize: 11, letterSpacing: '.03em',
+                      border: `1px solid ${active ? o.tone : 'var(--line)'}`,
+                      background: 'var(--panel-2)',
+                      color: active ? o.tone : 'var(--muted-2)',
+                    }}>
                     {o.label}
                   </button>
                 );
@@ -803,49 +856,50 @@ function PostSignalModal({
             </div>
           </Field>
 
-          <div className="grid grid-cols-1 gap-3">
-            <Field label="Risk Level">
-              <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20 w-full">
-                {(['low', 'medium', 'high'] as RiskLevel[]).map(r => (
+          <Field label="Risk Level">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7 }}>
+              {(['low', 'medium', 'high'] as RiskLevel[]).map(r => {
+                const active = riskLevel === r;
+                const tone = r === 'low' ? 'var(--green)' : 'var(--amber)';
+                return (
                   <button key={r} type="button" onClick={() => setRiskLevel(r)}
-                    className={`flex-1 px-2 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
-                      riskLevel === r
-                        ? r === 'high' ? 'bg-amber-600/25 text-amber-200 border border-amber-500/50'
-                          : r === 'medium' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : 'text-[var(--muted-foreground)]'
-                    }`}>
+                    style={{
+                      height: 34, borderRadius: 2, fontWeight: 700, fontSize: 11.5, textTransform: 'capitalize',
+                      border: `1px solid ${active ? tone : 'var(--line)'}`,
+                      background: 'var(--panel-2)',
+                      color: active ? tone : 'var(--muted-2)',
+                    }}>
                     {r}
                   </button>
-                ))}
-              </div>
-            </Field>
-          </div>
+                );
+              })}
+            </div>
+          </Field>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <Field label="Entry Low">
-              <input type="number" step="any" value={entryLow} onChange={e => setEntryLow(e.target.value)} placeholder="4685" />
+              <input type="number" step="any" value={entryLow} onChange={e => setEntryLow(e.target.value)} placeholder="4685" style={CONTROL} />
             </Field>
             <Field label="Entry High (optional)">
-              <input type="number" step="any" value={entryHigh} onChange={e => setEntryHigh(e.target.value)} placeholder="4700 (leave blank for single price)" />
+              <input type="number" step="any" value={entryHigh} onChange={e => setEntryHigh(e.target.value)} placeholder="4700 (leave blank for single price)" style={CONTROL} />
             </Field>
           </div>
 
           <Field label="Stop Loss">
-            <input type="number" step="any" value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="4675" />
+            <input type="number" step="any" value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="4675" style={CONTROL} />
           </Field>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                Take Profits ({tpInputs.length}) <span className="opacity-60 normal-case font-normal tracking-normal">· no limit</span>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 9 }}>
+              <p className="lbl" style={{ textTransform: 'uppercase' }}>
+                Take Profits ({tpInputs.length}) <span style={{ color: 'var(--muted-3)', fontWeight: 400 }}>· no limit</span>
+              </p>
               <button type="button" onClick={addTp}
-                className="inline-flex items-center gap-1 text-[10px] text-pink-400 hover:text-pink-300 transition-colors">
-                <Plus size={10} /> Add TP
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontWeight: 700, fontSize: 11.5, color: 'var(--amber)' }}>
+                <Plus size={11} /> Add TP
               </button>
             </div>
-            <div className="space-y-1.5">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {tpInputs.map((v, i) => {
                 const tpNum = parseFloat(v);
                 const tpValid = Number.isFinite(tpNum) && tpNum > 0 && allBaseValid;
@@ -989,10 +1043,25 @@ function PostSignalModal({
   );
 }
 
+// ATLAS form control chrome — panel-2 surface, hairline border, 2px radius.
+const CONTROL: React.CSSProperties = {
+  width: '100%',
+  height: 42,
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  padding: '0 16px',
+  fontSize: 13,
+  color: 'var(--text)',
+  fontFamily: 'var(--body)',
+};
+
+const TEXTAREA: React.CSSProperties = { ...CONTROL, height: 'auto', padding: '12px 16px', lineHeight: '20px', resize: 'vertical' };
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">{label}</div>
+    <label style={{ display: 'block' }}>
+      <span className="lbl" style={{ display: 'block', marginBottom: 9, textTransform: 'uppercase' }}>{label}</span>
       {children}
     </label>
   );

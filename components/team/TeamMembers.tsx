@@ -44,14 +44,23 @@ function getRiskLevel(compliance: number, pnl: number): 'low' | 'medium' | 'high
   return 'low';
 }
 
+const RISK_COLOR: Record<'low' | 'medium' | 'high', string> = {
+  low: 'var(--green)',
+  medium: 'var(--amber)',
+  high: 'var(--red)',
+};
+
+// shared ATLAS input chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', height: 42, padding: '0 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
+
 function RiskBadge({ level }: { level: 'low' | 'medium' | 'high' }) {
-  const styles = {
-    low: 'bg-green-500/15 text-green-400',
-    medium: 'bg-yellow-500/15 text-yellow-400',
-    high: 'bg-red-500/15 text-red-400',
-  };
   return (
-    <span className={`px-2.5 py-1 rounded-md text-[11px] font-semibold capitalize ${styles[level]}`}>
+    <span className="chip" style={{ height: 24, padding: '0 10px', fontSize: 11, color: RISK_COLOR[level] }}>
+      <i style={{ background: RISK_COLOR[level] }} />
       {level.charAt(0).toUpperCase() + level.slice(1)}
     </span>
   );
@@ -162,47 +171,43 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
   const visibleFilters = roleFilters.filter(f => f.value === 'all' || activeRoles.has(f.value));
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">Members</h2>
-          <p className="text-sm text-[var(--muted-foreground)]">{enrichedMembers.length} members total</p>
-        </div>
+      <div className="phead pwrap" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Roster</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Members</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>{enrichedMembers.length} members total</p>
         {canManage && (
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-semibold transition-colors"
-          >
-            <UserPlus size={16} />
-            Add Member
-          </button>
+          <div className="actions">
+            <button onClick={() => setShowAddModal(true)} className="btn-a" style={{ height: 44 }}>
+              <UserPlus size={14} />
+              Add Member
+            </button>
+          </div>
         )}
       </div>
 
       {/* Search + role filter */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 px-3 py-2 bg-[var(--muted)] rounded-lg border border-[var(--border)] text-sm flex-1 max-w-md">
-          <Search size={14} className="text-[var(--muted-foreground)] shrink-0" />
+      <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 20 }}>
+        <div
+          className="flex items-center gap-2 flex-1 max-w-md"
+          style={{ height: 40, padding: '0 14px', borderRadius: 2, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
+        >
+          <Search size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
           <input
             type="text"
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent outline-none text-sm w-full"
+            style={{ background: 'transparent', border: 0, outline: 'none', fontSize: 12.5, color: 'var(--text)', width: '100%' }}
           />
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 flex-wrap">
           {visibleFilters.map(f => (
             <button
               key={f.value}
               onClick={() => setRoleFilter(f.value)}
-              className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border',
-                roleFilter === f.value
-                  ? 'bg-[var(--accent)]/15 text-[var(--accent)] border-[var(--accent)]/30'
-                  : 'text-[var(--muted-foreground)] border-[var(--border)] hover:text-[var(--foreground)]'
-              )}
+              className={cn('chip', roleFilter === f.value && 'on')}
             >
               {f.label}
             </button>
@@ -211,9 +216,12 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
       </div>
 
       {/* Table */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden">
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         {/* Table header */}
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_0.8fr_0.8fr] gap-2 px-5 py-3 border-b border-[var(--border)] text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+        <div
+          className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_0.8fr_0.8fr] gap-2 px-5 py-3"
+          style={{ borderBottom: '1px solid var(--line)', fontSize: 9.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}
+        >
           <button onClick={() => handleSort('name')} className="flex items-center text-left">
             Name <SortIcon field="name" current={sortField} dir={sortDir} />
           </button>
@@ -237,11 +245,9 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
 
         {/* Table rows */}
         {sorted.length === 0 ? (
-          <div className="py-12 text-center">
-            <p className="text-sm text-[var(--muted-foreground)]">
-              {searchQuery || roleFilter !== 'all' ? 'No members match your filters.' : 'No members yet.'}
-            </p>
-          </div>
+          <p className="empty-line">
+            {searchQuery || roleFilter !== 'all' ? 'No members match your filters.' : 'No members yet.'}
+          </p>
         ) : (
           sorted.map(member => {
             const risk = getRiskLevel(member.compliance, member.totalPnL);
@@ -256,41 +262,49 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
                 {/* Main row */}
                 <div
                   onClick={() => setExpandedUserId(isExpanded ? null : member.userId)}
-                  className={cn(
-                    'grid grid-cols-[2fr_1fr_1fr_1fr_1fr_0.8fr_0.8fr] gap-2 px-5 py-3.5 items-center cursor-pointer transition-colors hover:bg-[var(--muted)]/50',
-                    isExpanded && 'bg-[var(--muted)]/30'
-                  )}
+                  className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_0.8fr_0.8fr] gap-2 px-5 py-3.5 items-center cursor-pointer"
+                  style={{
+                    borderBottom: '1px solid var(--hair)',
+                    background: isExpanded ? 'var(--panel-2)' : 'transparent',
+                  }}
                 >
                   {/* Name + email */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-sm font-bold text-[var(--accent)] shrink-0">
+                    <div
+                      className="flex items-center justify-center shrink-0"
+                      style={{
+                        width: 30, height: 29, borderRadius: 2, background: 'var(--panel-2)',
+                        border: '1px solid var(--line)', fontFamily: 'var(--display)',
+                        fontWeight: 700, fontSize: 13, color: 'var(--amber)',
+                      }}
+                    >
                       {member.displayName[0]?.toUpperCase() ?? '?'}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold truncate">{member.displayName}</p>
-                      <p className="text-[11px] text-[var(--muted-foreground)] truncate">{member.email}</p>
+                      <p className="truncate" style={{ margin: 0, fontWeight: 700, fontSize: 13 }}>{member.displayName}</p>
+                      <p className="truncate" style={{ margin: '3px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{member.email}</p>
                     </div>
                   </div>
 
                   {/* Role */}
-                  <span className="text-sm capitalize">{member.role}</span>
+                  <span className="capitalize" style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{member.role}</span>
 
                   {/* Compliance */}
-                  <span className="text-sm text-center">{Math.round(member.compliance)}%</span>
+                  <span className="text-center" style={{ fontFamily: 'var(--mono)', fontSize: 12.5 }}>{Math.round(member.compliance)}%</span>
 
                   {/* P&L */}
-                  <span className={cn(
-                    'text-sm font-medium text-center',
-                    member.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'
-                  )}>
+                  <span
+                    className="text-center"
+                    style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: member.totalPnL >= 0 ? 'var(--green)' : 'var(--red)' }}
+                  >
                     {member.totalPnL >= 0 ? '+' : '-'}${Math.abs(member.totalPnL).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </span>
 
                   {/* Win Rate */}
-                  <span className="text-sm text-center">{Math.round(member.winRate)}%</span>
+                  <span className="text-center" style={{ fontFamily: 'var(--mono)', fontSize: 12.5 }}>{Math.round(member.winRate)}%</span>
 
                   {/* Trades */}
-                  <span className="text-sm text-center">{member.totalTrades}</span>
+                  <span className="text-center" style={{ fontFamily: 'var(--mono)', fontSize: 12.5 }}>{member.totalTrades}</span>
 
                   {/* Risk + actions */}
                   <div className="flex items-center justify-center gap-2">
@@ -300,33 +314,33 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
 
                 {/* Expanded detail row */}
                 {isExpanded && (
-                  <div className="px-5 py-4 border-t border-[var(--border)] bg-[var(--muted)]/20">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                      <div>
-                        <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Status</p>
-                        <p className="text-sm font-semibold mt-0.5">Active</p>
+                  <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)', background: 'var(--panel-2)' }}>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="inset">
+                        <p className="lbl">STATUS</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 13, fontWeight: 700 }}>Active</p>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Cohorts</p>
-                        <p className="text-sm font-semibold mt-0.5">&mdash;</p>
+                      <div className="inset">
+                        <p className="lbl">COHORTS</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 13, fontWeight: 700 }}>&mdash;</p>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Accounts</p>
-                        <p className="text-sm font-semibold mt-0.5">0 linked</p>
+                      <div className="inset">
+                        <p className="lbl">ACCOUNTS</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 13, fontWeight: 700 }}>0 linked</p>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Wins / Losses</p>
-                        <p className="text-sm font-semibold mt-0.5">{wins} / {losses}</p>
+                      <div className="inset">
+                        <p className="lbl">WINS / LOSSES</p>
+                        <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 13 }}>{wins} / {losses}</p>
                       </div>
                     </div>
 
                     {/* Actions row */}
                     {canManage && member.role !== 'owner' && (
-                      <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[var(--border)]">
+                      <div className="flex items-center gap-3" style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
                         {/* Role selector */}
                         <select
                           defaultValue={member.role}
-                          className="px-3 py-1.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-xs font-medium"
+                          style={{ ...inputBox, width: 'auto', height: 32, fontSize: 12, fontWeight: 700 }}
                           onClick={e => e.stopPropagation()}
                         >
                           <option value="admin">Admin</option>
@@ -335,17 +349,19 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
                         </select>
                         <button
                           onClick={(e) => { e.stopPropagation(); }}
-                          className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-yellow-400 hover:bg-yellow-500/10 transition-colors"
+                          className="flex items-center justify-center"
+                          style={{ width: 32, height: 32, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--amber)' }}
                           title="Ban member"
                         >
-                          <Ban size={16} />
+                          <Ban size={15} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleRemove(member.userId, member.displayName); }}
-                          className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="flex items-center justify-center"
+                          style={{ width: 32, height: 32, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--red)' }}
                           title="Remove member"
                         >
-                          <XIcon size={16} />
+                          <XIcon size={15} />
                         </button>
                       </div>
                     )}
@@ -459,51 +475,49 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-md mx-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,.65)' }}>
+      <div className="modal w-full" style={{ maxWidth: 480, textAlign: 'left', padding: '28px 26px 32px' }}>
+        <span className="accent" />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-[var(--muted)] transition-colors"
+          className="absolute flex items-center justify-center"
+          style={{ top: 16, right: 16, width: 26, height: 26, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--muted)' }}
         >
-          <XIcon size={18} className="text-[var(--muted-foreground)]" />
+          <XIcon size={14} />
         </button>
 
-        <h3 className="text-lg font-bold mb-4">Add Member</h3>
+        <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 20, margin: 0 }}>Add Member</h3>
 
         {/* Tab switcher */}
-        <div className="flex rounded-xl border border-[var(--border)] overflow-hidden mb-4">
+        <div className="tabs line" style={{ marginTop: 18, marginBottom: 20 }}>
           <button
             onClick={() => { setTab('existing'); setError(''); }}
-            className={cn(
-              'flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-colors',
-              tab === 'existing'
-                ? 'bg-[var(--accent)] text-white'
-                : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-            )}
+            className={cn('flex items-center gap-2', tab === 'existing' && 'on')}
           >
-            <UserPlus size={14} />
+            <UserPlus size={13} />
             Add Existing User
           </button>
           <button
             onClick={() => { setTab('invite'); setError(''); }}
-            className={cn(
-              'flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-colors',
-              tab === 'invite'
-                ? 'bg-[var(--accent)] text-white'
-                : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-            )}
+            className={cn('flex items-center gap-2', tab === 'invite' && 'on')}
           >
-            <Search size={14} />
+            <Search size={13} />
             Invite
           </button>
         </div>
 
         {/* Role selector (shared) */}
-        <div className="mb-4">
+        <div className="field" style={{ marginBottom: 16 }}>
+          <label>ROLE</label>
           <select
             value={role}
             onChange={e => setRole(e.target.value as 'admin' | 'coach' | 'member')}
-            className="w-full px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-xl text-sm outline-none focus:border-[var(--accent)] appearance-none cursor-pointer"
+            style={{ ...inputBox, cursor: 'pointer' }}
           >
             <option value="member">Member</option>
             <option value="coach">Coach</option>
@@ -513,35 +527,38 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
 
         {/* Tab content */}
         {tab === 'existing' ? (
-          <div className="space-y-3">
+          <div>
             {/* Search input */}
-            <div className="flex items-center gap-2 px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-xl text-sm">
-              <Search size={14} className="text-[var(--muted-foreground)] shrink-0" />
+            <div
+              className="flex items-center gap-2"
+              style={{ height: 42, padding: '0 14px', borderRadius: 2, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
+            >
+              <Search size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => handleSearch(e.target.value)}
                 placeholder="Search by username or email..."
-                className="bg-transparent outline-none text-sm w-full"
+                style={{ background: 'transparent', border: 0, outline: 'none', fontSize: 13, color: 'var(--text)', width: '100%' }}
                 autoFocus
               />
             </div>
 
             {/* Search results */}
             {searchQuery.trim().length < 2 ? (
-              <p className="text-center text-xs text-[var(--muted-foreground)] py-4">
+              <p className="empty-line" style={{ padding: '20px 0', fontSize: 12.5 }}>
                 Type at least 2 characters to search
               </p>
             ) : searching ? (
-              <p className="text-center text-xs text-[var(--muted-foreground)] py-4">
+              <p className="empty-line" style={{ padding: '20px 0', fontSize: 12.5 }}>
                 Searching...
               </p>
             ) : searchResults.length === 0 ? (
-              <p className="text-center text-xs text-[var(--muted-foreground)] py-4">
+              <p className="empty-line" style={{ padding: '20px 0', fontSize: 12.5 }}>
                 No users found
               </p>
             ) : (
-              <div className="max-h-48 overflow-y-auto space-y-1">
+              <div style={{ maxHeight: 200, overflowY: 'auto', marginTop: 12 }}>
                 {searchResults.map(user => {
                   const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ');
                   const isSelected = selectedUser?.id === user.id;
@@ -549,26 +566,32 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
                     <button
                       key={user.id}
                       onClick={() => setSelectedUser(isSelected ? null : user)}
-                      className={cn(
-                        'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors',
-                        isSelected
-                          ? 'bg-[var(--accent)]/15 border border-[var(--accent)]/30'
-                          : 'hover:bg-[var(--muted)] border border-transparent'
-                      )}
+                      className="w-full flex items-center gap-3 text-left"
+                      style={{
+                        padding: '9px 12px', marginTop: 6, borderRadius: 2,
+                        border: `1px solid ${isSelected ? 'var(--amber)' : 'var(--line)'}`,
+                        background: isSelected ? '#14100a' : 'var(--panel-2)',
+                      }}
                     >
                       {user.imageUrl ? (
-                        <img src={user.imageUrl} alt="" className="w-8 h-8 rounded-full shrink-0" />
+                        <img src={user.imageUrl} alt="" className="shrink-0" style={{ width: 28, height: 28, borderRadius: 2 }} />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-xs font-bold text-[var(--accent)] shrink-0">
+                        <div
+                          className="flex items-center justify-center shrink-0"
+                          style={{
+                            width: 28, height: 28, borderRadius: 2, background: 'var(--panel)',
+                            border: '1px solid var(--line)', fontSize: 11, fontWeight: 700, color: 'var(--amber)',
+                          }}
+                        >
                           {(fullName || user.email)[0]?.toUpperCase() ?? '?'}
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        {fullName && <p className="text-sm font-medium truncate">{fullName}</p>}
-                        <p className="text-[11px] text-[var(--muted-foreground)] truncate">{user.email}</p>
+                        {fullName && <p className="truncate" style={{ margin: 0, fontSize: 12.5, fontWeight: 700 }}>{fullName}</p>}
+                        <p className="truncate" style={{ margin: fullName ? '3px 0 0' : 0, fontSize: 11, color: 'var(--muted-2)' }}>{user.email}</p>
                       </div>
                       {isSelected && (
-                        <span className="text-[var(--accent)] text-xs font-semibold shrink-0">Selected</span>
+                        <span className="shrink-0" style={{ fontSize: 11, fontWeight: 700, color: 'var(--amber)' }}>Selected</span>
                       )}
                     </button>
                   );
@@ -576,64 +599,58 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
               </div>
             )}
 
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--red)' }}>{error}</p>}
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-2.5 border border-[var(--border)] text-sm font-medium rounded-xl hover:bg-[var(--muted)] transition-colors"
-              >
+            <div className="flex gap-3" style={{ marginTop: 20 }}>
+              <button type="button" onClick={onClose} className="btn-g" style={{ flex: 1 }}>
                 Cancel
               </button>
               <button
                 onClick={handleAddExisting}
                 disabled={loading || !selectedUser}
-                className="flex-1 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                className={loading || !selectedUser ? 'btn-d' : 'btn-a'}
+                style={{ flex: 1 }}
               >
                 {loading ? 'Adding...' : 'Add Member'}
               </button>
             </div>
           </div>
         ) : (
-          <form onSubmit={handleInvite} className="space-y-3">
-            <div>
-              <label className="text-xs font-medium text-[var(--muted-foreground)] mb-1 block">Display Name</label>
+          <form onSubmit={handleInvite}>
+            <div className="field" style={{ marginBottom: 16 }}>
+              <label>DISPLAY NAME</label>
               <input
                 type="text"
                 value={inviteDisplayName}
                 onChange={e => setInviteDisplayName(e.target.value)}
                 placeholder="John Doe"
                 required
-                className="w-full px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-xl text-sm outline-none focus:border-[var(--accent)]"
+                style={inputBox}
               />
             </div>
-            <div>
-              <label className="text-xs font-medium text-[var(--muted-foreground)] mb-1 block">Email</label>
+            <div className="field">
+              <label>EMAIL</label>
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={e => setInviteEmail(e.target.value)}
                 placeholder="john@example.com"
                 required
-                className="w-full px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-xl text-sm outline-none focus:border-[var(--accent)]"
+                style={inputBox}
               />
             </div>
 
-            {error && <p className="text-xs text-red-400">{error}</p>}
+            {error && <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--red)' }}>{error}</p>}
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-2.5 border border-[var(--border)] text-sm font-medium rounded-xl hover:bg-[var(--muted)] transition-colors"
-              >
+            <div className="flex gap-3" style={{ marginTop: 20 }}>
+              <button type="button" onClick={onClose} className="btn-g" style={{ flex: 1 }}>
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                className={loading ? 'btn-d' : 'btn-a'}
+                style={{ flex: 1 }}
               >
                 {loading ? 'Inviting...' : 'Send Invite'}
               </button>

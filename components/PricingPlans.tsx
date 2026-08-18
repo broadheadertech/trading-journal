@@ -79,108 +79,92 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   const sorted = plans ? [...plans].sort((a: Plan, b: Plan) => a.sortOrder - b.sortOrder) : [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-4xl mx-4 rounded-2xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div
+        className="modal w-full max-w-6xl"
+        style={{ maxHeight: '90vh', overflowY: 'auto' }}
+      >
+        <span className="accent" />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-[var(--muted)] transition-colors"
+          className="absolute"
+          style={{ top: 16, right: 16, color: 'var(--muted)', zIndex: 2 }}
+          aria-label="Close"
         >
-          <X size={18} className="text-[var(--muted-foreground)]" />
+          <X size={18} />
         </button>
 
-        <div className="text-center mb-6">
-          <h2 className="text-lg font-bold text-[var(--foreground)]">Choose Your Plan</h2>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">
-            Unlock premium features for your trading journal
-          </p>
+        <h2>Choose Your Plan</h2>
+        <p className="sub">Unlock premium features for your trading journal</p>
 
-          {/* Interval toggle */}
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <button
-              onClick={() => setInterval('month')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                interval === 'month'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setInterval('year')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                interval === 'year'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-              }`}
-            >
-              Yearly
-              <span className="ml-1 text-[10px] opacity-75">Save ~17%</span>
-            </button>
-          </div>
+        {/* Interval toggle */}
+        <div className="switches">
+          <button
+            onClick={() => setInterval('month')}
+            className={interval === 'month' ? 'on' : undefined}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setInterval('year')}
+            className={interval === 'year' ? 'on' : undefined}
+          >
+            Yearly <small>Save ~17%</small>
+          </button>
+        </div>
 
-          {/* Payment provider toggle — Stripe for international cards, PayMongo for PH local methods */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <button
-              onClick={() => setProvider('stripe')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                provider === 'stripe'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              Card (Stripe)
-            </button>
-            <button
-              onClick={() => setProvider('paymongo')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                provider === 'paymongo'
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              GCash / GrabPay (PH)
-            </button>
-          </div>
+        {/* Payment provider toggle — Stripe for international cards, PayMongo for PH local methods */}
+        <div className="switches" style={{ marginTop: 10 }}>
+          <button
+            onClick={() => setProvider('stripe')}
+            className={provider === 'stripe' ? 'out' : undefined}
+          >
+            Card (Stripe)
+          </button>
+          <button
+            onClick={() => setProvider('paymongo')}
+            className={provider === 'paymongo' ? 'out' : undefined}
+          >
+            GCash / GrabPay (PH)
+          </button>
         </div>
 
         {error && (
-          <div className="mb-4 mx-auto max-w-md text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-center">
-            {error}
+          <div className="warn" style={{ textAlign: 'left' }}>
+            <span>{error}</span>
           </div>
         )}
 
         {!plans ? (
           <div className="flex justify-center py-8">
-            <Loader2 size={24} className="animate-spin text-[var(--muted-foreground)]" />
+            <Loader2 size={24} className="animate-spin" style={{ color: 'var(--muted)' }} />
           </div>
         ) : sorted.length === 0 ? (
-          <p className="text-center text-sm text-[var(--muted-foreground)] py-8">
-            No plans available yet. Check back soon!
-          </p>
+          <p className="empty-line">No plans available yet. Check back soon!</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="plans4">
             {/* Free tier card */}
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col">
-              <h3 className="text-sm font-bold text-[var(--foreground)]">Free</h3>
-              <p className="text-2xl font-bold text-[var(--foreground)] mt-2">
-                $0<span className="text-xs font-normal text-[var(--muted-foreground)]">/mo</span>
-              </p>
-              <ul className="mt-4 space-y-2 flex-1">
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  Basic trade journal
+            <div className="plan4">
+              <h4>Free</h4>
+              <div className="price">
+                <b>$0</b><span>/mo</span>
+              </div>
+              <ul>
+                <li>
+                  <Check size={12} style={{ color: 'var(--green)' }} />
+                  <span>Basic trade journal</span>
                 </li>
-                <li className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="mt-0.5 text-[var(--green)] shrink-0" />
-                  Up to 50 trades
+                <li>
+                  <Check size={12} style={{ color: 'var(--green)' }} />
+                  <span>Up to 50 trades</span>
                 </li>
               </ul>
-              {currentPlanId === 'free' && (
-                <div className="mt-4 py-2 text-center text-xs font-medium text-[var(--muted-foreground)] border border-[var(--border)] rounded-lg">
-                  Current Plan
-                </div>
-              )}
+              {currentPlanId === 'free' && <span className="cta ghost">Current Plan</span>}
             </div>
 
             {/* Paid plan cards */}
@@ -192,28 +176,19 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               const isElite = plan.planId === 'elite';
 
               return (
-                <div
-                  key={plan._id}
-                  className={`rounded-xl border p-5 flex flex-col ${
-                    isElite
-                      ? 'border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-[var(--card)] ring-1 ring-amber-500/20'
-                      : 'border-[var(--border)] bg-[var(--card)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    {isElite && <Crown size={16} className="text-amber-400" />}
-                    <h3 className={`text-sm font-bold ${isElite ? 'text-amber-400' : 'text-[var(--foreground)]'}`}>
-                      {plan.name}
-                    </h3>
+                <div key={plan._id} className={`plan4${isElite ? ' hot' : ''}`}>
+                  <h4 className={isElite ? 'amber' : undefined}>
+                    {isElite && <Crown size={16} />}
+                    {plan.name}
+                  </h4>
+                  <div className="price">
+                    <b>${price}</b><span>{priceLabel}</span>
                   </div>
-                  <p className="text-2xl font-bold text-[var(--foreground)] mt-2">
-                    ${price}<span className="text-xs font-normal text-[var(--muted-foreground)]">{priceLabel}</span>
-                  </p>
-                  <ul className="mt-4 space-y-2 flex-1">
+                  <ul>
                     {plan.features.map((f: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-[var(--muted-foreground)]">
-                        <Check size={14} className={`mt-0.5 shrink-0 ${isElite ? 'text-amber-400' : 'text-[var(--green)]'}`} />
-                        {f}
+                      <li key={i}>
+                        <Check size={12} style={{ color: isElite ? 'var(--amber)' : 'var(--green)' }} />
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -221,22 +196,18 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                     <button
                       onClick={handleManage}
                       disabled={loading === 'portal'}
-                      className="mt-4 w-full py-2 rounded-lg border border-[var(--border)] text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="cta ghost disabled:opacity-50"
                     >
-                      {loading === 'portal' && <Loader2 size={14} className="animate-spin" />}
+                      {loading === 'portal' && <Loader2 size={14} className="animate-spin" style={{ marginRight: 8 }} />}
                       Manage Subscription
                     </button>
                   ) : (
                     <button
                       onClick={() => handleSubscribe(plan)}
                       disabled={loading === plan.planId || !canSubscribe}
-                      className={`mt-4 w-full py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${
-                        isElite
-                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600'
-                          : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
-                      }`}
+                      className="cta amber disabled:opacity-50"
                     >
-                      {loading === plan.planId && <Loader2 size={14} className="animate-spin" />}
+                      {loading === plan.planId && <Loader2 size={14} className="animate-spin" style={{ marginRight: 8 }} />}
                       {canSubscribe ? 'Subscribe' : 'Coming Soon'}
                     </button>
                   )}
@@ -248,15 +219,15 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
         {/* Manage existing subscription */}
         {isActive && subscription?.stripeCustomerId && (
-          <div className="mt-6 text-center">
+          <p className="footnote">
             <button
               onClick={handleManage}
               disabled={loading === 'portal'}
-              className="text-xs text-[var(--accent)] hover:underline"
+              style={{ color: 'var(--amber)', fontWeight: 700, fontSize: 12.5 }}
             >
-              Manage billing & invoices
+              Manage billing &amp; invoices
             </button>
-          </div>
+          </p>
         )}
       </div>
     </div>

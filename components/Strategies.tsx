@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { TrendingUp, Crosshair, Sparkles, Sunrise, Waves, Layers, Clock, LineChart } from 'lucide-react';
-import { tabNeonActive } from '@/lib/utils';
 
 type StrategyId =
   | 'inner-circle'
@@ -178,41 +177,24 @@ export default function Strategies() {
   const current = STRATEGIES.find(s => s.id === active)!;
 
   return (
-    <div className="relative space-y-6">
-      <div className="hero-glow" />
+    <div>
+      <div className="phead">
+        <p className="eyebrow"><TrendingUp size={12} /> Curated playbooks</p>
+        <h2>Trading strategies</h2>
+        <p className="sub">Explore vetted, battle-tested strategies built by senior traders.</p>
+      </div>
 
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <TrendingUp size={12} /> Curated playbooks
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Trading <span className="gradient-text">strategies</span>
-        </h1>
-        <p className="text-base sm:text-lg text-[var(--fg-2)] max-w-xl leading-relaxed">
-          Explore vetted, battle-tested strategies built by senior traders.
-        </p>
-      </header>
-
-      {/* Sub-tab strip — same pattern as JournalTab */}
-      <div className="glass rounded-2xl p-1.5 inline-flex gap-1 overflow-x-auto max-w-full">
-        {STRATEGIES.map((s, idx) => {
-          const Icon = s.icon;
-          const isActive = active === s.id;
-          return (
-            <button
-              key={s.id}
-              onClick={() => setActive(s.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                isActive
-                  ? tabNeonActive(idx)
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40'
-              }`}
-            >
-              <Icon size={16} />
-              {s.title}
-            </button>
-          );
-        })}
+      {/* Sub-tab strip */}
+      <div className="tabs line">
+        {STRATEGIES.map(s => (
+          <button
+            key={s.id}
+            onClick={() => setActive(s.id)}
+            className={active === s.id ? 'on' : undefined}
+          >
+            {s.title}
+          </button>
+        ))}
       </div>
 
       {/* Active strategy content */}
@@ -224,55 +206,48 @@ export default function Strategies() {
 function StrategyContent({ strategy }: { strategy: StrategyDef }) {
   const Icon = strategy.icon;
   return (
-    <div className="space-y-6 anim-fade-up">
-      {/* Hero card */}
-      <div className="glass rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-gradient-to-br from-pink-500/20 to-emerald-500/10 blur-3xl pointer-events-none" />
-        <div className="flex items-start gap-4 relative">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center shrink-0">
-            <Icon size={26} className="text-pink-400" />
-          </div>
-          <div className="flex-1 min-w-0 space-y-2">
-            <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{strategy.tag}</span>
-            <h2 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">{strategy.title}</h2>
-            <p className="text-[var(--muted-foreground)]">{strategy.summary}</p>
-          </div>
-        </div>
+    <div>
+      {/* Strategy header */}
+      <div style={{ position: 'relative', paddingTop: 23 }}>
+        <span style={{ position: 'absolute', left: 0, top: 0, width: 56, height: 3, background: 'var(--amber)' }} />
+        <p style={{ margin: 0, fontWeight: 500, fontSize: 10, color: 'var(--teal)', letterSpacing: '.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Icon size={12} />{strategy.tag}
+        </p>
+        <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 28, lineHeight: '30px', margin: '16px 0 0' }}>
+          {strategy.title}
+        </h3>
+        <p style={{ margin: '20px 0 0', fontSize: 14.5, color: 'var(--muted)', maxWidth: 760 }}>
+          {strategy.summary}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="split" style={{ marginTop: 70 }}>
         {/* Key concepts */}
-        <div className="glass rounded-3xl p-6">
-          <h3 className="font-bold text-[var(--foreground)] flex items-center gap-2 mb-4">
-            <Sparkles size={16} className="text-pink-400" /> Key concepts
-          </h3>
-          <ul className="space-y-2.5">
+        <div>
+          <h4 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Sparkles size={14} style={{ color: 'var(--amber)' }} /> Key concepts
+          </h4>
+          <div className="klist">
             {strategy.keyConcepts.map((c, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-[var(--foreground)]">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0" />
-                <span>{c}</span>
-              </li>
+              <div key={i}><i /><span>{c}</span></div>
             ))}
-          </ul>
+          </div>
         </div>
 
         {/* Rules */}
-        <div className="glass rounded-3xl p-6">
-          <h3 className="font-bold text-[var(--foreground)] flex items-center gap-2 mb-4">
-            <Crosshair size={16} className="text-pink-400" /> Trading rules
-          </h3>
-          <ol className="space-y-2.5">
+        <div>
+          <h4 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Crosshair size={14} style={{ color: 'var(--amber)' }} /> Trading rules
+          </h4>
+          <div className="klist num">
             {strategy.rules.map((r, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--foreground)]">
-                <span className="shrink-0 w-5 h-5 rounded-full bg-pink-500/15 text-pink-400 text-[11px] font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
-                <span>{r}</span>
-              </li>
+              <div key={i}><b>{i + 1}</b><span>{r}</span></div>
             ))}
-          </ol>
+          </div>
         </div>
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)] text-center">
+      <p className="footnote">
         Full video lessons and worked examples coming with the Courses module.
       </p>
     </div>

@@ -379,7 +379,7 @@ export default function PsychologyJournal({
   const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
   return (
-    <div className="space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
       {/* Journaling — Daily Reflection + Trigger logging (forms wired to Convex via parent) */}
       {onAddReflection && onAddReview && (
         <DailyReflection
@@ -400,96 +400,80 @@ export default function PsychologyJournal({
 
       {/* ── Hero ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-400 text-xs font-semibold flex items-center gap-1.5">
-              <Brain size={14} /> BEHAVIOR COMMAND CENTER
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] mb-3">
+        <div className="card pwrap" style={{ padding: '39px 28px 34px' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <p style={{ margin: 0, fontWeight: 500, fontSize: '9.5px', color: 'var(--green)', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Brain size={12} /> BEHAVIOR COMMAND CENTER
+          </p>
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 28, lineHeight: '32px', margin: '20px 0 0' }}>
             Decode the Process Behind Your P&L
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] mb-5 max-w-xl">
+          </h3>
+          <p style={{ margin: '22px 0 0', fontSize: '13.5px', lineHeight: '21px', color: 'var(--muted)', maxWidth: 640 }}>
             This page maps behavior risk, emotional drift, and discipline leakage into concrete operating rules.
             Fix one top behavior loop at a time and validate in the next trading block.
           </p>
-          <div className="flex items-center flex-wrap gap-2">
-            <span className="px-3 py-1 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] text-xs">
-              {m.closed.length} trades analyzed
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginTop: 28 }}>
+            <span className="chip" style={{ height: 32 }}>{m.closed.length} trades analyzed</span>
           </div>
         </div>
 
         {/* Right: Immediate Focus + Scorecard */}
         <div className="space-y-4">
-          <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[10px] text-amber-400 uppercase tracking-wider font-semibold">Immediate Focus</span>
-            </div>
-            <p className="text-sm text-[var(--foreground)] font-medium mb-1">{m.immediateActions[0]}</p>
+          <div className="card" style={{ border: '1px solid #3a2a12', background: '#14100a', padding: '22px 20px' }}>
+            <p className="lbl b10" style={{ color: 'var(--amber)' }}>IMMEDIATE FOCUS</p>
+            <p style={{ margin: '12px 0 0', fontSize: '12.5px', lineHeight: '20px', color: 'var(--text)' }}>{m.immediateActions[0]}</p>
             {m.closed.length < 10 && (
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">Behavior engine needs enough diverse trade context to identify high-confidence weaknesses.</p>
+              <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: 'var(--muted)' }}>Behavior engine needs enough diverse trade context to identify high-confidence weaknesses.</p>
             )}
-            <div className="flex items-center gap-2 mt-3">
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-semibold">
-                Best edge {fmtPnl(m.bestEdge)}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14 }}>
+              <span className="chip" style={{ height: 24, fontSize: '10.5px', color: 'var(--green)' }}>Best edge {fmtPnl(m.bestEdge)}</span>
             </div>
           </div>
 
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Scorecard</span>
-              <span className={`text-xs font-semibold ${m.scorecardLabel === 'ELITE' ? 'text-emerald-400' : m.scorecardLabel === 'HIGH' ? 'text-blue-400' : m.scorecardLabel === 'MEDIUM' ? 'text-amber-400' : 'text-red-400'}`}>
-                {m.scorecardLabel}
-              </span>
+          <div className="card">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <p className="lbl b10">SCORECARD</p>
+              <span style={{
+                marginLeft: 'auto', fontWeight: 700, fontSize: '10.5px',
+                color: m.scorecardLabel === 'ELITE' ? 'var(--green)' : m.scorecardLabel === 'HIGH' ? 'var(--teal)' : m.scorecardLabel === 'MEDIUM' ? 'var(--amber)' : 'var(--red)',
+              }}>{m.scorecardLabel}</span>
             </div>
-            <div className="text-3xl font-bold text-[var(--foreground)] mb-3">{m.scorecardValue.toFixed(1)}</div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--muted-foreground)]">Execution Quality</span>
-                <span className="font-semibold text-[var(--foreground)]">{m.executionQuality}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--muted-foreground)]">Discipline Consistency</span>
-                <span className="font-semibold text-[var(--foreground)]">{m.disciplineScore}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[var(--muted-foreground)]">Opportunity Capture</span>
-                <span className="font-semibold text-[var(--foreground)]">{m.opportunityCapture}</span>
-              </div>
+            <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 32, lineHeight: '40px', margin: '6px 0 10px' }}>{m.scorecardValue.toFixed(1)}</div>
+            <div>
+              <div className="mrow"><span className="lb" style={{ marginLeft: 0 }}>Execution Quality</span><span className="val">{m.executionQuality}</span></div>
+              <div className="mrow"><span className="lb" style={{ marginLeft: 0 }}>Discipline Consistency</span><span className="val">{m.disciplineScore}</span></div>
+              <div className="mrow"><span className="lb" style={{ marginLeft: 0 }}>Opportunity Capture</span><span className="val">{m.opportunityCapture}</span></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ── 4 Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="stats" style={{ marginTop: 0 }}>
         {[
-          { label: 'HEALTH SCORE', icon: <Shield size={16} />, desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
-            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? 'â†‘' : '0'}%`, color: m.healthScore >= 60 ? 'text-emerald-400' : m.healthScore >= 40 ? 'text-amber-400' : 'text-red-400' },
-          { label: 'TILT PRESSURE', icon: <Zap size={16} />, desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
-            value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'text-emerald-400' : m.tiltPressure < 70 ? 'text-amber-400' : 'text-red-400' },
-          { label: 'REVENGE CLUSTERS', icon: <AlertTriangle size={16} />, desc: 'Loss-driven cascades detected from executed trades in this date range.',
-            value: m.revengeClusterCount, valueSub: `Cluster net ${formatCurrency(m.revengeClusterPnL)} \u2022 Avg ${m.avgClusterSize.toFixed(1)} trades/cluster`, color: m.revengeClusterCount === 0 ? 'text-emerald-400' : 'text-red-400' },
-          { label: 'RECOVERY PROFILE', icon: <RefreshCw size={16} />, desc: 'Average recovery effort and time after adverse trading periods.',
-            value: m.avgRecoveryTrades.toFixed(1), valueSub: `Avg trades to recover \u2022 ${m.avgRecoveryDays.toFixed(1)} days average`, color: 'text-[var(--foreground)]' },
+          { label: 'HEALTH SCORE', icon: <Shield size={14} />, accent: 'var(--green)', desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
+            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? 'â†‘' : '0'}%`, color: m.healthScore >= 60 ? 'var(--green)' : m.healthScore >= 40 ? 'var(--amber)' : 'var(--red)' },
+          { label: 'TILT PRESSURE', icon: <Zap size={14} />, accent: 'var(--amber)', desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
+            value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'var(--green)' : m.tiltPressure < 70 ? 'var(--amber)' : 'var(--red)' },
+          { label: 'REVENGE CLUSTERS', icon: <AlertTriangle size={14} />, accent: 'var(--pink)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
+            value: m.revengeClusterCount, valueSub: `Cluster net ${formatCurrency(m.revengeClusterPnL)} \u2022 Avg ${m.avgClusterSize.toFixed(1)} trades/cluster`, color: m.revengeClusterCount === 0 ? 'var(--green)' : 'var(--red)' },
+          { label: 'RECOVERY PROFILE', icon: <RefreshCw size={14} />, accent: 'var(--teal)', desc: 'Average recovery effort and time after adverse trading periods.',
+            value: m.avgRecoveryTrades.toFixed(1), valueSub: `Avg trades to recover \u2022 ${m.avgRecoveryDays.toFixed(1)} days average`, color: 'var(--text)' },
         ].map(card => (
-          <div key={card.label} className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">{card.label}</span>
-              <span className="text-[var(--muted-foreground)]">{card.icon}</span>
-            </div>
-            <p className="text-xs text-[var(--muted-foreground)] mb-3">{card.desc}</p>
-            <div className={`text-2xl font-bold ${card.color}`}>{card.value}</div>
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-1">{card.valueSub}</div>
+          <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
+            <span className="accent" style={{ background: card.accent }} />
+            <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {card.label}<span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}>{card.icon}</span>
+            </b>
+            <p style={{ margin: '9px 0 0', fontSize: '11.5px', lineHeight: '17px', color: 'var(--muted-2)' }}>{card.desc}</p>
+            <em style={{ color: card.color, marginTop: 6 }}>{card.value}</em>
+            <small style={{ display: 'block', fontSize: '10px', color: 'var(--muted-2)', marginTop: 4 }}>{card.valueSub}</small>
           </div>
         ))}
       </div>
 
       {/* ── Behavioral Health Score Gauge + Breakdown ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+      <div className="card">
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
           {/* SVG Gauge */}
           <div className="flex flex-col items-center justify-center">
@@ -515,15 +499,15 @@ export default function PsychologyJournal({
                 { label: 'Risk Mgmt', value: m.riskMgmt, icon: <Shield size={14} />, color: m.riskMgmt >= 70 ? '#22c55e' : m.riskMgmt >= 40 ? '#f59e0b' : '#ef4444' },
                 { label: 'Consistency', value: m.consistency, icon: <Activity size={14} />, color: m.consistency >= 70 ? '#22c55e' : m.consistency >= 40 ? '#f59e0b' : '#ef4444' },
               ].map(bar => (
-                <div key={bar.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
+                <div key={bar.label} className="inset">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 text-sm font-medium text-[var(--foreground)]">
                       {bar.icon} {bar.label}
                     </div>
                     <span className="text-sm font-bold text-[var(--foreground)]">{bar.value}</span>
                   </div>
-                  <div className="h-2 rounded-full bg-[var(--border)] overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${bar.value}%`, backgroundColor: bar.color }} />
+                  <div style={{ height: 2, background: "var(--rail)", overflow: "hidden" }}>
+                    <div style={{ width: `${bar.value}%`, backgroundColor: bar.color }} />
                   </div>
                 </div>
               ))}
@@ -555,12 +539,12 @@ export default function PsychologyJournal({
 
       {/* ── Signal Snapshot + Action Queue ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+        <div className="card">
           <div className="flex items-center gap-2 mb-1">
             <Activity size={18} className="text-[var(--muted-foreground)]" />
-            <h2 className="text-base font-semibold text-[var(--foreground)]">SIGNAL SNAPSHOT</h2>
+            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: 0 }}>SIGNAL SNAPSHOT</h3>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Compact readout of behavior frequency, pressure, and streak risk metrics.</p>
+          <p className="sub" style={{ marginBottom: 18 }}>Compact readout of behavior frequency, pressure, and streak risk metrics.</p>
           <div className="space-y-0">
             {[
               { label: 'Fast-trade ratio', value: `${m.fastTradeRatio.toFixed(1)}%` },
@@ -574,42 +558,42 @@ export default function PsychologyJournal({
               { label: 'Max win streak', value: String(m.maxWinStreak) },
               { label: 'Revenge clusters', value: String(m.revengeClusterCount) },
             ].map(row => (
-              <div key={row.label} className="flex items-center justify-between py-2.5 border-b border-[var(--border)] last:border-0">
-                <span className="text-sm text-[var(--foreground)]">{row.label}</span>
-                <span className="text-sm font-semibold text-[var(--foreground)]">{row.value}</span>
+              <div key={row.label} className="mrow">
+                <span className="lb" style={{ marginLeft: 0 }}>{row.label}</span>
+                <span className="val">{row.value}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+        <div className="card">
           <div className="flex items-center gap-2 mb-1">
             <Zap size={18} className="text-[var(--muted-foreground)]" />
-            <h2 className="text-base font-semibold text-[var(--foreground)]">ACTION QUEUE</h2>
+            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: 0 }}>ACTION QUEUE</h3>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Top active rule priorities with compliance status and impact telemetry.</p>
+          <p className="sub" style={{ marginBottom: 18 }}>Top active rule priorities with compliance status and impact telemetry.</p>
           <div className="flex items-center flex-wrap gap-2 mb-4">
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--muted)] text-[var(--foreground)]">Active rules: {m.immediateActions.length}</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-red-500/15 text-red-400">At risk: {m.revengeClusterCount}</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-500/15 text-amber-400">Watch: {m.overtradeDays}</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/15 text-emerald-400">On track: {m.immediateActions.length - m.revengeClusterCount}</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--muted)] text-[var(--foreground)]">Avg compliance: {m.compliancePercent}%</span>
+            <span className="chip" style={{ height: 24, fontSize: "10.5px" }}>Active rules: {m.immediateActions.length}</span>
+            <span className="chip" style={{ height: 24, fontSize: "10.5px", color: "var(--red)" }}>At risk: {m.revengeClusterCount}</span>
+            <span className="chip" style={{ height: 24, fontSize: "10.5px", color: "var(--amber)" }}>Watch: {m.overtradeDays}</span>
+            <span className="chip" style={{ height: 24, fontSize: "10.5px", color: "var(--green)" }}>On track: {m.immediateActions.length - m.revengeClusterCount}</span>
+            <span className="chip" style={{ height: 24, fontSize: "10.5px" }}>Avg compliance: {m.compliancePercent}%</span>
           </div>
           <div className="space-y-3">
             {m.immediateActions.map((action, i) => (
-              <div key={i} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-4">
+              <div key={i} className="inset" style={{ padding: '15px 18px' }}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-[var(--muted-foreground)]">P{i + 1}</span>
                     <ChevronRight size={14} className="text-fuchsia-400" />
                     <span className="text-sm font-semibold text-[var(--foreground)]">{action.split('.')[0]}</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${m.revengeClusterCount === 0 && m.overtradeDays === 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
+                  <span className="chip" style={{ height: 22, fontSize: "10px", fontWeight: 700, color: m.revengeClusterCount === 0 && m.overtradeDays === 0 ? "var(--green)" : "var(--amber)" }}>
                     {m.revengeClusterCount === 0 && m.overtradeDays === 0 ? 'ON TRACK' : 'WATCH'}
                   </span>
                 </div>
-                <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden mb-2">
-                  <div className="h-full rounded-full bg-emerald-500" style={{ width: `${m.compliancePercent}%` }} />
+                <div style={{ height: 2, background: "var(--rail)", overflow: "hidden", marginBottom: 10 }}>
+                  <div style={{ height: 2, background: "var(--green)" }} style={{ width: `${m.compliancePercent}%` }} />
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 text-xs text-[var(--muted-foreground)]">
                   <div>Compliance: <span className="font-semibold text-[var(--foreground)]">{m.compliancePercent}%</span></div>
@@ -622,37 +606,37 @@ export default function PsychologyJournal({
       </div>
 
       {/* ── Emotional State Flow ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+      <div className="card">
         <div className="flex items-center justify-between mb-1">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Emotional State Flow</h2>
-            <p className="text-xs text-[var(--muted-foreground)]">Interactive behavior timeline with pressure, PnL, and session context</p>
+            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Emotional State Flow</h3>
+            <p className="sub">Interactive behavior timeline with pressure, PnL, and session context</p>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${m.productivePercent >= 60 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}`}>
+          <span className="chip" style={{ height: 26, fontWeight: 700, color: m.productivePercent >= 60 ? "var(--green)" : "var(--red)" }}>
             {m.productivePercent}% productive
           </span>
         </div>
 
         {/* Session stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 mb-4">
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
+          <div className="inset">
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase">Sessions</div>
             <div className="text-lg font-bold text-[var(--foreground)]">{m.sessions.length}</div>
             <div className="text-[10px] text-[var(--muted-foreground)]">Filtered timeline points</div>
           </div>
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
+          <div className="inset">
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase">Total Session PnL</div>
             <div className={`text-lg font-bold ${pnlColor(m.totalPnL)}`}>{fmtPnl(m.totalPnL)}</div>
             <div className="text-[10px] text-[var(--muted-foreground)]">{m.closed.length > 0 ? (m.closed.length / m.sessions.length).toFixed(1) : '0'} avg trades/session</div>
           </div>
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
+          <div className="inset">
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase">Avg Session PnL</div>
             <div className={`text-lg font-bold ${pnlColor(m.sessions.length > 0 ? m.totalPnL / m.sessions.length : 0)}`}>
               {m.sessions.length > 0 ? fmtPnl(m.totalPnL / m.sessions.length) : '$0'}
             </div>
             <div className="text-[10px] text-[var(--muted-foreground)]">Per session outcome baseline</div>
           </div>
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3">
+          <div className="inset">
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase">Risky State Share</div>
             <div className={`text-lg font-bold ${m.riskyPercent + m.failurePercent > 40 ? 'text-red-400' : 'text-[var(--foreground)]'}`}>
               {m.riskyPercent + m.failurePercent}%
@@ -666,11 +650,11 @@ export default function PsychologyJournal({
           <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider flex items-center gap-1">
             <Activity size={12} /> Filter State
           </span>
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[var(--muted)] text-[var(--foreground)]">
+          <span className="chip" style={{ height: 24, fontSize: "10.5px" }}>
             All states ({m.closed.length})
           </span>
           {(Object.entries(m.stateDistribution) as [BehaviorState, number][]).filter(([, c]) => c > 0).map(([state, count]) => (
-            <span key={state} className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[var(--muted)] text-[var(--foreground)]">
+            <span key={state} className="chip" style={{ height: 24, fontSize: "10.5px" }}>
               {state} ({count})
             </span>
           ))}
@@ -704,16 +688,16 @@ export default function PsychologyJournal({
       {/* ── Selected Session + State Distribution ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-4">
         {/* Selected session */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+        <div className="card">
           <div className="flex items-center gap-2 mb-3">
             <Zap size={16} className="text-amber-400" />
-            <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Selected Session</span>
+            <span className="lbl b10">Selected Session</span>
           </div>
           {selectedSession ? (
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="text-lg font-semibold text-[var(--foreground)]">{selectedSession.date}</div>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold`}
+                <span className="chip"
                   style={{ backgroundColor: `${STATE_COLORS[selectedSession.state]}20`, color: STATE_COLORS[selectedSession.state] }}>
                   {selectedSession.state}
                 </span>
@@ -727,7 +711,7 @@ export default function PsychologyJournal({
               <div className={`text-base font-bold mt-1 ${pnlColor(selectedSession.pnl)}`}>{fmtPnl(selectedSession.pnl)}</div>
 
               {selectedSession.pressure > 50 && (
-                <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2 mt-3 text-xs text-[var(--foreground)]">
+                <div className="inset" style={{ marginTop: 14, fontSize: "12px" }}>
                   Pressure rising. Add one checklist step before every entry.
                 </div>
               )}
@@ -750,26 +734,26 @@ export default function PsychologyJournal({
               {/* Session navigation */}
               <div className="flex items-center gap-2 mt-4">
                 <button disabled={selectedSessionIdx === 0} onClick={() => setSelectedSessionIdx(selectedSessionIdx - 1)}
-                  className="px-3 py-1 rounded-lg text-xs bg-[var(--muted)] text-[var(--muted-foreground)] disabled:opacity-30">Prev</button>
+                  className="btn-g" style={{ height: 28, padding: "0 14px", fontSize: 12 }}>Prev</button>
                 <span className="text-xs text-[var(--muted-foreground)]">{selectedSessionIdx + 1} / {m.sessions.length}</span>
                 <button disabled={selectedSessionIdx >= m.sessions.length - 1} onClick={() => setSelectedSessionIdx(selectedSessionIdx + 1)}
-                  className="px-3 py-1 rounded-lg text-xs bg-[var(--muted)] text-[var(--muted-foreground)] disabled:opacity-30">Next</button>
+                  className="btn-g" style={{ height: 28, padding: "0 14px", fontSize: 12 }}>Next</button>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-[var(--muted-foreground)]">No session data available.</p>
+            <p className="sub">No session data available.</p>
           )}
         </div>
 
         {/* State Distribution */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <h3 className="text-base font-semibold text-[var(--foreground)] mb-4">STATE DISTRIBUTION</h3>
+        <div className="card">
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: '0 0 18px' }}>STATE DISTRIBUTION</h3>
           <div className="space-y-3">
             {(Object.keys(m.statePercent) as BehaviorState[]).map(state => (
               <div key={state} className="flex items-center gap-3">
                 <span className="w-16 text-sm text-[var(--foreground)]">{state}</span>
-                <div className="flex-1 h-2 rounded-full bg-[var(--border)] overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${m.statePercent[state]}%`, backgroundColor: STATE_COLORS[state] }} />
+                <div style={{ flex: 1, height: 2, background: "var(--rail)", overflow: "hidden" }}>
+                  <div style={{ width: `${m.statePercent[state]}%`, backgroundColor: STATE_COLORS[state] }} />
                 </div>
                 <span className="w-10 text-right text-sm text-[var(--foreground)]">{m.statePercent[state]}%</span>
               </div>
@@ -778,13 +762,13 @@ export default function PsychologyJournal({
 
           {/* Summary badges */}
           <div className="grid grid-cols-3 gap-2 mt-5">
-            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 text-center">
+            <div className="inset" style={{ padding: "12px 10px", textAlign: "center" }}>
               <div className="text-xs font-semibold text-emerald-400 flex items-center justify-center gap-1"><Check size={12} /> Productive {m.productivePercent}%</div>
             </div>
-            <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3 text-center">
+            <div className="inset" style={{ padding: "12px 10px", textAlign: "center" }}>
               <div className="text-xs font-semibold text-amber-400 flex items-center justify-center gap-1"><AlertTriangle size={12} /> Risky {m.riskyPercent}%</div>
             </div>
-            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 text-center">
+            <div className="inset" style={{ padding: "12px 10px", textAlign: "center" }}>
               <div className="text-xs font-semibold text-red-400 flex items-center justify-center gap-1"><AlertTriangle size={12} /> Failure {m.failurePercent}%</div>
             </div>
           </div>
@@ -793,9 +777,9 @@ export default function PsychologyJournal({
 
       {/* ── Revenge Trade Cascade + Session Heatmap ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Revenge Trade Cascade</h2>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Detected loss clusters from executed trades in this range</p>
+        <div className="card">
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Revenge Trade Cascade</h3>
+          <p className="sub" style={{ marginBottom: 18 }}>Detected loss clusters from executed trades in this range</p>
           {m.revengeClusterCount === 0 ? (
             <p className="text-sm text-[var(--muted-foreground)]">No revenge clusters detected in this range.</p>
           ) : (
@@ -808,9 +792,9 @@ export default function PsychologyJournal({
           )}
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Session Heatmap</h2>
-          <p className="text-xs text-[var(--muted-foreground)] mb-2">Real trade outcomes by UTC day and hour</p>
+        <div className="card">
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Session Heatmap</h3>
+          <p className="sub" style={{ marginBottom: 10 }}>Real trade outcomes by UTC day and hour</p>
           <div className="text-[10px] text-[var(--muted-foreground)] mb-3">Active cells: {m.heatmap.size}/168 &bull; Trades: {m.closed.length}</div>
 
           {/* Heatmap grid */}
@@ -863,7 +847,7 @@ export default function PsychologyJournal({
               { label: 'MOST ACTIVE WINDOW', value: `${m.mostActiveWindow.trades} trades`, sub: `${m.mostActiveWindow.key.replace('-', ' ')} \u2022 Net ${fmtPnl(m.mostActiveWindow.pnl)}`, color: 'text-[var(--foreground)]' },
               { label: 'HIGHEST WIN-RATE', value: `${m.highestWrWindow.wr}%`, sub: `${m.highestWrWindow.key.replace('-', ' ')} \u2022 Exp ${fmtPnl(m.avgExpectancy)}/trade`, color: m.highestWrWindow.wr >= 50 ? 'text-emerald-400' : 'text-red-400' },
             ].map(c => (
-              <div key={c.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
+              <div key={c.label} className="inset" style={{ padding: '10px 12px' }}>
                 <div className="text-[9px] text-[var(--muted-foreground)] uppercase tracking-wider">{c.label}</div>
                 <div className={`text-sm font-bold ${c.color}`}>{c.value}</div>
                 <div className="text-[9px] text-[var(--muted-foreground)]">{c.sub}</div>
@@ -877,7 +861,7 @@ export default function PsychologyJournal({
               { label: 'MEDIAN WINDOW NET', value: fmtPnl(m.medianWindowPnl), sub: `Total net ${fmtPnl(m.totalPnL)} in ${m.heatmap.size} windows` },
               { label: 'AVERAGE EXPECTANCY', value: `${fmtPnl(m.avgExpectancy)}/trade`, sub: `Best ${fmtPnl(m.bestWindow.pnl === -Infinity ? 0 : m.bestWindow.pnl)} \u2022` },
             ].map(c => (
-              <div key={c.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
+              <div key={c.label} className="inset" style={{ padding: '10px 12px' }}>
                 <div className="text-[9px] text-[var(--muted-foreground)] uppercase tracking-wider">{c.label}</div>
                 <div className="text-sm font-bold text-[var(--foreground)]">{c.value}</div>
                 <div className="text-[9px] text-[var(--muted-foreground)]">{c.sub}</div>
@@ -889,9 +873,9 @@ export default function PsychologyJournal({
 
       {/* ── Discipline Tracker + Cognitive Bias Profile ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Discipline Tracker</h2>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Rule compliance & streaks</p>
+        <div className="card">
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Discipline Tracker</h3>
+          <p className="sub" style={{ marginBottom: 18 }}>Rule compliance & streaks</p>
 
           <div className="grid grid-cols-3 gap-4 mb-5">
             <div className="text-center">
@@ -925,15 +909,15 @@ export default function PsychologyJournal({
           )}
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Cognitive Bias Profile</h2>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Psychological exposure analysis</p>
+        <div className="card">
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Cognitive Bias Profile</h3>
+          <p className="sub" style={{ marginBottom: 18 }}>Psychological exposure analysis</p>
 
           {/* Radar-style visualization using bars */}
           <div className="space-y-3 mb-4">
             <div className="grid grid-cols-2 gap-2">
               {BIAS_LABELS.map(bias => (
-                <div key={bias} className="flex items-center justify-between bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2">
+                <div key={bias} className="qrow" style={{ marginTop: 0 }}>
                   <span className="text-sm text-[var(--foreground)]">{bias}</span>
                   <span className="text-sm font-bold text-[var(--foreground)]">{m.biases[bias]}</span>
                 </div>
@@ -943,12 +927,12 @@ export default function PsychologyJournal({
 
           {/* Bias focus insight */}
           {m.biases[m.topBias] > 0 && (
-            <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-4 mt-3">
+            <div className="inset" style={{ padding: "15px 18px", marginTop: 14 }}>
               <div className="flex items-center gap-2 mb-1">
                 <Lightbulb size={16} className="text-amber-400" />
                 <span className="text-sm font-semibold text-[var(--foreground)]">Bias focus: {m.topBias}</span>
               </div>
-              <p className="text-xs text-[var(--muted-foreground)]">
+              <p className="sub">
                 {m.topBias === 'Overconfidence' && 'Sizing tends to expand after wins while high-size trades are less efficient.'}
                 {m.topBias === 'FOMO' && 'Fear of missing out is driving entries without proper confirmation.'}
                 {m.topBias === 'Loss Aversion' && 'Fear-based exits are cutting winners short.'}
@@ -956,7 +940,7 @@ export default function PsychologyJournal({
                 {m.topBias === 'Sunk Cost' && 'Holding losing positions significantly longer than winners.'}
                 {m.topBias === 'Anchoring' && 'Entry decisions may be anchored to previous price levels.'}
               </p>
-              <span className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-[var(--muted)] text-[var(--muted-foreground)]">
+              <span className="chip" style={{ height: 22, marginTop: 10, fontSize: "10px", fontWeight: 700 }}>
                 CONFIDENCE: {m.biases[m.topBias] > 10 ? 'HIGH' : m.biases[m.topBias] > 3 ? 'MEDIUM' : 'LOW'}
               </span>
             </div>
@@ -965,19 +949,19 @@ export default function PsychologyJournal({
       </div>
 
       {/* ── Behavior Edge Context ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
+      <div className="card">
         <div className="flex items-center gap-2 mb-1">
           <RefreshCw size={16} className="text-fuchsia-400" />
-          <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Behavior Edge Context</span>
+          <span className="lbl b10">Behavior Edge Context</span>
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] mb-4">Highest-confidence strength and highest-risk loop with direct narrative context.</p>
+        <p className="sub" style={{ marginBottom: 18 }}>Highest-confidence strength and highest-risk loop with direct narrative context.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-4">
+          <div className="inset" style={{ padding: '15px 18px' }}>
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Strongest Behavior Edge</div>
             <div className="text-sm font-semibold text-[var(--foreground)]">{m.edgeStrengths[0].label}</div>
             <p className="text-xs text-[var(--muted-foreground)] mt-1">{m.edgeStrengths[0].desc}</p>
           </div>
-          <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-4">
+          <div className="inset" style={{ padding: '15px 18px' }}>
             <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Highest Risk Loop</div>
             <div className="text-sm font-semibold text-[var(--foreground)]">{m.riskLoops[0].label}</div>
             <p className="text-xs text-[var(--muted-foreground)] mt-1">{m.riskLoops[0].desc}</p>

@@ -27,6 +27,14 @@ type Provider = {
   lastPostedAt: string;
 };
 
+const ACCENTS = ['var(--teal)', 'var(--pink)', 'var(--amber)', 'var(--green)'];
+
+function rateColor(rate: number) {
+  if (rate >= 60) return 'var(--green)';
+  if (rate >= 40) return 'var(--amber)';
+  return 'var(--red)';
+}
+
 function timeAgo(iso: string) {
   if (!iso) return null;
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -41,31 +49,36 @@ export default function SignalProviders() {
   const providers = useQuery(api.discover.getSignalProviders);
 
   if (providers === undefined) {
-    return <div className="text-center py-16"><Loader2 size={22} className="animate-spin inline text-pink-400" /></div>;
+    return (
+      <div className="empty-line">
+        <Loader2 size={20} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
+      </div>
+    );
   }
   if (providers.length === 0) {
     return (
-      <div className="text-center py-16 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50">
-        <Radio size={26} className="mx-auto text-[var(--muted-foreground)] mb-3" />
-        <p className="text-base font-semibold text-[var(--foreground)]">No signal providers yet</p>
-        <p className="text-sm text-[var(--muted-foreground)] mt-1">Once traders start posting signals, they'll show up here.</p>
+      <div className="empty-line">
+        <Radio size={22} style={{ color: 'var(--muted-3)', display: 'block', margin: '0 auto 12px' }} />
+        No signal providers yet — once traders start posting signals, they show up here.
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
-        Signal providers <span className="text-[var(--muted-foreground)]/60">· {providers.length}</span>
-      </h2>
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
-        {(providers as Provider[]).map(p => <ProviderCard key={p.posterId} p={p} />)}
+    <div>
+      <p style={{ margin: '0 0 20px', fontWeight: 700, fontSize: 10, letterSpacing: '.04em', color: 'var(--amber)' }}>
+        · {providers.length} ACTIVE
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 24 }}>
+        {(providers as Provider[]).map((p, i) => (
+          <ProviderCard key={p.posterId} p={p} accent={ACCENTS[i % ACCENTS.length]} />
+        ))}
       </div>
     </div>
   );
 }
 
-function ProviderCard({ p }: { p: Provider }) {
+function ProviderCard({ p, accent }: { p: Provider; accent: string }) {
   const follow = useMutation(api.follows.follow);
   const unfollow = useMutation(api.follows.unfollow);
   const [following, setFollowing] = useState(p.isFollowing);
@@ -89,78 +102,97 @@ function ProviderCard({ p }: { p: Provider }) {
   };
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 flex flex-col items-center text-center">
-      {/* Large avatar */}
-      <Link href={`/u/${p.handle}`} className="shrink-0">
-        {p.avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.avatar} alt={p.name} className="w-24 h-24 rounded-full object-cover ring-2 ring-pink-500/40" />
-        ) : (
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-3xl font-bold text-white ring-2 ring-pink-500/40">
-            {p.name.slice(0, 1).toUpperCase()}
-          </div>
-        )}
+    <div className="provider">
+      <span className="accent" style={{ background: accent }} />
+
+      {/* Avatar */}
+      <Link href={`/u/${p.handle}`} style={{ display: 'block' }}>
+        <div
+          className="av"
+          style={{
+            color: accent,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          {p.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={p.avatar} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 26, color: accent }}>
+              {p.name.slice(0, 1).toUpperCase()}
+            </span>
+          )}
+        </div>
       </Link>
 
-      <Link href={`/u/${p.handle}`} className="mt-3 text-base font-bold text-[var(--foreground)] hover:text-pink-300 transition-colors leading-tight">
-        {p.name}
-      </Link>
-      <div className="text-[11px] text-[var(--muted-foreground)] mt-0.5">
+      <h4>
+        <Link href={`/u/${p.handle}`} style={{ color: 'inherit' }}>{p.name}</Link>
+      </h4>
+      <p className="meta">
         {tierLabel} · {p.followers} follower{p.followers === 1 ? '' : 's'}
-      </div>
+      </p>
 
       {/* Win-rate showcase */}
-      <div className="mt-4 w-full rounded-xl border border-[var(--border)] bg-[var(--background)]/50 py-3">
-        <div className="text-4xl font-extrabold tabular-nums text-emerald-400 leading-none">{p.hitRate}%</div>
-        <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-1.5">Win rate · {p.closed} closed</div>
+      <div className="big">
+        <b style={{ color: rateColor(p.hitRate) }}>{p.hitRate}%</b>
+        <span>WIN RATE · {p.closed} CLOSED</span>
       </div>
 
       {/* Supporting stats */}
-      <div className="grid grid-cols-3 gap-2 w-full mt-3">
-        <Stat value={`${p.won}/${p.lost}`} label="W / L" />
-        <Stat value={`${p.avgR >= 0 ? '+' : ''}${p.avgR}R`} label="Avg R" tone={p.avgR >= 0 ? 'emerald' : 'red'} />
-        <Stat value={`${p.total}`} label="Signals" />
+      <div className="row3">
+        <div>
+          <b>{p.won}/{p.lost}</b>
+          <span>W / L</span>
+        </div>
+        <div>
+          <b style={{ color: p.avgR >= 0 ? 'var(--green)' : 'var(--red)' }}>
+            {p.avgR >= 0 ? '+' : ''}{p.avgR}R
+          </b>
+          <span>AVG R</span>
+        </div>
+        <div>
+          <b>{p.total}</b>
+          <span>SIGNALS</span>
+        </div>
       </div>
 
       {/* Activity */}
-      <div className="text-[11px] text-[var(--muted-foreground)] mt-3">
+      <p className="last">
         {p.active} active · {p.pending} pending{last ? ` · last ${last}` : ''}
-      </div>
+      </p>
 
       {/* Follow / You */}
-      <div className="w-full mt-4">
-        {p.isSelf ? (
-          <span className="w-full inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold border border-[var(--border)] text-[var(--muted-foreground)]">
-            You
-          </span>
-        ) : (
-          <button
-            onClick={toggle}
-            disabled={busy}
-            className={`w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 ${
-              following
-                ? 'border border-[var(--border)] text-[var(--foreground)] hover:border-red-500/40 hover:text-red-300'
-                : 'text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300'
-            }`}
-          >
-            {following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
-          </button>
-        )}
-      </div>
+      {p.isSelf ? (
+        <span
+          className="follow"
+          style={{ background: 'transparent', border: '1px solid var(--line-2)', color: 'var(--muted)' }}
+        >
+          You
+        </span>
+      ) : (
+        <button
+          onClick={toggle}
+          disabled={busy}
+          className="follow"
+          style={{
+            width: '100%',
+            cursor: busy ? 'not-allowed' : 'pointer',
+            opacity: busy ? 0.5 : 1,
+            ...(following
+              ? { background: 'transparent', border: '1px solid var(--line-2)', color: 'var(--text)' }
+              : {}),
+          }}
+        >
+          {following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
+        </button>
+      )}
 
-      <Link href={`/u/${p.handle}`} className="inline-flex items-center gap-1 text-[11px] font-semibold text-pink-300 hover:text-pink-200 mt-3">
+      <Link href={`/u/${p.handle}`} className="vp">
         View profile <ArrowRight size={12} />
       </Link>
-    </div>
-  );
-}
-
-function Stat({ value, label, tone }: { value: string; label: string; tone?: 'emerald' | 'red' }) {
-  const color = tone === 'emerald' ? 'text-emerald-400' : tone === 'red' ? 'text-red-400' : 'text-[var(--foreground)]';
-  return (
-    <div className="rounded-lg bg-[var(--background)]/50 border border-[var(--border)] py-1.5 px-1 text-center">
-      <div className={`text-sm font-bold tabular-nums leading-tight ${color}`}>{value}</div>
-      <div className="text-[9px] uppercase tracking-wide text-[var(--muted-foreground)] truncate mt-0.5">{label}</div>
     </div>
   );
 }

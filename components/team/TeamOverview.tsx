@@ -29,38 +29,38 @@ interface TeamOverviewProps {
   timeRange: '7d' | '30d' | '90d';
 }
 
-function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color?: string }) {
+function StatCard({ label, value, icon, color, accent }: { label: string; value: string | number; icon: React.ReactNode; color?: string; accent?: string }) {
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-[var(--muted-foreground)]">{label}</span>
-        <span className={color ?? 'text-[var(--muted-foreground)]'}>{icon}</span>
+    <div className="stat" style={{ height: 'auto', paddingBottom: 20 }}>
+      <span className="accent" style={{ background: accent ?? 'var(--teal)' }} />
+      <div className="flex items-start justify-between">
+        <b>{label}</b>
+        <span style={{ color: color ?? 'var(--muted-3)' }}>{icon}</span>
       </div>
-      <p className="text-2xl font-black">{value}</p>
+      <em style={{ color: color ?? 'var(--text)' }}>{value}</em>
     </div>
   );
 }
 
 function ComplianceRing({ value }: { value: number }) {
-  const radius = 44;
+  const radius = 37.5;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;
-  const color = value >= 80 ? 'var(--accent)' : value >= 60 ? '#eab308' : '#ef4444';
+  const color = value >= 80 ? 'var(--green)' : value >= 60 ? 'var(--amber)' : 'var(--red)';
 
   return (
-    <div className="relative w-28 h-28">
-      <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-        <circle cx="50" cy="50" r={radius} fill="none" stroke="var(--border)" strokeWidth="6" />
+    <div className="ring" style={{ width: 96, height: 96 }}>
+      <svg viewBox="0 0 80 80" className="w-full h-full">
+        <circle cx="40" cy="40" r={radius} fill="none" stroke="#16202c" strokeWidth="5" />
         <circle
-          cx="50" cy="50" r={radius} fill="none"
-          stroke={color} strokeWidth="6" strokeLinecap="round"
+          cx="40" cy="40" r={radius} fill="none"
+          stroke={color} strokeWidth="5" strokeLinecap="round"
           strokeDasharray={circumference} strokeDashoffset={offset}
+          transform="rotate(-90 40 40)"
           className="transition-all duration-700"
         />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-black">{Math.round(value)}%</span>
-      </div>
+      <span className="v" style={{ fontSize: 26 }}>{Math.round(value)}%</span>
     </div>
   );
 }
@@ -71,9 +71,14 @@ function getRiskLevel(compliance: number, pnl: number): 'low' | 'medium' | 'high
   return 'low';
 }
 
+const RISK_COLOR: Record<'low' | 'medium' | 'high', string> = {
+  low: 'var(--green)',
+  medium: 'var(--amber)',
+  high: 'var(--red)',
+};
+
 function RiskDot({ level }: { level: 'low' | 'medium' | 'high' }) {
-  const color = level === 'low' ? 'bg-green-400' : level === 'medium' ? 'bg-yellow-400' : 'bg-red-400';
-  return <span className={`w-2.5 h-2.5 rounded-full ${color} shrink-0`} />;
+  return <span className="shrink-0" style={{ width: 8, height: 8, borderRadius: 1, background: RISK_COLOR[level] }} />;
 }
 
 export default function TeamOverview({ memberStats, activityFeed, timeRange }: TeamOverviewProps) {
@@ -120,76 +125,101 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
   }
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Team pulse · {timeRange}</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Overview</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
+          Compliance, risk and activity across everyone in this workspace.
+        </p>
+      </div>
+
       {/* Top stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Active Students" value={stats.activeStudents} icon={<Users size={20} />} />
+      <div className="stats" style={{ marginTop: 0 }}>
+        <StatCard label="ACTIVE STUDENTS" value={stats.activeStudents} icon={<Users size={16} />} accent="var(--teal)" />
         <StatCard
-          label="Team Net P&L"
+          label="TEAM NET P&L"
           value={`${stats.totalPnL < 0 ? '-' : ''}$${Math.abs(stats.totalPnL).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          icon={<TrendingDown size={20} />}
-          color={stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}
+          icon={<TrendingDown size={16} />}
+          color={stats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'}
+          accent={stats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'}
         />
         <StatCard
-          label="Avg Compliance"
+          label="AVG COMPLIANCE"
           value={`${Math.round(stats.avgCompliance)}%`}
-          icon={<ShieldCheck size={20} />}
-          color="text-green-400"
+          icon={<ShieldCheck size={16} />}
+          color="var(--green)"
+          accent="var(--amber)"
         />
         <StatCard
-          label="Risk Alerts"
+          label="RISK ALERTS"
           value={stats.riskAlerts}
-          icon={<AlertTriangle size={20} />}
-          color={stats.riskAlerts > 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}
+          icon={<AlertTriangle size={16} />}
+          color={stats.riskAlerts > 0 ? 'var(--red)' : 'var(--muted)'}
+          accent="var(--pink)"
         />
       </div>
 
       {/* Middle row: Health Score + Risk Map */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="split" style={{ marginTop: 32 }}>
         {/* Team Health Score */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <h3 className="font-bold mb-4">Team Health Score</h3>
-          <div className="flex items-center gap-6">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <h3>Team Health Score</h3>
+          <p className="sub">Average rule compliance across the workspace</p>
+          <div className="flex items-center gap-7" style={{ marginTop: 24 }}>
             <ComplianceRing value={stats.avgCompliance} />
             <div>
-              <p className="text-sm text-[var(--muted-foreground)]">Compliance</p>
-              <p className="text-2xl font-black">{Math.round(stats.avgCompliance)}%</p>
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">
+              <p className="lbl b10">COMPLIANCE</p>
+              <p style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 30, lineHeight: '38px', margin: '6px 0 0' }}>
+                {Math.round(stats.avgCompliance)}%
+              </p>
+              <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--muted-2)' }}>
                 {stats.avgCompliance >= 80 ? 'Healthy' : stats.avgCompliance >= 60 ? 'Needs attention' : 'At risk'}
               </p>
             </div>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mt-4">Trend ({timeRange})</p>
+          <p className="lbl" style={{ marginTop: 22 }}>TREND ({timeRange.toUpperCase()})</p>
           {/* Simple trend line placeholder */}
-          <div className="h-1.5 mt-2 bg-[var(--muted)] rounded-full overflow-hidden">
-            <div className="h-full bg-[var(--accent)] rounded-full" style={{ width: `${stats.avgCompliance}%` }} />
+          <div style={{ height: 6, marginTop: 8, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ height: '100%', background: 'var(--amber)', width: `${stats.avgCompliance}%` }} />
           </div>
         </div>
 
         {/* Student Risk Map */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold">Student Risk Map</h3>
-            <div className="flex items-center gap-2">
-              {(['low', 'medium', 'high'] as const).map(level => (
-                <span key={level} className="px-2.5 py-1 rounded-lg border border-[var(--border)] text-xs font-medium capitalize">
-                  {level} ({riskCounts[level]})
-                </span>
-              ))}
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Student Risk Map</h3>
+              <p className="sub">Who needs attention right now</p>
             </div>
           </div>
+          <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 16 }}>
+            {(['low', 'medium', 'high'] as const).map(level => (
+              <span key={level} className="chip capitalize">
+                <i style={{ background: RISK_COLOR[level] }} />
+                {level} ({riskCounts[level]})
+              </span>
+            ))}
+          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-48 overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" style={{ marginTop: 18, maxHeight: 200, overflowY: 'auto' }}>
             {students.map(s => {
               const risk = getRiskLevel(s.compliance, s.totalPnL);
               return (
-                <div key={s.userId} className="border border-[var(--border)] rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold truncate">{s.displayName}</span>
+                <div key={s.userId} className="inset" style={{ padding: '10px 12px' }}>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate" style={{ fontWeight: 700, fontSize: 12.5 }}>{s.displayName}</span>
                     <RiskDot level={risk} />
                   </div>
-                  <p className="text-[10px] text-[var(--muted-foreground)]">{Math.round(s.compliance)}% compliance</p>
-                  <p className={`text-[10px] font-medium ${s.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
+                    {Math.round(s.compliance)}% compliance
+                  </p>
+                  <p style={{
+                    margin: '3px 0 0', fontFamily: 'var(--mono)', fontSize: 11,
+                    color: s.totalPnL >= 0 ? 'var(--green)' : 'var(--red)',
+                  }}>
                     {s.totalPnL >= 0 ? '+' : '-'}${Math.abs(s.totalPnL).toFixed(0)}
                   </p>
                 </div>
@@ -197,8 +227,8 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
             })}
 
             {students.length === 0 && (
-              <div className="col-span-full text-center py-8">
-                <p className="text-sm text-[var(--muted-foreground)]">No students yet. Add members to get started.</p>
+              <div className="col-span-full">
+                <p className="empty-line" style={{ padding: '30px 0' }}>No students yet. Add members to get started.</p>
               </div>
             )}
           </div>
@@ -206,57 +236,69 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
       </div>
 
       {/* Bottom row: P&L Distribution + Activity Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6" style={{ marginTop: 32 }}>
         {/* P&L Distribution */}
-        <div className="lg:col-span-3 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <h3 className="font-bold mb-4">P&L Distribution</h3>
-          <div className="space-y-3">
+        <div className="lg:col-span-3 card">
+          <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+          <h3>P&L Distribution</h3>
+          <p className="sub">How many members sit in each P&L band</p>
+          <div style={{ marginTop: 22 }}>
             {pnlRows.map(row => (
-              <div key={row.label} className="flex items-center gap-3">
-                <span className="text-xs text-[var(--muted-foreground)] w-16 text-right shrink-0">{row.label}</span>
-                <div className="flex-1 h-5 bg-[var(--muted)] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[var(--accent)] rounded-full transition-all"
-                    style={{ width: `${(row.count / maxBucket) * 100}%` }}
-                  />
+              <div key={row.label} className="mrow">
+                <span style={{ width: 72, flex: 'none', fontSize: 11.5, color: 'var(--muted-2)', textAlign: 'right' }}>
+                  {row.label}
+                </span>
+                <div style={{
+                  flex: 1, height: 10, marginLeft: 16, background: 'var(--panel-2)',
+                  border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden',
+                }}>
+                  <div style={{ height: '100%', background: 'var(--amber)', width: `${(row.count / maxBucket) * 100}%` }} />
                 </div>
-                <span className="text-xs font-semibold w-8 text-right">{row.count}</span>
+                <span className="val" style={{ width: 34, textAlign: 'right' }}>{row.count}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Activity Feed */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold">Activity Feed</h3>
-            <button className="flex items-center gap-1 text-xs text-[var(--accent)] font-medium hover:underline">
+        <div className="lg:col-span-2 card">
+          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Activity Feed</h3>
+              <p className="sub">Latest workspace events</p>
+            </div>
+            <button className="viewall">
               View all <ExternalLink size={12} />
             </button>
           </div>
 
-          <div className="space-y-3 max-h-52 overflow-y-auto">
+          <div style={{ marginTop: 18, maxHeight: 220, overflowY: 'auto' }}>
             {activityFeed.map((event, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="w-7 h-7 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--accent)] shrink-0 mt-0.5">
+              <div key={i} className="flex items-start gap-3" style={{ padding: '10px 0', borderBottom: '1px solid var(--hair)' }}>
+                <div
+                  className="flex items-center justify-center shrink-0"
+                  style={{
+                    width: 26, height: 26, borderRadius: 2, background: 'var(--panel-2)',
+                    border: '1px solid var(--line)', fontSize: 10, fontWeight: 700, color: 'var(--amber)',
+                  }}
+                >
                   {event.displayName[0]?.toUpperCase() ?? '?'}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm">
-                    <span className="font-semibold">{event.displayName}</span>{' '}
-                    <span className="text-[var(--muted-foreground)]">{event.message}</span>
+                  <p style={{ margin: 0, fontSize: 12.5, lineHeight: '18px', color: 'var(--text-2)' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text)' }}>{event.displayName}</span>{' '}
+                    {event.message}
                   </p>
                 </div>
-                <span className="text-[10px] text-[var(--muted-foreground)] shrink-0 whitespace-nowrap">
+                <span className="shrink-0 whitespace-nowrap" style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>
                   {formatTimestamp(event.timestamp)}
                 </span>
               </div>
             ))}
 
             {activityFeed.length === 0 && (
-              <p className="text-sm text-[var(--muted-foreground)] text-center py-8">
-                No activity yet
-              </p>
+              <p className="empty-line" style={{ padding: '30px 0' }}>No activity yet</p>
             )}
           </div>
         </div>

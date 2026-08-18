@@ -33,22 +33,34 @@ const TOOLS: ToolDef[] = [
 
 /* ── Direction toggle component ──────────────────────────── */
 
+const SEG_BASE: React.CSSProperties = {
+  height: 42,
+  fontWeight: 700,
+  fontSize: 12.5,
+  color: 'var(--muted)',
+  border: '1px solid var(--line)',
+  background: 'var(--panel-2)',
+  borderRadius: 2,
+};
+
 function DirectionToggle({ value, onChange }: { value: 'long' | 'short'; onChange: (v: 'long' | 'short') => void }) {
   return (
-    <div className="grid grid-cols-2 border border-[var(--border)] rounded-lg overflow-hidden">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
       <button
+        type="button"
         onClick={() => onChange('long')}
-        className={`py-3 text-sm font-semibold transition-colors ${
-          value === 'long' ? 'bg-green-500/10 border-r border-green-500 text-green-400' : 'text-[var(--muted-foreground)]'
-        }`}
+        style={value === 'long'
+          ? { ...SEG_BASE, borderColor: 'var(--green)', color: 'var(--green)', background: 'rgba(36,200,138,.08)' }
+          : SEG_BASE}
       >
         Buy / Long
       </button>
       <button
+        type="button"
         onClick={() => onChange('short')}
-        className={`py-3 text-sm font-semibold transition-colors ${
-          value === 'short' ? 'bg-red-500/10 border-l border-red-500 text-red-400' : 'text-[var(--muted-foreground)]'
-        }`}
+        style={value === 'short'
+          ? { ...SEG_BASE, borderColor: 'var(--red)', color: 'var(--red)', background: 'rgba(255,77,94,.08)' }
+          : SEG_BASE}
       >
         Sell / Short
       </button>
@@ -59,28 +71,48 @@ function DirectionToggle({ value, onChange }: { value: 'long' | 'short'; onChang
 /* ── Input field helpers ─────────────────────────────────── */
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-sm font-medium mb-1.5">{children}</label>;
+  return (
+    <label style={{ display: 'block', fontWeight: 700, fontSize: 9.5, color: 'var(--muted-2)', letterSpacing: '.04em', textTransform: 'uppercase', marginBottom: 9 }}>
+      {children}
+    </label>
+  );
 }
 
 function FieldHint({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs text-[var(--muted-foreground)] mt-1">{children}</p>;
+  return <p style={{ margin: '8px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{children}</p>;
 }
+
+const BOX_STYLE: React.CSSProperties = {
+  width: '100%',
+  height: 42,
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  fontFamily: 'var(--mono)',
+  fontSize: 13,
+  color: 'var(--text)',
+  outline: 'none',
+};
 
 function NumInput({ value, onChange, prefix, suffix, placeholder = '0' }: {
   value: string; onChange: (v: string) => void; prefix?: string; suffix?: string; placeholder?: string;
 }) {
   return (
-    <div className="relative">
-      {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--muted-foreground)]">{prefix}</span>}
+    <div style={{ position: 'relative' }}>
+      {prefix && (
+        <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 12.5, color: 'var(--muted-2)' }}>{prefix}</span>
+      )}
       <input
         type="number"
         step="any"
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full py-3 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm ${prefix ? 'pl-7' : 'pl-3'} ${suffix ? 'pr-8' : 'pr-3'}`}
+        style={{ ...BOX_STYLE, paddingLeft: prefix ? 28 : 14, paddingRight: suffix ? 30 : 14 }}
       />
-      {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[var(--muted-foreground)]">{suffix}</span>}
+      {suffix && (
+        <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 12.5, color: 'var(--muted-2)' }}>{suffix}</span>
+      )}
     </div>
   );
 }
@@ -89,12 +121,16 @@ function NumInput({ value, onChange, prefix, suffix, placeholder = '0' }: {
 
 function ResultRow({ label, value, hint, accent }: { label: string; value: string; hint?: string; accent?: boolean }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-[var(--border)] last:border-b-0">
-      <span className="text-sm text-[var(--muted-foreground)]">{label}</span>
-      <div className="text-right">
-        <span className={`text-sm font-bold ${accent ? 'text-[var(--accent)]' : ''}`}>{value}</span>
-        {hint && <p className="text-[10px] text-[var(--muted-foreground)]">{hint}</p>}
-      </div>
+    <div className="mrow">
+      <span className="lb" style={{ marginLeft: 0 }}>{label}</span>
+      <span className="val" style={{ textAlign: 'right' }}>
+        <span style={accent ? { color: 'var(--amber)' } : undefined}>{value}</span>
+        {hint && (
+          <small style={{ display: 'block', fontFamily: 'var(--body)', fontWeight: 400, fontSize: 10, color: 'var(--muted-2)', marginTop: 3 }}>
+            {hint}
+          </small>
+        )}
+      </span>
     </div>
   );
 }
@@ -146,8 +182,8 @@ function PositionSizeCalc() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Account Balance</FieldLabel><NumInput value={balance} onChange={setBalance} prefix="$" placeholder="10000" /></div>
         <div><FieldLabel>Risk Per Trade</FieldLabel><NumInput value={riskPercent} onChange={setRiskPercent} suffix="%" /><FieldHint>Recommended: 0.5-2%</FieldHint></div>
         <div><FieldLabel>Entry Price</FieldLabel><NumInput value={entryPrice} onChange={setEntryPrice} prefix="$" placeholder="0.00" /></div>
@@ -159,8 +195,8 @@ function PositionSizeCalc() {
       {result && (
         <>
           {/* POSITION section */}
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Position</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Position</p>
             <ResultRow label="Position Size" value={`${result.units.toFixed(4)} units`} accent />
             <ResultRow label="Position Value" value={`$${result.positionSize.toFixed(2)}`} hint="Notional exposure" />
             <ResultRow label="Required Margin" value={`$${result.margin.toFixed(2)}`} hint={`At ${leverage}x leverage`} />
@@ -169,8 +205,8 @@ function PositionSizeCalc() {
           </div>
 
           {/* FOREX LOTS section */}
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Forex Lots</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Forex Lots</p>
             <ResultRow label="Standard (100K)" value={(result.units / 100000).toFixed(4)} accent />
             <ResultRow label="Mini (10K)" value={(result.units / 10000).toFixed(4)} />
             <ResultRow label="Micro (1K)" value={(result.units / 1000).toFixed(4)} />
@@ -236,8 +272,8 @@ function ProfitLossCalc() {
   const lev = parseFloat(leverage) || 1;
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Entry Price</FieldLabel><NumInput value={entryPrice} onChange={setEntryPrice} prefix="$" placeholder="0.00" /></div>
         <div><FieldLabel>Exit Price</FieldLabel><NumInput value={exitPrice} onChange={setExitPrice} prefix="$" placeholder="0.00" /></div>
         <div><FieldLabel>Quantity / Size</FieldLabel><NumInput value={quantity} onChange={setQuantity} placeholder="0" /></div>
@@ -249,8 +285,8 @@ function ProfitLossCalc() {
       {result && (
         <>
           {/* TRADE OUTCOME */}
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Trade Outcome</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Trade Outcome</p>
             <ResultRow label="Net PnL" value={`${result.netPnL >= 0 ? '' : '-'}$${Math.abs(result.netPnL).toFixed(2)}`} accent />
             <ResultRow label="ROI (on margin)" value={`${result.roiOnMargin >= 0 ? '' : '-'}${Math.abs(result.roiOnMargin).toFixed(2)}%`} hint="Spot return" />
             <ResultRow label="Gross PnL" value={`${result.grossPnL >= 0 ? '' : '-'}$${Math.abs(result.grossPnL).toFixed(2)}`} />
@@ -258,8 +294,8 @@ function ProfitLossCalc() {
           </div>
 
           {/* POSITION DETAILS */}
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Position Details</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Position Details</p>
             <ResultRow label="Notional Value" value={`$${result.notional.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
             <ResultRow label="Margin Used" value={`$${result.margin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} hint={`At ${lev}x leverage`} />
             <ResultRow label="PnL Per Unit" value={`${result.pnlPerUnit >= 0 ? '' : '-'}$${Math.abs(result.pnlPerUnit).toFixed(4)}`} />
@@ -319,8 +355,8 @@ function RiskRewardCalc() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Entry Price</FieldLabel><NumInput value={entryPrice} onChange={setEntryPrice} prefix="$" placeholder="0.00" /></div>
         <div><FieldLabel>Direction</FieldLabel><DirectionToggle value={direction} onChange={setDirection} /></div>
         <div><FieldLabel>Stop Loss</FieldLabel><NumInput value={stopLoss} onChange={setStopLoss} prefix="$" placeholder="0.00" /></div>
@@ -330,8 +366,8 @@ function RiskRewardCalc() {
       </div>
       {result && (
         <>
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Risk / Reward</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Risk / Reward</p>
             <ResultRow label="Risk : Reward" value={`1 : ${result.rr.toFixed(2)}`} accent />
             <ResultRow label="Breakeven Win Rate" value={`${result.breakeven.toFixed(1)}%`} hint="Minimum WR to be profitable" />
             <ResultRow label="Risk (price)" value={`$${result.risk.toFixed(5)}`} hint={`${result.riskPct.toFixed(2)}% from entry`} />
@@ -339,8 +375,8 @@ function RiskRewardCalc() {
           </div>
 
           {(result.riskDollar !== null || result.rewardDollar !== null) && (
-            <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Dollar Values</p>
+            <div className="card">
+              <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Dollar Values</p>
               {result.riskDollar !== null && <ResultRow label="Risk ($)" value={`$${result.riskDollar.toFixed(2)}`} />}
               {result.rewardDollar !== null && <ResultRow label="Reward ($)" value={`$${result.rewardDollar.toFixed(2)}`} accent />}
             </div>
@@ -358,11 +394,11 @@ function RiskRewardCalc() {
 
 function CopyResetFooter({ onCopy, onReset, copied }: { onCopy: () => void; onReset: () => void; copied: boolean }) {
   return (
-    <div className="flex items-center justify-between">
-      <button onClick={onCopy} className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors font-medium">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+      <button type="button" onClick={onCopy} className={copied ? 'btn-a' : 'btn-g'}>
         {copied ? 'Copied!' : 'Copy'}
       </button>
-      <button onClick={onReset} className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors font-medium">
+      <button type="button" onClick={onReset} className="btn-g">
         Reset
       </button>
     </div>
@@ -371,9 +407,9 @@ function CopyResetFooter({ onCopy, onReset, copied }: { onCopy: () => void; onRe
 
 function InfoBanner({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-2.5 p-4 rounded-xl bg-[var(--accent)]/5 border border-[var(--accent)]/20">
-      <span className="text-[var(--accent)] mt-0.5 shrink-0">&#x24D8;</span>
-      <p className="text-xs text-[var(--muted-foreground)]">{children}</p>
+    <div className="warn" style={{ marginTop: 0 }}>
+      <b style={{ flex: 'none' }}>&#x24D8;</b>
+      <p style={{ margin: 0 }}>{children}</p>
     </div>
   );
 }
@@ -425,15 +461,15 @@ function MarginLeverageCalc() {
   };
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
         <FieldLabel>Calculate</FieldLabel>
-        <div className="grid grid-cols-2 border border-[var(--border)] rounded-lg overflow-hidden">
-          <button onClick={() => setMode('margin')} className={`py-3 text-sm font-semibold transition-colors ${mode === 'margin' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted-foreground)]'}`}>Required Margin</button>
-          <button onClick={() => setMode('leverage')} className={`py-3 text-sm font-semibold transition-colors ${mode === 'leverage' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted-foreground)]'}`}>Effective Leverage</button>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          <button type="button" onClick={() => setMode('margin')} style={mode === 'margin' ? { ...SEG_BASE, background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--ink)' } : SEG_BASE}>Required Margin</button>
+          <button type="button" onClick={() => setMode('leverage')} style={mode === 'leverage' ? { ...SEG_BASE, background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--ink)' } : SEG_BASE}>Effective Leverage</button>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Position Size (units)</FieldLabel><NumInput value={positionSize} onChange={setPositionSize} placeholder="1" /></div>
         <div><FieldLabel>Entry Price</FieldLabel><NumInput value={entryPrice} onChange={setEntryPrice} prefix="$" placeholder="1000" /></div>
         {mode === 'margin' ? (
@@ -445,8 +481,8 @@ function MarginLeverageCalc() {
       </div>
       {result && (
         <>
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Results</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Results</p>
             <ResultRow label="Notional Value" value={`$${result.notional.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
             {result.margin !== null && <ResultRow label="Required Margin" value={`$${result.margin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} accent />}
             {result.availableMargin !== null && <ResultRow label="Available Margin" value={`$${result.availableMargin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} accent />}
@@ -503,12 +539,12 @@ function PipValueCalc() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Pip Size</FieldLabel><NumInput value={pipSize} onChange={setPipSize} placeholder="0.0001" /><FieldHint>0.0001 for most pairs, 0.01 for JPY</FieldHint></div>
         <div>
           <FieldLabel>Lot Type</FieldLabel>
-          <select value={lotType} onChange={e => setLotType(e.target.value)} className="w-full py-3 px-3 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm">
+          <select value={lotType} onChange={e => setLotType(e.target.value)} style={{ ...BOX_STYLE, padding: '0 14px' }}>
             <option value="100000">Standard (100,000)</option>
             <option value="10000">Mini (10,000)</option>
             <option value="1000">Micro (1,000)</option>
@@ -522,8 +558,8 @@ function PipValueCalc() {
       </div>
       {result && (
         <>
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Pip Values</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Pip Values</p>
             <ResultRow label="1 Pip" value={`$${result.onePip.toFixed(4)}`} accent />
             <ResultRow label="10 Pips" value={`$${result.tenPips.toFixed(2)}`} />
             <ResultRow label="50 Pips" value={`$${result.fiftyPips.toFixed(2)}`} />
@@ -532,8 +568,8 @@ function PipValueCalc() {
           </div>
 
           {result.notional !== null && (
-            <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Margin</p>
+            <div className="card">
+              <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Margin</p>
               <ResultRow label="Notional Value" value={`$${result.notional.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
               {result.margin !== null && <ResultRow label="Required Margin" value={`$${result.margin.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} hint={`At ${leverage}x leverage`} accent />}
             </div>
@@ -586,8 +622,8 @@ function LiquidationCalc() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Entry Price</FieldLabel><NumInput value={entryPrice} onChange={setEntryPrice} prefix="$" placeholder="1000" /></div>
         <div><FieldLabel>Leverage</FieldLabel><NumInput value={leverage} onChange={setLeverage} suffix="x" placeholder="10" /></div>
         <div><FieldLabel>Direction</FieldLabel><DirectionToggle value={direction} onChange={setDirection} /></div>
@@ -595,29 +631,29 @@ function LiquidationCalc() {
       </div>
       {result && (
         <>
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Liquidation</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Liquidation</p>
             <ResultRow label="Liquidation Price" value={`$${result.liqPrice.toFixed(2)}`} hint={`$${result.distDollar.toFixed(2)} from entry`} accent />
             <ResultRow label="Distance to Liquidation" value={`${result.distPercent.toFixed(2)}%`} accent />
             <ResultRow label="Initial Margin" value={`${result.initialMargin.toFixed(2)}%`} />
           </div>
 
           {/* Liquidation distance bar */}
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Liquidation Distance</p>
-            <div className="relative h-3 rounded-full bg-[var(--muted)] overflow-hidden">
+          <div className="card">
+            <p className="lbl" style={{ marginBottom: 14 }}>Liquidation Distance</p>
+            <div style={{ position: 'relative', height: 2, background: 'var(--rail)' }}>
               <div
-                className="absolute left-0 top-0 h-full rounded-full transition-all"
                 style={{
+                  position: 'absolute', left: 0, top: 0, bottom: 0,
                   width: `${Math.min(result.distPercent, 100)}%`,
-                  backgroundColor: result.distPercent < 5 ? '#ef4444' : result.distPercent < 15 ? '#eab308' : 'var(--accent)',
+                  backgroundColor: result.distPercent < 5 ? 'var(--red)' : result.distPercent < 15 ? 'var(--amber)' : 'var(--green)',
                 }}
               />
             </div>
-            <div className="flex items-center justify-between mt-1.5">
-              <span className="text-[10px] text-[var(--muted-foreground)]">High risk</span>
-              <span className="text-xs font-semibold">{result.distPercent.toFixed(2)}%</span>
-              <span className="text-[10px] text-[var(--muted-foreground)]">Low risk</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+              <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>High risk</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--text)' }}>{result.distPercent.toFixed(2)}%</span>
+              <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>Low risk</span>
             </div>
           </div>
 
@@ -644,35 +680,35 @@ function DrawdownCalc() {
   const handleReset = () => setDrawdown('20');
 
   return (
-    <div className="space-y-5">
-      <div className="max-w-sm">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ maxWidth: 320 }}>
         <FieldLabel>Drawdown</FieldLabel>
         <NumInput value={drawdown} onChange={setDrawdown} suffix="%" placeholder="20" />
         <FieldHint>How much of your account is lost</FieldHint>
       </div>
 
       {dd > 0 && dd < 100 && (
-        <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Recovery Required</p>
+        <div className="card">
+          <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Recovery Required</p>
           <ResultRow label="Gain Needed" value={`${recovery.toFixed(2)}%`} hint="To return to original balance" accent />
         </div>
       )}
 
-      <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Reference Table</p>
-        <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+      <div className="card">
+        <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Reference Table</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', columnGap: 32 }}>
           {referenceTable.map(([left, right]) => {
             const leftRecovery = ((1 / (1 + left / 100)) - 1) * -100;
             const rightRecovery = ((1 / (1 + right / 100)) - 1) * -100;
             return (
-              <div key={`${left}-${right}`} className="contents">
-                <div className="flex items-center justify-between py-1.5 border-b border-[var(--border)]">
-                  <span className={`text-sm ${left <= -80 ? 'text-red-400 font-semibold' : ''}`}>{left}%</span>
-                  <span className={`text-sm font-bold ${leftRecovery >= 50 ? 'text-yellow-400' : leftRecovery >= 100 ? 'text-red-400' : 'text-[var(--accent)]'}`}>+{leftRecovery.toFixed(1)}%</span>
+              <div key={`${left}-${right}`} style={{ display: 'contents' }}>
+                <div className="mrow">
+                  <span className="lb" style={{ marginLeft: 0, color: left <= -80 ? 'var(--red)' : undefined }}>{left}%</span>
+                  <span className="val" style={{ color: leftRecovery >= 100 ? 'var(--red)' : leftRecovery >= 50 ? 'var(--amber)' : 'var(--green)' }}>+{leftRecovery.toFixed(1)}%</span>
                 </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-[var(--border)]">
-                  <span className="text-sm">{right}%</span>
-                  <span className={`text-sm font-bold ${rightRecovery >= 100 ? 'text-red-400' : rightRecovery >= 50 ? 'text-yellow-400' : 'text-[var(--accent)]'}`}>+{rightRecovery.toFixed(1)}%</span>
+                <div className="mrow">
+                  <span className="lb" style={{ marginLeft: 0 }}>{right}%</span>
+                  <span className="val" style={{ color: rightRecovery >= 100 ? 'var(--red)' : rightRecovery >= 50 ? 'var(--amber)' : 'var(--green)' }}>+{rightRecovery.toFixed(1)}%</span>
                 </div>
               </div>
             );
@@ -680,8 +716,8 @@ function DrawdownCalc() {
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <button onClick={handleReset} className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors font-medium">
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button type="button" onClick={handleReset} className="btn-g">
           Reset
         </button>
       </div>
@@ -753,16 +789,16 @@ function CompoundGrowthCalc() {
   };
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
         <FieldLabel>Mode</FieldLabel>
-        <div className="grid grid-cols-2 border border-[var(--border)] rounded-lg overflow-hidden">
-          <button onClick={() => setMode('fixed')} className={`py-3 text-sm font-semibold transition-colors ${mode === 'fixed' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted-foreground)]'}`}>Fixed Return</button>
-          <button onClick={() => setMode('winrate')} className={`py-3 text-sm font-semibold transition-colors ${mode === 'winrate' ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted-foreground)]'}`}>Win Rate Model</button>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          <button type="button" onClick={() => setMode('fixed')} style={mode === 'fixed' ? { ...SEG_BASE, background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--ink)' } : SEG_BASE}>Fixed Return</button>
+          <button type="button" onClick={() => setMode('winrate')} style={mode === 'winrate' ? { ...SEG_BASE, background: 'var(--amber)', borderColor: 'var(--amber)', color: 'var(--ink)' } : SEG_BASE}>Win Rate Model</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="split" style={{ gap: 24 }}>
         <div><FieldLabel>Starting Balance</FieldLabel><NumInput value={startBalance} onChange={setStartBalance} prefix="$" placeholder="10000" /></div>
         <div><FieldLabel>Number of Trades</FieldLabel><NumInput value={numTrades} onChange={setNumTrades} placeholder="50" /></div>
         {mode === 'fixed' ? (
@@ -778,25 +814,25 @@ function CompoundGrowthCalc() {
 
       {chartData.length > 1 && (
         <>
-          <div className="border border-[var(--border)] rounded-xl p-4 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Projected Growth Curve</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Projected Growth Curve</p>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.4} />
-                <XAxis dataKey="trade" tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} tickLine={false} axisLine={{ stroke: 'var(--border)' }} />
-                <YAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }} tickLine={false} axisLine={{ stroke: 'var(--border)' }} tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v.toFixed(0)}`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
+                <XAxis dataKey="trade" tick={{ fill: '#5c6b7e', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#182432' }} />
+                <YAxis tick={{ fill: '#5c6b7e', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#182432' }} tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v.toFixed(0)}`} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '0.75rem', fontSize: 12 }}
+                  contentStyle={{ backgroundColor: '#0c1119', border: '1px solid #182432', borderRadius: 2, fontSize: 12 }}
                   formatter={((v: number) => [`$${v.toFixed(2)}`, 'Balance']) as any}
                   labelFormatter={((l: number) => `Trade ${l}`) as any}
                 />
-                <Line type="monotone" dataKey="balance" stroke="var(--accent)" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="balance" stroke="#d99405" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="border border-[var(--border)] rounded-xl p-5 bg-[var(--muted)]/20">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Projection</p>
+          <div className="card">
+            <p className="lbl" style={{ color: 'var(--amber)', marginBottom: 14 }}>Projection</p>
             <ResultRow label="Final Balance" value={`$${finalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} accent />
             <ResultRow label="Total Profit" value={`$${totalProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} accent />
             <ResultRow label="Total Return" value={`${totalReturn.toFixed(2)}%`} />

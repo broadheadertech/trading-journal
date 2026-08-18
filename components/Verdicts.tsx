@@ -394,25 +394,25 @@ export default function Verdicts({ trades }: VerdictsProps) {
   /* ── Effort color helper ───────────────────────────────────────── */
   function effortColor(e: EffortLevel) {
     switch (e) {
-      case 'LOW EFFORT': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'MEDIUM EFFORT': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'HIGH EFFORT': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'LOW EFFORT': return 'text-[var(--green)]';
+      case 'MEDIUM EFFORT': return 'text-[var(--amber)]';
+      case 'HIGH EFFORT': return 'text-[var(--red)]';
     }
   }
 
   function priorityColor(p: Priority) {
     switch (p) {
-      case 'P1 PRIORITY': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'P2 PRIORITY': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'P3 PRIORITY': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'P1 PRIORITY': return 'text-[var(--red)]';
+      case 'P2 PRIORITY': return 'text-[var(--amber)]';
+      case 'P3 PRIORITY': return 'text-[var(--teal)]';
     }
   }
 
   /* ── Health bar color ──────────────────────────────────────────── */
   function healthColor(score: number) {
-    if (score >= 70) return '#4ade80';
-    if (score >= 40) return '#facc15';
-    return '#f87171';
+    if (score >= 70) return '#24c88a';
+    if (score >= 40) return '#d99405';
+    return '#ff4d5e';
   }
 
   const hc = healthColor(metrics.healthScore);

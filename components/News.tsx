@@ -55,140 +55,164 @@ export default function News() {
   const isApiKeyMissing = error === 'API key not configured';
 
   return (
-    <div className="space-y-5">
+    <div style={{ position: 'relative' }}>
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-xl font-bold">Market News</h2>
-          <p className="text-sm text-[var(--muted-foreground)]">Live financial news to keep you informed</p>
-        </div>
-        <button
-          onClick={() => setRefreshKey(k => k + 1)}
-          disabled={loading}
-          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors disabled:opacity-40"
-        >
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
-        </button>
-      </div>
-
-      {/* Category Filters */}
-      <div className="flex flex-wrap gap-2">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setCategory(cat.id)}
-            className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
-              category === cat.id
-                ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
-                : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/40 hover:text-[var(--foreground)]'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* API Key Missing State */}
-      {isApiKeyMissing && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle size={20} className="text-amber-400 shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-medium mb-1">News API key not configured</h3>
-              <p className="text-sm text-[var(--muted-foreground)] mb-3">
-                To display live news, you need a free API key from NewsAPI.org.
-              </p>
-              <ol className="text-sm text-[var(--muted-foreground)] space-y-1.5 list-decimal list-inside">
-                <li>Go to <a href="https://newsapi.org/register" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] hover:underline">newsapi.org/register</a> and create a free account</li>
-                <li>Copy your API key from the dashboard</li>
-                <li>Open <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs">.env.local</code> in your project root</li>
-                <li>Replace <code className="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs">NEWS_API_KEY=your_key_here</code> with your actual key</li>
-                <li>Restart the dev server</li>
-              </ol>
-              <p className="text-xs text-[var(--muted-foreground)] mt-3 p-2 bg-[var(--muted)] rounded-lg">
-                Free tier: 100 requests/day · Developer use only · For production, upgrade at newsapi.org
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Generic Error */}
-      {error && !isApiKeyMissing && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 text-center">
-          <AlertCircle size={24} className="text-[var(--red)] mx-auto mb-2" />
-          <p className="text-sm text-[var(--muted-foreground)]">{error}</p>
-          <button
-            onClick={() => setRefreshKey(k => k + 1)}
-            className="mt-3 text-sm text-[var(--accent)] hover:underline"
-          >
-            Try again
+      <div className="phead pwrap">
+        <p className="eyebrow" style={{ fontWeight: 500 }}><Newspaper size={13} /> Live wire</p>
+        <h2>Market news</h2>
+        <p className="sub">
+          Live financial news to keep you informed — filtered by the desks that move your markets.
+        </p>
+        <div className="actions">
+          <button className="btn-g" type="button" onClick={() => setRefreshKey(k => k + 1)} disabled={loading}
+            style={loading ? { opacity: 0.4 } : undefined}>
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} /> Refresh
           </button>
         </div>
-      )}
+      </div>
 
-      {/* Loading Skeleton */}
-      {loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3 animate-pulse">
-              <div className="flex items-center justify-between">
-                <div className="h-3 w-24 bg-[var(--muted)] rounded" />
-                <div className="h-3 w-16 bg-[var(--muted)] rounded" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-[var(--muted)] rounded w-full" />
-                <div className="h-4 bg-[var(--muted)] rounded w-4/5" />
-              </div>
-              <div className="space-y-1">
-                <div className="h-3 bg-[var(--muted)] rounded w-full" />
-                <div className="h-3 bg-[var(--muted)] rounded w-3/4" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!loading && !error && articles.length === 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">
-          <Newspaper size={32} className="text-[var(--muted-foreground)] mx-auto mb-3" />
-          <p className="text-[var(--muted-foreground)]">No articles found for this category</p>
-        </div>
-      )}
-
-      {/* Articles Grid */}
-      {!loading && articles.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {articles.map((article, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,260px) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
+        {/* Sidebar — categories */}
+        <div className="listnav">
+          <h6>CATEGORIES</h6>
+          {CATEGORIES.map(cat => (
             <a
-              key={i}
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-2 hover:border-[var(--accent)]/40 transition-colors group block"
+              key={cat.id}
+              onClick={() => setCategory(cat.id)}
+              className={category === cat.id ? 'on' : undefined}
+              style={{ cursor: 'pointer' }}
             >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium text-[var(--accent)] truncate">{article.source.name}</span>
-                <span className="text-xs text-[var(--muted-foreground)] shrink-0">
-                  {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
-                </span>
-              </div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)] leading-snug group-hover:text-[var(--accent)] transition-colors line-clamp-2">
-                {article.title}
-                <ExternalLink size={11} className="inline ml-1 opacity-50 group-hover:opacity-100 transition-opacity" />
-              </h3>
-              {article.description && (
-                <p className="text-xs text-[var(--muted-foreground)] leading-relaxed line-clamp-2">
-                  {article.description}
-                </p>
-              )}
+              {cat.label}
             </a>
           ))}
         </div>
-      )}
 
-      <p className="text-xs text-[var(--muted-foreground)] text-center pb-2">
+        <div>
+          {/* API Key Missing State */}
+          {isApiKeyMissing && (
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                <AlertCircle size={18} color="#d99405" style={{ flex: 'none', marginTop: 2 }} />
+                <div style={{ minWidth: 0 }}>
+                  <h3>News API key not configured</h3>
+                  <p className="sub">To display live news, you need a free API key from NewsAPI.org.</p>
+                  <div className="klist num">
+                    <div><b>1</b><span>Go to <a href="https://newsapi.org/register" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--amber)', fontWeight: 700 }}>newsapi.org/register</a> and create a free account</span></div>
+                    <div><b>2</b><span>Copy your API key from the dashboard</span></div>
+                    <div><b>3</b><span>Open <code style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>.env.local</code> in your project root</span></div>
+                    <div><b>4</b><span>Replace <code style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>NEWS_API_KEY=your_key_here</code> with your actual key</span></div>
+                    <div><b>5</b><span>Restart the dev server</span></div>
+                  </div>
+                  <div className="warn">
+                    <b>Free tier:</b> 100 requests/day · Developer use only · For production, upgrade at newsapi.org
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Generic Error */}
+          {error && !isApiKeyMissing && (
+            <div className="card" style={{ textAlign: 'center', padding: '34px 28px' }}>
+              <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
+              <AlertCircle size={22} color="#ff4d5e" style={{ display: 'inline-block' }} />
+              <p className="empty-line" style={{ padding: '14px 0 0' }}>{error}</p>
+              <button
+                onClick={() => setRefreshKey(k => k + 1)}
+                style={{ marginTop: 16, fontWeight: 700, fontSize: 13, color: 'var(--amber)' }}
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {/* Loading Skeleton */}
+          {loading && !error && (
+            <div className="news">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <a key={i} className="animate-pulse" style={{ cursor: 'default' }}>
+                  <div className="art" />
+                  <h5>
+                    <span style={{ display: 'block', height: 10, background: 'var(--line)', marginBottom: 7 }} />
+                    <span style={{ display: 'block', height: 10, width: '75%', background: 'var(--line)' }} />
+                  </h5>
+                  <span>
+                    <span style={{ display: 'block', height: 8, background: 'var(--hair)', marginBottom: 6 }} />
+                    <span style={{ display: 'block', height: 8, width: '60%', background: 'var(--hair)' }} />
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && articles.length === 0 && (
+            <div className="blank" style={{ minHeight: 320 }}>
+              <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+              <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+              <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)' }}>
+                <Newspaper size={24} color="#2fd3c4" />
+              </span>
+              <h4>No articles found</h4>
+              <p>Nothing on the wire for this category right now.</p>
+            </div>
+          )}
+
+          {/* Articles Grid */}
+          {!loading && articles.length > 0 && (
+            <div className="news">
+              {articles.map((article, i) => (
+                <a
+                  key={i}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                >
+                  <div className="art" style={{ position: 'relative', overflow: 'hidden', flex: 'none' }}>
+                    {article.urlToImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={article.urlToImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <i style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Newspaper size={16} color="#2fd3c4" />
+                      </i>
+                    )}
+                    <b
+                      className="chip"
+                      style={{
+                        position: 'absolute', left: 10, top: 10, height: 20, padding: '0 10px',
+                        fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
+                        maxWidth: 'calc(100% - 20px)', overflow: 'hidden', whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {article.source.name}
+                    </b>
+                  </div>
+                  <h5>
+                    {article.title}
+                    <ExternalLink size={10} style={{ display: 'inline', marginLeft: 5, opacity: 0.55 }} />
+                  </h5>
+                  {article.description && <span style={{ flex: 1 }}>{article.description}</span>}
+                  <span
+                    style={{
+                      margin: '0 16px 16px', padding: '12px 0 0', borderTop: '1px solid var(--line)',
+                      fontSize: 10.5, color: 'var(--muted-2)',
+                    }}
+                  >
+                    {formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <p className="footnote">
         News sourced from NewsAPI.org · Updates every 5 minutes · For informational purposes only
       </p>
     </div>
