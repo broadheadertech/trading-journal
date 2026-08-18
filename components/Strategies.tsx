@@ -191,6 +191,9 @@ export default function Strategies() {
             key={s.id}
             onClick={() => setActive(s.id)}
             className={active === s.id ? 'on' : undefined}
+            // The reference renders the active strategy tab as a solid amber
+            // block (it overrides the `.tabs.line` underline-only rule inline).
+            style={active === s.id ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 } : undefined}
           >
             {s.title}
           </button>

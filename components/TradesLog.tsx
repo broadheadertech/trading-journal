@@ -360,7 +360,7 @@ export default function TradesLog({
         <div className="card" style={{ padding: '36px 28px 30px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <h3>Trade Journal</h3>
+              <h3 style={{ fontSize: 19 }}>Trade Journal</h3>
               <p className="sub">Click any trade card to open full review, violations context, and evidence.</p>
             </div>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>

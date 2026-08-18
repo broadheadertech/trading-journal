@@ -78,7 +78,7 @@ export default function Community() {
           Discuss trades, share insights, ask questions. Read freely, post when logged in.
         </p>
         {user && (
-          <div className="actions">
+          <div className="actions" style={{ top: 34 }}>
             <button onClick={() => setShowNew(true)} className="btn-a" style={{ height: 44 }}>
               <Plus size={14} /> New Post
             </button>

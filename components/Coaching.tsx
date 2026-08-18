@@ -77,8 +77,8 @@ export default function Coaching() {
   return (
     <div>
       <div className="phead pwrap">
-        <p className="eyebrow">
-          <Headphones size={13} /> {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
+        <p className="eyebrow" style={{ color: '#0dfb78', fontWeight: 500 }}>
+          {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
         </p>
         <h2>{tab === 'sessions' ? 'Talk to a trading coach' : 'Join a trading cohort'}</h2>
         <p className="sub">
@@ -86,7 +86,7 @@ export default function Coaching() {
             ? 'Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.'
             : 'Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.'}
         </p>
-        <div className="actions">
+        <div className="actions" style={{ top: 26 }}>
           {user && tab === 'sessions' && (
             <button type="button" onClick={() => setView('mine')} className="btn-g" style={{ height: 44 }}>
               My sessions ({myClientSessions.length})
@@ -106,14 +106,24 @@ export default function Coaching() {
         <button
           onClick={() => setTab('sessions')}
           className={tab === 'sessions' ? 'on' : undefined}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            ...(tab === 'sessions'
+              ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 }
+              : null),
+          }}
         >
           <Headphones size={13} /> 1-on-1 Sessions
         </button>
         <button
           onClick={() => setTab('cohorts')}
           className={tab === 'cohorts' ? 'on' : undefined}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            ...(tab === 'cohorts'
+              ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 }
+              : null),
+          }}
         >
           <Users size={13} /> Cohorts
         </button>

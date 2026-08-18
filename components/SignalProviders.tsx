@@ -69,7 +69,9 @@ export default function SignalProviders() {
       <p style={{ margin: '0 0 20px', fontWeight: 700, fontSize: 10, letterSpacing: '.04em', color: 'var(--amber)' }}>
         · {providers.length} ACTIVE
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 24 }}>
+      {/* 300px floor keeps this at 2-up inside the 720px `.split-2u` column,
+          matching the reference; it still collapses to 1-up on narrow screens. */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 24 }}>
         {(providers as Provider[]).map((p, i) => (
           <ProviderCard key={p.posterId} p={p} accent={ACCENTS[i % ACCENTS.length]} />
         ))}

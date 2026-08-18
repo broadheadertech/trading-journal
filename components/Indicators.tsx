@@ -22,7 +22,7 @@ export default function Indicators() {
   return (
     <div style={{ position: 'relative' }}>
       <div className="phead">
-        <p className="eyebrow">TradingView library</p>
+        <p className="eyebrow" style={{ fontWeight: 500 }}>TradingView library</p>
         <h2>Premium indicators</h2>
         <p className="sub">
           Custom-built indicators included with your subscription. One click to install.

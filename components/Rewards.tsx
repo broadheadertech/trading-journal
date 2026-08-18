@@ -1,14 +1,12 @@
 'use client';
 
-import { Gift, Calendar, DollarSign, Sparkles, Ticket } from 'lucide-react';
+import { Calendar, Monitor, TrendingUp, User } from 'lucide-react';
 
 export default function Rewards() {
   return (
     <div style={{ position: 'relative' }}>
       <div className="phead">
-        <p className="eyebrow">
-          <Gift size={13} /> Loyalty program
-        </p>
+        <p className="eyebrow" style={{ color: '#fff' }}>Loyalty program</p>
         <h2>Rewards &amp; Bonuses</h2>
         <p className="sub">
           Earn perks for being active — free subscription extensions, funded account raffles, and more.
@@ -75,16 +73,13 @@ export default function Rewards() {
 
       {/* How to earn */}
       <div className="card" style={{ marginTop: 32, padding: '25px 28px 34px' }}>
-        <h3>
-          <Sparkles size={16} style={{ verticalAlign: -3, marginRight: 8, color: 'var(--teal)' }} />
-          Ways to earn
-        </h3>
+        <h3 style={{ fontSize: 17, marginLeft: 26 }}>Ways to earn</h3>
         <div className="earn">
           {[
-            { icon: Calendar, label: 'Daily reflection',  reward: '+1 streak point' },
-            { icon: DollarSign, label: 'Hit weekly profit goal', reward: '+1 raffle ticket' },
-            { icon: Gift,     label: 'Refer a friend',    reward: '1 month free per signup' },
-            { icon: Ticket,   label: 'Complete a course', reward: '+3 raffle tickets' },
+            { icon: Calendar,   label: 'Daily reflection',       reward: '+1 streak point' },
+            { icon: TrendingUp, label: 'Hit weekly profit goal', reward: '+1 raffle ticket' },
+            { icon: User,       label: 'Refer a friend',         reward: '1 month free per signup' },
+            { icon: Monitor,    label: 'Complete a course',      reward: '+3 raffle tickets' },
           ].map(({ icon: Icon, label, reward }) => (
             <div key={label}>
               <Icon size={16} style={{ color: 'var(--teal)', flex: 'none' }} />

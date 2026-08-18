@@ -174,10 +174,13 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               const isCurrent = currentPlanId === plan.planId && isActive;
               const canSubscribe = price > 0;
               const isElite = plan.planId === 'elite';
+              // Presentation only: the reference highlights the Pro column and
+              // tints both Pro and Elite headings amber.
+              const isFeatured = plan.planId === 'pro';
 
               return (
-                <div key={plan._id} className={`plan4${isElite ? ' hot' : ''}`}>
-                  <h4 className={isElite ? 'amber' : undefined}>
+                <div key={plan._id} className={`plan4${isFeatured ? ' hot' : ''}`}>
+                  <h4 className={isFeatured || isElite ? 'amber' : undefined}>
                     {isElite && <Crown size={16} />}
                     {plan.name}
                   </h4>
@@ -187,7 +190,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                   <ul>
                     {plan.features.map((f: string, i: number) => (
                       <li key={i}>
-                        <Check size={12} style={{ color: isElite ? 'var(--amber)' : 'var(--green)' }} />
+                        <Check size={12} style={{ color: 'var(--green)' }} />
                         <span>{f}</span>
                       </li>
                     ))}

@@ -101,7 +101,7 @@ export default function Events() {
   return (
     <div>
       <div className="phead">
-        <p className="eyebrow">Live trainings &amp; meetups</p>
+        <p className="eyebrow" style={{ fontWeight: 500 }}>Live trainings &amp; meetups</p>
         <h2>Learn together, grow faster</h2>
         <p className="sub">Workshops, group sessions, and meetups — online or in-person.</p>
       </div>

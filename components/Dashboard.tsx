@@ -296,12 +296,6 @@ export default function Dashboard({
 
   return (
     <div className="pwrap">
-      <div className="phead">
-        <p className="eyebrow">Performance overview</p>
-        <h2>Dashboard</h2>
-        <p className="sub">Net outcome, execution quality and where your edge leaks — for the selected period.</p>
-      </div>
-
       <div className="grid2">
         {/* net P&L hero */}
         <div className="card hero" style={{ height: 'auto' }}>
@@ -672,12 +666,12 @@ export default function Dashboard({
               <div className="mrow">
                 <span className="ic" />
                 <span className="lb">Avg loss</span>
-                <span className="val" style={{ color: GREEN }}>{fmtPnl(-metrics.avgLoss)}</span>
+                <span className="val" style={{ color: c(-metrics.avgLoss) }}>{fmtPnl(-metrics.avgLoss)}</span>
               </div>
               <div className="mrow">
                 <span className="ic" />
                 <span className="lb">Biggest loss</span>
-                <span className="val" style={{ color: GREEN }}>{fmtPnl(metrics.biggestLoss)}</span>
+                <span className="val" style={{ color: c(metrics.biggestLoss) }}>{fmtPnl(metrics.biggestLoss)}</span>
               </div>
               <div className="mrow">
                 <span className="ic" />

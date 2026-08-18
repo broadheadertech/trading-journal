@@ -125,7 +125,7 @@ export default function WorldMonitoring() {
           Real-time global intelligence — financial centers, central banks, trade routes, undersea cables, and pipelines.
           Toggle layers to explore.
         </p>
-        <div className="actions" style={{ gap: 8 }}>
+        <div className="actions" style={{ top: 26, gap: 8 }}>
           <button
             onClick={() => setView('globe')}
             className={view === 'globe' ? 'btn-a' : 'chip'}

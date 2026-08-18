@@ -46,7 +46,7 @@ export default function Articles() {
   return (
     <div>
       <div className="phead">
-        <p className="eyebrow"><BookOpen size={13} /> Articles &amp; insights</p>
+        <p className="eyebrow">Articles &amp; insights</p>
         <h2>Read, learn, level up</h2>
         <p className="sub">
           Long-form articles from senior traders and coaches — strategy breakdowns, psychology deep-dives, and market analysis.

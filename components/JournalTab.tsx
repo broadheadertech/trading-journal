@@ -1,9 +1,6 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  List, Brain, Scale, BarChart3, FileText, BookOpen, Map, Target, Sparkles, Trophy,
-} from 'lucide-react';
 import TradesLog from './TradesLog';
 import PsychologyJournal from './PsychologyJournal';
 import Verdicts from './Verdicts';
@@ -65,17 +62,19 @@ interface Props {
   updateGoal: any;
 }
 
-const SUB_TABS: { id: JournalSubTab; label: string; icon: React.ReactNode; gate?: TabId }[] = [
-  { id: 'trades',      label: 'Trades',         icon: <List size={16} /> },
-  { id: 'psychology',  label: 'Psychology',     icon: <Brain size={16} /> },
-  { id: 'verdicts',    label: 'Verdicts',       icon: <Scale size={16} />,    gate: 'verdicts' },
-  { id: 'performance', label: 'Performance',    icon: <BarChart3 size={16} /> },
-  { id: 'reports',     label: 'Reports',        icon: <FileText size={16} />, gate: 'reports' },
-  { id: 'playbook',    label: 'Playbook',       icon: <BookOpen size={16} /> },
-  { id: 'checklist',   label: 'Market Context', icon: <Map size={16} />,      gate: 'checklist' },
-  { id: 'goals',       label: 'Goals',          icon: <Target size={16} />,   gate: 'goals' },
-  { id: 'whatif',      label: 'What-If',        icon: <Sparkles size={16} />, gate: 'whatif' },
-  { id: 'achievements', label: 'Achievements',  icon: <Trophy size={16} /> },
+// Text-only labels — the ATLAS reference renders this strip as a single row of
+// plain-text tabs; per-tab icons pushed the 10 tabs onto a second line.
+const SUB_TABS: { id: JournalSubTab; label: string; gate?: TabId }[] = [
+  { id: 'trades',       label: 'Trades' },
+  { id: 'psychology',   label: 'Psychology' },
+  { id: 'verdicts',     label: 'Verdicts',       gate: 'verdicts' },
+  { id: 'performance',  label: 'Performance' },
+  { id: 'reports',      label: 'Reports',        gate: 'reports' },
+  { id: 'playbook',     label: 'Playbook' },
+  { id: 'checklist',    label: 'Market Context', gate: 'checklist' },
+  { id: 'goals',        label: 'Goals',          gate: 'goals' },
+  { id: 'whatif',       label: 'What-If',        gate: 'whatif' },
+  { id: 'achievements', label: 'Achievements' },
 ];
 
 export default function JournalTab(props: Props) {
@@ -99,9 +98,8 @@ export default function JournalTab(props: Props) {
               key={t.id}
               onClick={() => setSub(t.id)}
               className={active ? 'on' : undefined}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}
+              style={{ whiteSpace: 'nowrap' }}
             >
-              {t.icon}
               {t.label}
             </button>
           );
