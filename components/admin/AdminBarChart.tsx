@@ -6,26 +6,30 @@ interface AdminBarChartProps {
   height?: number;
 }
 
-export default function AdminBarChart({ data, color = 'var(--accent)', height = 160 }: AdminBarChartProps) {
+export default function AdminBarChart({ data, color = 'var(--amber)', height = 160 }: AdminBarChartProps) {
   const maxValue = Math.max(...data.map((d) => d.value), 1);
 
   return (
-    <div className="flex items-end gap-1.5" style={{ height }}>
+    <div className="flex items-end" style={{ height, gap: 6 }}>
       {data.map((d) => {
         const barHeight = (d.value / maxValue) * 100;
         return (
-          <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-            <span className="text-[10px] text-[var(--muted-foreground)]">{d.value}</span>
+          <div key={d.label} className="flex-1 flex flex-col items-center" style={{ gap: 5 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-2)' }}>{d.value}</span>
             <div
-              className="w-full rounded-t-sm transition-all"
+              className="w-full"
               style={{
                 height: `${barHeight}%`,
-                minHeight: d.value > 0 ? 4 : 0,
+                minHeight: d.value > 0 ? 3 : 0,
                 backgroundColor: color,
-                opacity: 0.8,
+                borderRadius: 1,
+                opacity: 0.85,
               }}
             />
-            <span className="text-[9px] text-[var(--muted-foreground)] truncate w-full text-center">
+            <span
+              className="truncate w-full text-center"
+              style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.03em', color: 'var(--muted-3)' }}
+            >
               {d.label}
             </span>
           </div>

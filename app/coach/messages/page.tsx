@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { SessionView } from '@/components/Coaching';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, ArrowRight } from 'lucide-react';
 
 export default function CoachMessagesPage() {
   const sessions = useQuery(api.coachSessions.myCoachSessions) ?? [];
@@ -18,25 +18,51 @@ export default function CoachMessagesPage() {
   const active = sessions.filter((s: any) => s.status !== 'cancelled');
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Messages</h1>
+    <div style={{ maxWidth: 900 }}>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <MessageSquare size={13} style={{ color: 'var(--amber)' }} /> CLIENT THREADS
+        </p>
+        <h2>Messages</h2>
+        <p className="sub">One thread per active session. Open a client to read and reply.</p>
+      </div>
+
       {active.length === 0 ? (
-        <p className="text-sm text-[var(--muted-foreground)]">No conversations yet.</p>
+        <div className="blank" style={{ padding: '48px 28px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, top: -1, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: -1, bottom: -1, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)', background: 'var(--panel-2)' }}>
+            <MessageSquare size={22} style={{ color: 'var(--teal)' }} />
+          </span>
+          <h4>No conversations yet</h4>
+          <p>Threads open automatically once a trader books a session with you.</p>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div style={{ display: 'grid', gap: 10 }}>
           {active.map((s: any) => (
             <button
               key={s.id}
               onClick={() => setActiveId(s.id)}
-              className="w-full glass rounded-2xl p-4 flex items-center gap-3 card-lift text-left"
+              className="card"
+              style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', width: '100%' }}
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-                <MessageSquare size={16} className="text-pink-400" />
+              <div className="inset" style={{ width: 40, height: 40, padding: 0, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MessageSquare size={18} style={{ color: 'var(--amber)' }} />
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[var(--foreground)]">{s.clientName}</div>
-                <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleString()}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
+                  {s.clientName}
+                </div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted-2)', marginTop: 4 }}>
+                  {new Date(s.startsAt).toLocaleString()}
+                </div>
               </div>
+              <span className="chip" style={{ flex: 'none', textTransform: 'capitalize' }}>
+                {s.status.replace('_', ' ')}
+              </span>
+              <ArrowRight size={14} style={{ color: 'var(--amber)', flex: 'none' }} />
             </button>
           ))}
         </div>

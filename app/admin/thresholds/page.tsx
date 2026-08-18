@@ -119,10 +119,10 @@ export default function ThresholdsPage() {
   if (data === undefined || !form) {
     return (
       <div className="space-y-4 max-w-3xl animate-pulse">
-        <div className="h-8 w-56 bg-[var(--muted)] rounded" />
-        <div className="h-4 w-80 bg-[var(--muted)] rounded" />
+        <div style={{ height: 32, width: 224, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 14, width: 320, background: 'var(--panel-2)', borderRadius: 2 }} />
         {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="h-20 bg-[var(--muted)] rounded-xl" />
+          <div key={i} style={{ height: 80, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
         ))}
       </div>
     );
@@ -169,44 +169,45 @@ export default function ThresholdsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="max-w-3xl">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <SlidersHorizontal size={20} className="text-[var(--accent)]" />
-          <h1 className="text-xl font-bold text-[var(--foreground)]">Anti-Gaming Thresholds</h1>
-        </div>
-        <p className="text-sm text-[var(--muted-foreground)]">
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+          <SlidersHorizontal size={13} style={{ color: 'var(--amber)' }} /> Integrity
+        </p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Anti-Gaming Thresholds</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           Configure detection thresholds for the anti-gaming engine. Changes take effect immediately for new trades.
         </p>
       </div>
 
       {/* Threshold fields */}
-      <div className="space-y-3">
+      <div>
         {FIELDS.map((field) => {
           const displayValue = field.toDisplay(form[field.key]);
           const defaultDisplay = field.toDisplay(DEFAULTS[field.key]);
           const isModified = form[field.key] !== DEFAULTS[field.key];
 
           return (
-            <div
-              key={field.key}
-              className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4"
-            >
-              <div className="flex items-start justify-between gap-4">
+            <div key={field.key} className="card" style={{ marginBottom: 12 }}>
+              <span className="accent" style={{ width: 56, background: isModified ? 'var(--amber)' : 'var(--line-2)' }} />
+              <div className="flex items-start justify-between gap-6">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-[var(--foreground)]">{field.label}</p>
+                  <div className="flex items-center gap-3">
+                    <h4>{field.label}</h4>
                     {isModified && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium">
-                        Modified
+                      <span
+                        className="chip"
+                        style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: 'var(--amber)' }}
+                      >
+                        MODIFIED
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{field.description}</p>
+                  <p className="sub">{field.description}</p>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-3 shrink-0">
                   <input
                     type="number"
                     value={displayValue}
@@ -214,15 +215,24 @@ export default function ThresholdsPage() {
                     min={field.min}
                     max={field.max}
                     step={field.step}
-                    className="w-20 px-2 py-1.5 text-sm text-right tabular-nums rounded-lg border border-[var(--border)] bg-[var(--muted)]/40 text-[var(--foreground)] focus:outline-none focus:border-[var(--accent)]"
+                    className="text-right"
+                    style={{
+                      width: 84, height: 38, padding: '0 12px', borderRadius: 2,
+                      border: '1px solid var(--line)', background: 'var(--panel-2)',
+                      fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--text)', outline: 'none',
+                    }}
                   />
-                  <span className="text-xs text-[var(--muted-foreground)] w-16">{field.unit}</span>
+                  <span style={{ width: 64, fontSize: 11.5, color: 'var(--muted-2)' }}>{field.unit}</span>
 
                   <button
                     type="button"
                     onClick={() => handleResetField(field.key)}
                     title={`Reset to default (${defaultDisplay} ${field.unit})`}
-                    className="p-1 rounded text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors"
+                    className="inline-flex items-center justify-center"
+                    style={{
+                      width: 30, height: 30, borderRadius: 2,
+                      border: '1px solid var(--line)', background: 'var(--panel-2)', color: 'var(--muted-2)',
+                    }}
                   >
                     <RotateCcw size={14} />
                   </button>
@@ -230,8 +240,8 @@ export default function ThresholdsPage() {
               </div>
 
               {/* Default indicator */}
-              <p className="text-[11px] text-[var(--muted-foreground)] mt-1.5">
-                Default: {defaultDisplay} {field.unit}
+              <p style={{ margin: '12px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>
+                Default: <span style={{ fontFamily: 'var(--mono)' }}>{defaultDisplay}</span> {field.unit}
               </p>
             </div>
           );
@@ -239,12 +249,12 @@ export default function ThresholdsPage() {
       </div>
 
       {/* Actions bar */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 24 }}>
         <button
           type="button"
           onClick={handleSave}
           disabled={saving || !hasChanges}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] text-white hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-a disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Save size={14} />
           {saving ? 'Saving...' : 'Save Changes'}
@@ -254,20 +264,25 @@ export default function ThresholdsPage() {
           type="button"
           onClick={handleResetAll}
           disabled={saving}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors disabled:opacity-40"
+          className="btn-g disabled:opacity-40"
         >
           <RotateCcw size={14} />
           Reset All to Defaults
         </button>
 
         {saveResult && (
-          <span className={`text-xs font-medium ${saveResult.includes('Failed') ? 'text-red-400' : 'text-green-400'}`}>
+          <span
+            style={{
+              fontSize: 12, fontWeight: 700,
+              color: saveResult.includes('Failed') ? 'var(--red)' : 'var(--green)',
+            }}
+          >
             {saveResult}
           </span>
         )}
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)]">
+      <p className="footnote" style={{ marginTop: 20, textAlign: 'left' }}>
         Threshold changes are logged to the admin audit trail. Values take effect immediately via Convex real-time subscriptions.
       </p>
     </div>

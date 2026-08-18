@@ -19,6 +19,48 @@ import ReducedMotionToggle from './ReducedMotionToggle';
 import BrainDeleteButton from './BrainDeleteButton';
 import CinematicEngine from './cinematic/CinematicEngine';
 
+// ─── ATLAS raw tokens ────────────────────────────────────────────────
+// The brain dimension is a position:fixed surface that may mount outside the
+// `.atlas-dash` scope, so ATLAS values are inlined (same as BrainMiniWidget).
+const T = {
+  panel: '#0a0f17',
+  panel2: '#0c1119',
+  hair: '#101922',
+  line: '#182432',
+  line2: '#24344a',
+  rail: '#141e2a',
+  amber: '#d99405',
+  green: '#24c88a',
+  red: '#ff4d5e',
+  text: '#edf2f7',
+  text2: '#9fb0c2',
+  muted: '#7f8ea3',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+  muted4: '#3a4a5c',
+  display: "'Archivo',system-ui,sans-serif",
+  mono: "'Geist Mono',ui-monospace,monospace",
+};
+
+/** Stage accent still honours any theme-provided --accent, falling back to ATLAS amber. */
+const ACCENT = `var(--accent, ${T.amber})`;
+
+const LBL: React.CSSProperties = {
+  margin: 0,
+  fontWeight: 700,
+  fontSize: 9.5,
+  letterSpacing: '.04em',
+  color: T.muted2,
+};
+
+const CARD: React.CSSProperties = {
+  position: 'relative',
+  border: `1px solid ${T.line}`,
+  borderRadius: 2,
+  background: T.panel,
+  padding: '15px 20px 18px',
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function stageLabel(s: Stage): string {
@@ -53,14 +95,24 @@ function BackButton({ onBack }: { onBack: () => void }) {
   return (
     <button
       onClick={onBack}
-      className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-2
-                 rounded-xl bg-white/5 backdrop-blur-md border border-white/10
-                 text-white/80 hover:text-white hover:bg-white/10
-                 transition-all duration-200 group cursor-pointer"
+      className="absolute top-4 left-4 z-10 group cursor-pointer"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 9,
+        height: 32,
+        padding: '0 16px',
+        borderRadius: 2,
+        border: `1px solid ${T.line2}`,
+        background: T.panel,
+        color: T.text,
+        fontWeight: 700,
+        fontSize: 12,
+      }}
       aria-label="Return to dashboard"
     >
-      <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
-      <span className="text-sm font-medium hidden sm:inline">Back</span>
+      <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+      <span className="hidden sm:inline">Back</span>
     </button>
   );
 }
@@ -70,20 +122,21 @@ function BackButton({ onBack }: { onBack: () => void }) {
 function StageRoadmap({ currentStage }: { currentStage: Stage }) {
   const currentIdx = STAGE_ORDER.indexOf(currentStage);
   return (
-    <div className="flex flex-wrap gap-1 items-center text-xs text-white/40">
+    <div className="flex flex-wrap gap-1 items-center" style={{ fontSize: 11.5, color: T.muted3 }}>
       {STAGE_ORDER.map((s, idx) => (
         <span key={s} className="flex items-center gap-1">
-          {idx > 0 && <span className="text-white/15" aria-hidden="true">&rarr;</span>}
+          {idx > 0 && <span style={{ color: T.muted4 }} aria-hidden="true">&rarr;</span>}
           {/* Story 9.3 — pattern swatch for colorblind differentiation */}
-          <svg viewBox="0 0 10 10" className="w-2.5 h-2.5 flex-shrink-0" aria-hidden="true" style={{ color: idx <= currentIdx ? STAGE_COLORS[s].accent : 'rgba(255,255,255,0.15)' }}>
+          <svg viewBox="0 0 10 10" className="w-2.5 h-2.5 flex-shrink-0" aria-hidden="true" style={{ color: idx <= currentIdx ? STAGE_COLORS[s].accent : T.rail }}>
             <defs><SingleStagePatternDef stage={s} /></defs>
             <circle cx="5" cy="5" r="5" fill="currentColor" />
             {idx <= currentIdx && <circle cx="5" cy="5" r="5" fill={`url(#${STAGE_PATTERNS[s].id})`} />}
           </svg>
-          <span className={idx === currentIdx
-            ? 'text-white font-bold uppercase'
-            : idx < currentIdx ? 'text-white/50' : ''
-          }>
+          <span
+            style={idx === currentIdx
+              ? { fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: T.text }
+              : idx < currentIdx ? { color: T.muted2 } : undefined}
+          >
             {idx === currentIdx ? `[${stageLabel(s)}]` : stageLabel(s)}
           </span>
         </span>
@@ -106,15 +159,26 @@ function ScoreHistory({ data }: { data: { timestamp: number; newScore: number }[
   if (entries.length === 0) return null;
 
   return (
-    <section aria-label="Score history">
-      <div className="text-[10px] uppercase tracking-widest text-white/30 mb-2 font-medium" aria-hidden="true">
-        Score History
-      </div>
-      <ul className="space-y-1 list-none p-0 m-0">
+    <section aria-label="Score history" style={CARD}>
+      <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 2.5, background: ACCENT }} />
+      <p style={{ ...LBL, marginBottom: 8 }} aria-hidden="true">SCORE HISTORY</p>
+      <ul className="list-none p-0 m-0">
         {entries.map((e, i) => (
-          <li key={i} className="flex justify-between text-sm text-white/50">
+          <li
+            key={i}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '10px 0',
+              borderBottom: `1px solid ${T.hair}`,
+              fontSize: 12.5,
+              color: T.text2,
+            }}
+          >
             <span>{e.date}</span>
-            <span className="tabular-nums text-white/70">{e.score}</span>
+            <span style={{ marginLeft: 'auto', fontFamily: T.mono, fontWeight: 500, fontSize: 12.5, color: T.text }}>
+              {e.score}
+            </span>
           </li>
         ))}
       </ul>
@@ -128,8 +192,8 @@ function SkeletonState({ onBack }: { onBack?: () => void }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center brain-dimension-bg" role="status" aria-label="Loading brain data">
       {onBack && <BackButton onBack={onBack} />}
-      <div className="w-32 h-4 rounded bg-white/5 animate-pulse mb-4" aria-hidden="true" />
-      <div className="w-24 h-3 rounded bg-white/5 animate-pulse" aria-hidden="true" />
+      <div className="animate-pulse mb-4" style={{ width: 128, height: 14, borderRadius: 2, background: T.rail }} aria-hidden="true" />
+      <div className="animate-pulse" style={{ width: 96, height: 10, borderRadius: 2, background: T.rail }} aria-hidden="true" />
     </div>
   );
 }
@@ -138,10 +202,28 @@ function EmptyState({ onBack }: { onBack?: () => void }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center px-4 brain-dimension-bg" role="region" aria-label="Brain empty state">
       {onBack && <BackButton onBack={onBack} />}
-      <h2 className="text-lg font-semibold text-white/90 mb-2">Your Brain is Waiting</h2>
-      <p className="text-sm text-white/50 max-w-sm text-center">
-        Start logging trades to grow your brain! Each trade, reflection, and disciplined decision shapes your neural score.
-      </p>
+      <div
+        style={{
+          position: 'relative',
+          maxWidth: 460,
+          width: '100%',
+          border: `1px solid ${T.line2}`,
+          borderRadius: 2,
+          background: '#070c13',
+          padding: '52px 28px 56px',
+          textAlign: 'center',
+        }}
+      >
+        {/* ATLAS blank-state corner ticks */}
+        <span style={{ position: 'absolute', left: -1, top: -1, width: 14, height: 14, border: `1px solid ${T.line2}`, borderRight: 0, borderBottom: 0 }} />
+        <span style={{ position: 'absolute', right: -1, bottom: -1, width: 14, height: 14, border: `1px solid ${T.line2}`, borderLeft: 0, borderTop: 0 }} />
+        <h2 style={{ margin: 0, fontFamily: T.display, fontWeight: 700, fontSize: 22, lineHeight: '24px', color: T.text }}>
+          Your Brain is Waiting
+        </h2>
+        <p style={{ margin: '14px 0 0', fontSize: 13.5, lineHeight: '20px', color: T.muted }}>
+          Start logging trades to grow your brain! Each trade, reflection, and disciplined decision shapes your neural score.
+        </p>
+      </div>
     </div>
   );
 }
@@ -214,45 +296,85 @@ export default function TextOnlyBrainTab({ onBack }: TextOnlyBrainTabProps) {
         {onBack && <BackButton onBack={onBack} />}
 
         {/* Main content — single scrollable column */}
-        <div className="flex-1 pt-16 px-4 sm:px-8 pb-8 space-y-6 max-w-xl mx-auto w-full">
+        <div className="flex-1 pt-16 px-4 sm:px-8 pb-8 max-w-xl mx-auto w-full" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Neuro Score */}
-          <section aria-label="Neuro Score">
-            <div className="text-[10px] uppercase tracking-widest text-white/30 mb-1 font-medium" aria-hidden="true">
-              Neuro Score
-            </div>
-            <div className="flex items-baseline gap-2.5">
-              <span className="text-5xl sm:text-6xl font-bold text-white tabular-nums">
+          <section aria-label="Neuro Score" style={CARD}>
+            <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 2.5, background: ACCENT }} />
+            <p style={LBL} aria-hidden="true">NEURO SCORE</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 4 }}>
+              <span style={{ fontFamily: T.mono, fontWeight: 500, fontSize: 44, lineHeight: '57px', color: T.text }}>
                 {Math.round(currentScore)}
               </span>
-              <span className={`text-sm font-semibold ${delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <span style={{ fontFamily: T.mono, fontWeight: 500, fontSize: 13, color: delta >= 0 ? T.green : T.red }}>
                 {deltaSign}{delta.toFixed(1)}
               </span>
             </div>
-            <div className="mt-2 flex gap-4 text-[10px] text-white/30">
-              <span>Streak <strong className="text-white/60">{streakDays}d</strong></span>
-              <span>Multi <strong className="text-white/60">{streakMultiplier.toFixed(2)}x</strong></span>
+            <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
+              <div style={{ flex: 1, border: `1px solid ${T.line}`, borderRadius: 2, background: T.panel2, padding: '11px 16px' }}>
+                <p style={LBL}>STREAK</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: T.mono, fontWeight: 500, fontSize: 18, marginTop: 6, color: T.text }}>
+                  {streakDays}d
+                </em>
+              </div>
+              <div style={{ flex: 1, border: `1px solid ${T.line}`, borderRadius: 2, background: T.panel2, padding: '11px 16px' }}>
+                <p style={LBL}>MULTIPLIER</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: T.mono, fontWeight: 500, fontSize: 18, marginTop: 6, color: T.text }}>
+                  {streakMultiplier.toFixed(2)}x
+                </em>
+              </div>
             </div>
           </section>
 
           {/* Stage */}
-          <section aria-label="Brain stage">
-            <div className="text-[10px] uppercase tracking-widest text-white/30 mb-1 font-medium" aria-hidden="true">
-              Stage
-            </div>
-            <div className="text-3xl sm:text-4xl font-bold text-white capitalize mb-2">
+          <section aria-label="Brain stage" style={CARD}>
+            <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 2.5, background: ACCENT }} />
+            <p style={LBL} aria-hidden="true">STAGE</p>
+            <div
+              className="capitalize"
+              style={{ fontFamily: T.display, fontWeight: 700, fontSize: 30, lineHeight: '33px', margin: '8px 0 14px', color: T.text }}
+            >
               {stageLabel(displayStage)}
             </div>
             <StageRoadmap currentStage={displayStage} />
             {nextInfo && (
-              <div className="mt-2 text-sm text-white/40">
-                Progress: {Math.round(currentScore)} / {nextInfo.nextMin} to {stageLabel(nextInfo.nextStage)}
-              </div>
+              <>
+                <div style={{ height: 2, marginTop: 16, background: T.rail, position: 'relative' }} aria-hidden="true">
+                  <div
+                    style={{
+                      position: 'absolute', left: 0, top: 0, bottom: 0,
+                      width: `${Math.min(100, Math.max(0, (currentScore / nextInfo.nextMin) * 100))}%`,
+                      background: ACCENT,
+                    }}
+                  />
+                </div>
+                <p style={{ margin: '10px 0 0', fontSize: 11.5, color: T.muted2 }}>
+                  Progress:{' '}
+                  <span style={{ fontFamily: T.mono, fontWeight: 500, color: T.text2 }}>
+                    {Math.round(currentScore)} / {nextInfo.nextMin}
+                  </span>
+                  {' '}to {stageLabel(nextInfo.nextStage)}
+                </p>
+              </>
             )}
             {!nextInfo && (
-              <div className="mt-2 text-sm text-white/40">
-                {Math.round(currentScore)} / 1000 — Maximum stage reached
-              </div>
+              <>
+                <div style={{ height: 2, marginTop: 16, background: T.rail, position: 'relative' }} aria-hidden="true">
+                  <div
+                    style={{
+                      position: 'absolute', left: 0, top: 0, bottom: 0,
+                      width: `${Math.min(100, Math.max(0, (currentScore / 1000) * 100))}%`,
+                      background: ACCENT,
+                    }}
+                  />
+                </div>
+                <p style={{ margin: '10px 0 0', fontSize: 11.5, color: T.muted2 }}>
+                  <span style={{ fontFamily: T.mono, fontWeight: 500, color: T.text2 }}>
+                    {Math.round(currentScore)} / 1000
+                  </span>
+                  {' '}— Maximum stage reached
+                </p>
+              </>
             )}
           </section>
 
@@ -273,7 +395,7 @@ export default function TextOnlyBrainTab({ onBack }: TextOnlyBrainTabProps) {
           <BrainCoachingCard coaching={brainState.latestCoachingMessage} />
 
           {/* Controls */}
-          <div className="space-y-1">
+          <div style={{ border: `1px solid ${T.line}`, borderRadius: 2, background: T.panel, padding: '4px 20px 6px' }}>
             <VacationModeToggle />
             <TextOnlyModeToggle enabled={textOnlyBrain} onToggle={setTextOnlyBrain} />
             <ReducedMotionToggle enabled={appReducedMotion} onToggle={setReducedMotion} />

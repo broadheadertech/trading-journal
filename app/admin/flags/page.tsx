@@ -6,16 +6,21 @@ import { useAdminAntiGamingFlags, useAdminLogFlagView } from '@/hooks/useAdminSt
 import type { Id } from '@/convex/_generated/dataModel';
 
 // ─── Flag badge config ───────────────────────────────────────────────────────
-const FLAG_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-  phantom_trade_detected: { label: 'Phantom Trade', bg: 'bg-amber-500/15', text: 'text-amber-400' },
-  pnl_anomaly_flagged: { label: 'P&L Anomaly', bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
-  recovery_lock_limit: { label: 'Lock Exceeded', bg: 'bg-amber-500/15', text: 'text-amber-400' },
-  recovery_lock_active: { label: 'Lock Active', bg: 'bg-zinc-500/15', text: 'text-zinc-400' },
+const FLAG_BADGE: Record<string, { label: string; color: string }> = {
+  phantom_trade_detected: { label: 'Phantom Trade', color: 'var(--red)' },
+  pnl_anomaly_flagged: { label: 'P&L Anomaly', color: 'var(--amber)' },
+  recovery_lock_limit: { label: 'Lock Exceeded', color: 'var(--amber)' },
+  recovery_lock_active: { label: 'Lock Active', color: 'var(--muted-2)' },
 };
 
 function getFlagBadge(flag: string) {
-  return FLAG_BADGE[flag] ?? { label: flag, bg: 'bg-zinc-500/15', text: 'text-zinc-400' };
+  return FLAG_BADGE[flag] ?? { label: flag, color: 'var(--muted-2)' };
 }
+
+// shared ATLAS chrome (markup-level styling only)
+const flagChip: React.CSSProperties = {
+  height: 20, padding: '0 10px', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em',
+};
 
 export default function AntiGamingFlagsPage() {
   const data = useAdminAntiGamingFlags();
@@ -35,11 +40,11 @@ export default function AntiGamingFlagsPage() {
   // Loading skeleton
   if (data === undefined) {
     return (
-      <div className="space-y-4 max-w-5xl animate-pulse">
-        <div className="h-8 w-56 bg-[var(--muted)] rounded" />
-        <div className="h-4 w-80 bg-[var(--muted)] rounded" />
-        <div className="h-16 w-40 bg-[var(--muted)] rounded-xl" />
-        <div className="h-72 bg-[var(--muted)] rounded-xl" />
+      <div className="max-w-5xl animate-pulse space-y-4">
+        <div style={{ height: 32, width: 224, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 14, width: 320, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 64, width: 160, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+        <div style={{ height: 288, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
       </div>
     );
   }
@@ -47,47 +52,50 @@ export default function AntiGamingFlagsPage() {
   // Empty state
   if (data.flags.length === 0) {
     return (
-      <div className="space-y-6 max-w-5xl">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <ShieldAlert size={20} className="text-[var(--accent)]" />
-            <h1 className="text-xl font-bold text-[var(--foreground)]">Anti-Gaming Alerts</h1>
-          </div>
-          <p className="text-sm text-[var(--muted-foreground)]">
+      <div className="max-w-5xl">
+        <div className="phead" style={{ marginBottom: 24 }}>
+          <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+            <ShieldAlert size={13} style={{ color: 'var(--amber)' }} /> Integrity
+          </p>
+          <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Anti-Gaming Alerts</h2>
+          <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
             Review suspicious activity flagged by the anti-gaming engine
           </p>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <ShieldAlert size={32} className="mx-auto mb-3 text-[var(--muted-foreground)]" />
-          <p className="text-sm font-medium text-[var(--foreground)]">No anti-gaming flags detected</p>
-          <p className="text-xs text-[var(--muted-foreground)] mt-1">
-            Flags will appear here when phantom trades, P&amp;L anomalies, or recovery lock violations are detected.
-          </p>
+        <div className="blank">
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+            <ShieldAlert size={22} style={{ color: 'var(--amber)' }} />
+          </div>
+          <h4>No anti-gaming flags detected</h4>
+          <p>Flags will appear here when phantom trades, P&amp;L anomalies, or recovery lock violations are detected.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="max-w-5xl">
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <ShieldAlert size={20} className="text-[var(--accent)]" />
-          <h1 className="text-xl font-bold text-[var(--foreground)]">Anti-Gaming Alerts</h1>
-        </div>
-        <p className="text-sm text-[var(--muted-foreground)]">
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+          <ShieldAlert size={13} style={{ color: 'var(--amber)' }} /> Integrity
+        </p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Anti-Gaming Alerts</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           Review suspicious activity flagged by the anti-gaming engine
         </p>
       </div>
 
       {/* Summary card */}
-      <div className="flex items-center gap-6">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-          <p className="text-xs text-[var(--muted-foreground)]">Total flagged events</p>
-          <p className="text-2xl font-bold text-[var(--foreground)]">{data.total}</p>
+      <div className="stats" style={{ marginTop: 0, gridTemplateColumns: 'minmax(0,260px)' }}>
+        <div className="stat" style={{ height: 'auto', paddingBottom: 18 }}>
+          <span className="accent" style={{ background: 'var(--red)' }} />
+          <b>TOTAL FLAGGED EVENTS</b>
+          <em>{data.total}</em>
           {data.total > 100 && (
-            <p className="text-[11px] text-[var(--muted-foreground)] mt-0.5">
+            <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>
               Showing 100 most recent
             </p>
           )}
@@ -95,50 +103,52 @@ export default function AntiGamingFlagsPage() {
       </div>
 
       {/* Flags table */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+      <div className="card" style={{ marginTop: 24, padding: '19px 24px 12px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         {/* Header row */}
-        <div className="grid grid-cols-[140px_100px_1fr_80px_70px_24px] gap-3 px-5 py-2 bg-[var(--muted)]/40 border-b border-[var(--border)]">
-          <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Timestamp</span>
-          <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">User</span>
-          <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Flags</span>
-          <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Impact</span>
-          <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide text-right">Delta</span>
+        <div
+          className="grid grid-cols-[140px_100px_1fr_80px_70px_24px] gap-3"
+          style={{ padding: '0 0 10px', borderBottom: '1px solid var(--line-2)' }}
+        >
+          <span className="lbl">TIMESTAMP</span>
+          <span className="lbl">USER</span>
+          <span className="lbl">FLAGS</span>
+          <span className="lbl">IMPACT</span>
+          <span className="lbl text-right">DELTA</span>
           <span />
         </div>
 
         {/* Data rows */}
-        <div className="divide-y divide-[var(--border)]">
+        <div>
           {data.flags.map((e) => {
             const isExpanded = expandedId === e._id;
             const isBlocking = e.delta === 0;
 
             return (
-              <div key={e._id}>
+              <div key={e._id} style={{ borderBottom: '1px solid var(--hair)' }}>
                 {/* Summary row */}
                 <button
                   type="button"
                   onClick={() => handleRowClick(e._id, e.userId, e.antiGamingFlags)}
-                  className="w-full grid grid-cols-[140px_100px_1fr_80px_70px_24px] gap-3 px-5 py-3 hover:bg-[var(--muted)]/30 transition-colors text-left"
+                  className="w-full grid grid-cols-[140px_100px_1fr_80px_70px_24px] gap-3 items-center text-left"
+                  style={{ padding: '11px 0' }}
                 >
                   {/* Timestamp */}
-                  <span className="text-xs text-[var(--muted-foreground)] tabular-nums truncate">
+                  <span className="truncate" style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
                     {new Date(e.createdAt).toLocaleString()}
                   </span>
 
                   {/* User ID (truncated) */}
-                  <span className="text-xs text-[var(--foreground)] truncate" title={e.userId}>
+                  <span className="truncate" style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--text-2)' }} title={e.userId}>
                     {e.userId.length > 12 ? e.userId.slice(0, 12) + '\u2026' : e.userId}
                   </span>
 
                   {/* Flag badges */}
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1.5">
                     {e.antiGamingFlags.map((flag) => {
                       const badge = getFlagBadge(flag);
                       return (
-                        <span
-                          key={flag}
-                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${badge.bg} ${badge.text}`}
-                        >
+                        <span key={flag} className="chip" style={{ ...flagChip, color: badge.color }}>
                           {badge.label}
                         </span>
                       );
@@ -147,24 +157,19 @@ export default function AntiGamingFlagsPage() {
 
                   {/* Impact badge */}
                   <span
-                    className={`inline-flex items-center justify-center px-2 py-0.5 rounded text-[10px] font-semibold w-fit ${
-                      isBlocking
-                        ? 'bg-amber-500/15 text-amber-400'
-                        : 'bg-yellow-500/15 text-yellow-400'
-                    }`}
+                    className="chip w-fit"
+                    style={{ ...flagChip, color: isBlocking ? 'var(--red)' : 'var(--amber)' }}
                   >
                     {isBlocking ? 'Blocking' : 'Advisory'}
                   </span>
 
                   {/* Score delta */}
                   <span
-                    className={`text-sm font-semibold tabular-nums text-right ${
-                      e.delta > 0
-                        ? 'text-green-400'
-                        : e.delta < 0
-                          ? 'text-amber-400'
-                          : 'text-[var(--muted-foreground)]'
-                    }`}
+                    className="text-right"
+                    style={{
+                      fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 13,
+                      color: e.delta > 0 ? 'var(--green)' : e.delta < 0 ? 'var(--red)' : 'var(--muted-2)',
+                    }}
                   >
                     {e.delta > 0 ? `+${e.delta}` : e.delta}
                   </span>
@@ -172,16 +177,15 @@ export default function AntiGamingFlagsPage() {
                   {/* Expand arrow */}
                   <ChevronRight
                     size={14}
-                    className={`text-[var(--muted-foreground)] transition-transform ${
-                      isExpanded ? 'rotate-90' : ''
-                    }`}
+                    className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                    style={{ color: 'var(--muted-3)' }}
                   />
                 </button>
 
                 {/* Expanded details */}
                 {isExpanded && (
-                  <div className="px-5 pb-4 pt-1 bg-[var(--muted)]/20 border-t border-[var(--border)]">
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs max-w-2xl">
+                  <div className="inset" style={{ margin: '0 0 14px', padding: '16px 18px' }}>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 max-w-2xl">
                       {e.tradeId && (
                         <Detail label="Trade ID" value={e.tradeId} />
                       )}
@@ -199,18 +203,13 @@ export default function AntiGamingFlagsPage() {
                     </div>
 
                     {/* Anti-gaming flags */}
-                    <div className="mt-3">
-                      <p className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-1">
-                        Anti-Gaming Flags
-                      </p>
+                    <div style={{ marginTop: 16 }}>
+                      <p className="lbl" style={{ marginBottom: 8 }}>ANTI-GAMING FLAGS</p>
                       <div className="flex flex-wrap gap-1.5">
                         {e.antiGamingFlags.map((flag) => {
                           const badge = getFlagBadge(flag);
                           return (
-                            <span
-                              key={flag}
-                              className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${badge.bg} ${badge.text}`}
-                            >
+                            <span key={flag} className="chip" style={{ ...flagChip, height: 24, color: badge.color }}>
                               {badge.label}
                             </span>
                           );
@@ -220,24 +219,24 @@ export default function AntiGamingFlagsPage() {
 
                     {/* Rule compliance */}
                     {e.ruleCompliance && e.ruleCompliance.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-1">
-                          Rule Compliance
-                        </p>
-                        <div className="space-y-0.5">
+                      <div style={{ marginTop: 16 }}>
+                        <p className="lbl" style={{ marginBottom: 8 }}>RULE COMPLIANCE</p>
+                        <div>
                           {e.ruleCompliance.map((rc, i) => (
-                            <div key={i} className="flex items-center gap-2 text-xs">
+                            <div key={i} className="flex items-center gap-2" style={{ padding: '3px 0', fontSize: 12 }}>
                               <span
-                                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                                  rc.compliance === 'yes'
-                                    ? 'bg-green-400'
+                                className="shrink-0"
+                                style={{
+                                  width: 6, height: 6, borderRadius: 1,
+                                  background: rc.compliance === 'yes'
+                                    ? 'var(--green)'
                                     : rc.compliance === 'partial'
-                                      ? 'bg-yellow-400'
-                                      : 'bg-amber-400'
-                                }`}
+                                      ? 'var(--amber)'
+                                      : 'var(--red)',
+                                }}
                               />
-                              <span className="text-[var(--foreground)]">{rc.rule}</span>
-                              <span className="text-[var(--muted-foreground)]">({rc.compliance})</span>
+                              <span style={{ color: 'var(--text-2)' }}>{rc.rule}</span>
+                              <span style={{ color: 'var(--muted-2)' }}>({rc.compliance})</span>
                             </div>
                           ))}
                         </div>
@@ -246,11 +245,16 @@ export default function AntiGamingFlagsPage() {
 
                     {/* Metadata */}
                     {e.metadata != null && (
-                      <div className="mt-3">
-                        <p className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-1">
-                          Metadata
-                        </p>
-                        <pre className="text-[11px] text-[var(--muted-foreground)] bg-[var(--muted)]/40 rounded p-2 overflow-x-auto max-h-32">
+                      <div style={{ marginTop: 16 }}>
+                        <p className="lbl" style={{ marginBottom: 8 }}>METADATA</p>
+                        <pre
+                          className="overflow-x-auto max-h-32"
+                          style={{
+                            margin: 0, padding: 12, borderRadius: 2,
+                            border: '1px solid var(--line)', background: 'var(--panel)',
+                            fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted)',
+                          }}
+                        >
                           {typeof e.metadata === 'string'
                             ? e.metadata
                             : JSON.stringify(e.metadata, null, 2)}
@@ -265,7 +269,7 @@ export default function AntiGamingFlagsPage() {
         </div>
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)]">
+      <p className="footnote" style={{ marginTop: 20, textAlign: 'left' }}>
         Flags update in real-time via Convex subscriptions. Expanding a flag logs the admin view for audit.
       </p>
     </div>
@@ -274,9 +278,9 @@ export default function AntiGamingFlagsPage() {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <span className="text-[var(--muted-foreground)]">{label}: </span>
-      <span className="text-[var(--foreground)] font-medium">{value}</span>
+    <div style={{ fontSize: 12 }}>
+      <span style={{ color: 'var(--muted-2)' }}>{label}: </span>
+      <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{value}</span>
     </div>
   );
 }

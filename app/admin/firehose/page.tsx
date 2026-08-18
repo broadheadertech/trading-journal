@@ -8,6 +8,7 @@ import {
 import { useAdminFirehose } from '@/hooks/useAdminStore';
 
 type EventStyle = { icon: any; tint: string; label: string };
+// `tint` carries the ATLAS accent color for the event's icon chip.
 
 type FirehoseEvent = {
   id: string;
@@ -18,16 +19,16 @@ type FirehoseEvent = {
 };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:     { icon: TrendingUp,     tint: 'text-cyan-400 bg-cyan-500/10',         label: 'Trade logged' },
-  trade_closed:     { icon: TrendingDown,   tint: 'text-emerald-400 bg-emerald-500/10',   label: 'Trade closed' },
-  rule_break:       { icon: AlertTriangle,  tint: 'text-red-400 bg-red-500/10',           label: 'Rule break' },
-  circuit_breaker:  { icon: AlertTriangle,  tint: 'text-red-400 bg-red-500/10',           label: 'Circuit breaker' },
-  score_event:      { icon: Brain,          tint: 'text-blue-400 bg-blue-500/10',         label: 'Brain score' },
-  anti_gaming_flag: { icon: ShieldAlert,    tint: 'text-red-400 bg-red-500/10',           label: 'Anti-gaming' },
-  daily_reflection: { icon: Sparkles,       tint: 'text-violet-400 bg-violet-500/10',     label: 'Reflection' },
-  journal_entry:    { icon: FileText,       tint: 'text-purple-400 bg-purple-500/10',     label: 'Journal' },
-  trigger_entry:    { icon: Zap,            tint: 'text-rose-400 bg-rose-500/10',         label: 'Trigger' },
-  strategy_created: { icon: BookOpen,       tint: 'text-pink-400 bg-pink-500/10',         label: 'Strategy' },
+  trade_logged:     { icon: TrendingUp,     tint: 'var(--teal)',   label: 'Trade logged' },
+  trade_closed:     { icon: TrendingDown,   tint: 'var(--green)',  label: 'Trade closed' },
+  rule_break:       { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Rule break' },
+  circuit_breaker:  { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Circuit breaker' },
+  score_event:      { icon: Brain,          tint: 'var(--amber)',  label: 'Brain score' },
+  anti_gaming_flag: { icon: ShieldAlert,    tint: 'var(--red)',    label: 'Anti-gaming' },
+  daily_reflection: { icon: Sparkles,       tint: 'var(--pink)',   label: 'Reflection' },
+  journal_entry:    { icon: FileText,       tint: 'var(--pink)',   label: 'Journal' },
+  trigger_entry:    { icon: Zap,            tint: 'var(--amber)',  label: 'Trigger' },
+  strategy_created: { icon: BookOpen,       tint: 'var(--teal)',   label: 'Strategy' },
 };
 
 const FILTERS: { type: string; label: string }[] = [
@@ -69,24 +70,22 @@ export default function AdminFirehosePage() {
     setFilters((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
 
   return (
-    <div className="space-y-5 max-w-6xl">
-      <div>
-        <h1 className="text-xl font-bold text-[var(--foreground)]">Activity Firehose</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">
+    <div style={{ maxWidth: 1180 }}>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Live stream</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Activity Firehose</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           Real-time stream of every user action across the platform.
         </p>
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="card" style={{ padding: '18px 22px 20px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="flex flex-wrap items-center" style={{ gap: 8 }}>
           <button
             onClick={() => setFilters([])}
-            className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
-              filters.length === 0
-                ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/10'
-                : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-            }`}
+            className={filters.length === 0 ? 'chip on' : 'chip'}
           >
             All
           </button>
@@ -96,37 +95,40 @@ export default function AdminFirehosePage() {
               <button
                 key={f.type}
                 onClick={() => toggle(f.type)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
-                  active
-                    ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/10'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
+                className={active ? 'chip on' : 'chip'}
               >
                 {f.label}
               </button>
             );
           })}
         </div>
-        <div className="flex items-center gap-2">
-          <Search size={14} className="text-[var(--muted-foreground)]" />
-          <input
-            type="text"
-            placeholder="Filter by user ID (paste full Clerk subject)…"
-            value={userIdSearch}
-            onChange={(e) => setUserIdSearch(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && setAppliedUserId(userIdSearch.trim())}
-            className="flex-1 px-2 py-1 rounded-md border border-[var(--border)] bg-[var(--input-bg)] text-xs text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]"
-          />
+        <div className="field flex items-center" style={{ gap: 10, marginTop: 16 }}>
+          <div className="box flex-1 min-w-0" style={{ height: 38, gap: 12 }}>
+            <Search size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <input
+              type="text"
+              placeholder="Filter by user ID (paste full Clerk subject)…"
+              value={userIdSearch}
+              onChange={(e) => setUserIdSearch(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && setAppliedUserId(userIdSearch.trim())}
+              style={{
+                flex: 1, minWidth: 0, height: '100%', border: 0, outline: 'none',
+                background: 'transparent', fontSize: 12.5, color: 'var(--text)',
+              }}
+            />
+          </div>
           <button
             onClick={() => setAppliedUserId(userIdSearch.trim())}
-            className="px-3 py-1 rounded-md bg-[var(--accent)] text-white text-xs font-medium"
+            className="btn-a"
+            style={{ height: 38, flex: 'none' }}
           >
             Apply
           </button>
           {appliedUserId && (
             <button
               onClick={() => { setUserIdSearch(''); setAppliedUserId(''); }}
-              className="px-3 py-1 rounded-md border border-[var(--border)] text-[var(--muted-foreground)] text-xs"
+              className="btn-g"
+              style={{ height: 38, flex: 'none' }}
             >
               Clear
             </button>
@@ -135,34 +137,39 @@ export default function AdminFirehosePage() {
       </div>
 
       {/* Stream */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+      <div className="card" style={{ marginTop: 24, padding: '14px 22px 8px' }}>
         {!events ? (
-          <div className="space-y-1">
+          <div className="animate-pulse" style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '8px 0' }}>
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-12 bg-[var(--muted)] rounded-lg animate-pulse" />
+              <div key={i} style={{ height: 44, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
             ))}
           </div>
         ) : events.length === 0 ? (
-          <div className="text-center text-sm text-[var(--muted-foreground)] py-12">
-            No events match the current filter.
-          </div>
+          <p className="empty-line">No events match the current filter.</p>
         ) : (
-          <ul className="space-y-1">
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {(events as FirehoseEvent[]).map((e) => {
-              const style = EVENT_STYLES[e.type] ?? { icon: Activity, tint: 'text-slate-400 bg-slate-500/10', label: e.type };
+              const style = EVENT_STYLES[e.type] ?? { icon: Activity, tint: 'var(--muted)', label: e.type };
               const Icon = style.icon;
               return (
-                <li key={e.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-[var(--muted)]/40 transition-colors">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${style.tint}`}>
-                    <Icon size={14} />
+                <li
+                  key={e.id}
+                  className="flex items-start"
+                  style={{ gap: 12, padding: '10px 0', borderBottom: '1px solid var(--hair)' }}
+                >
+                  <div
+                    className="flex items-center justify-center shrink-0"
+                    style={{ width: 26, height: 26, borderRadius: 2, border: `1px solid ${style.tint}`, background: 'var(--panel-2)' }}
+                  >
+                    <Icon size={13} style={{ color: style.tint }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">{style.label}</span>
-                      <span className="text-[10px] text-[var(--muted-foreground)]">{formatTimeAgo(e.timestamp)}</span>
-                      <span className="text-[10px] text-[var(--muted-foreground)] font-mono truncate max-w-[140px]">{e.userId.slice(0, 16)}…</span>
+                    <div className="flex items-baseline flex-wrap" style={{ gap: 10 }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>{style.label}</span>
+                      <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>{formatTimeAgo(e.timestamp)}</span>
+                      <span className="truncate max-w-[140px]" style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-3)' }}>{e.userId.slice(0, 16)}…</span>
                     </div>
-                    <div className="text-sm text-[var(--foreground)] truncate">{e.summary}</div>
+                    <div className="truncate" style={{ marginTop: 3, fontSize: 12.5, color: 'var(--text)' }}>{e.summary}</div>
                   </div>
                 </li>
               );

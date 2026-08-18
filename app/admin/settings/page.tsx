@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { useAdminSettings, useAdminPlans } from '@/hooks/useAdminStore';
 
+// shared ATLAS input chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', height: 42, padding: '0 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
+
 export default function AdminSettingsPage() {
   const { getSetting, setSetting, isLoading: settingsLoading } = useAdminSettings();
   const { plans, upsertPlan, isLoading: plansLoading } = useAdminPlans();
@@ -59,81 +66,97 @@ export default function AdminSettingsPage() {
   if (settingsLoading || plansLoading) {
     return (
       <div className="animate-pulse space-y-4 max-w-3xl">
-        <div className="h-8 w-32 bg-[var(--muted)] rounded" />
-        <div className="h-40 bg-[var(--muted)] rounded-xl" />
+        <div style={{ height: 32, width: 128, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 160, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      <div>
-        <h1 className="text-xl font-bold text-[var(--foreground)]">Settings</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">Platform configuration and subscription plans</p>
+    <div className="max-w-3xl">
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Configuration</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Settings</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>Platform configuration and subscription plans</p>
       </div>
 
       {/* Platform settings */}
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">Platform Settings</h2>
+      <section className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Platform Settings</h3>
+        <p className="sub">Identity and availability for the whole platform</p>
 
-        <div className="space-y-1.5">
-          <label className="text-xs text-[var(--muted-foreground)]">Platform Name</label>
-          <div className="flex gap-2">
+        <div className="field" style={{ marginTop: 20 }}>
+          <label>PLATFORM NAME</label>
+          <div className="flex gap-3">
             <input
               type="text"
               value={effectiveName}
               onChange={(e) => setPlatformName(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+              style={{ ...inputBox, flex: 1 }}
             />
-            <button
-              onClick={savePlatformName}
-              className="px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:bg-[var(--accent-hover)] transition-colors flex items-center gap-1.5"
-            >
+            <button onClick={savePlatformName} className="btn-a shrink-0" style={{ height: 42 }}>
               <Save size={14} />
               Save
             </button>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4" style={{ marginTop: 20 }}>
           <div>
-            <p className="text-sm text-[var(--foreground)]">Maintenance Mode</p>
-            <p className="text-xs text-[var(--muted-foreground)]">When enabled, users see a maintenance page</p>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 700 }}>Maintenance Mode</p>
+            <p style={{ margin: '4px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>When enabled, users see a maintenance page</p>
           </div>
           <button
             onClick={toggleMaintenance}
-            className={`relative w-11 h-6 rounded-full transition-colors ${
-              effectiveMaintenance === 'true' ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'
-            }`}
+            className="flex items-center shrink-0"
+            style={{
+              width: 42, height: 22, padding: 2, borderRadius: 2,
+              border: '1px solid var(--line-2)',
+              background: effectiveMaintenance === 'true' ? 'var(--amber)' : 'var(--panel-2)',
+            }}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                effectiveMaintenance === 'true' ? 'translate-x-5' : ''
-              }`}
+              style={{
+                width: 16, height: 16, borderRadius: 1,
+                background: effectiveMaintenance === 'true' ? 'var(--ink)' : 'var(--muted)',
+                transform: effectiveMaintenance === 'true' ? 'translateX(20px)' : 'translateX(0)',
+                transition: 'transform .18s',
+              }}
             />
           </button>
         </div>
       </section>
 
       {/* Admin access info */}
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 space-y-2">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">Admin Access</h2>
-        <p className="text-xs text-[var(--muted-foreground)]">
-          Admin access is controlled via the <code className="px-1 py-0.5 bg-[var(--muted)] rounded text-[var(--foreground)]">NEXT_PUBLIC_ADMIN_USER_ID</code> environment variable
-          and the Convex <code className="px-1 py-0.5 bg-[var(--muted)] rounded text-[var(--foreground)]">ADMIN_USER_ID</code> env var.
-        </p>
-        <p className="text-xs text-[var(--muted-foreground)]">
-          To add additional admins, implement role-based access control in a future update.
-        </p>
+      <section className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <h3>Admin Access</h3>
+        <div className="warn" style={{ marginTop: 16 }}>
+          <div>
+            <p style={{ margin: 0 }}>
+              Admin access is controlled via the <b style={{ fontFamily: 'var(--mono)' }}>NEXT_PUBLIC_ADMIN_USER_ID</b> environment variable
+              and the Convex <b style={{ fontFamily: 'var(--mono)' }}>ADMIN_USER_ID</b> env var.
+            </p>
+            <p style={{ margin: '10px 0 0' }}>
+              To add additional admins, implement role-based access control in a future update.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Subscription plans CRUD */}
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">Subscription Plans</h2>
+      <section className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Subscription Plans</h3>
+            <p className="sub">Pricing tiers exposed to customers</p>
+          </div>
           <button
             onClick={() => setShowPlanForm(!showPlanForm)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:bg-[var(--accent-hover)] transition-colors"
+            className="btn-a shrink-0"
+            style={{ marginLeft: 'auto', height: 32, padding: '0 16px', fontSize: 12 }}
           >
             <Plus size={14} />
             Add Plan
@@ -141,124 +164,127 @@ export default function AdminSettingsPage() {
         </div>
 
         {showPlanForm && (
-          <div className="border border-[var(--border)] rounded-lg p-4 space-y-3 bg-[var(--background)]">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Plan ID</label>
+          <div className="inset" style={{ marginTop: 20, padding: '18px 20px' }}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="field">
+                <label>PLAN ID</label>
                 <input
                   type="text"
                   value={planForm.planId}
                   onChange={(e) => setPlanForm({ ...planForm, planId: e.target.value })}
                   placeholder="e.g. pro"
-                  className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                  style={{ ...inputBox, background: 'var(--panel)' }}
                 />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Plan Name</label>
+              <div className="field">
+                <label>PLAN NAME</label>
                 <input
                   type="text"
                   value={planForm.name}
                   onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
                   placeholder="e.g. Pro"
-                  className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                  style={{ ...inputBox, background: 'var(--panel)' }}
                 />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Monthly Price ($)</label>
+              <div className="field">
+                <label>MONTHLY PRICE ($)</label>
                 <input
                   type="number"
                   value={planForm.priceMonthly}
                   onChange={(e) => setPlanForm({ ...planForm, priceMonthly: Number(e.target.value) })}
-                  className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                  style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)' }}
                 />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Yearly Price ($)</label>
+              <div className="field">
+                <label>YEARLY PRICE ($)</label>
                 <input
                   type="number"
                   value={planForm.priceYearly}
                   onChange={(e) => setPlanForm({ ...planForm, priceYearly: Number(e.target.value) })}
-                  className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                  style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)' }}
                 />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Sort Order</label>
+              <div className="field">
+                <label>SORT ORDER</label>
                 <input
                   type="number"
                   value={planForm.sortOrder}
                   onChange={(e) => setPlanForm({ ...planForm, sortOrder: Number(e.target.value) })}
-                  className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                  style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)' }}
                 />
               </div>
               <div className="flex items-end">
-                <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+                <label className="flex items-center gap-2" style={{ height: 42, fontSize: 13, color: 'var(--text)' }}>
                   <input
                     type="checkbox"
                     checked={planForm.isActive}
                     onChange={(e) => setPlanForm({ ...planForm, isActive: e.target.checked })}
-                    className="rounded"
+                    style={{ accentColor: 'var(--amber)' }}
                   />
                   Active
                 </label>
               </div>
             </div>
             {/* Stripe IDs */}
-            <div className="col-span-2 border-t border-[var(--border)] pt-3 mt-1">
-              <p className="text-xs font-medium text-[var(--muted-foreground)] mb-2">Stripe Integration (optional)</p>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-[var(--muted-foreground)]">Stripe Product ID</label>
+            <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+              <p className="lbl" style={{ marginBottom: 12 }}>STRIPE INTEGRATION (OPTIONAL)</p>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="field">
+                  <label>STRIPE PRODUCT ID</label>
                   <input
                     type="text"
                     value={planForm.stripeProductId}
                     onChange={(e) => setPlanForm({ ...planForm, stripeProductId: e.target.value })}
                     placeholder="prod_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                    style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)', fontSize: 12 }}
                   />
                 </div>
-                <div>
-                  <label className="text-xs text-[var(--muted-foreground)]">Monthly Price ID</label>
+                <div className="field">
+                  <label>MONTHLY PRICE ID</label>
                   <input
                     type="text"
                     value={planForm.stripePriceIdMonthly}
                     onChange={(e) => setPlanForm({ ...planForm, stripePriceIdMonthly: e.target.value })}
                     placeholder="price_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                    style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)', fontSize: 12 }}
                   />
                 </div>
-                <div>
-                  <label className="text-xs text-[var(--muted-foreground)]">Yearly Price ID</label>
+                <div className="field">
+                  <label>YEARLY PRICE ID</label>
                   <input
                     type="text"
                     value={planForm.stripePriceIdYearly}
                     onChange={(e) => setPlanForm({ ...planForm, stripePriceIdYearly: e.target.value })}
                     placeholder="price_xxx"
-                    className="w-full mt-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
+                    style={{ ...inputBox, background: 'var(--panel)', fontFamily: 'var(--mono)', fontSize: 12 }}
                   />
                 </div>
               </div>
             </div>
-            <div>
-              <label className="text-xs text-[var(--muted-foreground)]">Features (one per line)</label>
+            <div className="field" style={{ marginTop: 18 }}>
+              <label>FEATURES (ONE PER LINE)</label>
               <textarea
                 value={planForm.features}
                 onChange={(e) => setPlanForm({ ...planForm, features: e.target.value })}
                 rows={4}
                 placeholder={"Unlimited trades\nAdvanced analytics\nPriority support"}
-                className="w-full mt-1 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40 resize-none"
+                className="resize-none"
+                style={{ ...inputBox, background: 'var(--panel)', height: 'auto', padding: '11px 14px', lineHeight: '19px' }}
               />
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3" style={{ marginTop: 18 }}>
               <button
                 onClick={() => setShowPlanForm(false)}
-                className="px-3 py-1.5 rounded-lg border border-[var(--border)] text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
+                className="btn-g"
+                style={{ height: 34, padding: '0 16px', fontSize: 12 }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSavePlan}
                 disabled={!planForm.planId || !planForm.name}
-                className="px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+                className="btn-a disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ height: 34, padding: '0 16px', fontSize: 12 }}
               >
                 <Save size={14} />
                 Save Plan
@@ -269,31 +295,33 @@ export default function AdminSettingsPage() {
 
         {/* Existing plans list */}
         {plans && plans.length > 0 ? (
-          <div className="space-y-2">
+          <div style={{ marginTop: 18 }}>
             {[...plans]
               .sort((a: Plan, b: Plan) => a.sortOrder - b.sortOrder)
               .map((plan: Plan) => (
-                <div key={plan._id} className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-[var(--border)]">
-                  <div>
-                    <span className="text-sm font-medium text-[var(--foreground)]">{plan.name}</span>
-                    <span className="text-xs text-[var(--muted-foreground)] ml-2">
+                <div key={plan._id} className="mrow">
+                  <span className="ic" />
+                  <span className="lb" style={{ marginLeft: 0 }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text)' }}>{plan.name}</span>
+                    <span style={{ marginLeft: 10, fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
                       ${plan.priceMonthly}/mo &bull; ${plan.priceYearly}/yr
                     </span>
-                  </div>
+                  </span>
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      plan.isActive
-                        ? 'bg-[var(--green)]/10 text-[var(--green)]'
-                        : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                    }`}
+                    className="chip"
+                    style={{
+                      marginLeft: 'auto', height: 20, padding: '0 10px',
+                      fontSize: 9, fontWeight: 700, letterSpacing: '.04em',
+                      color: plan.isActive ? 'var(--green)' : 'var(--muted-2)',
+                    }}
                   >
-                    {plan.isActive ? 'Active' : 'Inactive'}
+                    {plan.isActive ? 'ACTIVE' : 'INACTIVE'}
                   </span>
                 </div>
               ))}
           </div>
         ) : (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-4">No plans yet. Add one above.</p>
+          <p className="empty-line" style={{ padding: '34px 0 8px' }}>No plans yet. Add one above.</p>
         )}
       </section>
     </div>

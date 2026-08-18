@@ -9,6 +9,19 @@ import { api } from '@/convex/_generated/api';
 // Cascade deletes brainStates, scoreEvents, dailySnapshots.
 // Trade data is NOT affected.
 
+/* ── ATLAS raw tokens (brain dimension is position:fixed — see BrainMiniWidget) ── */
+const T = {
+  hair: '#101922',
+  panel2: '#0c1119',
+  line: '#182432',
+  red: '#ff4d5e',
+  text: '#edf2f7',
+  muted: '#7f8ea3',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+  display: "'Archivo',system-ui,sans-serif",
+};
+
 interface BrainDeleteButtonProps {
   onBack?: () => void;
 }
@@ -54,47 +67,75 @@ export default function BrainDeleteButton({ onBack }: BrainDeleteButtonProps) {
         role="alertdialog"
         aria-labelledby="brain-delete-title"
         aria-describedby="brain-delete-desc"
-        className="rounded-xl border border-red-500/30 bg-red-950/30 p-4 space-y-3"
+        style={{
+          position: 'relative',
+          border: `1px solid ${T.line}`,
+          borderRadius: 2,
+          background: T.panel2,
+          padding: '15px 18px 17px',
+        }}
       >
+        {/* red accent rule — ATLAS card accent */}
+        <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 3, background: T.red }} />
         <h3
           id="brain-delete-title"
-          className="text-sm font-semibold text-red-400"
+          style={{ margin: 0, fontFamily: T.display, fontWeight: 700, fontSize: 15, lineHeight: '16px', color: T.red }}
         >
           Delete Brain State?
         </h3>
         <p
           id="brain-delete-desc"
-          className="text-xs text-white/50 leading-relaxed"
+          style={{ margin: '9px 0 0', fontSize: 12, lineHeight: '18px', color: T.muted2 }}
         >
           This will permanently delete your Neuro Score, evolution history,
           coaching messages, and daily snapshots. Your trade data will NOT be
           affected. You can start fresh with a new brain afterward.
         </p>
         {error && (
-          <p className="text-xs text-red-400" role="alert">{error}</p>
+          <p style={{ margin: '10px 0 0', fontSize: 11.5, color: T.red }} role="alert">{error}</p>
         )}
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
           <button
             onClick={handleDelete}
             disabled={isPending}
             aria-busy={isPending}
             aria-label={isPending ? 'Deleting brain state...' : 'Confirm delete brain state'}
-            className="px-3 py-1.5 text-xs font-semibold rounded-lg
-                       bg-red-600 hover:bg-red-500 text-white
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-                       transition-colors cursor-pointer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 32,
+              padding: '0 18px',
+              borderRadius: 2,
+              border: `1px solid ${T.red}`,
+              background: 'rgba(255,77,94,.14)',
+              color: T.red,
+              fontWeight: 700,
+              fontSize: 12,
+              cursor: isPending ? 'not-allowed' : 'pointer',
+              opacity: isPending ? 0.5 : 1,
+            }}
           >
             {isPending ? 'Deleting...' : 'Delete Brain State'}
           </button>
           <button
             onClick={() => { setShowConfirm(false); setError(null); }}
             disabled={isPending}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg
-                       bg-white/5 hover:bg-white/10 text-white/60
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-                       transition-colors cursor-pointer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 32,
+              padding: '0 18px',
+              borderRadius: 2,
+              border: `1px solid ${T.line}`,
+              background: 'none',
+              color: T.text,
+              fontWeight: 700,
+              fontSize: 12,
+              cursor: isPending ? 'not-allowed' : 'pointer',
+              opacity: isPending ? 0.5 : 1,
+            }}
           >
             Cancel
           </button>
@@ -104,25 +145,45 @@ export default function BrainDeleteButton({ onBack }: BrainDeleteButtonProps) {
   }
 
   return (
-    <div className="flex items-center justify-between px-1 py-0.5">
-      <div className="flex flex-col">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-red-400/50 font-medium">
-          Delete Brain
-        </span>
-        <span className="text-[10px] text-white/20 mt-0.5">
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        padding: '10px 0',
+        borderBottom: `1px solid ${T.hair}`,
+      }}
+    >
+      <div>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: T.red }}>
+          DELETE BRAIN
+        </p>
+        <p style={{ margin: '5px 0 0', fontSize: 11, color: T.muted3 }}>
           Remove all brain data, keep trades
-        </span>
+        </p>
       </div>
       <button
         onClick={() => setShowConfirm(true)}
         aria-label="Delete brain state"
-        className="flex-shrink-0 px-3 py-1.5 text-[10px] font-semibold rounded-lg
-                   bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/20
-                   hover:border-red-500/40
-                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-                   transition-colors cursor-pointer"
+        style={{
+          marginLeft: 'auto',
+          flex: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 26,
+          padding: '0 14px',
+          borderRadius: 2,
+          border: `1px solid ${T.line}`,
+          background: 'none',
+          color: T.red,
+          fontWeight: 700,
+          fontSize: 10.5,
+          letterSpacing: '.04em',
+          cursor: 'pointer',
+        }}
       >
-        Delete
+        DELETE
       </button>
     </div>
   );

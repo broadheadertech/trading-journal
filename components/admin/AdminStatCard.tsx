@@ -11,19 +11,16 @@ interface AdminStatCardProps {
 
 export default function AdminStatCard({ icon: Icon, label, value, subtitle }: AdminStatCardProps) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-[var(--accent)]/10">
-          <Icon size={20} className="text-[var(--accent)]" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs text-[var(--muted-foreground)]">{label}</p>
-          <p className="text-xl font-bold text-[var(--foreground)]">{value}</p>
-          {subtitle && (
-            <p className="text-[11px] text-[var(--muted-foreground)] mt-0.5">{subtitle}</p>
-          )}
-        </div>
+    <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+      <span className="accent" style={{ background: 'var(--amber)' }} />
+      <div className="flex items-center" style={{ gap: 8 }}>
+        <Icon size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+        <b style={{ textTransform: 'uppercase' }}>{label}</b>
       </div>
+      <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--text)' }}>{value}</em>
+      {subtitle && (
+        <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>{subtitle}</small>
+      )}
     </div>
   );
 }

@@ -12,6 +12,18 @@ const STATUS_FILTERS = ['all', 'draft', 'in_review', 'published', 'archived'] as
 const CATEGORIES = ['Strategy', 'Psychology', 'Market Analysis', 'Education', 'News'];
 const ACCESS_TIERS: Array<'public' | 'subscribers' | 'paid'> = ['public', 'subscribers', 'paid'];
 
+// shared ATLAS chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', minHeight: 42, padding: '11px 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
+const iconBtn = (color: string): React.CSSProperties => ({
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+  width: 30, height: 30, borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)', color,
+});
+
 export default function AdminArticlesPage() {
   const { showToast } = useToast();
   const [filter, setFilter] = useState<typeof STATUS_FILTERS[number]>('all');
@@ -35,43 +47,47 @@ export default function AdminArticlesPage() {
   if (editing) return <ArticleEditor article={editing} onBack={() => setEditingId(null)} />;
 
   const STATUS_META: Record<string, { label: string; color: string; icon: any }> = {
-    draft:       { label: 'Draft',     color: 'bg-[var(--muted)]/40 text-[var(--muted-foreground)]', icon: FileText },
-    in_review:   { label: 'In Review', color: 'bg-amber-500/15 text-amber-400',                       icon: Clock },
-    published:   { label: 'Published', color: 'bg-emerald-500/15 text-emerald-400',                   icon: CheckCircle },
-    archived:    { label: 'Archived',  color: 'bg-[var(--muted)]/40 text-[var(--muted-foreground)]', icon: XCircle },
+    draft:       { label: 'Draft',     color: 'var(--muted-2)', icon: FileText },
+    in_review:   { label: 'In Review', color: 'var(--amber)',   icon: Clock },
+    published:   { label: 'Published', color: 'var(--green)',   icon: CheckCircle },
+    archived:    { label: 'Archived',  color: 'var(--muted-3)', icon: XCircle },
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Manage Articles</h1>
-        <button
-          onClick={() => setCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-xl text-sm font-semibold"
-        >
-          <Plus size={16} /> New Article
-        </button>
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow"><BookOpen size={13} style={{ color: 'var(--amber)' }} /> Content</p>
+        <h2>Manage Articles</h2>
+        <p className="sub">Draft, review, publish and archive editorial content.</p>
+        <div className="actions">
+          <button onClick={() => setCreating(true)} className="btn-a">
+            <Plus size={14} /> New Article
+          </button>
+        </div>
       </div>
 
       {/* Analytics dashboard */}
       {analytics && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Stat label="Articles"         value={analytics.totalArticles} icon={BookOpen} />
-          <Stat label="Published"        value={analytics.published}     icon={CheckCircle} accent="text-emerald-400" />
-          <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} />
-          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={Mail} accent="text-fuchsia-400" />
+        <div className="stats" style={{ marginTop: 0 }}>
+          <Stat label="Articles"         value={analytics.totalArticles} icon={BookOpen} accent="var(--amber)" />
+          <Stat label="Published"        value={analytics.published}     icon={CheckCircle} accent="var(--green)" />
+          <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} accent="var(--teal)" />
+          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={Mail} accent="var(--pink)" />
         </div>
       )}
 
       {/* Top articles */}
       {analytics && analytics.top.length > 0 && (
-        <div className="glass rounded-2xl p-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">Top Articles by Views</h2>
-          <div className="space-y-1.5">
+        <div className="card" style={{ marginTop: 24 }}>
+          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <h3>Top Articles by Views</h3>
+          <p className="sub">Ranked by lifetime reads</p>
+          <div style={{ marginTop: 18 }}>
             {analytics.top.map((t: any) => (
-              <div key={t.id} className="flex items-center justify-between text-sm border-b border-[var(--border)] last:border-0 py-1.5">
-                <span className="text-[var(--foreground)] truncate flex-1">{t.title}</span>
-                <span className="text-xs text-[var(--muted-foreground)] flex items-center gap-1 ml-3"><Eye size={11} /> {t.viewCount}</span>
+              <div key={t.id} className="mrow">
+                <Eye size={14} className="ic" />
+                <span className="lb truncate">{t.title}</span>
+                <span className="val">{t.viewCount}</span>
               </div>
             ))}
           </div>
@@ -79,16 +95,12 @@ export default function AdminArticlesPage() {
       )}
 
       {/* Status filter */}
-      <div className="flex gap-1 flex-wrap">
+      <div className="tabs line" style={{ marginTop: 32, marginBottom: 24 }}>
         {STATUS_FILTERS.map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
-              filter === f
-                ? 'bg-pink-500 text-white'
-                : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60'
-            }`}
+            className={filter === f ? 'on' : ''}
           >
             {f.replace('_', ' ').toUpperCase()}
           </button>
@@ -96,37 +108,49 @@ export default function AdminArticlesPage() {
       </div>
 
       {/* Articles list */}
-      <div className="space-y-2">
+      <div>
         {articles.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No articles found.</p>
+          <div className="blank">
+            <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+            <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+              <BookOpen size={22} style={{ color: 'var(--amber)' }} />
+            </div>
+            <h4>No articles found</h4>
+            <p>Nothing matches this status filter yet.</p>
+          </div>
         ) : (
           articles.map((a: any) => {
             const meta = STATUS_META[a.status];
             const Icon = meta.icon;
             return (
-              <div key={a.id} className="glass rounded-2xl p-4 flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center shrink-0">
-                  <BookOpen size={16} className="text-pink-400" />
+              <div key={a.id} className="card flex items-start gap-4" style={{ marginBottom: 12 }}>
+                <span className="accent" style={{ width: 56, background: meta.color }} />
+                <div
+                  className="flex items-center justify-center shrink-0"
+                  style={{ width: 40, height: 40, borderRadius: 3, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
+                >
+                  <BookOpen size={16} style={{ color: 'var(--amber)' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${meta.color}`}>
-                      <Icon size={10} /> {meta.label}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="chip" style={{ height: 20, padding: '0 10px', fontSize: 9.5, fontWeight: 700, letterSpacing: '.04em', color: meta.color, borderColor: 'var(--line-2)' }}>
+                      <Icon size={10} /> {meta.label.toUpperCase()}
                     </span>
-                    <span className="text-[10px] text-[var(--muted-foreground)]">{a.category} · {a.accessTier}</span>
+                    <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>{a.category} · {a.accessTier}</span>
                   </div>
-                  <div className="font-semibold text-[var(--foreground)]">{a.title}</div>
-                  <div className="text-xs text-[var(--muted-foreground)] line-clamp-1">{a.excerpt}</div>
-                  <div className="flex items-center gap-3 mt-1 text-[10px] text-[var(--muted-foreground)]">
+                  <div style={{ marginTop: 8, fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>{a.title}</div>
+                  <div className="line-clamp-1" style={{ marginTop: 4, fontSize: 12.5, color: 'var(--muted)' }}>{a.excerpt}</div>
+                  <div className="flex items-center gap-3" style={{ marginTop: 8, fontSize: 10.5, color: 'var(--muted-2)' }}>
                     <span>by {a.authorName}</span>
                     <span>·</span>
                     <span className="flex items-center gap-1"><Eye size={10} /> {a.viewCount}</span>
                   </div>
                   {a.reviewNotes && (
-                    <div className="mt-2 text-[10px] text-amber-400 italic">Review: {a.reviewNotes}</div>
+                    <div className="note" style={{ marginTop: 12, color: 'var(--amber)' }}>Review: {a.reviewNotes}</div>
                   )}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 shrink-0">
                   {a.status === 'in_review' && (
                     <>
                       <button
@@ -134,7 +158,7 @@ export default function AdminArticlesPage() {
                           await approveArticle({ id: a.id });
                           showToast('Published', 'success');
                         }}
-                        className="p-2 rounded-lg text-emerald-400 hover:bg-emerald-500/10"
+                        style={iconBtn('var(--green)')}
                         title="Approve & publish"
                       >
                         <CheckCircle size={14} />
@@ -146,21 +170,22 @@ export default function AdminArticlesPage() {
                           await rejectArticle({ id: a.id, notes: reason });
                           showToast('Sent back to draft', 'success');
                         }}
-                        className="p-2 rounded-lg text-amber-400 hover:bg-amber-500/10"
+                        style={iconBtn('var(--amber)')}
                         title="Reject"
                       >
                         <XCircle size={14} />
                       </button>
                     </>
                   )}
-                  <button onClick={() => setEditingId(a.id)} className="p-2 rounded-lg hover:bg-[var(--muted)]"><Edit2 size={14} /></button>
+                  <button onClick={() => setEditingId(a.id)} style={iconBtn('var(--text-2)')} title="Edit"><Edit2 size={14} /></button>
                   <button
                     onClick={async () => {
                       if (!confirm(`Delete "${a.title}"?`)) return;
                       await deleteArticle({ id: a.id });
                       showToast('Deleted', 'success');
                     }}
-                    className="p-2 rounded-lg hover:bg-[var(--red)]/10 text-[var(--red)]"
+                    style={iconBtn('var(--red)')}
+                    title="Delete"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -172,25 +197,35 @@ export default function AdminArticlesPage() {
       </div>
 
       {/* Newsletter subscribers section */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)] flex items-center gap-2">
-          <Mail size={14} className="text-fuchsia-400" /> Newsletter ({subscribers.length})
-        </h2>
+      <section className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Newsletter</h3>
+            <p className="sub">Confirmed and pending subscribers</p>
+          </div>
+          <span className="chip" style={{ marginLeft: 'auto', height: 26, padding: '0 10px', fontSize: 11 }}>
+            {subscribers.length}
+          </span>
+        </div>
         {subscribers.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)]">No subscribers yet.</p>
+          <p className="empty-line" style={{ padding: '34px 0 8px' }}>No subscribers yet.</p>
         ) : (
-          <div className="glass rounded-2xl divide-y divide-[var(--border)] max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto" style={{ marginTop: 18 }}>
             {subscribers.map((s: any) => (
-              <div key={s._id} className="p-3 flex items-center gap-3 text-sm">
-                <Mail size={12} className="text-fuchsia-400" />
-                <span className="flex-1 text-[var(--foreground)] truncate">{s.email}</span>
-                <span className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">{s.status}</span>
+              <div key={s._id} className="mrow">
+                <Mail size={14} className="ic" style={{ color: 'var(--pink)' }} />
+                <span className="lb truncate flex-1">{s.email}</span>
+                <span className="chip" style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', marginLeft: 12 }}>
+                  {String(s.status).toUpperCase()}
+                </span>
                 <button
                   onClick={async () => {
                     if (!confirm(`Remove ${s.email}?`)) return;
                     await removeSubscriber({ email: s.email });
                   }}
-                  className="p-1.5 rounded-lg text-[var(--red)] hover:bg-[var(--red)]/10"
+                  style={{ ...iconBtn('var(--red)'), marginLeft: 8 }}
+                  title="Remove"
                 >
                   <Trash2 size={12} />
                 </button>
@@ -205,11 +240,10 @@ export default function AdminArticlesPage() {
 
 function Stat({ label, value, icon: Icon, accent }: { label: string; value: number; icon: any; accent?: string }) {
   return (
-    <div className="glass rounded-2xl p-4">
-      <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)] flex items-center gap-1 mb-1">
-        <Icon size={11} /> {label}
-      </div>
-      <div className={`text-2xl font-bold ${accent ?? 'text-[var(--foreground)]'}`}>{value.toLocaleString()}</div>
+    <div className="stat">
+      <span className="accent" style={{ background: accent ?? 'var(--amber)' }} />
+      <b className="flex items-center gap-1.5"><Icon size={11} /> {label.toUpperCase()}</b>
+      <em style={{ color: accent ?? 'var(--text)' }}>{value.toLocaleString()}</em>
     </div>
   );
 }
@@ -268,75 +302,81 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
   };
 
   return (
-    <div className="max-w-3xl space-y-5">
-      <button onClick={onBack} className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">← Back</button>
+    <div className="max-w-3xl">
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>← Back</button>
 
-      <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">{article ? 'Edit' : 'New'} Article</h1>
+      <div className="phead" style={{ marginTop: 18, marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Editor</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>{article ? 'Edit' : 'New'} Article</h2>
+      </div>
 
-      <div className="glass rounded-3xl p-6 space-y-4">
-        <Field label="Title" value={title} onChange={setTitle} />
-        <Field label="Slug" value={slug} onChange={setSlug} placeholder="my-article-url-slug" />
-        <Field label="Excerpt" value={excerpt} onChange={setExcerpt} multiline rows={2} />
-        <Field label="Cover image URL" value={coverImage} onChange={setCoverImage} />
-        <Field label="Body (Markdown supported)" value={body} onChange={setBody} multiline rows={14} />
-        <Field label="Tags (comma separated)" value={tags} onChange={setTags} />
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="space-y-4" style={{ marginTop: 4 }}>
+          <Field label="Title" value={title} onChange={setTitle} />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="my-article-url-slug" />
+          <Field label="Excerpt" value={excerpt} onChange={setExcerpt} multiline rows={2} />
+          <Field label="Cover image URL" value={coverImage} onChange={setCoverImage} />
+          <Field label="Body (Markdown supported)" value={body} onChange={setBody} multiline rows={14} mono />
+          <Field label="Tags (comma separated)" value={tags} onChange={setTags} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Select label="Category" value={category} onChange={setCategory} options={CATEGORIES} />
-          <Select label="Access Tier" value={accessTier} onChange={(v) => setAccessTier(v as any)} options={ACCESS_TIERS} />
-          <Select label="Status" value={status} onChange={(v) => setStatus(v as any)} options={['draft', 'in_review', 'published']} />
-        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Select label="Category" value={category} onChange={setCategory} options={CATEGORIES} />
+            <Select label="Access Tier" value={accessTier} onChange={(v) => setAccessTier(v as any)} options={ACCESS_TIERS} />
+            <Select label="Status" value={status} onChange={(v) => setStatus(v as any)} options={['draft', 'in_review', 'published']} />
+          </div>
 
-        <div className="flex gap-2 pt-2">
-          <button onClick={onBack} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
-          <button
-            disabled={busy}
-            onClick={submit}
-            className="flex-1 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {busy ? 'Saving…' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
-          </button>
+          <div className="flex gap-3" style={{ paddingTop: 6 }}>
+            <button onClick={onBack} className="btn-g flex-1">Cancel</button>
+            <button
+              disabled={busy}
+              onClick={submit}
+              className="btn-a flex-1 disabled:opacity-50"
+            >
+              {busy ? 'Saving…' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function Field({ label, value, onChange, multiline, rows = 3, placeholder }: any) {
+function Field({ label, value, onChange, multiline, rows = 3, placeholder, mono }: any) {
   return (
-    <label className="block">
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label>{label.toUpperCase()}</label>
       {multiline ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={rows}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm font-mono"
+          style={{ ...inputBox, fontFamily: mono ? 'var(--mono)' : 'inherit', lineHeight: '19px', resize: 'vertical' }}
         />
       ) : (
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+          style={{ ...inputBox, height: 42, padding: '0 14px' }}
         />
       )}
-    </label>
+    </div>
   );
 }
 
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
   return (
-    <label className="block">
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label>{label.toUpperCase()}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+        style={{ ...inputBox, height: 42, padding: '0 14px', cursor: 'pointer' }}
       >
         {options.map(o => <option key={o} value={o}>{o}</option>)}
       </select>
-    </label>
+    </div>
   );
 }

@@ -7,25 +7,30 @@ export default function CheckoutCanceledPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
-      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-xl">
-        <div className="mx-auto mb-4 inline-flex w-14 h-14 items-center justify-center rounded-full bg-[var(--muted)]/40 border border-[var(--border)]">
-          <XCircle size={28} className="text-[var(--muted-foreground)]" />
+    <div className="atlas-site" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 20px' }}>
+      <div className="card-solid" style={{ width: '100%', maxWidth: '480px', padding: '38px 36px', textAlign: 'center', position: 'relative' }}>
+        <span style={{ position: 'absolute', left: 0, top: '-1px', width: '120px', height: '2px', background: 'var(--line-2)' }} />
+        <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--line-2)', borderRadius: '3px', background: 'var(--card-2)' }}>
+          <XCircle size={24} style={{ color: 'var(--atlas-muted)' }} />
         </div>
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Checkout canceled</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+        <p className="eyebrow" style={{ margin: '0 0 12px', color: 'var(--muted-2)' }}>NO CHARGE MADE</p>
+        <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>Checkout canceled</h1>
+        <p style={{ margin: '14px 0 0', fontSize: '14px', lineHeight: '22px', color: 'var(--atlas-muted)' }}>
           No charge was made. You can pick a plan again any time from the pricing page.
         </p>
-        <div className="mt-6 flex flex-col gap-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '28px' }}>
           <button
             onClick={() => router.replace('/pricing')}
-            className="w-full py-2.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 transition-all"
+            className="btn btn-amber"
+            style={{ width: '100%' }}
           >
             Back to pricing
+            <svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg>
           </button>
           <button
             onClick={() => router.replace('/app')}
-            className="w-full py-2.5 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors text-[var(--foreground)]"
+            className="btn btn-ghost"
+            style={{ width: '100%' }}
           >
             Continue on the free plan
           </button>

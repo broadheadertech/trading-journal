@@ -10,11 +10,11 @@ import type { LucideIcon } from 'lucide-react';
 
 const EVENT_CONFIG: Record<string, { icon: LucideIcon; color: string; label: string }> = {
   user_signup:         { icon: UserPlus,    color: 'var(--green)',  label: 'New signup' },
-  subscription_change: { icon: CreditCard,  color: 'var(--blue)',   label: 'Subscription changed' },
+  subscription_change: { icon: CreditCard,  color: 'var(--teal)',   label: 'Subscription changed' },
   user_banned:         { icon: ShieldAlert, color: 'var(--red)',    label: 'User banned' },
   user_unbanned:       { icon: ShieldCheck, color: 'var(--green)',  label: 'User unbanned' },
-  plan_override:       { icon: ArrowUpDown, color: 'var(--purple)', label: 'Plan overridden' },
-  data_reset:          { icon: Trash2,      color: 'var(--yellow)', label: 'Data reset' },
+  plan_override:       { icon: ArrowUpDown, color: 'var(--pink)',   label: 'Plan overridden' },
+  data_reset:          { icon: Trash2,      color: 'var(--amber)',  label: 'Data reset' },
 };
 
 function getRelativeTime(isoString: string): string {
@@ -30,7 +30,7 @@ function getRelativeTime(isoString: string): string {
 }
 
 function ActivityRow({ event }: { event: { type: string; userId: string; metadata: string; timestamp: string } }) {
-  const config = EVENT_CONFIG[event.type] ?? { icon: Activity, color: 'var(--muted-foreground)', label: event.type };
+  const config = EVENT_CONFIG[event.type] ?? { icon: Activity, color: 'var(--muted)', label: event.type };
   const Icon = config.icon;
 
   let detail = '';
@@ -43,20 +43,29 @@ function ActivityRow({ event }: { event: { type: string; userId: string; metadat
   } catch { /* ignore */ }
 
   return (
-    <div className="flex items-center gap-3 py-2 px-2 rounded-lg hover:bg-[var(--muted)] transition-colors">
-      <div className="p-1.5 rounded-md" style={{ backgroundColor: `color-mix(in srgb, ${config.color} 15%, transparent)` }}>
-        <Icon size={14} style={{ color: config.color }} />
+    <div className="flex items-center" style={{ gap: 12, padding: '10px 0', borderBottom: '1px solid var(--hair)' }}>
+      <div
+        className="flex items-center justify-center shrink-0"
+        style={{
+          width: 26, height: 26, borderRadius: 2,
+          border: `1px solid ${config.color}`,
+          background: 'var(--panel-2)',
+        }}
+      >
+        <Icon size={13} style={{ color: config.color }} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-[var(--foreground)]">
+        <p style={{ margin: 0, fontSize: 12.5, lineHeight: '18px', color: 'var(--text)' }}>
           {config.label}
-          <span className="text-[var(--muted-foreground)]">{detail}</span>
+          <span style={{ color: 'var(--muted)' }}>{detail}</span>
         </p>
-        <p className="text-[10px] text-[var(--muted-foreground)] truncate">
+        <p style={{ margin: '3px 0 0', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-2)' }} className="truncate">
           {event.userId.slice(0, 20)}...
         </p>
       </div>
-      <span className="text-[10px] text-[var(--muted-foreground)] shrink-0">{getRelativeTime(event.timestamp)}</span>
+      <span className="shrink-0 whitespace-nowrap" style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>
+        {getRelativeTime(event.timestamp)}
+      </span>
     </div>
   );
 }
@@ -68,11 +77,11 @@ export default function AdminDashboard() {
 
   if (!stats) {
     return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 w-48 bg-[var(--muted)] rounded" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="animate-pulse" style={{ maxWidth: 1180 }}>
+        <div style={{ height: 32, width: 220, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div className="stats">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-[var(--muted)] rounded-xl" />
+            <div key={i} style={{ height: 104, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
           ))}
         </div>
       </div>
@@ -83,13 +92,14 @@ export default function AdminDashboard() {
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
 
   return (
-    <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="text-xl font-bold text-[var(--foreground)]">Dashboard</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">Platform overview at a glance</p>
+    <div style={{ maxWidth: 1180 }}>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Back office</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Dashboard</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>Platform overview at a glance</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats" style={{ marginTop: 0 }}>
         <AdminStatCard
           icon={Users}
           label="Total Users"
@@ -117,58 +127,55 @@ export default function AdminDashboard() {
       </div>
 
       {/* Revenue summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[var(--green)]/10">
-              <DollarSign size={20} className="text-[var(--green)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--muted-foreground)]">MRR</p>
-              <p className="text-xl font-bold text-[var(--foreground)]">{revenue ? fmt(revenue.mrr) : '$0.00'}</p>
-              <p className="text-[11px] text-[var(--muted-foreground)]">Monthly recurring revenue</p>
-            </div>
+      <div className="split-3" style={{ marginTop: 24 }}>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <DollarSign size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <b>MRR</b>
           </div>
+          <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--green)' }}>{revenue ? fmt(revenue.mrr) : '$0.00'}</em>
+          <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>Monthly recurring revenue</small>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[var(--blue)]/10">
-              <DollarSign size={20} className="text-[var(--blue)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--muted-foreground)]">ARR</p>
-              <p className="text-xl font-bold text-[var(--foreground)]">{revenue ? fmt(revenue.arr) : '$0.00'}</p>
-              <p className="text-[11px] text-[var(--muted-foreground)]">Annual recurring revenue</p>
-            </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <DollarSign size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <b>ARR</b>
           </div>
+          <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--teal)' }}>{revenue ? fmt(revenue.arr) : '$0.00'}</em>
+          <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>Annual recurring revenue</small>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[var(--yellow)]/10">
-              <Users size={20} className="text-[var(--yellow)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--muted-foreground)]">Subscribers</p>
-              <p className="text-xl font-bold text-[var(--foreground)]">{revenue?.totalActiveSubscribers ?? 0}</p>
-              <p className="text-[11px] text-[var(--muted-foreground)]">Active paid users</p>
-            </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <Users size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <b>SUBSCRIBERS</b>
           </div>
+          <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--text)' }}>{revenue?.totalActiveSubscribers ?? 0}</em>
+          <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>Active paid users</small>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-5">
-        <h2 className="text-sm font-semibold text-[var(--foreground)] mb-4">Recent Activity</h2>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Recent Activity</h3>
+            <p className="sub">Latest platform-wide admin and account events</p>
+          </div>
+        </div>
         {!events ? (
-          <div className="space-y-2">
+          <div className="animate-pulse" style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 bg-[var(--muted)] rounded-lg animate-pulse" />
+              <div key={i} style={{ height: 40, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
             ))}
           </div>
         ) : events.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-6">No activity yet.</p>
+          <p className="empty-line" style={{ padding: '34px 0 8px' }}>No activity yet.</p>
         ) : (
-          <div className="space-y-0.5">
+          <div style={{ marginTop: 18 }}>
             {events.map((event) => (
               <ActivityRow key={event._id} event={event} />
             ))}

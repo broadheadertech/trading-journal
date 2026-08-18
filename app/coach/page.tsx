@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useToast } from '@/components/ui/Toast';
-import { Star, ShieldCheck, Clock } from 'lucide-react';
+import { Star, ShieldCheck, Clock, Ban, UserPlus } from 'lucide-react';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -19,13 +19,23 @@ export default function CoachProfilePage() {
 
   if (!profile && !applicationsOpen) {
     return (
-      <div className="max-w-xl">
-        <div className="glass rounded-3xl p-8 text-center space-y-3">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-[var(--muted)]/40 flex items-center justify-center text-3xl">🚫</div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">Applications are closed</h1>
-          <p className="text-sm text-[var(--muted-foreground)]">
-            We&apos;re not accepting new coach applications right now. Check back soon.
+      <div style={{ maxWidth: 680 }}>
+        <div className="phead pwrap">
+          <p className="eyebrow">
+            <Ban size={13} style={{ color: 'var(--red)' }} /> COACH APPLICATIONS
           </p>
+          <h2>Applications are closed</h2>
+        </div>
+        <div className="blank" style={{ padding: '48px 28px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, top: -1, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: -1, bottom: -1, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid rgba(255,77,94,.4)', background: 'var(--panel-2)' }}>
+            <Ban size={22} style={{ color: 'var(--red)' }} />
+          </span>
+          <h4>Not accepting applications</h4>
+          <p>We&apos;re not accepting new coach applications right now. Check back soon.</p>
         </div>
       </div>
     );
@@ -61,44 +71,60 @@ function ApplyForm({ onSubmit }: { onSubmit: (d: any) => Promise<void> }) {
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Become a coach</h1>
-        <p className="text-sm text-[var(--muted-foreground)] mt-1">Apply to offer 1-on-1 trading sessions. Admin will review and approve.</p>
+    <div style={{ maxWidth: 720 }}>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <UserPlus size={13} style={{ color: 'var(--amber)' }} /> COACH APPLICATION
+        </p>
+        <h2>Become a coach</h2>
+        <p className="sub">Apply to offer 1-on-1 trading sessions. Admin will review and approve.</p>
       </div>
 
-      <div className="glass rounded-3xl p-6 space-y-4">
-        <Field label="Display name" value={displayName} onChange={setDisplayName} />
-        <Field label="URL slug" value={slug} onChange={setSlug} placeholder="your-name" />
-        <Field label="Headline" value={headline} onChange={setHeadline} placeholder="One-sentence pitch" />
-        <Field label="Bio" value={bio} onChange={setBio} multiline />
-        <Field label="Photo URL (optional)" value={photoUrl} onChange={setPhotoUrl} />
-        <Field label="Specialties (comma separated)" value={specialties} onChange={setSpecialties} placeholder="Day Trading, Psychology, Risk" />
-        <Field label="Timezone" value={timezone} onChange={setTimezone} />
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Hourly rate USD" value={hourlyRateUsd} onChange={setHourlyRateUsd} type="number" />
-          <Field label="Session duration (min)" value={sessionDurationMin} onChange={setSessionDurationMin} type="number" />
+      <div className="card pwrap">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Application details</h3>
+            <p className="sub">All fields except photo are required to submit.</p>
+          </div>
         </div>
-        <button
-          disabled={busy || !displayName || !slug || !bio}
-          onClick={async () => {
-            setBusy(true);
-            try {
-              await onSubmit({
-                slug, displayName, headline, bio,
-                photoUrl: photoUrl || undefined,
-                specialties: specialties.split(',').map(s => s.trim()).filter(Boolean),
-                timezone,
-                hourlyRateUsd: Number(hourlyRateUsd),
-                sessionDurationMin: Number(sessionDurationMin),
-              });
-            } finally { setBusy(false); }
-          }}
-          className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold disabled:opacity-50"
-        >
-          {busy ? 'Submitting…' : 'Submit application'}
-        </button>
+
+        <div style={{ display: 'grid', gap: 16, marginTop: 22 }}>
+          <Field label="Display name" value={displayName} onChange={setDisplayName} />
+          <Field label="URL slug" value={slug} onChange={setSlug} placeholder="your-name" />
+          <Field label="Headline" value={headline} onChange={setHeadline} placeholder="One-sentence pitch" />
+          <Field label="Bio" value={bio} onChange={setBio} multiline />
+          <Field label="Photo URL (optional)" value={photoUrl} onChange={setPhotoUrl} />
+          <Field label="Specialties (comma separated)" value={specialties} onChange={setSpecialties} placeholder="Day Trading, Psychology, Risk" />
+          <Field label="Timezone" value={timezone} onChange={setTimezone} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Field label="Hourly rate USD" value={hourlyRateUsd} onChange={setHourlyRateUsd} type="number" />
+            <Field label="Session duration (min)" value={sessionDurationMin} onChange={setSessionDurationMin} type="number" />
+          </div>
+          <button
+            disabled={busy || !displayName || !slug || !bio}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                await onSubmit({
+                  slug, displayName, headline, bio,
+                  photoUrl: photoUrl || undefined,
+                  specialties: specialties.split(',').map(s => s.trim()).filter(Boolean),
+                  timezone,
+                  hourlyRateUsd: Number(hourlyRateUsd),
+                  sessionDurationMin: Number(sessionDurationMin),
+                });
+              } finally { setBusy(false); }
+            }}
+            className="btn-a disabled:opacity-50"
+            style={{ width: '100%' }}
+          >
+            {busy ? 'Submitting…' : 'Submit application'}
+          </button>
+        </div>
       </div>
+
+      <p className="footnote">Approved coaches appear in the public coach catalog.</p>
     </div>
   );
 }
@@ -112,57 +138,79 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
   const [sessionDurationMin, setSessionDurationMin] = useState(String(profile.sessionDurationMin));
 
   const STATUS: Record<string, { label: string; color: string }> = {
-    pending:   { label: 'Pending review', color: 'bg-amber-500/15 text-amber-400' },
-    approved:  { label: 'Approved · Live', color: 'bg-emerald-500/15 text-emerald-400' },
-    suspended: { label: 'Suspended', color: 'bg-[var(--red)]/15 text-[var(--red)]' },
-    rejected:  { label: 'Rejected', color: 'bg-[var(--red)]/15 text-[var(--red)]' },
+    pending:   { label: 'Pending review', color: 'var(--amber)' },
+    approved:  { label: 'Approved · Live', color: 'var(--green)' },
+    suspended: { label: 'Suspended', color: 'var(--red)' },
+    rejected:  { label: 'Rejected', color: 'var(--red)' },
   };
   const st = STATUS[profile.status];
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Coach profile</h1>
-        <span className={`text-xs uppercase tracking-wider font-bold px-3 py-1 rounded-full ${st.color}`}>{st.label}</span>
+    <div style={{ maxWidth: 720 }}>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <ShieldCheck size={13} style={{ color: 'var(--amber)' }} /> COACH HUB
+        </p>
+        <h2>Coach profile</h2>
+        <p className="sub">Your public listing in the coach catalog. Changes go live immediately.</p>
+        <div className="actions">
+          <span className="chip" style={{ color: st.color }}>
+            <i style={{ background: st.color }} />
+            {st.label}
+          </span>
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="glass rounded-2xl p-4">
-          <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1"><Star size={11} /> Rating</div>
-          <div className="text-2xl font-bold text-[var(--foreground)]">{profile.avgRating?.toFixed(1) ?? '—'}</div>
+      <div className="stats" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginTop: 0 }}>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Star size={11} /> RATING</b>
+          <em style={{ color: 'var(--text)' }}>{profile.avgRating?.toFixed(1) ?? '—'}</em>
         </div>
-        <div className="glass rounded-2xl p-4">
-          <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1"><ShieldCheck size={11} /> Reviews</div>
-          <div className="text-2xl font-bold text-[var(--foreground)]">{profile.reviewCount ?? 0}</div>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><ShieldCheck size={11} /> REVIEWS</b>
+          <em style={{ color: 'var(--text)' }}>{profile.reviewCount ?? 0}</em>
         </div>
-        <div className="glass rounded-2xl p-4">
-          <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={11} /> Sessions</div>
-          <div className="text-2xl font-bold text-[var(--foreground)]">{profile.totalSessions ?? 0}</div>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={11} /> SESSIONS</b>
+          <em style={{ color: 'var(--text)' }}>{profile.totalSessions ?? 0}</em>
         </div>
       </div>
 
-      <div className="glass rounded-3xl p-6 space-y-4">
-        <Field label="Headline" value={headline} onChange={setHeadline} />
-        <Field label="Bio" value={bio} onChange={setBio} multiline />
-        <Field label="Photo URL" value={photoUrl} onChange={setPhotoUrl} />
-        <Field label="Specialties (comma separated)" value={specialties} onChange={setSpecialties} />
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Hourly rate USD" value={hourlyRateUsd} onChange={setHourlyRateUsd} type="number" />
-          <Field label="Session duration (min)" value={sessionDurationMin} onChange={setSessionDurationMin} type="number" />
+      <div className="card pwrap" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Listing details</h3>
+            <p className="sub">How traders see you in the catalog.</p>
+          </div>
         </div>
-        <button
-          onClick={() => onSave({
-            headline, bio,
-            photoUrl: photoUrl || undefined,
-            specialties: specialties.split(',').map((s: string) => s.trim()).filter(Boolean),
-            hourlyRateUsd: Number(hourlyRateUsd),
-            sessionDurationMin: Number(sessionDurationMin),
-          })}
-          className="px-5 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold"
-        >
-          Save changes
-        </button>
+
+        <div style={{ display: 'grid', gap: 16, marginTop: 22 }}>
+          <Field label="Headline" value={headline} onChange={setHeadline} />
+          <Field label="Bio" value={bio} onChange={setBio} multiline />
+          <Field label="Photo URL" value={photoUrl} onChange={setPhotoUrl} />
+          <Field label="Specialties (comma separated)" value={specialties} onChange={setSpecialties} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Field label="Hourly rate USD" value={hourlyRateUsd} onChange={setHourlyRateUsd} type="number" />
+            <Field label="Session duration (min)" value={sessionDurationMin} onChange={setSessionDurationMin} type="number" />
+          </div>
+          <button
+            onClick={() => onSave({
+              headline, bio,
+              photoUrl: photoUrl || undefined,
+              specialties: specialties.split(',').map((s: string) => s.trim()).filter(Boolean),
+              hourlyRateUsd: Number(hourlyRateUsd),
+              sessionDurationMin: Number(sessionDurationMin),
+            })}
+            className="btn-a"
+          >
+            Save changes
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -170,15 +218,19 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
 
 function Field({ label, value, onChange, type = 'text', multiline, placeholder }: any) {
   return (
-    <label className="block">
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label>{label.toUpperCase()}</label>
       {multiline ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={4}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+          className="box"
+          style={{
+            display: 'block', width: '100%', height: 'auto', padding: '11px 16px',
+            fontFamily: 'inherit', resize: 'vertical', outline: 'none',
+          }}
         />
       ) : (
         <input
@@ -186,9 +238,10 @@ function Field({ label, value, onChange, type = 'text', multiline, placeholder }
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+          className="box"
+          style={{ display: 'block', width: '100%', outline: 'none' }}
         />
       )}
-    </label>
+    </div>
   );
 }
