@@ -39,24 +39,24 @@ interface SidebarProps {
 const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={20} /> },
-  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={20} /> },
-  { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={20} /> },
-  { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={20} /> },
-  { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={20} /> },
-  { id: 'journal',     label: 'Journal & Analytics', icon: <List size={20} /> },
-  { id: 'coaching',    label: 'Call a Coach',        icon: <Headphones size={20} /> },
-  { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={20} /> },
-  { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={20} /> },
-  { id: 'indicators',  label: 'Indicators',          icon: <Activity size={20} /> },
-  { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={20} /> },
-  { id: 'world',       label: 'World Monitoring',    icon: <Globe size={20} /> },
-  { id: 'articles',    label: 'Articles',            icon: <BookOpen size={20} /> },
-  { id: 'community',   label: 'Community',           icon: <MessagesSquare size={20} /> },
-  { id: 'events',      label: 'Events',              icon: <CalendarDays size={20} /> },
-  { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={20} /> },
-  { id: 'news',        label: 'News',                icon: <Newspaper size={20} /> },
-  { id: 'tools',       label: 'Tools',               icon: <Wrench size={20} /> },
+  { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={16} /> },
+  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={16} /> },
+  { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={16} /> },
+  { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={16} /> },
+  { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={16} /> },
+  { id: 'journal',     label: 'Journal & Analytics', icon: <List size={16} /> },
+  { id: 'coaching',    label: 'Call a Coach',        icon: <Headphones size={16} /> },
+  { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={16} /> },
+  { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={16} /> },
+  { id: 'indicators',  label: 'Indicators',          icon: <Activity size={16} /> },
+  { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={16} /> },
+  { id: 'world',       label: 'World Monitoring',    icon: <Globe size={16} /> },
+  { id: 'articles',    label: 'Articles',            icon: <BookOpen size={16} /> },
+  { id: 'community',   label: 'Community',           icon: <MessagesSquare size={16} /> },
+  { id: 'events',      label: 'Events',              icon: <CalendarDays size={16} /> },
+  { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={16} /> },
+  { id: 'news',        label: 'News',                icon: <Newspaper size={16} /> },
+  { id: 'tools',       label: 'Tools',               icon: <Wrench size={16} /> },
 ];
 
 export default function Sidebar({
@@ -122,7 +122,7 @@ export default function Sidebar({
               style={{ cursor: 'pointer' }}
               title={collapsed ? tab.label : undefined}
             >
-              <span className="ic [&>svg]:w-4 [&>svg]:h-4">{tab.icon}</span>
+              <span className="ic">{tab.icon}</span>
               {!collapsed && <span className="lb">{tab.label}</span>}
             </a>
           ))}
@@ -251,34 +251,33 @@ export default function Sidebar({
                 ?
               </button>
                 {helpOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-72 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xl z-50 p-4 space-y-3">
-                    <h3 className="text-sm font-bold">Help & Resources</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <BookOpen size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">Getting Started</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">Learn the basics of Atlas</p>
+                  <div
+                    className="absolute right-0 top-full mt-2 w-72 z-50"
+                    style={{ border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', padding: 16 }}
+                  >
+                    <p className="lbl b10">HELP &amp; RESOURCES</p>
+                    <div style={{ marginTop: 12 }}>
+                      {[
+                        { icon: <BookOpen size={14} />, title: 'Getting Started', desc: 'Learn the basics of Atlas' },
+                        { icon: <Target size={14} />, title: 'Keyboard Shortcuts', desc: 'Speed up your workflow' },
+                        { icon: <Brain size={14} />, title: 'AI Coach Guide', desc: 'How Brain analyzes your trades' },
+                      ].map(item => (
+                        <div
+                          key={item.title}
+                          className="inset"
+                          style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginTop: 8, padding: '10px 12px', cursor: 'pointer' }}
+                        >
+                          <span style={{ flex: 'none', marginTop: 2, color: 'var(--amber)' }}>{item.icon}</span>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{item.title}</p>
+                            <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{item.desc}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <Target size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">Keyboard Shortcuts</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">Speed up your workflow</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <Brain size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">AI Coach Guide</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">How Brain analyzes your trades</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                    <div className="pt-2 border-t border-[var(--border)]">
-                      <p className="text-[11px] text-[var(--muted-foreground)]">Need more help? Contact support@atlas.app</p>
-                    </div>
+                    <p style={{ margin: '14px 0 0', paddingTop: 12, borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted-2)' }}>
+                      Need more help? Contact support@atlas.app
+                    </p>
                   </div>
                 )}
               </div>
@@ -298,13 +297,16 @@ export default function Sidebar({
                   )}
                 </button>
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xl z-50 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-                      <h3 className="text-sm font-bold">Notifications</h3>
+                  <div
+                    className="absolute right-0 top-full mt-2 w-80 z-50 overflow-hidden"
+                    style={{ border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel-2)' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--line)' }}>
+                      <p className="lbl b10">NOTIFICATIONS</p>
                       {unreadCount > 0 && (
                         <button
                           onClick={() => markAllRead()}
-                          className="text-[11px] font-medium text-[var(--accent)] hover:underline"
+                          style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 11, color: 'var(--amber)' }}
                         >
                           Mark all read
                         </button>
@@ -312,23 +314,24 @@ export default function Sidebar({
                     </div>
                     <div className="max-h-80 overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No notifications yet</p>
+                        <p className="empty-line" style={{ padding: '28px 0' }}>No notifications yet</p>
                       ) : (
                         notifications.map(n => (
                           <button
                             key={n._id}
                             onClick={() => { if (!n.read) markOneRead({ notificationId: n._id }); }}
-                            className={cn(
-                              'w-full text-left px-4 py-3 border-b border-[var(--border)]/50 hover:bg-[var(--muted)]/30 transition-colors',
-                              !n.read && 'bg-[var(--accent)]/5'
-                            )}
+                            style={{
+                              display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px',
+                              borderBottom: '1px solid var(--hair)',
+                              background: n.read ? 'none' : 'rgba(217,148,5,.06)',
+                            }}
                           >
-                            <div className="flex items-start gap-2">
-                              {!n.read && <div className="w-2 h-2 rounded-full bg-[var(--accent)] mt-1.5 shrink-0" />}
-                              <div className={cn('flex-1 min-w-0', n.read && 'ml-4')}>
-                                <p className="text-sm font-medium truncate">{n.title}</p>
-                                <p className="text-[11px] text-[var(--muted-foreground)] line-clamp-2">{n.message}</p>
-                                <p className="text-[10px] text-[var(--muted-foreground)]/60 mt-1">
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                              {!n.read && <span style={{ flex: 'none', width: 6, height: 6, borderRadius: 1, marginTop: 5, background: 'var(--amber)' }} />}
+                              <div style={{ flex: 1, minWidth: 0, marginLeft: n.read ? 14 : 0 }}>
+                                <p className="truncate" style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{n.title}</p>
+                                <p className="line-clamp-2" style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{n.message}</p>
+                                <p style={{ margin: '5px 0 0', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-3)' }}>
                                   {new Date(n.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </p>
                               </div>

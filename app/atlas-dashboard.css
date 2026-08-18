@@ -94,7 +94,8 @@
   .provider{border:1px solid var(--line);border-radius:2px;background:rgba(10,15,23,.2);padding:32px 24px 24px;position:relative;text-align:center}
   .provider .accent{position:absolute;left:0;top:-1px;width:60px;height:3px}
   .provider .av{width:68px;height:68px;margin:0 auto;border-radius:3px;background:#0f1620;border:1px solid currentColor}
-  .provider h4{font-family:var(--display);font-weight:700;font-size:18px;line-height:20px;margin:14px 0 0;color:var(--text)}
+  .provider h4{font-family:var(--display);font-weight:700;font-size:18px;line-height:20px;margin:14px 0 0;color:var(--text);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .provider .meta{margin:8px 0 0;font-size:12px;color:var(--muted-2)}
   .provider .big{margin-top:34px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:12px}
   .provider .big b{display:block;font-family:var(--mono);font-weight:500;font-size:34px;line-height:44px}
@@ -161,7 +162,8 @@
   .course .foot .go{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;color:var(--amber)}
 
   /* ---- rewards ---- */
-  .reward{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:28px 24px}
+  .reward{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:28px 24px;
+    display:flex;flex-direction:column}
   .reward .accent{position:absolute;left:0;top:-1px;width:56px;height:3px}
   .reward .rtop{display:flex;align-items:flex-start;gap:16px}
   .reward .ic{width:44px;height:44px;border-radius:3px;flex:none}
@@ -172,6 +174,9 @@
   .reward .prog{margin:30px 0 0 60px;height:2px;background:var(--rail);position:relative}
   .reward .prog i{position:absolute;left:0;top:0;bottom:0;width:3%;background:var(--green)}
   .reward .st{margin:14px 0 0 60px;font-size:12px;color:var(--muted-2)}
+  /* keep the progress rail + status on a shared baseline when sibling cards in the
+     same grid row have descriptions of different lengths */
+  .reward > p:not(.st){margin-bottom:auto}
   .earn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
   .earn div{height:38px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
     gap:14px;padding:0 14px;font-size:12.5px;color:#c0ccda}
@@ -179,7 +184,7 @@
   @media(max-width:900px){.earn{grid-template-columns:1fr}}
 
   /* ---- indicators ---- */
-  .ind{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:26px 24px 0;height:226px;
+  .ind{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:26px 24px 0;min-height:226px;
     display:flex;flex-direction:column}
   .ind .accent{position:absolute;left:0;top:-1px;width:48px;height:3px}
   .ind .ic{width:40px;height:40px;border-radius:3px}
@@ -202,7 +207,7 @@
   .daygroup .dh b{font-weight:700;font-size:11.5px;letter-spacing:.03em}
   .daygroup .dh span{font-size:11.5px;color:var(--muted-2)}
   .daygroup .dh em{margin-left:auto;font-style:normal;font-size:11px;color:var(--muted-2)}
-  .ev{display:grid;grid-template-columns:104px 1fr 130px 130px 100px;gap:0 16px;align-items:center;height:66px;margin-top:8px;
+  .ev{display:grid;grid-template-columns:104px 1fr 130px 130px 100px;gap:0 16px;align-items:center;min-height:66px;margin-top:8px;
     border:1px solid var(--line);border-left-width:3px;border-radius:2px;background:var(--panel);padding:0 24px}
   .ev .t{font-family:var(--display);font-weight:700;font-size:15px}
   .ev .evwho{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:400;font-size:13px;margin-left:0}
@@ -288,7 +293,7 @@
   /* ---- journal ---- */
   .jcal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:22px}
   .jcal .dow{text-align:center;font-weight:700;font-size:10px;color:var(--muted-2);padding-bottom:6px}
-  .jcal .day{height:57px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:8px 10px}
+  .jcal .day{min-height:57px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:8px 10px}
   .jcal .day.out{background:#080d14}
   .jcal .day.today{border-color:var(--amber)}
   .jcal .day b{display:block;font-family:var(--display);font-weight:700;font-size:13px}
@@ -303,7 +308,7 @@
   .jstat small{display:block;font-size:9.5px;color:var(--muted-2);margin-top:6px}
   @media(max-width:1240px){.jstats{grid-template-columns:repeat(4,1fr)}}
   @media(max-width:760px){.jstats{grid-template-columns:repeat(2,1fr)}}
-  .qrow{display:flex;align-items:center;height:40px;margin-top:8px;border:1px solid var(--line);border-radius:2px;
+  .qrow{display:flex;align-items:center;min-height:40px;margin-top:8px;border:1px solid var(--line);border-radius:2px;
     background:var(--panel-2);padding:0 16px;font-size:12.5px;color:#c0ccda}
   .qrow em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:12.5px}
 
@@ -468,7 +473,7 @@
   .lbl.b95{font-size:9.5px}
 
   /* hero P&L */
-  .hero{height:210px;padding:30px 28px}
+  .hero{min-height:210px;padding:30px 28px}
   .hero .row1{display:flex;align-items:center;gap:27px}
   .pill{height:20px;padding:0 12px;border-radius:2px;background:#0f2018;display:inline-flex;align-items:center;
     font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green)}
@@ -477,13 +482,13 @@
   .wl span{display:flex;align-items:center;gap:7px}
   .wl .l{margin-left:69px}
   .tri{display:grid;grid-template-columns:repeat(3,240px);gap:12px;margin-top:20px}
-  .tri .inset{height:44px;padding:9px 16px}
+  .tri .inset{min-height:44px;padding:9px 16px}
   .tri em{display:block;font-style:normal;font-size:12.5px;color:var(--muted);margin-top:3px}
   .tri em.g{font-family:var(--mono);font-weight:500;color:var(--green)}
   @media(max-width:1420px){.tri{grid-template-columns:repeat(3,1fr)}}
 
   /* execution score */
-  .score{height:210px;text-align:center;padding:34px 22px}
+  .score{min-height:210px;text-align:center;padding:34px 22px}
   .ring{position:relative;width:80px;height:80px;margin:0 auto}
   .ring .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     font-family:var(--mono);font-size:34px;color:var(--text)}
@@ -492,7 +497,7 @@
 
   /* stat strip */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
-  .stat{height:104px;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:21px 20px}
+  .stat{min-height:104px;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:21px 20px}
   .stat .accent{position:absolute;left:0;top:-1px;width:44px;height:2.5px}
   .stat b{display:block;font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em}
   .stat em{display:block;font-style:normal;font-family:var(--mono);font-size:26px;line-height:34px;margin-top:8px}
@@ -524,22 +529,38 @@
   .amaphead span{text-align:center;font-size:11px;color:var(--text-2)}
   .amaprow{display:grid;grid-template-columns:153px repeat(4,1fr);gap:6px;align-items:center;margin-bottom:8px}
   .amaprow > b{font-weight:400;font-size:12.5px;color:var(--text-2)}
-  .cell{height:28px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);
+  .cell{min-height:28px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);
     display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted-4)}
   .amapnote{margin:18px 0 0;font-size:11.5px;color:var(--muted-2)}
 
   /* next best actions */
   .nba{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:33px}
-  .nba .inset{height:88px;position:relative;padding:15px 16px}
+  .nba .inset{min-height:88px;position:relative;padding:15px 16px}
   .nba .inset .accent{position:absolute;left:0;top:-1px;width:36px;height:3px}
   .nba em{display:block;font-style:normal;font-family:var(--mono);font-size:20px;line-height:26px;margin-top:8px}
   .nba small{display:block;font-size:10.5px;color:var(--muted-2);margin-top:6px}
-  .note{height:44px;margin-top:22px;display:flex;align-items:center;padding:0 18px;font-size:12px;color:var(--muted);
+  .note{min-height:44px;margin-top:22px;display:flex;align-items:center;padding:0 18px;font-size:12px;color:var(--muted);
     border:1px solid var(--line);border-radius:2px;background:var(--panel-2)}
   .ghostbtn{display:flex;align-items:center;justify-content:center;gap:12px;height:44px;margin-top:14px;
     border:1px solid var(--line-2);border-radius:2px;font-weight:700;font-size:14px}
   .ghostbtn:hover{border-color:var(--muted)}
   @media(max-width:900px){.nba{grid-template-columns:1fr}}
+
+  /* ============================= FORM CONTROLS =============================
+     globals.css gives every input/textarea/select an 8px radius, 14px type and
+     --input-bg, which is off-system inside the dashboard. Re-key them to ATLAS
+     (2px radius, panel-2, 12.5px). Controls that already carry an ATLAS class
+     (.chip selects, .btn-*) are excluded so their own rules keep winning. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.chip),
+  textarea:not(.chip),
+  select:not(.chip){
+    background:var(--panel-2);border:1px solid var(--line);border-radius:2px;color:var(--text);
+    min-height:38px;padding:0 14px;font-family:var(--body);font-size:12.5px}
+  textarea:not(.chip){min-height:84px;padding:11px 14px;line-height:19px}
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.chip):focus,
+  textarea:not(.chip):focus,
+  select:not(.chip):focus{border-color:var(--amber);box-shadow:none}
+  input::placeholder,textarea::placeholder{color:var(--muted-3)}
 
   .viewall{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13px;color:var(--amber)}
   .cardhead{display:flex;align-items:flex-start}

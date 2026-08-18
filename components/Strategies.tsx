@@ -179,7 +179,7 @@ export default function Strategies() {
   return (
     <div>
       <div className="phead">
-        <p className="eyebrow"><TrendingUp size={12} /> Curated playbooks</p>
+        <p className="eyebrow"><TrendingUp size={13} /> Curated playbooks</p>
         <h2>Trading strategies</h2>
         <p className="sub">Explore vetted, battle-tested strategies built by senior traders.</p>
       </div>

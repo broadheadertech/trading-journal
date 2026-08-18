@@ -58,7 +58,7 @@ export default function News() {
     <div style={{ position: 'relative' }}>
       {/* Header */}
       <div className="phead pwrap">
-        <p className="eyebrow" style={{ fontWeight: 500 }}><Newspaper size={13} /> Live wire</p>
+        <p className="eyebrow"><Newspaper size={13} /> Live wire</p>
         <h2>Market news</h2>
         <p className="sub">
           Live financial news to keep you informed — filtered by the desks that move your markets.
@@ -66,7 +66,7 @@ export default function News() {
         <div className="actions">
           <button className="btn-g" type="button" onClick={() => setRefreshKey(k => k + 1)} disabled={loading}
             style={loading ? { opacity: 0.4 } : undefined}>
-            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} /> Refresh
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
           </button>
         </div>
       </div>

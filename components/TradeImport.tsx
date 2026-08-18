@@ -338,7 +338,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
             <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, margin: 0 }}>Import Trades</h3>
           </div>
           <button onClick={onClose} className="chip" style={{ width: 32, height: 32, padding: 0, justifyContent: 'center' }} aria-label="Close">
-            <X size={15} />
+            <X size={16} />
           </button>
         </div>
 
@@ -390,7 +390,7 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
               />
               <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
-                <FileText size={22} style={{ color: 'var(--amber)' }} />
+                <FileText size={24} style={{ color: 'var(--amber)' }} />
               </div>
               <h4>Drop your CSV or Excel file here</h4>
               <p>or click to browse — .csv, .xlsx supported</p>

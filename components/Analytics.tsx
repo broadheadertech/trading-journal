@@ -249,9 +249,9 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
   return (
     <div className="pwrap">
       {/* ── Header ── */}
-      <div className="phead" style={{ marginBottom: 26 }}>
-        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
-          <TrendingDown size={12} /> Performance Command Center
+      <div className="phead">
+        <p className="eyebrow">
+          <TrendingDown size={13} style={{ color: 'var(--amber)' }} /> Execution diagnostics
         </p>
         <h2>Performance Command Center</h2>
         <p className="sub">One page to diagnose outcome quality, identify drag sources, and prioritize the next execution change.</p>

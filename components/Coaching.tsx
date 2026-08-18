@@ -21,6 +21,18 @@ const fmt = (iso: string) => {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
 };
 
+// ATLAS form-control chrome (matches .field .box / .codebox in app/atlas-dashboard.css)
+const atlasField: React.CSSProperties = {
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  color: 'var(--text)',
+  padding: '10px 14px',
+  font: 'inherit',
+  fontSize: 13,
+  outline: 'none',
+};
+
 export default function Coaching() {
   const { user } = useUser();
   const [tab, setTab] = useState<CoachingTab>('sessions');
@@ -65,8 +77,8 @@ export default function Coaching() {
   return (
     <div>
       <div className="phead pwrap">
-        <p className="eyebrow" style={{ color: '#0dfb78', fontWeight: 500 }}>
-          <Headphones size={12} /> {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
+        <p className="eyebrow">
+          <Headphones size={13} /> {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
         </p>
         <h2>{tab === 'sessions' ? 'Talk to a trading coach' : 'Join a trading cohort'}</h2>
         <p className="sub">
@@ -74,7 +86,7 @@ export default function Coaching() {
             ? 'Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.'
             : 'Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.'}
         </p>
-        <div className="actions" style={{ top: 26 }}>
+        <div className="actions">
           {user && tab === 'sessions' && (
             <button type="button" onClick={() => setView('mine')} className="btn-g" style={{ height: 44 }}>
               My sessions ({myClientSessions.length})
@@ -82,7 +94,7 @@ export default function Coaching() {
           )}
           {user && (
             <Link href="/coach" className="btn-a" style={{ height: 44 }}>
-              <UserPlus size={16} />
+              <UserPlus size={14} />
               {myCoachProfile ? 'Coach Hub' : 'Become a coach'}
             </Link>
           )}
@@ -96,21 +108,21 @@ export default function Coaching() {
           className={tab === 'sessions' ? 'on' : undefined}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
         >
-          <Headphones size={16} /> 1-on-1 Sessions
+          <Headphones size={13} /> 1-on-1 Sessions
         </button>
         <button
           onClick={() => setTab('cohorts')}
           className={tab === 'cohorts' ? 'on' : undefined}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
         >
-          <Users size={16} /> Cohorts
+          <Users size={13} /> Cohorts
         </button>
       </div>
 
       {tab === 'cohorts' && <CoachingCohorts />}
 
       {tab === 'sessions' && (coaches.length === 0 ? (
-        <div className="blank" style={{ height: 300 }}>
+        <div className="blank" style={{ minHeight: 300 }}>
           <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
           <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
           <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
@@ -151,7 +163,7 @@ export default function Coaching() {
                 </div>
               )}
               <h4>{c.displayName}</h4>
-              <p className="meta">{c.headline}</p>
+              <p className="meta" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.headline}</p>
 
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 14 }}>
                 {(c.specialties as string[]).slice(0, 3).map((s) => (
@@ -213,7 +225,7 @@ function CoachDetail({
   if (!coach) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--muted-foreground)]" />
+        <Loader2 size={26} className="animate-spin" style={{ color: 'var(--muted)' }} />
       </div>
     );
   }
@@ -246,7 +258,7 @@ function CoachDetail({
   return (
     <div className="space-y-6">
       <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
-        <ArrowLeft size={16} /> Back to coaches
+        <ArrowLeft size={12} /> Back to coaches
       </button>
 
       <div className="card pwrap" style={{ padding: '28px 28px 24px' }}>
@@ -296,12 +308,12 @@ function CoachDetail({
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h3 className="flex items-center gap-2">
-            <Calendar size={18} style={{ color: 'var(--amber)' }} /> Available slots
+            <Calendar size={16} style={{ color: 'var(--amber)' }} /> Available slots
           </h3>
-          <span className="text-xs text-[var(--muted-foreground)]">{coach.timezone}</span>
+          <span className="lbl b95">{coach.timezone}</span>
         </div>
         {slots.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] py-6 text-center">No open slots right now. Check back soon.</p>
+          <p className="empty-line">No open slots right now. Check back soon.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             {slots.map((s: any) => (
@@ -311,8 +323,8 @@ function CoachDetail({
                 className="inset"
                 style={{ textAlign: 'left', cursor: 'pointer' }}
               >
-                <div className="font-medium">{new Date(s.startsAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+                <div style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{new Date(s.startsAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                <div style={{ marginTop: 4, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted-2)' }}>{new Date(s.startsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
               </button>
             ))}
           </div>
@@ -324,16 +336,16 @@ function CoachDetail({
         <div className="card space-y-4">
           <h3>Reviews</h3>
           {reviews.map((r: any) => (
-            <div key={r.id} className="border-b border-[var(--border)] last:border-0 pb-4 last:pb-0">
+            <div key={r.id} className="last:border-0 pb-4 last:pb-0" style={{ borderBottom: '1px solid var(--hair)' }}>
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-[var(--foreground)] text-sm">{r.clientName}</span>
+                <span style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{r.clientName}</span>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} size={12} className={n <= r.rating ? 'text-amber-400 fill-amber-400' : 'text-[var(--muted-foreground)]/30'} />
+                    <Star key={n} size={12} style={n <= r.rating ? { color: 'var(--amber)', fill: 'currentColor' } : { color: 'var(--muted-4)' }} />
                   ))}
                 </div>
               </div>
-              <p className="text-sm text-[var(--muted-foreground)]">{r.comment}</p>
+              <p style={{ margin: 0, fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>{r.comment}</p>
             </div>
           ))}
         </div>
@@ -345,24 +357,24 @@ function CoachDetail({
           <div className="card max-w-md w-full space-y-4">
             <div className="flex items-center justify-between">
               <h3>Book session</h3>
-              <button onClick={() => setShowBooking(false)} className="p-1 rounded hover:bg-[var(--muted)]"><X size={18} /></button>
-            </div>
-            <div className="text-sm">
-              <div className="text-[var(--muted-foreground)]">When</div>
-              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
-            </div>
-            <div className="text-sm">
-              <div className="text-[var(--muted-foreground)]">Total</div>
-              <div className="font-bold text-[var(--foreground)] text-lg">${totalPrice.toFixed(2)}</div>
+              <button onClick={() => setShowBooking(false)} className="chip" style={{ width: 28, height: 28, padding: 0, justifyContent: 'center' }}><X size={14} /></button>
             </div>
             <div>
-              <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">What do you want to work on?</div>
+              <p className="lbl">WHEN</p>
+              <div style={{ marginTop: 6, fontSize: 13, color: 'var(--text)' }}>{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+            </div>
+            <div>
+              <p className="lbl">TOTAL</p>
+              <div style={{ marginTop: 6, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 20, color: 'var(--text)' }}>${totalPrice.toFixed(2)}</div>
+            </div>
+            <div>
+              <p className="lbl" style={{ marginBottom: 9 }}>WHAT DO YOU WANT TO WORK ON?</p>
               <textarea
                 value={goals}
                 onChange={(e) => setGoals(e.target.value)}
                 rows={4}
                 placeholder="Specific goals, problems, or questions..."
-                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                className="w-full" style={atlasField}
               />
             </div>
             <button
@@ -372,7 +384,7 @@ function CoachDetail({
             >
               {busy ? 'Booking…' : `Confirm & pay $${totalPrice.toFixed(2)}`}
             </button>
-            <p className="text-[10px] text-[var(--muted-foreground)] text-center">
+            <p style={{ margin: 0, textAlign: 'center', fontSize: 10.5, color: 'var(--muted-2)' }}>
               Stub mode: payment is recorded automatically. Real Stripe Connect to be wired later.
             </p>
           </div>
@@ -393,11 +405,11 @@ export function MySessionsView({
   return (
     <div className="space-y-6">
       <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
-        <ArrowLeft size={16} /> Back to coaches
+        <ArrowLeft size={12} /> Back to coaches
       </button>
       <div className="phead"><h2>My sessions</h2></div>
       {sessions.length === 0 ? (
-        <p className="text-sm text-[var(--muted-foreground)]">You haven&apos;t booked any sessions yet.</p>
+        <p className="empty-line">You haven&apos;t booked any sessions yet.</p>
       ) : (
         <div className="space-y-2">
           {sessions.map((s) => <SessionRow key={s.id} session={s} onOpen={() => onOpen(s.id)} />)}
@@ -409,12 +421,12 @@ export function MySessionsView({
 
 export function SessionRow({ session, onOpen }: { session: any; onOpen: () => void }) {
   const STATUS_COLORS: Record<string, string> = {
-    confirmed:   'bg-pink-500/15 text-pink-400',
-    in_progress: 'bg-blue-500/15 text-blue-400',
-    completed:   'bg-emerald-500/15 text-emerald-400',
-    cancelled:   'bg-[var(--muted)]/40 text-[var(--muted-foreground)]',
-    disputed:    'bg-amber-500/15 text-amber-400',
-    pending:     'bg-amber-500/15 text-amber-400',
+    confirmed:   'var(--pink)',
+    in_progress: 'var(--teal)',
+    completed:   'var(--green)',
+    cancelled:   'var(--muted-2)',
+    disputed:    'var(--red)',
+    pending:     'var(--amber)',
   };
   return (
     <button
@@ -423,13 +435,20 @@ export function SessionRow({ session, onOpen }: { session: any; onOpen: () => vo
       style={{ padding: '14px 18px' }}
     >
       <div className="inset flex items-center justify-center" style={{ width: 44, height: 44, padding: 0, flex: 'none' }}>
-        <Calendar size={20} style={{ color: 'var(--amber)' }} />
+        <Calendar size={18} style={{ color: 'var(--amber)' }} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-[var(--foreground)]">{fmt(session.startsAt)}</div>
-        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
+        <div style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{fmt(session.startsAt)}</div>
+        <div style={{ marginTop: 5, fontSize: 11.5, color: 'var(--muted-2)' }}>{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
       </div>
-      <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[session.status]}`}>
+      <span
+        className="chip"
+        style={{
+          flex: 'none', height: 20, padding: '0 10px', fontWeight: 700, fontSize: 9,
+          letterSpacing: '.04em', textTransform: 'uppercase',
+          color: STATUS_COLORS[session.status], borderColor: STATUS_COLORS[session.status],
+        }}
+      >
         {session.status.replace('_', ' ')}
       </span>
     </button>
@@ -474,7 +493,7 @@ export function SessionView({
   if (!session) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--muted-foreground)]" />
+        <Loader2 size={26} className="animate-spin" style={{ color: 'var(--muted)' }} />
       </div>
     );
   }
@@ -497,7 +516,7 @@ export function SessionView({
   return (
     <div className="space-y-6">
       <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={12} /> Back
       </button>
 
       {/* Session header */}
@@ -507,7 +526,7 @@ export function SessionView({
           <div>
             <p className="lbl">SESSION</p>
             <h3 style={{ marginTop: 9 }}>{fmt(session.startsAt)}</h3>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1">
+            <p style={{ margin: '8px 0 0', fontSize: 12.5, color: 'var(--muted)' }}>
               {session.sessionDurationMin} minutes · ${session.pricePaidUsd.toFixed(2)} ·{' '}
               <span className="capitalize">{session.status.replace('_', ' ')}</span>
             </p>
@@ -520,7 +539,7 @@ export function SessionView({
                 rel="noreferrer"
                 className="btn-a"
               >
-                <Video size={16} /> Join call
+                <Video size={14} /> Join call
               </a>
             )}
             {session.status !== 'cancelled' && session.status !== 'completed' && (
@@ -552,7 +571,7 @@ export function SessionView({
                   value={meetingUrlInput}
                   onChange={(e) => setMeetingUrlInput(e.target.value)}
                   placeholder="Paste meeting URL (Zoom, Meet, Daily.co...)"
-                  className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                  className="flex-1 min-w-0" style={atlasField}
                 />
                 <button
                   onClick={async () => {
@@ -582,7 +601,7 @@ export function SessionView({
                   onChange={(e) => setCoachNotes(e.target.value)}
                   placeholder="Post-session notes (private to you)"
                   rows={3}
-                  className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                  className="w-full" style={atlasField}
                 />
                 <button
                   onClick={async () => {
@@ -614,7 +633,7 @@ export function SessionView({
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
               <button key={n} onClick={() => setReviewRating(n)}>
-                <Star size={28} className={n <= reviewRating ? 'text-amber-400 fill-amber-400' : 'text-[var(--muted-foreground)]/30'} />
+                <Star size={28} style={n <= reviewRating ? { color: 'var(--amber)', fill: 'currentColor' } : { color: 'var(--muted-4)' }} />
               </button>
             ))}
           </div>
@@ -623,7 +642,7 @@ export function SessionView({
             onChange={(e) => setReviewComment(e.target.value)}
             placeholder="Share your experience..."
             rows={3}
-            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            className="w-full" style={atlasField}
           />
           <button
             disabled={!reviewComment.trim()}
@@ -652,7 +671,7 @@ export function SessionView({
         </h3>
         <div className="flex-1 overflow-y-auto space-y-3 pr-2">
           {messages.length === 0 ? (
-            <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No messages yet. Say hello!</p>
+            <p className="empty-line">No messages yet. Say hello!</p>
           ) : (
             messages.map((m: any) => {
               const mine = m.fromUserId === user?.id;
@@ -665,7 +684,7 @@ export function SessionView({
                       : { borderRadius: 2, background: 'var(--panel-2)', border: '1px solid var(--line)', color: 'var(--text)' }}
                   >
                     {!mine && <div className="text-[10px] font-medium opacity-70 mb-0.5">{m.fromName}</div>}
-                    <div className="text-sm whitespace-pre-wrap">{m.body}</div>
+                    <div className="whitespace-pre-wrap" style={{ fontSize: 12.5, lineHeight: '19px' }}>{m.body}</div>
                   </div>
                 </div>
               );
@@ -679,14 +698,14 @@ export function SessionView({
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
             placeholder="Type a message..."
-            className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-xl text-sm"
+            className="flex-1 min-w-0" style={atlasField}
           />
           <button
             onClick={handleSend}
             disabled={!body.trim()}
             className="btn-a disabled:opacity-50"
           >
-            <Send size={16} />
+            <Send size={14} />
           </button>
         </div>
       </div>

@@ -129,7 +129,7 @@ export default function Articles() {
               <p>New content drops weekly. Stay tuned.</p>
             </div>
           ) : (
-            <div className="news">
+            <div className="news" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(230px,1fr))' }}>
               {filtered.map((a: any, idx: number) => (
                 <ArticleCard
                   key={a.id}
@@ -251,7 +251,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
   return (
     <div style={{ maxWidth: 820 }}>
       <button onClick={onBack} className="btn-g" style={{ height: 34, padding: '0 16px', marginBottom: 26 }}>
-        <ArrowLeft size={14} /> Back to articles
+        <ArrowLeft size={12} /> Back to articles
       </button>
 
       {article.coverImage && (
@@ -293,7 +293,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
           <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
           <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
           <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
-            <Lock size={22} color="#d99405" />
+            <Lock size={24} color="#d99405" />
           </span>
           <h4>This is a {article.accessTier === 'paid' ? 'Pro' : 'subscriber'} article</h4>
           <p style={{ maxWidth: 420 }}>Upgrade to read the full piece plus everything else in our archive.</p>
@@ -304,7 +304,7 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
       ) : (
         <div
           className="card"
-          style={{ whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: '24px', color: 'var(--text-2)', padding: '28px' }}
+          style={{ whiteSpace: 'pre-wrap', maxWidth: 700, fontSize: 14, lineHeight: '24px', color: 'var(--text-2)', padding: '28px' }}
         >
           {article.body}
         </div>

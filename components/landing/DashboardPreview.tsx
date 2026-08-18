@@ -32,7 +32,7 @@ export default function DashboardPreview() {
 
           <div className="sidecards">
             <div>
-              <div className="card minicard" style={{ height: '162px' }}>
+              <div className="card minicard" style={{ minHeight: '162px' }}>
                 <h4>Track Your Discipline</h4>
                 <p className="kicker">30-DAY DISCIPLINE SCORE</p>
                 <div className="disc">
@@ -59,7 +59,7 @@ export default function DashboardPreview() {
             </div>
 
             <div>
-              <div className="card minicard" style={{ height: '156px' }}>
+              <div className="card minicard" style={{ minHeight: '156px' }}>
                 <h4>Measure Your Edge</h4>
                 <p className="kicker">EQUITY CURVE · 30D</p>
                 <div className="edge">

@@ -266,8 +266,8 @@ export default function Reports({ trades, strategies }: Props) {
     <div className="pwrap">
       {/* ── Page head ── */}
       <div className="phead">
-        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
-          <FileText size={12} /> Reporting Desk
+        <p className="eyebrow">
+          <FileText size={13} style={{ color: 'var(--amber)' }} /> Reporting Desk
         </p>
         <h2>Reports &amp; Exports</h2>
         <p className="sub">Generate PDF reports, export trade data, and download performance cards.</p>

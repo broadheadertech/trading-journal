@@ -163,7 +163,7 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
       )}
 
       {/* Key numbers */}
-      <div className="stats" style={{ marginTop: 24, gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))' }}>
+      <div className="stats" style={{ marginTop: 24 }}>
         {[
           { label: 'Entry', value: formatPrice(trade.entryPrice) },
           { label: 'Exit', value: trade.isOpen ? 'Open' : trade.exitPrice ? formatPrice(trade.exitPrice) : '—' },

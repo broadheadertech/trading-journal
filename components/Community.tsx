@@ -78,9 +78,9 @@ export default function Community() {
           Discuss trades, share insights, ask questions. Read freely, post when logged in.
         </p>
         {user && (
-          <div className="actions" style={{ top: 34 }}>
+          <div className="actions">
             <button onClick={() => setShowNew(true)} className="btn-a" style={{ height: 44 }}>
-              <Plus size={12} /> New Post
+              <Plus size={14} /> New Post
             </button>
           </div>
         )}
@@ -128,13 +128,13 @@ export default function Community() {
           </div>
 
           {posts.length === 0 ? (
-            <div className="blank" style={{ height: 300 }}>
+            <div className="blank" style={{ minHeight: 300 }}>
               <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
               <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
               <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
               <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
               <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
-                <MessagesSquare size={26} style={{ color: 'var(--amber)' }} />
+                <MessagesSquare size={24} style={{ color: 'var(--amber)' }} />
               </span>
               <h4>No posts yet</h4>
               <p>Be the first to start the conversation.</p>
@@ -332,16 +332,11 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
   const [replyBody, setReplyBody] = useState('');
   const [replyParent, setReplyParent] = useState<string | null>(null);
 
-  if (!post) return (
-    <div className="flex items-center justify-center py-20">
-      <BrainMascot size={48} glow beat />
-    </div>
-  );
-
-  const myVote = (myPostVotes as any)[postId];
-  const canMod = isAdmin || post.authorId === user?.id;
-
-  // Build comment tree
+  // Build comment tree.
+  // MUST stay above the `!post` early return: when the post resolves the
+  // component would otherwise run one more hook than on the loading render,
+  // and React throws "Rendered more hooks than during the previous render",
+  // so PostDetail could never mount. Only depends on `comments`.
   const tree = useMemo(() => {
     const byParent: Record<string, any[]> = {};
     for (const c of comments) {
@@ -350,6 +345,15 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
     }
     return byParent;
   }, [comments]);
+
+  if (!post) return (
+    <div className="flex items-center justify-center py-20">
+      <BrainMascot size={48} glow beat />
+    </div>
+  );
+
+  const myVote = (myPostVotes as any)[postId];
+  const canMod = isAdmin || post.authorId === user?.id;
 
   const renderComments = (parentId: string, depth: number): React.ReactNode => {
     const list = tree[parentId] ?? [];
@@ -450,7 +454,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
               {post.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={11} /> Locked</span>}
             </div>
             <h3 style={{ marginBottom: 12 }}>{post.title}</h3>
-            <p className="whitespace-pre-wrap mb-4" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
+            <p className="whitespace-pre-wrap mb-4" style={{ maxWidth: 680, fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
 
             {post.images && post.images.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">

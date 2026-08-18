@@ -101,19 +101,19 @@ export default function Events() {
   return (
     <div>
       <div className="phead">
-        <p className="eyebrow" style={{ fontWeight: 500 }}>Live trainings &amp; meetups</p>
+        <p className="eyebrow">Live trainings &amp; meetups</p>
         <h2>Learn together, grow faster</h2>
         <p className="sub">Workshops, group sessions, and meetups — online or in-person.</p>
       </div>
 
       {events.length === 0 ? (
-        <div className="blank" style={{ height: 300 }}>
+        <div className="blank" style={{ minHeight: 300 }}>
           <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
           <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
           <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
           <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
           <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
-            <CalendarDays size={26} style={{ color: 'var(--amber)' }} />
+            <CalendarDays size={24} style={{ color: 'var(--amber)' }} />
           </span>
           <h4>No events yet</h4>
           <p>New trainings drop monthly — stay tuned.</p>
@@ -218,7 +218,7 @@ function EventDetail({
         )}
         <div className="space-y-4" style={{ padding: '24px 28px 28px' }}>
           <div className="flex items-start gap-3 flex-wrap">
-            <h3 className="flex-1">{ev.title}</h3>
+            <h3 className="flex-1" style={{ fontSize: 26, lineHeight: '28px' }}>{ev.title}</h3>
             <span className="chip" style={{ textTransform: 'uppercase', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em' }}>
               {m.icon} {m.label}
             </span>
@@ -230,7 +230,7 @@ function EventDetail({
             {ev.capacity && <span>Capacity: {ev.capacity}</span>}
           </div>
 
-          <p className="whitespace-pre-wrap" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{ev.description}</p>
+          <p className="whitespace-pre-wrap" style={{ maxWidth: 680, fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{ev.description}</p>
 
           {ev.gallery && ev.gallery.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -321,7 +321,7 @@ export function AdminEvents({ onBack }: { onBack?: () => void }) {
           </button>
         ) : <span />}
         <button onClick={() => setCreating(true)} className="btn-a">
-          <Plus size={12} /> New Event
+          <Plus size={14} /> New Event
         </button>
       </div>
 

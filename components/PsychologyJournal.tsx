@@ -41,11 +41,11 @@ function classifyEmotion(emotion: EmotionState): BehaviorState {
 }
 
 const STATE_COLORS: Record<BehaviorState, string> = {
-  Calm: '#22c55e',
-  Focused: '#3b82f6',
-  Heated: '#f59e0b',
-  Tilted: '#ef4444',
-  Revenge: '#dc2626',
+  Calm: '#24c88a',
+  Focused: '#2fd3c4',
+  Heated: '#d99405',
+  Tilted: '#ff4d5e',
+  Revenge: '#ff3d87',
 };
 
 // Bias detection types
@@ -371,7 +371,7 @@ export default function PsychologyJournal({
   const [selectedSessionIdx, setSelectedSessionIdx] = useState(0);
   const selectedSession = m.sessions[selectedSessionIdx] ?? null;
 
-  const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--foreground)]';
+  const pnlColor = (v: number) => v > 0 ? 'text-[var(--green)]' : v < 0 ? 'text-[var(--red)]' : 'text-[var(--text)]';
   // formatCurrency already signs the number — no need to manually prepend '+'.
   const fmtPnl = (v: number) => formatCurrency(v);
 
@@ -452,7 +452,7 @@ export default function PsychologyJournal({
       <div className="stats" style={{ marginTop: 0 }}>
         {[
           { label: 'HEALTH SCORE', icon: <Shield size={14} />, accent: 'var(--green)', desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
-            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? 'â†‘' : '0'}%`, color: m.healthScore >= 60 ? 'var(--green)' : m.healthScore >= 40 ? 'var(--amber)' : 'var(--red)' },
+            value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? '↑' : '0'}%`, color: m.healthScore >= 60 ? 'var(--green)' : m.healthScore >= 40 ? 'var(--amber)' : 'var(--red)' },
           { label: 'TILT PRESSURE', icon: <Zap size={14} />, accent: 'var(--amber)', desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
             value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'var(--green)' : m.tiltPressure < 70 ? 'var(--amber)' : 'var(--red)' },
           { label: 'REVENGE CLUSTERS', icon: <AlertTriangle size={14} />, accent: 'var(--pink)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
@@ -481,11 +481,11 @@ export default function PsychologyJournal({
               <circle cx="100" cy="100" r="85" fill="none" stroke="var(--border)" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={`${85 * 2 * Math.PI * 0.75} ${85 * 2 * Math.PI * 0.25}`}
                 transform="rotate(135 100 100)" />
-              <circle cx="100" cy="100" r="85" fill="none" stroke="#22c55e" strokeWidth="12" strokeLinecap="round"
+              <circle cx="100" cy="100" r="85" fill="none" stroke="#24c88a" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={`${85 * 2 * Math.PI * 0.75 * (m.healthScore / 100)} ${85 * 2 * Math.PI}`}
                 transform="rotate(135 100 100)" className="transition-all duration-700" />
-              <text x="100" y="95" textAnchor="middle" className="fill-[var(--foreground)]" fontSize="42" fontWeight="bold" fontFamily="var(--font-sans), system-ui, sans-serif">{m.healthScore}</text>
-              <text x="100" y="120" textAnchor="middle" className={m.healthScore >= 60 ? 'fill-emerald-400' : m.healthScore >= 40 ? 'fill-amber-400' : 'fill-red-400'} fontSize="14" fontWeight="600">{m.healthLabel.toUpperCase()}</text>
+              <text x="100" y="95" textAnchor="middle" className="fill-[var(--text)]" fontSize="42" fontWeight="500" fontFamily="var(--mono)">{m.healthScore}</text>
+              <text x="100" y="120" textAnchor="middle" className={m.healthScore >= 60 ? 'fill-[var(--green)]' : m.healthScore >= 40 ? 'fill-[var(--amber)]' : 'fill-[var(--red)]'} fontSize="14" fontWeight="600">{m.healthLabel.toUpperCase()}</text>
             </svg>
             <div className="text-sm font-medium text-[var(--muted-foreground)] mt-2">Behavioral Health Score</div>
           </div>
@@ -494,10 +494,10 @@ export default function PsychologyJournal({
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { label: 'Discipline', value: m.disciplineScore, icon: <Activity size={14} />, color: m.disciplineScore >= 70 ? '#3b82f6' : m.disciplineScore >= 40 ? '#f59e0b' : '#ef4444' },
-                { label: 'Emotional Control', value: m.emotionalControl, icon: <Heart size={14} />, color: m.emotionalControl >= 70 ? '#22c55e' : m.emotionalControl >= 40 ? '#f59e0b' : '#ef4444' },
-                { label: 'Risk Mgmt', value: m.riskMgmt, icon: <Shield size={14} />, color: m.riskMgmt >= 70 ? '#22c55e' : m.riskMgmt >= 40 ? '#f59e0b' : '#ef4444' },
-                { label: 'Consistency', value: m.consistency, icon: <Activity size={14} />, color: m.consistency >= 70 ? '#22c55e' : m.consistency >= 40 ? '#f59e0b' : '#ef4444' },
+                { label: 'Discipline', value: m.disciplineScore, icon: <Activity size={14} />, color: m.disciplineScore >= 70 ? 'var(--teal)' : m.disciplineScore >= 40 ? 'var(--amber)' : 'var(--red)' },
+                { label: 'Emotional Control', value: m.emotionalControl, icon: <Heart size={14} />, color: m.emotionalControl >= 70 ? 'var(--green)' : m.emotionalControl >= 40 ? 'var(--amber)' : 'var(--red)' },
+                { label: 'Risk Mgmt', value: m.riskMgmt, icon: <Shield size={14} />, color: m.riskMgmt >= 70 ? 'var(--green)' : m.riskMgmt >= 40 ? 'var(--amber)' : 'var(--red)' },
+                { label: 'Consistency', value: m.consistency, icon: <Activity size={14} />, color: m.consistency >= 70 ? 'var(--green)' : m.consistency >= 40 ? 'var(--amber)' : 'var(--red)' },
               ].map(bar => (
                 <div key={bar.label} className="inset">
                   <div className="flex items-center justify-between mb-2">
@@ -507,7 +507,7 @@ export default function PsychologyJournal({
                     <span className="text-sm font-bold text-[var(--foreground)]">{bar.value}</span>
                   </div>
                   <div style={{ height: 2, background: "var(--rail)", overflow: "hidden" }}>
-                    <div style={{ width: `${bar.value}%`, backgroundColor: bar.color }} />
+                    <div style={{ height: "100%", width: `${bar.value}%`, backgroundColor: bar.color }} />
                   </div>
                 </div>
               ))}
@@ -525,9 +525,9 @@ export default function PsychologyJournal({
                     <LineChart data={m.sessions.map(s => ({ date: s.date, score: Math.round(100 - s.pressure) }))}>
                       <XAxis dataKey="date" tick={false} axisLine={false} />
                       <YAxis domain={[0, 100]} tick={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }}
+                      <Tooltip contentStyle={{ background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: '2px', fontSize: '11px', color: 'var(--text)' }}
                         formatter={(v: unknown) => [`Score ${v}`, '']} labelFormatter={(l) => `${l}`} />
-                      <Line type="monotone" dataKey="score" stroke="#22c55e" strokeWidth={2} dot={{ fill: '#ef4444', r: 3 }} />
+                      <Line type="monotone" dataKey="score" stroke="#24c88a" strokeWidth={2} dot={{ fill: '#ff4d5e', r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -542,7 +542,7 @@ export default function PsychologyJournal({
         <div className="card">
           <div className="flex items-center gap-2 mb-1">
             <Activity size={18} className="text-[var(--muted-foreground)]" />
-            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: 0 }}>SIGNAL SNAPSHOT</h3>
+            <h3>Signal Snapshot</h3>
           </div>
           <p className="sub" style={{ marginBottom: 18 }}>Compact readout of behavior frequency, pressure, and streak risk metrics.</p>
           <div className="space-y-0">
@@ -569,7 +569,7 @@ export default function PsychologyJournal({
         <div className="card">
           <div className="flex items-center gap-2 mb-1">
             <Zap size={18} className="text-[var(--muted-foreground)]" />
-            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: 0 }}>ACTION QUEUE</h3>
+            <h3>Action Queue</h3>
           </div>
           <p className="sub" style={{ marginBottom: 18 }}>Top active rule priorities with compliance status and impact telemetry.</p>
           <div className="flex items-center flex-wrap gap-2 mb-4">
@@ -609,7 +609,7 @@ export default function PsychologyJournal({
       <div className="card">
         <div className="flex items-center justify-between mb-1">
           <div>
-            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Emotional State Flow</h3>
+            <h3>Emotional State Flow</h3>
             <p className="sub">Interactive behavior timeline with pressure, PnL, and session context</p>
           </div>
           <span className="chip" style={{ height: 26, fontWeight: 700, color: m.productivePercent >= 60 ? "var(--green)" : "var(--red)" }}>
@@ -668,17 +668,17 @@ export default function PsychologyJournal({
                 margin={{ top: 5, right: 40, left: 10, bottom: 5 }}>
                 <defs>
                   <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#24c88a" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#24c88a" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
                 <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                 <YAxis yAxisId="pressure" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#pnlGrad)" dot={{ fill: '#22c55e', r: 4 }} name="PnL" />
-                <Line yAxisId="pressure" type="monotone" dataKey="pressure" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Pressure" />
+                <Tooltip contentStyle={{ background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: '2px', fontSize: '11px', color: 'var(--text)' }} />
+                <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#24c88a" strokeWidth={2} fill="url(#pnlGrad)" dot={{ fill: '#24c88a', r: 4 }} name="PnL" />
+                <Line yAxisId="pressure" type="monotone" dataKey="pressure" stroke="#24c88a" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Pressure" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -747,13 +747,13 @@ export default function PsychologyJournal({
 
         {/* State Distribution */}
         <div className="card">
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: '0 0 18px' }}>STATE DISTRIBUTION</h3>
+          <h3 style={{ marginBottom: 18 }}>State Distribution</h3>
           <div className="space-y-3">
             {(Object.keys(m.statePercent) as BehaviorState[]).map(state => (
               <div key={state} className="flex items-center gap-3">
                 <span className="w-16 text-sm text-[var(--foreground)]">{state}</span>
                 <div style={{ flex: 1, height: 2, background: "var(--rail)", overflow: "hidden" }}>
-                  <div style={{ width: `${m.statePercent[state]}%`, backgroundColor: STATE_COLORS[state] }} />
+                  <div style={{ height: "100%", width: `${m.statePercent[state]}%`, backgroundColor: STATE_COLORS[state] }} />
                 </div>
                 <span className="w-10 text-right text-sm text-[var(--foreground)]">{m.statePercent[state]}%</span>
               </div>
@@ -778,7 +778,7 @@ export default function PsychologyJournal({
       {/* ── Revenge Trade Cascade + Session Heatmap ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="card">
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Revenge Trade Cascade</h3>
+          <h3>Revenge Trade Cascade</h3>
           <p className="sub" style={{ marginBottom: 18 }}>Detected loss clusters from executed trades in this range</p>
           {m.revengeClusterCount === 0 ? (
             <p className="text-sm text-[var(--muted-foreground)]">No revenge clusters detected in this range.</p>
@@ -793,7 +793,7 @@ export default function PsychologyJournal({
         </div>
 
         <div className="card">
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Session Heatmap</h3>
+          <h3>Session Heatmap</h3>
           <p className="sub" style={{ marginBottom: 10 }}>Real trade outcomes by UTC day and hour</p>
           <div className="text-[10px] text-[var(--muted-foreground)] mb-3">Active cells: {m.heatmap.size}/168 &bull; Trades: {m.closed.length}</div>
 
@@ -874,7 +874,7 @@ export default function PsychologyJournal({
       {/* ── Discipline Tracker + Cognitive Bias Profile ── */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <div className="card">
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Discipline Tracker</h3>
+          <h3>Discipline Tracker</h3>
           <p className="sub" style={{ marginBottom: 18 }}>Rule compliance & streaks</p>
 
           <div className="grid grid-cols-3 gap-4 mb-5">
@@ -910,7 +910,7 @@ export default function PsychologyJournal({
         </div>
 
         <div className="card">
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0 }}>Cognitive Bias Profile</h3>
+          <h3>Cognitive Bias Profile</h3>
           <p className="sub" style={{ marginBottom: 18 }}>Psychological exposure analysis</p>
 
           {/* Radar-style visualization using bars */}

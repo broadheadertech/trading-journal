@@ -98,7 +98,7 @@ export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDa
         {/* Step 1: Market Selection */}
         {step === 1 && (
           <div style={{ marginTop: 22 }}>
-            <h2 style={{ fontSize: 24, lineHeight: '28px' }}>What do you trade?</h2>
+            <h2>What do you trade?</h2>
             <p className="sub">We&apos;ll tailor your experience</p>
 
             <div className="grid grid-cols-2 gap-3" style={{ marginTop: 24, textAlign: 'left' }}>
@@ -156,7 +156,7 @@ export default function OnboardingWizard({ onComplete, onLogFirstTrade, onGoToDa
         {/* Step 2: Capital & Currency */}
         {step === 2 && (
           <div style={{ marginTop: 22 }}>
-            <h2 style={{ fontSize: 24, lineHeight: '28px' }}>Set your starting capital</h2>
+            <h2>Set your starting capital</h2>
             <p className="sub">This helps track your portfolio growth</p>
 
             <div style={{ marginTop: 24, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 16 }}>

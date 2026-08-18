@@ -133,7 +133,7 @@ export default function TradingSignals() {
   return (
     <div>
       <div className="phead pwrap">
-        <p className="eyebrow" style={{ fontWeight: 500 }}>
+        <p className="eyebrow">
           <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--pink)', flex: 'none' }} />
           {activeCount} active · {pendingCount} pending · community + AI signals
         </p>
@@ -275,7 +275,7 @@ function Leaderboard({ rows }: { rows: { posterId: string; posterName: string; t
             <span style={{ width: 22, fontFamily: 'var(--mono)', color: i === 0 ? 'var(--amber)' : 'var(--muted-2)', flex: 'none' }}>
               {i + 1}
             </span>
-            <span style={{ fontWeight: 700, color: 'var(--text)' }}>{r.posterName}</span>
+            <span style={{ fontWeight: 700, color: 'var(--text)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.posterName}</span>
             <span style={{ marginLeft: 10, height: 20, padding: '0 8px', borderRadius: 2, display: 'inline-flex', alignItems: 'center', fontWeight: 700, fontSize: 9, letterSpacing: '.03em', textTransform: 'uppercase', border: '1px solid var(--line-2)', color: 'var(--muted-2)' }}>
               {r.tier}
             </span>

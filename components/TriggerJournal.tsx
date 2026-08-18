@@ -95,7 +95,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
         <div className="cardhead" style={{ flexWrap: 'wrap', gap: 16 }}>
           <div>
             <p className="lbl b10" style={{ color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <Zap size={12} /> TRIGGER JOURNAL
+              <Zap size={12} /> BEHAVIOR LOG
             </p>
             <h3>Trigger Journal</h3>
             <p className="sub">Track what makes you emotional and how it affects your trades.</p>

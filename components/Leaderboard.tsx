@@ -43,14 +43,14 @@ export default function Leaderboard({ trades }: LeaderboardProps) {
 
       {/* ── Page head ── */}
       <div className="phead pwrap">
-        <p className="eyebrow" style={{ fontWeight: 500 }}><Trophy size={13} /> Competitive pulse</p>
+        <p className="eyebrow"><Trophy size={13} /> Competitive pulse</p>
         <h2>Leaderboard arena</h2>
         <p className="sub">
           Anonymous verified ranking built from actual account performance. Use this board to benchmark execution quality, not just outcomes.
         </p>
         <div className="actions">
           <button className="btn-g" type="button">
-            <RefreshCw size={13} /> Refresh board
+            <RefreshCw size={14} /> Refresh board
           </button>
         </div>
       </div>

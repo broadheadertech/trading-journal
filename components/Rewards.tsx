@@ -6,8 +6,8 @@ export default function Rewards() {
   return (
     <div style={{ position: 'relative' }}>
       <div className="phead">
-        <p className="eyebrow" style={{ color: '#fff' }}>
-          <Gift size={12} /> Loyalty program
+        <p className="eyebrow">
+          <Gift size={13} /> Loyalty program
         </p>
         <h2>Rewards &amp; Bonuses</h2>
         <p className="sub">
@@ -75,7 +75,7 @@ export default function Rewards() {
 
       {/* How to earn */}
       <div className="card" style={{ marginTop: 32, padding: '25px 28px 34px' }}>
-        <h3 style={{ fontSize: 17, marginLeft: 26 }}>
+        <h3>
           <Sparkles size={16} style={{ verticalAlign: -3, marginRight: 8, color: 'var(--teal)' }} />
           Ways to earn
         </h3>

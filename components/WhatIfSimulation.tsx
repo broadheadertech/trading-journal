@@ -310,9 +310,9 @@ export default function WhatIfSimulation({ trades }: Props) {
   return (
     <div className="pwrap anim-fade-up">
       {/* ── Header ── */}
-      <div className="phead" style={{ marginBottom: 26 }}>
-        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
-          <FlaskConical size={12} /> What-If Lab
+      <div className="phead">
+        <p className="eyebrow">
+          <FlaskConical size={13} style={{ color: 'var(--amber)' }} /> What-If Lab
         </p>
         <h2>Scenario Composer for Behavior Fixes</h2>
         <p className="sub">

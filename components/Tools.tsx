@@ -870,7 +870,7 @@ export default function Tools() {
   return (
     <div>
       <div className="phead pwrap">
-        <p className="eyebrow" style={{ fontWeight: 500 }}>
+        <p className="eyebrow">
           <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--amber)', flex: 'none' }} />
           {TOOLS.length} calculators · sizing, risk &amp; projection
         </p>

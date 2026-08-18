@@ -108,42 +108,8 @@ export default function JournalTab(props: Props) {
         })}
       </div>
 
-      {sub === 'trades' && (
-        <div className="card pwrap" style={{ padding: '39px 28px 34px' }}>
-          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
-          <p style={{ margin: 0, fontWeight: 500, fontSize: '9.5px', color: 'var(--green)', letterSpacing: '.04em' }}>
-            INTERACTIVE TRADE JOURNAL
-          </p>
-          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 28, lineHeight: '32px', margin: '20px 0 0' }}>
-            Journal Every Trade With Click-to-Review Flow
-          </h3>
-          <p style={{ margin: '22px 0 0', fontSize: '13.5px', lineHeight: '21px', color: 'var(--muted)', maxWidth: 640 }}>
-            This is your interactive journal. Filter by behavior pattern, click any trade row, and open full
-            root-cause review with notes, setup tags, emotions, and evidence.
-          </p>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 28 }}>
-            <span className="chip" style={{ height: 32 }}>1. Use filters to isolate one pattern</span>
-            <span className="chip" style={{ height: 32 }}>2. Click a trade to open review details</span>
-            <span className="chip" style={{ height: 32 }}>3. Log lesson and move to next trade</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', marginTop: 32, maxWidth: 292 }}>
-            <span style={{ fontSize: '12.5px', color: 'var(--muted)' }}>Trades</span>
-            <b style={{ marginLeft: 'auto', fontSize: '12.5px' }}>{props.trades.length}</b>
-          </div>
-          <button
-            type="button"
-            onClick={props.onAddTrade}
-            className="btn-a"
-            style={{ position: 'absolute', right: 28, top: 30, height: 47, padding: '0 22px' }}
-          >
-            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden="true">
-              <path d="M6 0v13M0 6.5h12" stroke="currentColor" strokeWidth="1.8" />
-            </svg>
-            Add New Trade
-          </button>
-        </div>
-      )}
-
+      {/* The "Interactive Trade Journal" hero lives in <TradesLog/> — rendering it here
+          as well stacked two identical cards on top of each other. */}
       {sub === 'trades' && (
         <TradesLog
           trades={props.trades}

@@ -81,7 +81,7 @@ export default function Courses() {
     <div className="pwrap">
       <div className="phead">
         <p className="eyebrow">
-          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)', display: 'inline-block' }} />
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)', flex: 'none' }} />
           New courses every month
         </p>
         <h2>Level up your trading edge</h2>
@@ -92,8 +92,10 @@ export default function Courses() {
 
       {courses.length === 0 ? (
         <div className="blank">
-          <span className="corner" style={{ left: -1, top: -1, borderWidth: '1px 0 0 1px' }} />
-          <span className="corner" style={{ right: -1, bottom: -1, borderWidth: '0 1px 1px 0' }} />
+          <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
           <span className="badge" style={{ border: '1px solid var(--amber)', color: 'var(--amber)' }}>
             <GraduationCap size={24} />
           </span>
@@ -134,8 +136,8 @@ export default function Courses() {
                 </div>
 
                 <div className="body">
-                  <h4>{c.title}</h4>
-                  <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '19px', color: 'var(--muted)' }}>
+                  <h4 className="line-clamp-2">{c.title}</h4>
+                  <p className="line-clamp-2" style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '19px', color: 'var(--muted)' }}>
                     {c.description}
                   </p>
 
@@ -207,7 +209,7 @@ function CourseDetail({
           )}
           <div style={{ padding: '25px 28px 34px' }}>
             <h3 style={{ fontSize: 26, lineHeight: '28px' }}>{course.title}</h3>
-            <p className="sub" style={{ fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>{course.description}</p>
+            <p className="sub" style={{ maxWidth: 680, fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>{course.description}</p>
 
             {course.gallery && course.gallery.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 10, marginTop: 22 }}>
@@ -250,7 +252,7 @@ function CourseDetail({
       </button>
 
       <div className="phead" style={{ marginTop: 18, marginBottom: 24 }}>
-        <h2 style={{ fontSize: 32, lineHeight: '36px' }}>{course.title}</h2>
+        <h2>{course.title}</h2>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,280px) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
@@ -321,7 +323,7 @@ function CourseDetail({
               )}
 
               {activeLesson.body && (
-                <p style={{ margin: '20px 0 0', fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>
+                <p style={{ maxWidth: 680, margin: '20px 0 0', fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>
                   {activeLesson.body}
                 </p>
               )}
@@ -341,7 +343,7 @@ function CourseDetail({
                     className="btn-a"
                     style={{ height: 36, fontSize: 12.5 }}
                   >
-                    <Check size={13} /> Mark as complete
+                    <Check size={12} /> Mark as complete
                   </button>
                 )}
               </div>
@@ -381,7 +383,7 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
           </button>
         ) : <span />}
         <button onClick={() => setShowNew(true)} className="btn-a">
-          <Plus size={12} /> New Course
+          <Plus size={14} /> New Course
         </button>
       </div>
 
@@ -809,7 +811,7 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
             }}
             className="btn-a disabled:opacity-50"
           >
-            <Plus size={12} /> Add Module
+            <Plus size={14} /> Add Module
           </button>
         </div>
 

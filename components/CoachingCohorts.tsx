@@ -67,13 +67,15 @@ export default function CoachingCohorts() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
             <p className="lbl b10">COHORTS YOU HOST</p>
             <button onClick={() => setShowCreate(true)} className="btn-a" style={{ height: 34, marginLeft: 'auto', fontSize: 12 }}>
-              <Plus size={14} /> New cohort
+              <Plus size={12} /> New cohort
             </button>
           </div>
           {myCoachCohorts.length === 0 ? (
             <div className="blank" style={{ height: 'auto', minHeight: 180, padding: '40px 28px', textAlign: 'center' }}>
-              <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
-              <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+              <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+              <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
               <h4>No cohorts yet</h4>
               <p>
                 You haven&apos;t created any cohorts yet. Tap <strong style={{ color: 'var(--amber)' }}>New cohort</strong> to host your first group program.
@@ -377,21 +379,25 @@ function CohortCard({
         </div>
       )}
 
-      <button
-        onClick={handleJoin}
-        disabled={busy || alreadyMember || full}
-        className={alreadyMember || full ? 'btn-g' : 'btn-a'}
-        style={{
-          width: '100%', marginTop: 18,
-          ...(alreadyMember ? { borderColor: 'var(--green)', color: 'var(--green)', cursor: 'default' } : null),
-          ...(full && !alreadyMember ? { color: 'var(--muted-2)', cursor: 'not-allowed' } : null),
-        }}
-      >
-        {busy ? <Loader2 size={14} className="animate-spin" /> :
-          alreadyMember ? <span className="inline-flex items-center gap-1.5"><Check size={14} /> Joined</span> :
-          full ? 'Cohort full' :
-          `Join — $${cohort.monthlyPriceUsd}/mo`}
-      </button>
+      {/* marginTop:auto pins the CTA to the card floor so a row of stretched
+          .split-3 cards keeps its buttons on one baseline. */}
+      <div style={{ marginTop: 'auto', paddingTop: 18 }}>
+        <button
+          onClick={handleJoin}
+          disabled={busy || alreadyMember || full}
+          className={alreadyMember || full ? 'btn-g' : 'btn-a'}
+          style={{
+            width: '100%',
+            ...(alreadyMember ? { borderColor: 'var(--green)', color: 'var(--green)', cursor: 'default' } : null),
+            ...(full && !alreadyMember ? { color: 'var(--muted-2)', cursor: 'not-allowed' } : null),
+          }}
+        >
+          {busy ? <Loader2 size={14} className="animate-spin" /> :
+            alreadyMember ? <span className="inline-flex items-center gap-1.5"><Check size={14} /> Joined</span> :
+            full ? 'Cohort full' :
+            `Join — $${cohort.monthlyPriceUsd}/mo`}
+        </button>
+      </div>
     </div>
   );
 }

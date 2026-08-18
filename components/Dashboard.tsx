@@ -372,7 +372,7 @@ export default function Dashboard({
         </div>
 
         {/* execution score */}
-        <div className="card score">
+        <div className="card score" style={{ alignSelf: 'stretch' }}>
           <div className="ring">
             <svg viewBox="0 0 120 120" width="80" height="80" fill="none">
               <circle cx="60" cy="60" r="54" stroke="#16202c" strokeWidth="7.5" />
@@ -749,12 +749,15 @@ export default function Dashboard({
                   <span className="ic" style={{ color: dirColor, fontWeight: 700 }}>{dir}</span>
                   <span className="lb" style={{ color: 'var(--text)', fontWeight: 700 }}>{t.coin}</span>
                   <span style={{ marginLeft: 12, fontSize: 11, color: 'var(--muted-2)' }}>{timeLabel} ago</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)' }}>
+                  <span style={{
+                    marginLeft: 'auto', minWidth: 0, fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  }}>
                     ENTRY {formatCurrency(t.entryPrice)}
                     {t.exitPrice ? ` · EXIT ${formatCurrency(t.exitPrice)}` : ''}
                     {t.exitDate ? ` · ${format(new Date(t.exitDate), 'dd/MM/yyyy, HH:mm')}` : ''}
                   </span>
-                  <span className="val" style={{ marginLeft: 20, color: c(t.actualPnL ?? 0) }}>{fmtPnl(t.actualPnL ?? 0)}</span>
+                  <span className="val" style={{ flex: 'none', marginLeft: 20, color: c(t.actualPnL ?? 0) }}>{fmtPnl(t.actualPnL ?? 0)}</span>
                 </div>
               );
             })}

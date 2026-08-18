@@ -305,7 +305,7 @@ export default function TradesLog({
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
           <Calendar size={16} style={{ marginTop: 4, color: 'var(--amber)', flex: 'none' }} />
           <div>
-            <h3 style={{ fontSize: 17 }}>Monthly Calendar</h3>
+            <h3>Monthly Calendar</h3>
             <p className="sub">Independent from timeframe. Jump quickly between months.</p>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -360,7 +360,7 @@ export default function TradesLog({
         <div className="card" style={{ padding: '36px 28px 30px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <h3 style={{ fontSize: 19 }}>Trade Journal</h3>
+              <h3>Trade Journal</h3>
               <p className="sub">Click any trade card to open full review, violations context, and evidence.</p>
             </div>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -525,9 +525,7 @@ export default function TradesLog({
             <div className="qrow">Unknown side<em style={{ color: 'var(--amber)' }}>{filtered.filter(t => !t.direction).length}</em></div>
             <div className="qrow">High-fee trades<em style={{ color: 'var(--amber)' }}>0</em></div>
             <p className="lbl b95" style={{ marginTop: 26 }}>TOP PENDING SYMBOLS</p>
-          </div>
-          <div className="card" style={{ marginTop: 14, padding: '16px 18px' }}>
-            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
+            <p style={{ margin: '9px 0 0', fontSize: 12, color: 'var(--muted)' }}>
               {filtered.filter(t => !t.verdict).length === 0
                 ? 'No pending clusters in current filters.'
                 : `${[...new Set(filtered.filter(t => !t.verdict).map(t => t.coin))].slice(0, 3).join(', ')} pending`}

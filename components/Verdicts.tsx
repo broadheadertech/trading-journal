@@ -421,9 +421,9 @@ export default function Verdicts({ trades }: VerdictsProps) {
   if (assessed.length === 0) {
     return (
       <div className="pwrap anim-fade-up">
-        <div className="phead" style={{ marginBottom: 26 }}>
-          <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
-            <Shield size={12} /> Verdict Engine
+        <div className="phead">
+          <p className="eyebrow">
+            <Shield size={13} style={{ color: 'var(--amber)' }} /> Verdict Engine
           </p>
           <h2>Performance Verdicts</h2>
           <p className="sub">An honest read on execution quality — leaks, strengths, and the next change worth making.</p>
@@ -447,9 +447,9 @@ export default function Verdicts({ trades }: VerdictsProps) {
   return (
     <div className="pwrap anim-fade-up">
       {/* ── Header ── */}
-      <div className="phead" style={{ marginBottom: 26 }}>
-        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
-          <Shield size={12} /> Verdict Engine
+      <div className="phead">
+        <p className="eyebrow">
+          <Shield size={13} style={{ color: 'var(--amber)' }} /> Verdict Engine
         </p>
         <h2>Performance Verdicts</h2>
         <p className="sub">

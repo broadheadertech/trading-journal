@@ -61,7 +61,7 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
   return (
     <div style={{ position: 'relative' }}>
       <div className="phead">
-        <p className="eyebrow" style={{ fontWeight: 500 }}><Users size={13} /> Following</p>
+        <p className="eyebrow"><Users size={13} /> Following</p>
         <h2>Your feed</h2>
         <p className="sub">
           Latest signals, public trades, and posts from the traders you follow.
