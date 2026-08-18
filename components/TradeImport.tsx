@@ -327,38 +327,44 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
     .every(f => Object.values(mapping).includes(f.field));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#0a0a14] border border-[var(--foreground)]/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(4,7,11,.86)' }}>
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        style={{ border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel)', position: 'relative' }}>
+        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 120, height: 3, background: 'var(--amber)' }} />
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--foreground)]/10">
-          <div className="flex items-center gap-3">
-            <Upload size={20} className="text-[var(--foreground)]/60" />
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Import Trades</h2>
+        <div className="flex items-center justify-between" style={{ padding: '20px 26px', borderBottom: '1px solid var(--line)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Upload size={16} style={{ color: 'var(--amber)', flex: 'none' }} />
+            <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, margin: 0 }}>Import Trades</h3>
           </div>
-          <button onClick={onClose} className="text-[var(--foreground)]/40 hover:text-[var(--foreground)] transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="chip" style={{ width: 32, height: 32, padding: 0, justifyContent: 'center' }} aria-label="Close">
+            <X size={15} />
           </button>
         </div>
 
         {/* Steps indicator */}
-        <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--foreground)]/5">
+        <div className="flex items-center flex-wrap" style={{ gap: 10, padding: '14px 26px', borderBottom: '1px solid var(--hair, var(--line))' }}>
           {[1, 2, 3].map(s => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${
-                step >= s ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' : 'bg-[var(--foreground)]/5 text-[var(--foreground)]/30 border border-[var(--foreground)]/10'
-              }`}>
-                {step > s ? <Check size={14} /> : s}
-              </div>
-              <span className={`text-xs hidden sm:inline ${step >= s ? 'text-[var(--foreground)]/70' : 'text-[var(--foreground)]/30'}`}>
+            <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{
+                width: 24, height: 24, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12,
+                border: `1px solid ${step >= s ? 'var(--amber)' : 'var(--line)'}`,
+                color: step >= s ? 'var(--amber)' : 'var(--muted-3)',
+                background: 'var(--panel-2)',
+              }}>
+                {step > s ? <Check size={12} /> : s}
+              </span>
+              <span className="hidden sm:inline" style={{ fontSize: '11.5px', fontWeight: step >= s ? 700 : 400, color: step >= s ? 'var(--text)' : 'var(--muted-3)' }}>
                 {s === 1 ? 'Upload' : s === 2 ? 'Map Columns' : 'Preview & Import'}
               </span>
-              {s < 3 && <ChevronRight size={14} className="text-[var(--foreground)]/20 mx-1" />}
+              {s < 3 && <ChevronRight size={13} style={{ color: 'var(--muted-3)', margin: '0 4px' }} />}
             </div>
           ))}
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto" style={{ padding: '24px 26px' }}>
 
           {/* Step 1: Upload */}
           {step === 1 && (
@@ -366,11 +372,16 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer ${
-                dragOver ? 'border-blue-400 bg-blue-500/10' : 'border-[var(--foreground)]/15 hover:border-[var(--foreground)]/30'
-              }`}
+              className="blank"
+              style={{
+                padding: '48px 28px', textAlign: 'center', cursor: 'pointer',
+                borderStyle: 'dashed',
+                borderColor: dragOver ? 'var(--amber)' : 'var(--line-2)',
+              }}
               onClick={() => fileRef.current?.click()}
             >
+              <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
               <input
                 ref={fileRef}
                 type="file"
@@ -378,10 +389,12 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
               />
-              <FileText size={40} className="mx-auto text-[var(--foreground)]/30 mb-4" />
-              <p className="text-[var(--foreground)]/70 text-sm mb-1">Drop your CSV or Excel file here</p>
-              <p className="text-[var(--foreground)]/40 text-xs">or click to browse — .csv, .xlsx supported</p>
-              <p className="text-[var(--foreground)]/30 text-xs mt-4">
+              <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+                <FileText size={22} style={{ color: 'var(--amber)' }} />
+              </div>
+              <h4>Drop your CSV or Excel file here</h4>
+              <p>or click to browse — .csv, .xlsx supported</p>
+              <p className="footnote" style={{ marginTop: 20 }}>
                 Supports exports from Binance, Bybit, TradingView, MetaTrader, and most brokers
               </p>
             </div>
@@ -389,19 +402,19 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
 
           {/* Step 2: Column Mapping */}
           {step === 2 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-[var(--foreground)]/60">
-                  <span className="text-[var(--foreground)] font-medium">{rawRows.length}</span> rows detected in <span className="text-[var(--foreground)]/80">{fileName}</span>
+            <div>
+              <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '11px 16px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--muted)' }}>
+                  <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{rawRows.length}</span> rows detected in <span style={{ color: 'var(--text-2, var(--text))' }}>{fileName}</span>
                 </p>
-                <p className="text-xs text-[var(--foreground)]/40">{columns.length} columns</p>
+                <p style={{ margin: 0, marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--muted-2)' }}>{columns.length} columns</p>
               </div>
 
-              <div className="space-y-2">
+              <div style={{ display: 'grid', gap: 8, marginTop: 18 }}>
                 {MAPPABLE_FIELDS.map(({ field, label, required }) => (
-                  <div key={field} className="flex items-center gap-3">
-                    <span className={`text-xs w-44 ${required ? 'text-[var(--foreground)]/80' : 'text-[var(--foreground)]/50'}`}>
-                      {label} {required && <span className="text-red-400">*</span>}
+                  <div key={field} style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <span style={{ width: 172, flex: 'none', fontSize: '11.5px', color: required ? 'var(--text)' : 'var(--muted-2)' }}>
+                      {label} {required && <span style={{ color: 'var(--red)' }}>*</span>}
                     </span>
                     <select
                       value={Object.entries(mapping).find(([, f]) => f === field)?.[0] || ''}
@@ -415,39 +428,45 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
                         if (e.target.value) newMapping[e.target.value] = field;
                         setMapping(newMapping);
                       }}
-                      className="flex-1 bg-[var(--foreground)]/5 border border-[var(--foreground)]/10 rounded-lg px-3 py-1.5 text-sm text-[var(--foreground)]/80 outline-none focus:border-blue-500/50"
+                      style={{
+                        flex: 1, minWidth: 160, height: 36, appearance: 'none',
+                        border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)',
+                        padding: '0 12px', fontSize: '12.5px', color: 'var(--text)', outline: 'none',
+                      }}
                     >
                       <option value="">— Not mapped —</option>
                       {columns.map(col => (
                         <option key={col} value={col}>{col}</option>
                       ))}
                     </select>
-                    {Object.values(mapping).includes(field) && (
-                      <Check size={14} className="text-emerald-400 flex-shrink-0" />
-                    )}
+                    <span style={{ width: 14, flex: 'none' }}>
+                      {Object.values(mapping).includes(field) && (
+                        <Check size={14} style={{ color: 'var(--green)' }} />
+                      )}
+                    </span>
                   </div>
                 ))}
               </div>
 
               {/* Preview */}
               {rawRows.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-xs text-[var(--foreground)]/40 mb-2">Preview (first 3 rows):</p>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
+                <div style={{ marginTop: 22 }}>
+                  <p className="lbl b95" style={{ marginBottom: 10 }}>PREVIEW (FIRST 3 ROWS)</p>
+                  <div style={{ overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11.5px' }}>
                       <thead>
-                        <tr className="border-b border-[var(--foreground)]/10">
+                        <tr style={{ borderBottom: '1px solid var(--line)' }}>
                           {MAPPABLE_FIELDS.filter(f => Object.values(mapping).includes(f.field)).map(f => (
-                            <th key={f.field} className="text-left text-[var(--foreground)]/50 px-2 py-1 font-medium">{f.label}</th>
+                            <th key={f.field} style={TH_STYLE}>{f.label}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {rawRows.slice(0, 3).map((row, i) => (
-                          <tr key={i} className="border-b border-[var(--foreground)]/5">
+                          <tr key={i} style={{ borderBottom: '1px solid var(--hair, var(--line))' }}>
                             {MAPPABLE_FIELDS.filter(f => Object.values(mapping).includes(f.field)).map(f => {
                               const col = Object.entries(mapping).find(([, mf]) => mf === f.field)?.[0];
-                              return <td key={f.field} className="px-2 py-1 text-[var(--foreground)]/70">{col ? row[col] || '—' : '—'}</td>;
+                              return <td key={f.field} style={TD_STYLE}>{col ? row[col] || '—' : '—'}</td>;
                             })}
                           </tr>
                         ))}
@@ -461,32 +480,34 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
 
           {/* Step 3: Preview & Import */}
           {step === 3 && validation && (
-            <div className="space-y-4">
+            <div>
               {/* Summary */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-emerald-400">{validation.valid.length}</p>
-                  <p className="text-xs text-emerald-400/70">Valid trades</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12 }}>
+                <div className="inset" style={{ position: 'relative', padding: '16px 18px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+                  <p style={{ margin: 0, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 26, color: 'var(--green)' }}>{validation.valid.length}</p>
+                  <p className="lbl" style={{ marginTop: 8 }}>VALID TRADES</p>
                 </div>
-                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-red-400">{validation.errors.length}</p>
-                  <p className="text-xs text-red-400/70">Errors (skipped)</p>
+                <div className="inset" style={{ position: 'relative', padding: '16px 18px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
+                  <p style={{ margin: 0, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 26, color: 'var(--red)' }}>{validation.errors.length}</p>
+                  <p className="lbl" style={{ marginTop: 8 }}>ERRORS (SKIPPED)</p>
                 </div>
               </div>
 
               {/* Error details */}
               {validation.errors.length > 0 && (
-                <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle size={14} className="text-red-400" />
-                    <p className="text-xs text-red-400 font-medium">Rows with errors (will be skipped):</p>
+                <div className="inset" style={{ marginTop: 16, borderLeft: '3px solid var(--red)', padding: '13px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                    <AlertTriangle size={13} style={{ color: 'var(--red)', flex: 'none' }} />
+                    <p className="lbl" style={{ color: 'var(--red)' }}>ROWS WITH ERRORS (WILL BE SKIPPED)</p>
                   </div>
-                  <div className="max-h-32 overflow-y-auto space-y-0.5">
+                  <div style={{ maxHeight: 128, overflowY: 'auto', marginTop: 10 }}>
                     {validation.errors.slice(0, 20).map((err, i) => (
-                      <p key={i} className="text-xs text-red-400/70">Row {err.row}: {err.reason}</p>
+                      <p key={i} style={{ margin: '3px 0 0', fontSize: '11px', color: 'var(--muted)' }}>Row {err.row}: {err.reason}</p>
                     ))}
                     {validation.errors.length > 20 && (
-                      <p className="text-xs text-red-400/50">...and {validation.errors.length - 20} more</p>
+                      <p style={{ margin: '3px 0 0', fontSize: '11px', color: 'var(--muted-2)' }}>...and {validation.errors.length - 20} more</p>
                     )}
                   </div>
                 </div>
@@ -494,52 +515,49 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
 
               {/* Valid trades preview */}
               {validation.valid.length > 0 && (
-                <div>
-                  <p className="text-xs text-[var(--foreground)]/40 mb-2">Preview of valid trades:</p>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
+                <div style={{ marginTop: 22 }}>
+                  <p className="lbl b95" style={{ marginBottom: 10 }}>PREVIEW OF VALID TRADES</p>
+                  <div style={{ overflowX: 'auto', border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11.5px' }}>
                       <thead>
-                        <tr className="border-b border-[var(--foreground)]/10">
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Coin</th>
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Entry</th>
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Exit</th>
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Capital</th>
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">P&L</th>
-                          <th className="text-left text-[var(--foreground)]/50 px-2 py-1">Date</th>
+                        <tr style={{ borderBottom: '1px solid var(--line)' }}>
+                          <th style={TH_STYLE}>Coin</th>
+                          <th style={TH_STYLE}>Entry</th>
+                          <th style={TH_STYLE}>Exit</th>
+                          <th style={TH_STYLE}>Capital</th>
+                          <th style={TH_STYLE}>P&L</th>
+                          <th style={TH_STYLE}>Date</th>
                         </tr>
                       </thead>
                       <tbody>
                         {validation.valid.slice(0, 5).map((t, i) => (
-                          <tr key={i} className="border-b border-[var(--foreground)]/5">
-                            <td className="px-2 py-1 text-[var(--foreground)]/80 font-medium">{t.coin}</td>
-                            <td className="px-2 py-1 text-[var(--foreground)]/60">${t.entryPrice.toLocaleString()}</td>
-                            <td className="px-2 py-1 text-[var(--foreground)]/60">{t.exitPrice ? `$${t.exitPrice.toLocaleString()}` : '—'}</td>
-                            <td className="px-2 py-1 text-[var(--foreground)]/60">${t.capital.toLocaleString()}</td>
-                            <td className={`px-2 py-1 ${(t.actualPnL ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                          <tr key={i} style={{ borderBottom: '1px solid var(--hair, var(--line))' }}>
+                            <td style={{ ...TD_STYLE, color: 'var(--text)', fontWeight: 700 }}>{t.coin}</td>
+                            <td style={TD_NUM}>${t.entryPrice.toLocaleString()}</td>
+                            <td style={TD_NUM}>{t.exitPrice ? `$${t.exitPrice.toLocaleString()}` : '—'}</td>
+                            <td style={TD_NUM}>${t.capital.toLocaleString()}</td>
+                            <td style={{ ...TD_NUM, color: (t.actualPnL ?? 0) >= 0 ? 'var(--green)' : 'var(--red)' }}>
                               {t.actualPnL !== null ? `$${t.actualPnL.toFixed(2)}` : '—'}
                             </td>
-                            <td className="px-2 py-1 text-[var(--foreground)]/60">{t.entryDate.slice(0, 10)}</td>
+                            <td style={TD_NUM}>{t.entryDate.slice(0, 10)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    {validation.valid.length > 5 && (
-                      <p className="text-xs text-[var(--foreground)]/30 mt-1 px-2">...and {validation.valid.length - 5} more</p>
-                    )}
                   </div>
+                  {validation.valid.length > 5 && (
+                    <p style={{ margin: '8px 0 0', fontSize: '11px', color: 'var(--muted-2)' }}>...and {validation.valid.length - 5} more</p>
+                  )}
                 </div>
               )}
 
               {/* Progress bar */}
               {importing && (
-                <div className="mt-4">
-                  <div className="w-full bg-[var(--foreground)]/5 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-[var(--foreground)]/40 mt-1 text-center">Importing... {progress}%</p>
+                <div style={{ marginTop: 22 }}>
+                  <span style={{ display: 'block', width: '100%', height: 2, background: 'var(--rail)' }}>
+                    <i className="transition-all duration-300" style={{ display: 'block', width: `${progress}%`, height: 2, background: 'var(--amber)' }} />
+                  </span>
+                  <p style={{ margin: '10px 0 0', textAlign: 'center', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--muted-2)' }}>Importing... {progress}%</p>
                 </div>
               )}
             </div>
@@ -547,22 +565,24 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--foreground)]/10">
+        <div className="flex items-center justify-between" style={{ gap: 12, padding: '18px 26px', borderTop: '1px solid var(--line)' }}>
           <button
             onClick={step === 1 ? onClose : () => setStep((step - 1) as 1 | 2)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] transition-colors"
+            className="btn-g"
+            style={{ height: 38 }}
             disabled={importing}
           >
-            <ChevronLeft size={16} /> {step === 1 ? 'Cancel' : 'Back'}
+            <ChevronLeft size={14} /> {step === 1 ? 'Cancel' : 'Back'}
           </button>
 
           {step === 2 && (
             <button
               onClick={handleValidate}
               disabled={!requiredMapped}
-              className="flex items-center gap-2 px-5 py-2 bg-blue-500 hover:bg-blue-600 text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className={requiredMapped ? 'btn-a' : 'btn-d'}
+              style={{ height: 38 }}
             >
-              Validate & Preview <ChevronRight size={16} />
+              Validate & Preview <ChevronRight size={14} />
             </button>
           )}
 
@@ -570,12 +590,13 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
             <button
               onClick={handleImport}
               disabled={importing || validation.valid.length === 0}
-              className="flex items-center gap-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className={importing || validation.valid.length === 0 ? 'btn-d' : 'btn-a'}
+              style={{ height: 38 }}
             >
               {importing ? (
-                <><Loader2 size={16} className="animate-spin" /> Importing...</>
+                <><Loader2 size={14} className="animate-spin" /> Importing...</>
               ) : (
-                <><Check size={16} /> Import {validation.valid.length} Trades</>
+                <><Check size={14} /> Import {validation.valid.length} Trades</>
               )}
             </button>
           )}
@@ -584,3 +605,18 @@ export default function TradeImport({ onImport, onClose, strategies }: TradeImpo
     </div>
   );
 }
+
+// ─── Shared table chrome (module-level so it doesn't re-create per render) ────
+
+const TH_STYLE: React.CSSProperties = {
+  textAlign: 'left', padding: '9px 12px', fontWeight: 700, fontSize: '9px',
+  letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)', whiteSpace: 'nowrap',
+};
+
+const TD_STYLE: React.CSSProperties = {
+  padding: '9px 12px', color: 'var(--muted)', whiteSpace: 'nowrap',
+};
+
+const TD_NUM: React.CSSProperties = {
+  ...TD_STYLE, fontFamily: 'var(--mono)', fontWeight: 500,
+};

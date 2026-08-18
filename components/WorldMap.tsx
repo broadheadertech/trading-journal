@@ -156,6 +156,19 @@ const LINES: LineEdge[] = [
   { from: [37.62, 55.75], to: [80.07, 30.31], layer: 'pipelines' },           // Russia-China gas (Power of Siberia)
 ];
 
+// Presentational only — shared chrome for the map's zoom controls.
+const ZOOM_BTN: React.CSSProperties = {
+  width: 32,
+  height: 32,
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'rgba(10,15,23,.9)',
+  color: 'var(--text-2)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 function CountryLabel({ geo, name, zoom }: { geo: any; name: string; zoom: number }) {
   const c = geoCentroid(geo) as [number, number];
   if (!c || !isFinite(c[0]) || !isFinite(c[1])) return null;
@@ -224,110 +237,175 @@ export default function WorldMap() {
   const reset = () => { setZoom(1); setCenter([10, 20]); };
 
   return (
-    <div className="glass rounded-3xl overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-0 min-h-[600px]">
-        {/* ── Layers panel ── */}
-        <aside className="p-4 border-b lg:border-b-0 lg:border-r border-[var(--border)] space-y-3 bg-[var(--background)]/30">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
-            <Layers size={12} /> Layers
-          </div>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0,260px) minmax(0,1fr)',
+        border: '1px solid var(--line)',
+        borderRadius: 2,
+        background: 'var(--panel)',
+        overflow: 'hidden',
+        minHeight: 600,
+      }}
+      className="wm-flat"
+    >
+      <style>{`@media(max-width:900px){.atlas-dash .wm-flat{grid-template-columns:minmax(0,1fr)!important}.atlas-dash .wm-flat>aside{border-right:0!important;border-bottom:1px solid var(--line)}}`}</style>
+      {/* ── Layers panel ── */}
+      <aside
+        style={{
+          borderRight: '1px solid var(--line)',
+          background: 'var(--panel-2)',
+          padding: '18px 16px',
+        }}
+      >
+        <h6 style={{ display: 'flex', alignItems: 'center', gap: 9, fontWeight: 700, fontSize: 9.5, color: 'var(--muted-2)', letterSpacing: '.04em', margin: '0 0 12px' }}>
+          <Layers size={12} /> LAYERS
+        </h6>
 
-          <div className="relative">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search layers…"
-              className="w-full pl-7 pr-2 py-1.5 bg-[var(--card)] border border-[var(--border)] rounded-lg text-xs"
-            />
-          </div>
+        <div
+          style={{
+            height: 36,
+            border: '1px solid var(--line)',
+            borderRadius: 2,
+            background: 'var(--panel)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '0 12px',
+          }}
+        >
+          <Search size={12} color="#5c6b7e" style={{ flex: 'none' }} />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search layers…"
+            style={{
+              flex: 1,
+              minWidth: 0,
+              border: 0,
+              outline: 'none',
+              background: 'transparent',
+              color: 'var(--text)',
+              font: 'inherit',
+              fontSize: 12,
+            }}
+          />
+        </div>
 
-          {/* Continents */}
-          <div className="pt-1">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5">Continents</div>
-            <div className="flex flex-wrap gap-1">
-              {CONTINENTS.map(c => {
-                const on = activeContinents.has(c.id);
-                return (
-                  <button
-                    key={c.id}
-                    onClick={() => toggleContinent(c.id)}
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider transition-colors ${
-                      on ? 'bg-pink-500/20 text-pink-400' : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)]/50'
-                    }`}
-                  >
-                    {c.emoji} {c.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Country labels toggle */}
-          <label className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-[var(--muted)]/40 transition-colors">
-            <div
-              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                showCountryNames ? 'border-transparent bg-pink-400' : 'border-[var(--muted-foreground)]/40'
-              }`}
-            >
-              {showCountryNames && <span className="text-white text-[10px] font-black">✓</span>}
-            </div>
-            <Type size={12} className="text-pink-400" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--foreground)]">Country names</span>
-            <input type="checkbox" checked={showCountryNames} onChange={() => setShowCountryNames(s => !s)} className="hidden" />
-          </label>
-
-          <div className="space-y-1 pt-2 border-t border-[var(--border)]">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5">Data Layers</div>
-            {visibleLayers.map(l => {
-              const Icon = l.icon;
-              const on = active.has(l.id);
+        {/* Continents */}
+        <div style={{ marginTop: 22 }}>
+          <h6 style={{ fontWeight: 700, fontSize: 9.5, color: 'var(--muted-2)', letterSpacing: '.04em', margin: '0 0 10px' }}>CONTINENTS</h6>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {CONTINENTS.map(c => {
+              const on = activeContinents.has(c.id);
               return (
-                <label
-                  key={l.id}
-                  className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-[var(--muted)]/40 transition-colors"
+                <button
+                  key={c.id}
+                  onClick={() => toggleContinent(c.id)}
+                  className={on ? 'chip on' : 'chip'}
+                  style={{ height: 24, padding: '0 10px', fontSize: 10.5, fontWeight: 700, letterSpacing: '.03em' }}
                 >
-                  <div
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                      on ? 'border-transparent' : 'border-[var(--muted-foreground)]/40'
-                    }`}
-                    style={{ background: on ? l.color : 'transparent' }}
-                  >
-                    {on && <span className="text-white text-[10px] font-black">✓</span>}
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={on}
-                    onChange={() => toggle(l.id)}
-                    className="hidden"
-                  />
-                  <Icon size={12} style={{ color: l.color }} />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--foreground)]">{l.label}</span>
-                </label>
+                  {c.emoji} {c.label}
+                </button>
               );
             })}
           </div>
-        </aside>
+        </div>
 
-        {/* ── Map ── */}
-        <div className="relative bg-[#0a0f14] min-h-[600px]">
+        {/* Country labels toggle */}
+        <div style={{ marginTop: 22 }}>
+          <h6 style={{ fontWeight: 700, fontSize: 9.5, color: 'var(--muted-2)', letterSpacing: '.04em', margin: '0 0 10px' }}>LABELS</h6>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 12, height: 30, cursor: 'pointer' }}>
+            <span
+              style={{
+                width: 14,
+                height: 14,
+                flex: 'none',
+                borderRadius: 2,
+                border: `1px solid ${showCountryNames ? '#ff3d87' : 'var(--line-2)'}`,
+                background: showCountryNames ? '#ff3d87' : 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 9,
+                fontWeight: 700,
+                color: 'var(--ink)',
+              }}
+            >
+              {showCountryNames ? '✓' : ''}
+            </span>
+            <Type size={12} color="#ff3d87" style={{ flex: 'none' }} />
+            <span style={{ fontSize: 12, color: showCountryNames ? '#c0ccda' : 'var(--muted-4)' }}>Country names</span>
+            <input type="checkbox" checked={showCountryNames} onChange={() => setShowCountryNames(s => !s)} style={{ display: 'none' }} />
+          </label>
+        </div>
+
+        <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+          <h6 style={{ fontWeight: 700, fontSize: 9.5, color: 'var(--muted-2)', letterSpacing: '.04em', margin: '0 0 10px' }}>DATA LAYERS</h6>
+          {visibleLayers.map(l => {
+            const Icon = l.icon;
+            const on = active.has(l.id);
+            return (
+              <label
+                key={l.id}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, height: 30, cursor: 'pointer' }}
+              >
+                <span
+                  style={{
+                    width: 14,
+                    height: 14,
+                    flex: 'none',
+                    borderRadius: 2,
+                    border: `1px solid ${on ? l.color : 'var(--line-2)'}`,
+                    background: on ? l.color : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    color: 'var(--ink)',
+                  }}
+                >
+                  {on ? '✓' : ''}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={() => toggle(l.id)}
+                  style={{ display: 'none' }}
+                />
+                <Icon size={12} style={{ color: on ? l.color : 'var(--muted-4)', flex: 'none' }} />
+                <span style={{ fontSize: 12, color: on ? '#c0ccda' : 'var(--muted-4)' }}>{l.label}</span>
+              </label>
+            );
+          })}
+          {visibleLayers.length === 0 && (
+            <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>No layers match that search.</p>
+          )}
+        </div>
+      </aside>
+
+      {/* ── Map ── */}
+      <div style={{ position: 'relative', background: '#05080d', minHeight: 600 }}>
           {/* Zoom controls */}
-          <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
+          <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <button
               onClick={() => setZoom(z => Math.min(z + 0.5, 8))}
-              className="w-9 h-9 rounded-lg bg-[var(--card)]/90 backdrop-blur border border-[var(--border)] flex items-center justify-center hover:bg-[var(--muted)]/60"
+              style={ZOOM_BTN}
+              title="Zoom in"
             >
-              <ZoomIn size={16} />
+              <ZoomIn size={15} />
             </button>
             <button
               onClick={() => setZoom(z => Math.max(z - 0.5, 1))}
-              className="w-9 h-9 rounded-lg bg-[var(--card)]/90 backdrop-blur border border-[var(--border)] flex items-center justify-center hover:bg-[var(--muted)]/60"
+              style={ZOOM_BTN}
+              title="Zoom out"
             >
-              <ZoomOut size={16} />
+              <ZoomOut size={15} />
             </button>
             <button
               onClick={reset}
-              className="w-9 h-9 rounded-lg bg-[var(--card)]/90 backdrop-blur border border-[var(--border)] flex items-center justify-center hover:bg-[var(--muted)]/60"
+              style={ZOOM_BTN}
               title="Reset"
             >
               <RotateCcw size={14} />
@@ -335,16 +413,28 @@ export default function WorldMap() {
           </div>
 
           {/* Stats overlay */}
-          <div className="absolute left-3 bottom-3 z-10 flex flex-wrap gap-1.5">
+          <div style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {LAYERS.filter(l => active.has(l.id)).map(l => {
               const count = POINTS.filter(p => p.layer === l.id).length + LINES.filter(ln => ln.layer === l.id).length;
               return (
                 <span
                   key={l.id}
-                  className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full backdrop-blur"
-                  style={{ background: l.color + '22', color: l.color }}
+                  style={{
+                    height: 24,
+                    padding: '0 10px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    border: `1px solid ${l.color}55`,
+                    borderRadius: 2,
+                    background: 'rgba(10,15,23,.9)',
+                    fontSize: 10.5,
+                    color: '#c0ccda',
+                  }}
                 >
-                  {l.label} · {count}
+                  <i style={{ width: 7, height: 7, borderRadius: 1, background: l.color, flex: 'none' }} />
+                  {l.label}
+                  <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{count}</span>
                 </span>
               );
             })}
@@ -414,7 +504,6 @@ export default function WorldMap() {
               ))}
             </ZoomableGroup>
           </ComposableMap>
-        </div>
       </div>
     </div>
   );

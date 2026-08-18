@@ -43,15 +43,17 @@ export default function CoachingCohorts() {
   const memberCohortIds = new Set(myMemberships.map((m: any) => m.cohort?.id).filter(Boolean));
 
   return (
-    <div className="space-y-10">
+    <div>
       {/* ── My Cohorts (if any) ── */}
       {myMemberships.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Your cohorts</h2>
-            <span className="text-xs text-[var(--muted-foreground)]">{myMemberships.length} active</span>
+        <section style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+            <p className="lbl b10">YOUR COHORTS</p>
+            <span className="chip" style={{ height: 22, marginLeft: 'auto', fontSize: 10.5 }}>
+              {myMemberships.length} active
+            </span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="split">
             {myMemberships.map(({ cohort, membership }: any) => (
               <MyCohortCard key={cohort.id} cohort={cohort} membership={membership} />
             ))}
@@ -61,22 +63,24 @@ export default function CoachingCohorts() {
 
       {/* ── Coach-side: cohorts I host ── */}
       {myCoachProfile && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Cohorts you host</h2>
-            <button
-              onClick={() => setShowCreate(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900 text-sm font-semibold shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] hover:from-orange-300 hover:to-amber-300 transition-all"
-            >
-              <Plus size={16} /> New cohort
+        <section style={{ marginBottom: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+            <p className="lbl b10">COHORTS YOU HOST</p>
+            <button onClick={() => setShowCreate(true)} className="btn-a" style={{ height: 34, marginLeft: 'auto', fontSize: 12 }}>
+              <Plus size={14} /> New cohort
             </button>
           </div>
           {myCoachCohorts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center text-sm text-[var(--muted-foreground)]">
-              You haven&apos;t created any cohorts yet. Tap <strong>New cohort</strong> to host your first group program.
+            <div className="blank" style={{ height: 'auto', minHeight: 180, padding: '40px 28px', textAlign: 'center' }}>
+              <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+              <h4>No cohorts yet</h4>
+              <p>
+                You haven&apos;t created any cohorts yet. Tap <strong style={{ color: 'var(--amber)' }}>New cohort</strong> to host your first group program.
+              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="split">
               {myCoachCohorts.map((c: any) => <CoachCohortCard key={c.id} cohort={c} />)}
             </div>
           )}
@@ -84,29 +88,31 @@ export default function CoachingCohorts() {
       )}
 
       {/* ── Public catalog ── */}
-      <section className="space-y-4">
-        <div className="flex items-end justify-between flex-wrap gap-3">
+      <section>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Open <span className="aurora-text-static">cohorts</span>
-            </h2>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1">
+            <p className="lbl b10">OPEN COHORTS</p>
+            <p className="sub" style={{ margin: '9px 0 0', fontSize: 12.5, color: 'var(--muted-2)', maxWidth: 560 }}>
               Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.
             </p>
           </div>
-          <span className="text-xs text-[var(--muted-foreground)]">{cohorts.length} available</span>
+          <span className="chip" style={{ height: 22, fontSize: 10.5 }}>{cohorts.length} available</span>
         </div>
 
         {cohorts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--border)] p-12 text-center">
-            <Users size={32} className="mx-auto text-[var(--muted-foreground)] mb-3" />
-            <p className="text-[var(--foreground)] font-medium">No cohorts available yet</p>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              Check back soon — coaches are setting up their first programs.
-            </p>
+          <div className="blank" style={{ height: 'auto', minHeight: 280, padding: '48px 28px' }}>
+            <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+            <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+            <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)', color: 'var(--teal)' }}>
+              <Users size={24} />
+            </span>
+            <h4>No cohorts available yet</h4>
+            <p>Check back soon — coaches are setting up their first programs.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="split-3">
             {cohorts.map((c: Cohort) => (
               <CohortCard
                 key={c.id}
@@ -147,40 +153,72 @@ function MyCohortCard({ cohort, membership }: { cohort: Cohort; membership: any 
   };
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur p-5 space-y-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
+    <div className="card" style={{ padding: '19px 22px 20px' }}>
+      <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
           {cohort.coachPhotoUrl ? (
-            <img src={cohort.coachPhotoUrl} alt={cohort.coachName} className="w-10 h-10 rounded-full object-cover" />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={cohort.coachPhotoUrl}
+              alt={cohort.coachName}
+              style={{ width: 38, height: 38, borderRadius: 3, objectFit: 'cover', border: '1px solid var(--line)', flex: 'none' }}
+            />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-sm font-bold text-slate-900">
+            <div
+              style={{
+                width: 38, height: 38, borderRadius: 3, flex: 'none',
+                border: '1px solid var(--line)', background: 'var(--panel-2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, color: 'var(--amber)',
+              }}
+            >
               {cohort.coachName.charAt(0)}
             </div>
           )}
-          <div className="min-w-0">
-            <p className="font-semibold truncate">{cohort.name}</p>
-            <p className="text-xs text-[var(--muted-foreground)] truncate">with {cohort.coachName}</p>
+          <div style={{ minWidth: 0 }}>
+            <h4 className="truncate">{cohort.name}</h4>
+            <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }} className="truncate">
+              with {cohort.coachName}
+            </p>
           </div>
         </div>
-        <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
+        <span
+          className="chip"
+          style={{ marginLeft: 'auto', flex: 'none', height: 20, fontSize: 9.5, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', borderColor: 'var(--green)', color: 'var(--green)' }}
+        >
           Active
         </span>
       </div>
-      <div className="text-xs space-y-1.5 text-[var(--muted-foreground)]">
-        <div className="flex items-center gap-2"><Calendar size={12} /> {cohort.schedule}</div>
+
+      <div style={{ marginTop: 14 }}>
+        <div className="mrow">
+          <Calendar size={12} className="ic" />
+          <span className="lb">{cohort.schedule}</span>
+        </div>
         {cohort.nextSessionAt && (
-          <div className="flex items-center gap-2"><Calendar size={12} /> Next: {fmt(cohort.nextSessionAt)}</div>
+          <div className="mrow">
+            <Calendar size={12} className="ic" />
+            <span className="lb">Next session</span>
+            <span className="val">{fmt(cohort.nextSessionAt)}</span>
+          </div>
         )}
         {membership.currentPeriodEnd && (
-          <div className="text-[10px] opacity-60">Period ends {fmt(membership.currentPeriodEnd)}</div>
+          <div className="mrow">
+            <span className="ic" />
+            <span className="lb">Period ends</span>
+            <span className="val">{fmt(membership.currentPeriodEnd)}</span>
+          </div>
         )}
       </div>
+
       <button
         onClick={handleLeave}
         disabled={busy}
-        className="w-full px-3 py-2 rounded-lg border border-[var(--border)] text-xs font-medium text-[var(--muted-foreground)] hover:text-amber-300 hover:border-amber-500/40 disabled:opacity-50 transition-colors"
+        className="btn-g disabled:opacity-50"
+        style={{ width: '100%', height: 34, marginTop: 16, fontSize: 12 }}
       >
-        {busy ? <Loader2 size={14} className="animate-spin mx-auto" /> : 'Cancel membership'}
+        {busy ? <Loader2 size={14} className="animate-spin" /> : 'Cancel membership'}
       </button>
     </div>
   );
@@ -189,24 +227,45 @@ function MyCohortCard({ cohort, membership }: { cohort: Cohort; membership: any 
 // ─── Coach-side card ─────────────────────────────────────────────────
 function CoachCohortCard({ cohort }: { cohort: Cohort }) {
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur p-5 space-y-3">
-      <div className="flex items-start justify-between gap-3">
-        <p className="font-semibold">{cohort.name}</p>
-        <span className={`text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full ${
-          cohort.isActive
-            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-            : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-        }`}>
+    <div className="card" style={{ padding: '19px 22px 20px' }}>
+      <span className="accent" style={{ width: 44, background: cohort.isActive ? 'var(--teal)' : 'var(--muted-3)' }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <h4 style={{ minWidth: 0 }}>{cohort.name}</h4>
+        <span
+          className="chip"
+          style={{
+            marginLeft: 'auto', flex: 'none', height: 20, fontSize: 9.5, fontWeight: 700,
+            letterSpacing: '.06em', textTransform: 'uppercase',
+            borderColor: cohort.isActive ? 'var(--teal)' : 'var(--line)',
+            color: cohort.isActive ? 'var(--teal)' : 'var(--muted-2)',
+          }}
+        >
           {cohort.isActive ? 'Live' : 'Paused'}
         </span>
       </div>
-      <div className="text-xs space-y-1 text-[var(--muted-foreground)]">
-        <div className="flex items-center gap-2"><Calendar size={12} /> {cohort.schedule}</div>
-        <div className="flex items-center gap-2"><Users size={12} /> {cohort.memberCount} / {cohort.capacity} members</div>
-        <div className="flex items-center gap-2"><DollarSign size={12} /> ${cohort.monthlyPriceUsd}/mo</div>
+
+      <div style={{ marginTop: 14 }}>
+        <div className="mrow">
+          <Calendar size={12} className="ic" />
+          <span className="lb">{cohort.schedule}</span>
+        </div>
+        <div className="mrow">
+          <Users size={12} className="ic" />
+          <span className="lb">Members</span>
+          <span className="val">{cohort.memberCount} / {cohort.capacity}</span>
+        </div>
+        <div className="mrow">
+          <DollarSign size={12} className="ic" />
+          <span className="lb">Price</span>
+          <span className="val">${cohort.monthlyPriceUsd}/mo</span>
+        </div>
       </div>
-      <div className="pt-2 border-t border-[var(--border)] text-[11px] text-emerald-300 font-bold tabular-nums">
-        ${(cohort.memberCount * cohort.monthlyPriceUsd).toLocaleString()} <span className="text-[var(--muted-foreground)] font-normal">MRR</span>
+
+      <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14 }}>
+        <p className="lbl">MRR</p>
+        <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 15, color: 'var(--green)' }}>
+          ${(cohort.memberCount * cohort.monthlyPriceUsd).toLocaleString()}
+        </span>
       </div>
     </div>
   );
@@ -238,53 +297,80 @@ function CohortCard({
   const remaining = Math.max(0, cohort.capacity - cohort.memberCount);
 
   return (
-    <div className="group rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur p-5 space-y-4 hover:border-pink-500/40 hover:-translate-y-0.5 transition-all">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+    <div className="card" style={{ padding: '19px 22px 20px', display: 'flex', flexDirection: 'column' }}>
+      <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
           {cohort.coachPhotoUrl ? (
-            <img src={cohort.coachPhotoUrl} alt={cohort.coachName} className="w-11 h-11 rounded-full object-cover ring-2 ring-pink-500/20" />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={cohort.coachPhotoUrl}
+              alt={cohort.coachName}
+              style={{ width: 42, height: 42, borderRadius: 3, objectFit: 'cover', border: '1px solid var(--line)', flex: 'none' }}
+            />
           ) : (
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-sm font-bold text-slate-900">
+            <div
+              style={{
+                width: 42, height: 42, borderRadius: 3, flex: 'none',
+                border: '1px solid var(--line)', background: 'var(--panel-2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, color: 'var(--amber)',
+              }}
+            >
               {cohort.coachName.charAt(0)}
             </div>
           )}
-          <div className="min-w-0">
-            <p className="font-bold text-base truncate">{cohort.name}</p>
-            <p className="text-xs text-[var(--muted-foreground)] truncate">hosted by {cohort.coachName}</p>
+          <div style={{ minWidth: 0 }}>
+            <h4 className="truncate">{cohort.name}</h4>
+            <p className="truncate" style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
+              hosted by {cohort.coachName}
+            </p>
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <p className="text-lg font-bold aurora-text-static tabular-nums">${cohort.monthlyPriceUsd}</p>
-          <p className="text-[9px] uppercase tracking-widest text-[var(--muted-foreground)]">/ month</p>
+        <div style={{ flex: 'none', textAlign: 'right' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 20, lineHeight: '24px', color: 'var(--text)' }}>
+            ${cohort.monthlyPriceUsd}
+          </div>
+          <p className="lbl" style={{ marginTop: 4 }}>/ MONTH</p>
         </div>
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)] leading-relaxed line-clamp-3">{cohort.description}</p>
+      <p className="sub" style={{ margin: '16px 0 0', fontSize: 12, lineHeight: '19px', color: 'var(--muted)' }}>
+        {cohort.description}
+      </p>
 
-      <div className="space-y-1.5 text-xs">
-        <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-          <Calendar size={12} className="text-pink-400" />
-          <span>{cohort.schedule}</span>
+      <div style={{ marginTop: 14 }}>
+        <div className="mrow">
+          <Calendar size={12} className="ic" style={{ color: 'var(--amber)' }} />
+          <span className="lb">{cohort.schedule}</span>
         </div>
         {cohort.nextSessionAt && (
-          <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-            <Calendar size={12} className="text-pink-400" />
-            <span>Next: {fmt(cohort.nextSessionAt)}</span>
+          <div className="mrow">
+            <Calendar size={12} className="ic" style={{ color: 'var(--amber)' }} />
+            <span className="lb">Next session</span>
+            <span className="val">{fmt(cohort.nextSessionAt)}</span>
           </div>
         )}
-        <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-          <Users size={12} className="text-pink-400" />
-          <span>{cohort.memberCount} / {cohort.capacity} members</span>
-          {!full && remaining <= 5 && (
-            <span className="text-amber-300 font-semibold">· {remaining} spots left</span>
-          )}
+        <div className="mrow">
+          <Users size={12} className="ic" style={{ color: 'var(--amber)' }} />
+          <span className="lb">
+            Members
+            {!full && remaining <= 5 && (
+              <span style={{ marginLeft: 8, fontWeight: 700, fontSize: 11, color: 'var(--amber)' }}>· {remaining} spots left</span>
+            )}
+          </span>
+          <span className="val">{cohort.memberCount} / {cohort.capacity}</span>
         </div>
       </div>
 
       {cohort.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
           {cohort.tags.slice(0, 4).map(t => (
-            <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-300 border border-pink-500/20">
+            <span
+              key={t}
+              className="chip"
+              style={{ height: 22, padding: '0 10px', fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase' }}
+            >
               {t}
             </span>
           ))}
@@ -294,15 +380,14 @@ function CohortCard({
       <button
         onClick={handleJoin}
         disabled={busy || alreadyMember || full}
-        className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-          alreadyMember
-            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-default'
-            : full
-            ? 'bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed'
-            : 'bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900 shadow-[0_0_20px_-4px_rgba(251,146,60,0.5)] hover:from-orange-300 hover:to-amber-300'
-        } disabled:opacity-60`}
+        className={alreadyMember || full ? 'btn-g' : 'btn-a'}
+        style={{
+          width: '100%', marginTop: 18,
+          ...(alreadyMember ? { borderColor: 'var(--green)', color: 'var(--green)', cursor: 'default' } : null),
+          ...(full && !alreadyMember ? { color: 'var(--muted-2)', cursor: 'not-allowed' } : null),
+        }}
       >
-        {busy ? <Loader2 size={14} className="animate-spin mx-auto" /> :
+        {busy ? <Loader2 size={14} className="animate-spin" /> :
           alreadyMember ? <span className="inline-flex items-center gap-1.5"><Check size={14} /> Joined</span> :
           full ? 'Cohort full' :
           `Join — $${cohort.monthlyPriceUsd}/mo`}
@@ -348,46 +433,60 @@ function CreateCohortModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(3,6,10,.78)' }}
+      onClick={onClose}
+    >
       <div
-        className="w-full max-w-lg bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-2xl"
+        className="modal w-full max-w-lg"
+        style={{ padding: 0, textAlign: 'left' }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-          <h2 className="text-lg font-bold">New cohort</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)]">
+        <span className="accent" style={{ width: 90 }} />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--line)' }}>
+          <h2 style={{ fontSize: 20, lineHeight: '22px' }}>New cohort</h2>
+          <button onClick={onClose} style={{ display: 'flex', color: 'var(--muted-2)' }}>
             <X size={18} />
           </button>
         </div>
-        <div className="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">
-          <Field label="Name">
-            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Forex Discipline Cohort" className="w-full" />
+
+        <div style={{ padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 18, maxHeight: '70vh', overflowY: 'auto' }}>
+          <Field label="NAME">
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Forex Discipline Cohort" className="box w-full" />
           </Field>
-          <Field label="Description">
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} placeholder="What members get out of joining this cohort" className="w-full resize-none" />
+          <Field label="DESCRIPTION">
+            <textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows={3}
+              placeholder="What members get out of joining this cohort"
+              className="box w-full"
+              style={{ height: 'auto', minHeight: 74, display: 'block', padding: '11px 16px', lineHeight: '19px', resize: 'vertical' }}
+            />
           </Field>
-          <Field label="Schedule">
-            <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="e.g. Thursdays 7pm EST" className="w-full" />
+          <Field label="SCHEDULE">
+            <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="e.g. Thursdays 7pm EST" className="box w-full" />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Capacity">
-              <input type="number" min="1" max="500" value={capacity} onChange={e => setCapacity(e.target.value)} className="w-full" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <Field label="CAPACITY">
+              <input type="number" min="1" max="500" value={capacity} onChange={e => setCapacity(e.target.value)} className="box w-full" />
             </Field>
-            <Field label="Monthly Price (USD)">
-              <input type="number" min="0" step="any" value={price} onChange={e => setPrice(e.target.value)} className="w-full" />
+            <Field label="MONTHLY PRICE (USD)">
+              <input type="number" min="0" step="any" value={price} onChange={e => setPrice(e.target.value)} className="box w-full" />
             </Field>
           </div>
-          <Field label="Tags (comma-separated)">
-            <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="forex, discipline, beginners" className="w-full" />
+          <Field label="TAGS (COMMA-SEPARATED)">
+            <input type="text" value={tags} onChange={e => setTags(e.target.value)} placeholder="forex, discipline, beginners" className="box w-full" />
           </Field>
         </div>
-        <div className="flex justify-end gap-2 px-5 py-4 border-t border-[var(--border)]">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-[var(--border)] text-sm">Cancel</button>
-          <button
-            onClick={handleSubmit}
-            disabled={busy}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900 text-sm font-semibold disabled:opacity-50"
-          >
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '18px 24px', borderTop: '1px solid var(--line)' }}>
+          <button onClick={onClose} className="btn-g">Cancel</button>
+          <button onClick={handleSubmit} disabled={busy} className="btn-a disabled:opacity-50">
             {busy ? <Loader2 size={14} className="animate-spin" /> : 'Create cohort'}
           </button>
         </div>
@@ -398,8 +497,8 @@ function CreateCohortModal({ onClose }: { onClose: () => void }) {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">{label}</label>
+    <div className="field">
+      <label>{label}</label>
       {children}
     </div>
   );

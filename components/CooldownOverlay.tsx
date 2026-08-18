@@ -84,81 +84,112 @@ export default function CooldownOverlay({ expiresAt, breakerType, reason, onExpi
   const currentBreath = BREATHING_PHASES[breathPhase];
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'grid', gap: 20 }}>
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-        <AlertOctagon size={24} className="text-[var(--red)] shrink-0" />
+      <div
+        className="inset"
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 16,
+          borderLeft: '3px solid var(--red)',
+          padding: '16px 20px',
+        }}
+      >
+        <AlertOctagon size={20} style={{ color: 'var(--red)', flex: 'none', marginTop: 2 }} />
         <div>
-          <h3 className="font-bold text-[var(--red)]">Cooldown Active</h3>
-          <p className="text-sm text-[var(--muted-foreground)]">{reason}</p>
+          <h4 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, lineHeight: '16px', margin: 0, color: 'var(--red)' }}>
+            Cooldown Active
+          </h4>
+          <p style={{ margin: '9px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>{reason}</p>
         </div>
       </div>
 
-      {/* Timer Circle */}
-      <div className="flex justify-center">
-        <div className="relative w-44 h-44">
-          <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
-            <circle cx="80" cy="80" r={radius} fill="none" stroke="var(--border)" strokeWidth="6" />
+      {/* Timer Ring */}
+      <div className="card" style={{ textAlign: 'center', padding: '30px 22px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
+        <div style={{ position: 'relative', width: 176, height: 176, margin: '0 auto' }}>
+          <svg width="100%" height="100%" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx="80" cy="80" r={radius} fill="none" stroke="var(--rail)" strokeWidth="4" />
             <circle
               cx="80"
               cy="80"
               r={radius}
               fill="none"
               stroke="var(--red)"
-              strokeWidth="6"
-              strokeLinecap="round"
+              strokeWidth="4"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               className="transition-all duration-1000"
             />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <Timer size={20} className="text-[var(--muted-foreground)] mb-1" />
-            <span className="text-3xl font-bold">
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+            }}
+          >
+            <Timer size={16} style={{ color: 'var(--muted-2)' }} />
+            <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 34, lineHeight: '40px', color: 'var(--text)' }}>
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </span>
-            <span className="text-xs text-[var(--muted-foreground)]">remaining</span>
+            <span className="lbl">REMAINING</span>
           </div>
         </div>
       </div>
 
       {/* Breathing Exercise */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
-        <div className="flex items-center gap-2 mb-4 justify-center">
-          <Wind size={16} className="text-[var(--accent)]" />
-          <span className="text-sm font-medium">Breathing Exercise</span>
+      <div className="card" style={{ padding: '19px 28px 28px' }}>
+        <div className="cardhead" style={{ alignItems: 'center', gap: 10, justifyContent: 'center' }}>
+          <Wind size={14} style={{ color: 'var(--teal)' }} />
+          <h4>Breathing Exercise</h4>
         </div>
-        <div className="flex flex-col items-center gap-4">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, marginTop: 26 }}>
           <div
-            className="w-20 h-20 rounded-full bg-[var(--accent)]/20 border-2 border-[var(--accent)] transition-transform duration-[4000ms] ease-in-out"
-            style={{ transform: `scale(${currentBreath.scale})` }}
+            style={{
+              width: 76,
+              height: 76,
+              borderRadius: 3,
+              background: 'rgba(47,211,196,.10)',
+              border: '1px solid var(--teal)',
+              transition: 'transform 4000ms ease-in-out',
+              transform: `scale(${currentBreath.scale})`,
+            }}
           />
-          <span className="text-lg font-medium text-[var(--accent)]">{currentBreath.label}</span>
-          <p className="text-xs text-[var(--muted-foreground)] text-center">
-            Follow the circle. Breathe in as it expands, out as it contracts.
+          <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, color: 'var(--teal)' }}>
+            {currentBreath.label}
+          </span>
+          <p style={{ margin: 0, fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)', textAlign: 'center' }}>
+            Follow the square. Breathe in as it expands, out as it contracts.
           </p>
         </div>
       </div>
 
       {/* Reflective Prompt */}
-      <div className="bg-[var(--muted)]/50 border border-[var(--border)] rounded-xl p-5 text-center">
-        <p className="text-sm italic text-[var(--foreground)] leading-relaxed">
+      <div className="inset" style={{ padding: '20px 24px', textAlign: 'center' }}>
+        <p style={{ margin: 0, fontStyle: 'italic', fontSize: 13.5, lineHeight: '21px', color: 'var(--text-2)' }}>
           &ldquo;{prompts[promptIndex]}&rdquo;
         </p>
       </div>
 
       {/* Override Section */}
-      <div className="border-t border-[var(--border)] pt-4">
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 18 }}>
         {!showOverride ? (
           <button
             onClick={() => setShowOverride(true)}
-            className="w-full text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors py-2"
+            className="ghostbtn"
+            style={{ marginTop: 0, width: '100%', fontSize: 12.5, color: 'var(--muted)' }}
           >
-            I understand the risks and want to override this cooldown...
+            I understand the risks and want to override this cooldown
           </button>
         ) : (
-          <div className="space-y-3 animate-in">
-            <p className="text-xs text-[var(--red)]">
+          <div style={{ display: 'grid', gap: 14 }} className="animate-in">
+            <p style={{ margin: 0, fontSize: 12, lineHeight: '18px', color: 'var(--red)' }}>
               Explain why you believe this trade is justified despite the warning (min 50 characters):
             </p>
             <textarea
@@ -166,23 +197,48 @@ export default function CooldownOverlay({ expiresAt, breakerType, reason, onExpi
               onChange={e => setAcknowledgment(e.target.value)}
               rows={3}
               placeholder="I am overriding this because..."
-              className="text-sm"
+              style={{
+                width: '100%',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
+                background: 'var(--panel-2)',
+                color: 'var(--text)',
+                padding: '12px 16px',
+                fontSize: 13,
+                lineHeight: '20px',
+                resize: 'vertical',
+              }}
             />
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[var(--muted-foreground)]">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 11.5,
+                  color: acknowledgment.length >= 50 ? 'var(--green)' : 'var(--muted-2)',
+                }}
+              >
                 {acknowledgment.length}/50 characters
               </span>
-              <div className="flex gap-2">
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: 10 }}>
                 <button
                   onClick={() => { setShowOverride(false); setAcknowledgment(''); }}
-                  className="px-3 py-1.5 text-xs rounded-lg hover:bg-[var(--muted)]"
+                  className="btn-g"
+                  style={{ height: 32, padding: '0 16px', fontSize: 12 }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => onOverride(acknowledgment)}
                   disabled={acknowledgment.length < 50}
-                  className="px-3 py-1.5 text-xs bg-[var(--red)] text-white rounded-lg disabled:opacity-50"
+                  className="btn-a"
+                  style={{
+                    height: 32,
+                    padding: '0 16px',
+                    fontSize: 12,
+                    background: 'var(--red)',
+                    color: '#fff',
+                    opacity: acknowledgment.length < 50 ? 0.5 : 1,
+                  }}
                 >
                   Override Cooldown
                 </button>

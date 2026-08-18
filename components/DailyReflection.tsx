@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { DailyReflection as DailyReflectionType, WeeklyReview, DisciplineGrade, Trade } from '@/lib/types';
-import { getGradeColor } from '@/lib/discipline-engine';
 import { getWeeklyDataQuestions } from '@/lib/utils';
 import { Sun, Moon, CalendarDays, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { SpeechButton } from '@/components/SpeechButton';
@@ -17,6 +16,15 @@ interface Props {
   onAddReflection: (r: Omit<DailyReflectionType, 'id' | 'createdAt'>) => void;
   onAddReview: (r: Omit<WeeklyReview, 'id' | 'createdAt'>) => void;
 }
+
+// Presentational only — maps a grade to an ATLAS token colour.
+const GRADE_TONE: Record<string, string> = {
+  A: 'var(--green)',
+  B: 'var(--teal)',
+  C: 'var(--amber)',
+  D: 'var(--pink)',
+  F: 'var(--red)',
+};
 
 export default function DailyReflection({ reflections, reviews, trades, onAddReflection, onAddReview }: Props) {
   const { showToast } = useToast();
@@ -99,75 +107,83 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
   };
 
   return (
-    <div className="space-y-4 sm:space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold flex items-center gap-2">
-            <CalendarDays size={20} className="text-blue-400" /> Reflections
-          </h3>
-          <p className="text-xs text-[var(--muted-foreground)]">End-of-day reflections and weekly reviews</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* ── Header ── */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <div className="cardhead" style={{ flexWrap: 'wrap', gap: 16 }}>
+          <div>
+            <p className="lbl b10" style={{ color: 'var(--teal)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <CalendarDays size={12} /> REFLECTION LOG
+            </p>
+            <h3>Reflections</h3>
+            <p className="sub">End-of-day reflections and weekly reviews.</p>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setActiveForm(activeForm === 'daily' ? 'none' : 'daily')}
+              className="btn-g"
+              style={{ height: 34, padding: '0 16px', fontSize: 12.5 }}
+            >
+              <Sun size={14} /> Daily
+            </button>
+            <button
+              onClick={() => setActiveForm(activeForm === 'weekly' ? 'none' : 'weekly')}
+              className="btn-g"
+              style={{ height: 34, padding: '0 16px', fontSize: 12.5 }}
+            >
+              <Moon size={14} /> Weekly
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveForm(activeForm === 'daily' ? 'none' : 'daily')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-sm font-medium transition-colors"
-          >
-            <Sun size={14} /> Daily
-          </button>
-          <button
-            onClick={() => setActiveForm(activeForm === 'weekly' ? 'none' : 'weekly')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-fuchsia-400 rounded-lg text-sm font-medium transition-colors"
-          >
-            <Moon size={14} /> Weekly
-          </button>
-        </div>
-      </div>
 
-      {/* Today's Status */}
-      {todayReflection && activeForm !== 'daily' && (
-        <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-sm">
-          <CheckCircle size={16} className="text-[var(--green)]" />
-          <span className="text-[var(--green)] font-medium">Today&apos;s reflection completed</span>
-          <span className="text-[var(--muted-foreground)]">— Rating: {todayReflection.overallRating}/10</span>
-        </div>
-      )}
+        {/* Today's Status */}
+        {todayReflection && activeForm !== 'daily' && (
+          <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', gap: 10, color: 'var(--text-2)' }}>
+            <CheckCircle size={14} style={{ color: 'var(--green)', flex: 'none' }} />
+            <span style={{ color: 'var(--green)', fontWeight: 700 }}>Today&apos;s reflection completed</span>
+            <span style={{ color: 'var(--muted-2)', marginLeft: 8, fontFamily: 'var(--mono)' }}>Rating {todayReflection.overallRating}/10</span>
+          </div>
+        )}
+      </div>
 
       {/* Daily Reflection Modal */}
       <Modal isOpen={activeForm === 'daily'} onClose={resetDaily} title="End-of-Day Reflection" size="lg">
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Did you trade your plan today?</label>
-            <div className="flex gap-3">
+          <div className="field">
+            <label>DID YOU TRADE YOUR PLAN TODAY?</label>
+            <div style={{ display: 'flex', gap: 10 }}>
               <button
                 onClick={() => setTradedMyPlan(true)}
-                className={`flex-1 py-3 text-sm rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-                  tradedMyPlan === true
-                    ? 'border-green-500 bg-green-500/10 text-green-400 font-medium'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-green-500/50'
-                }`}
+                className="chip"
+                style={{
+                  flex: 1, height: 44, justifyContent: 'center', gap: 8,
+                  borderColor: tradedMyPlan === true ? 'var(--green)' : 'var(--line)',
+                  color: tradedMyPlan === true ? 'var(--green)' : 'var(--muted)',
+                  fontWeight: tradedMyPlan === true ? 700 : 400,
+                }}
               >
-                <CheckCircle size={18} /> Yes, I followed my plan
+                <CheckCircle size={15} /> Yes, I followed my plan
               </button>
               <button
                 onClick={() => setTradedMyPlan(false)}
-                className={`flex-1 py-3 text-sm rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-                  tradedMyPlan === false
-                    ? 'border-red-500 bg-red-500/10 text-red-400 font-medium'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-red-500/50'
-                }`}
+                className="chip"
+                style={{
+                  flex: 1, height: 44, justifyContent: 'center', gap: 8,
+                  borderColor: tradedMyPlan === false ? 'var(--red)' : 'var(--line)',
+                  color: tradedMyPlan === false ? 'var(--red)' : 'var(--muted)',
+                  fontWeight: tradedMyPlan === false ? 700 : 400,
+                }}
               >
-                <XCircle size={18} /> No, I deviated
+                <XCircle size={15} /> No, I deviated
               </button>
             </div>
           </div>
 
           {tradedMyPlan !== null && (
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium">
-                  {tradedMyPlan ? 'What went well?' : 'What happened?'}
-                </label>
+            <div className="field">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <label>{tradedMyPlan ? 'WHAT WENT WELL?' : 'WHAT HAPPENED?'}</label>
                 <SpeechButton value={explanation} onChange={setExplanation} />
               </div>
               <textarea
@@ -179,9 +195,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             </div>
           )}
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">What emotional mistakes did you make?</label>
+          <div className="field">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label>WHAT EMOTIONAL MISTAKES DID YOU MAKE?</label>
               <SpeechButton value={emotionalMistakes} onChange={setEmotionalMistakes} />
             </div>
             <textarea
@@ -193,9 +209,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium">Biggest Lesson</label>
+            <div className="field">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <label>BIGGEST LESSON</label>
                 <SpeechButton value={biggestLesson} onChange={setBiggestLesson} />
               </div>
               <textarea
@@ -205,9 +221,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                 placeholder="What's the #1 thing you learned?"
               />
             </div>
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium">Tomorrow&apos;s Goal</label>
+            <div className="field">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <label>TOMORROW&apos;S GOAL</label>
                 <SpeechButton value={tomorrowGoal} onChange={setTomorrowGoal} />
               </div>
               <textarea
@@ -219,27 +235,29 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Overall Day Rating: {overallRating}/10</label>
+          <div className="field">
+            <label>OVERALL DAY RATING — {overallRating}/10</label>
             <input
               type="range" min="1" max="10"
               value={overallRating}
               onChange={e => setOverallRating(parseInt(e.target.value))}
-              className="w-full accent-blue-500"
+              className="w-full"
+              style={{ accentColor: 'var(--amber)' }}
             />
-            <div className="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
               <span>Terrible</span>
               <span>Average</span>
               <span>Perfect</span>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-1">
-            <button onClick={resetDaily} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+          <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={resetDaily} className="btn-g">Cancel</button>
             <button
               onClick={handleDailySubmit}
               disabled={tradedMyPlan === null}
-              className="px-4 py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
+              className="btn-a"
+              style={{ opacity: tradedMyPlan === null ? 0.5 : 1 }}
             >
               Save Reflection
             </button>
@@ -253,41 +271,36 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
 
           {/* Data Summary Panel (C-41) */}
           {weeklyData.summary.total > 0 && (
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3.5 space-y-1.5">
-              <p className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide mb-2">This week&apos;s data</p>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                <span>
-                  <span className="font-semibold text-[var(--foreground)]">{weeklyData.summary.total}</span>
-                  <span className="text-[var(--muted-foreground)]"> trades · </span>
-                  <span className="text-[var(--gain)] font-semibold">{weeklyData.summary.wins}W</span>
-                  <span className="text-[var(--muted-foreground)]"> · </span>
-                  <span className="text-[var(--loss)] font-semibold">{weeklyData.summary.losses}L</span>
+            <div className="inset" style={{ padding: '14px 16px' }}>
+              <p className="lbl">THIS WEEK&apos;S DATA</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 14px', marginTop: 10, fontSize: 12.5 }}>
+                <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{weeklyData.summary.total}</span>
+                <span style={{ color: 'var(--muted-2)' }}>trades</span>
+                <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{weeklyData.summary.wins}W</span>
+                <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{weeklyData.summary.losses}L</span>
+                <span style={{ fontFamily: 'var(--mono)', color: 'var(--muted-2)' }}>
+                  {Math.round((weeklyData.summary.wins / weeklyData.summary.total) * 100)}% win rate
                 </span>
-                {weeklyData.summary.total > 0 && (
-                  <span className="text-[var(--muted-foreground)]">
-                    {Math.round((weeklyData.summary.wins / weeklyData.summary.total) * 100)}% win rate
-                  </span>
-                )}
               </div>
               {weeklyData.summary.topBrokenRule && (
-                <p className="text-xs text-amber-400">
-                  Most broken rule: <span className="font-medium">&ldquo;{weeklyData.summary.topBrokenRule}&rdquo;</span>
+                <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--amber)' }}>
+                  Most broken rule: <span style={{ fontWeight: 700 }}>&ldquo;{weeklyData.summary.topBrokenRule}&rdquo;</span>
                 </p>
               )}
               {weeklyData.summary.topEmotion && (
-                <p className="text-xs text-[var(--muted-foreground)]">
-                  Top emotion: <span className="text-[var(--foreground)] font-medium">{weeklyData.summary.topEmotion}</span>
+                <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
+                  Top emotion: <span style={{ color: 'var(--text)', fontWeight: 700 }}>{weeklyData.summary.topEmotion}</span>
                   {weeklyData.summary.avgConfidenceOnLoss !== null && (
-                    <span> · avg confidence on losses: <span className="font-medium">{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
+                    <span> &bull; avg confidence on losses: <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{weeklyData.summary.avgConfidenceOnLoss.toFixed(1)}</span></span>
                   )}
                 </p>
               )}
             </div>
           )}
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">What emotional mistakes did you make this week?</label>
+          <div className="field">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label>WHAT EMOTIONAL MISTAKES DID YOU MAKE THIS WEEK?</label>
               <SpeechButton value={weeklyMistakes} onChange={setWeeklyMistakes} />
             </div>
             <textarea
@@ -301,9 +314,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             />
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">Patterns you noticed</label>
+          <div className="field">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label>PATTERNS YOU NOTICED</label>
               <SpeechButton value={weeklyPatterns} onChange={setWeeklyPatterns} />
             </div>
             <textarea
@@ -317,9 +330,9 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             />
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">Improvement plan for next week</label>
+          <div className="field">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label>IMPROVEMENT PLAN FOR NEXT WEEK</label>
               <SpeechButton value={weeklyPlan} onChange={setWeeklyPlan} />
             </div>
             <textarea
@@ -330,16 +343,21 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Self-Grade for the Week</label>
-            <div className="flex gap-2">
+          <div className="field">
+            <label>SELF-GRADE FOR THE WEEK</label>
+            <div style={{ display: 'flex', gap: 8 }}>
               {(['A', 'B', 'C', 'D', 'F'] as DisciplineGrade[]).map(g => (
                 <button
                   key={g}
                   onClick={() => setWeeklyGrade(g)}
-                  className={`w-12 h-12 rounded-xl border-2 text-lg font-bold transition-all ${
-                    weeklyGrade === g ? getGradeColor(g) : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/50'
-                  }`}
+                  className="inset"
+                  style={{
+                    width: 46, height: 46, padding: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16,
+                    color: weeklyGrade === g ? GRADE_TONE[g] : 'var(--muted)',
+                    borderColor: weeklyGrade === g ? GRADE_TONE[g] : 'var(--line)',
+                  }}
                 >
                   {g}
                 </button>
@@ -347,12 +365,13 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-1">
-            <button onClick={resetWeekly} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+          <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={resetWeekly} className="btn-g">Cancel</button>
             <button
               onClick={handleWeeklySubmit}
               disabled={!weeklyMistakes}
-              className="px-4 py-2 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
+              className="btn-a"
+              style={{ opacity: !weeklyMistakes ? 0.5 : 1 }}
             >
               Save Review
             </button>
@@ -360,95 +379,142 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
         </div>
       </Modal>
 
-      {/* Recent Reflections */}
-      <div className="space-y-2">
-        {recentReflections.map(r => (
-          <div
-            key={r.id}
-            className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-hidden hover:border-[var(--accent)]/30 transition-colors"
-          >
-            <button
-              onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
-              className="w-full flex items-center justify-between p-3.5 text-left"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  {format(new Date(r.date), 'MMM dd')}
-                </span>
-                {r.tradedMyPlan ? (
-                  <span className="flex items-center gap-1 text-xs text-green-400">
-                    <CheckCircle size={12} /> Followed Plan
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 text-xs text-red-400">
-                    <XCircle size={12} /> Deviated
-                  </span>
-                )}
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  Rating: {r.overallRating}/10
-                </span>
-              </div>
-              {expandedId === r.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-            {expandedId === r.id && (
-              <div className="px-3.5 pb-3.5 space-y-2 text-sm animate-in">
-                {r.explanation && (
-                  <div>
-                    <span className="text-xs font-medium text-[var(--muted-foreground)]">
-                      {r.tradedMyPlan ? 'What went well:' : 'What happened:'}
-                    </span>
-                    <p className="text-sm">{r.explanation}</p>
-                  </div>
-                )}
-                {r.emotionalMistakes && (
-                  <div>
-                    <span className="text-xs font-medium text-red-400">Emotional mistakes:</span>
-                    <p className="text-sm">{r.emotionalMistakes}</p>
-                  </div>
-                )}
-                {r.biggestLesson && (
-                  <div>
-                    <span className="text-xs font-medium text-fuchsia-400">Lesson:</span>
-                    <p className="text-sm">{r.biggestLesson}</p>
-                  </div>
-                )}
-                {r.tomorrowGoal && (
-                  <div>
-                    <span className="text-xs font-medium text-blue-400">Goal:</span>
-                    <p className="text-sm">{r.tomorrowGoal}</p>
-                  </div>
-                )}
-              </div>
-            )}
+      {/* ── Recent Reflections ── */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h4>Recent Reflections</h4>
+            <p className="sub sm">Click any entry to expand the full write-up.</p>
           </div>
-        ))}
+          {recentReflections.length > 0 && (
+            <span className="chip" style={{ marginLeft: 'auto', height: 24, fontSize: 10.5 }}>
+              {recentReflections.length} entr{recentReflections.length !== 1 ? 'ies' : 'y'}
+            </span>
+          )}
+        </div>
+
+        {recentReflections.length === 0 ? (
+          <div className="blank" style={{ marginTop: 20, padding: '38px 28px', textAlign: 'center' }}>
+            <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+            <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(47,211,196,.4)', background: 'var(--panel-2)' }}>
+              <CalendarDays size={20} style={{ color: 'var(--teal)' }} />
+            </div>
+            <h4>No reflections logged yet</h4>
+            <p>Close out a session with a daily reflection to start building the record.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+            {recentReflections.map(r => (
+              <div key={r.id} className="inset" style={{ padding: 0, overflow: 'hidden' }}>
+                <button
+                  onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '13px 16px', textAlign: 'left' }}
+                >
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted)', width: 56, flex: 'none' }}>
+                    {format(new Date(r.date), 'MMM dd')}
+                  </span>
+                  {r.tradedMyPlan ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: 'var(--green)' }}>
+                      <CheckCircle size={12} /> Followed Plan
+                    </span>
+                  ) : (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: 'var(--red)' }}>
+                      <XCircle size={12} /> Deviated
+                    </span>
+                  )}
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
+                    {r.overallRating}/10
+                  </span>
+                  <span style={{ marginLeft: 'auto', color: 'var(--muted-3)', display: 'inline-flex' }}>
+                    {expandedId === r.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  </span>
+                </button>
+                {expandedId === r.id && (
+                  <div style={{ padding: '0 16px 15px', display: 'flex', flexDirection: 'column', gap: 12, borderTop: '1px solid var(--hair)', paddingTop: 14 }}>
+                    {r.explanation && (
+                      <div>
+                        <p className="lbl">{r.tradedMyPlan ? 'WHAT WENT WELL' : 'WHAT HAPPENED'}</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.explanation}</p>
+                      </div>
+                    )}
+                    {r.emotionalMistakes && (
+                      <div>
+                        <p className="lbl" style={{ color: 'var(--red)' }}>EMOTIONAL MISTAKES</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.emotionalMistakes}</p>
+                      </div>
+                    )}
+                    {r.biggestLesson && (
+                      <div>
+                        <p className="lbl" style={{ color: 'var(--pink)' }}>LESSON</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.biggestLesson}</p>
+                      </div>
+                    )}
+                    {r.tomorrowGoal && (
+                      <div>
+                        <p className="lbl" style={{ color: 'var(--teal)' }}>GOAL</p>
+                        <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.tomorrowGoal}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Weekly Reviews */}
+      {/* ── Weekly Reviews ── */}
       {reviews.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-semibold flex items-center gap-2">
-            <Moon size={14} className="text-fuchsia-400" /> Weekly Reviews
-          </h4>
-          {reviews.slice(0, 5).map(review => (
-            <div key={review.id} className="bg-[var(--card)] border border-blue-500/20 rounded-xl p-3.5 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[var(--muted-foreground)]">Week of {format(new Date(review.weekStart), 'MMM dd')}</span>
-                <span className={`text-sm font-bold px-2 py-0.5 rounded-lg border ${getGradeColor(review.disciplineGrade)}`}>
-                  {review.disciplineGrade}
-                </span>
-              </div>
-              {review.emotionalMistakes && (
-                <p className="text-sm"><span className="text-red-400 text-xs font-medium">Mistakes:</span> {review.emotionalMistakes}</p>
-              )}
-              {review.patternsNoticed && (
-                <p className="text-sm"><span className="text-yellow-400 text-xs font-medium">Patterns:</span> {review.patternsNoticed}</p>
-              )}
-              {review.improvementPlan && (
-                <p className="text-sm"><span className="text-green-400 text-xs font-medium">Plan:</span> {review.improvementPlan}</p>
-              )}
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Weekly Reviews</h4>
+              <p className="sub sm">Self-graded week-over-week process notes.</p>
             </div>
-          ))}
+            <Moon size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+            {reviews.slice(0, 5).map(review => (
+              <div key={review.id} className="inset" style={{ padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted)' }}>
+                    Week of {format(new Date(review.weekStart), 'MMM dd')}
+                  </span>
+                  <span
+                    className="chip"
+                    style={{
+                      marginLeft: 'auto', height: 24, fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12,
+                      color: GRADE_TONE[review.disciplineGrade],
+                      borderColor: GRADE_TONE[review.disciplineGrade],
+                    }}
+                  >
+                    {review.disciplineGrade}
+                  </span>
+                </div>
+                {review.emotionalMistakes && (
+                  <div style={{ marginTop: 12 }}>
+                    <p className="lbl" style={{ color: 'var(--red)' }}>MISTAKES</p>
+                    <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{review.emotionalMistakes}</p>
+                  </div>
+                )}
+                {review.patternsNoticed && (
+                  <div style={{ marginTop: 10 }}>
+                    <p className="lbl" style={{ color: 'var(--amber)' }}>PATTERNS</p>
+                    <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{review.patternsNoticed}</p>
+                  </div>
+                )}
+                {review.improvementPlan && (
+                  <div style={{ marginTop: 10 }}>
+                    <p className="lbl" style={{ color: 'var(--green)' }}>PLAN</p>
+                    <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{review.improvementPlan}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

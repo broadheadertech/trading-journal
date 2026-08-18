@@ -150,10 +150,10 @@ export default function WorldGlobe() {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+    <div>
       {/* Layer toggles */}
-      <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-[var(--border)] bg-black/20">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mr-1">Layers</span>
+      <div className="layers" style={{ gap: 10, paddingBottom: 18, borderBottom: '1px solid var(--line)' }}>
+        <b style={{ marginRight: 18 }}>LAYERS</b>
         {LAYERS.map(l => {
           const Icon = l.icon;
           const on = active[l.id];
@@ -161,14 +161,13 @@ export default function WorldGlobe() {
             <button
               key={l.id}
               onClick={() => toggle(l.id)}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all border ${
-                on
-                  ? 'bg-[var(--card)] border-[var(--border)] text-[var(--foreground)]'
-                  : 'bg-transparent border-[var(--border)] text-[var(--muted-foreground)] opacity-50 hover:opacity-80'
-              }`}
-              style={on ? { boxShadow: `0 0 0 1px ${l.color}55, 0 0 12px -4px ${l.color}88` } : {}}
+              className="chip"
+              style={{
+                borderColor: on ? `${l.color}66` : 'var(--line)',
+                color: on ? '#c0ccda' : 'var(--muted-4)',
+              }}
             >
-              <span className="w-2 h-2 rounded-full" style={{ background: on ? l.color : '#555' }} />
+              <i style={{ background: on ? l.color : 'var(--muted-4)', borderRadius: 1 }} />
               <Icon size={11} />
               {l.label}
             </button>
@@ -177,7 +176,19 @@ export default function WorldGlobe() {
       </div>
 
       {/* Globe canvas */}
-      <div ref={containerRef} className="relative w-full h-[560px] bg-black">
+      <div
+        ref={containerRef}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: 560,
+          marginTop: 18,
+          border: '1px solid var(--line)',
+          borderRadius: 2,
+          background: '#05080d',
+          overflow: 'hidden',
+        }}
+      >
         <Globe
           ref={globeRef as never}
           width={size.w}
@@ -197,7 +208,7 @@ export default function WorldGlobe() {
           pointLabel={(d: object) => {
             const p = d as PointMarker;
             const layer = LAYERS.find(l => l.id === p.layer)?.label ?? p.layer;
-            return `<div style="background:rgba(12,18,32,0.95);padding:8px 12px;border-radius:8px;border:1px solid rgba(236,72,153,0.4);font-family:system-ui;color:#fff;font-size:12px;"><div style="font-weight:bold;color:${colorFor(p.layer)}">${p.name}</div><div style="opacity:0.7;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px">${layer}</div></div>`;
+            return `<div style="background:#0a0f17;padding:9px 13px;border-radius:2px;border:1px solid #182432;font-family:Inter,system-ui,sans-serif;color:#edf2f7;font-size:12px;line-height:1.35"><div style="font-weight:700;font-size:12.5px;color:${colorFor(p.layer)}">${p.name}</div><div style="color:#7f8ea3;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-top:5px">${layer}</div></div>`;
           }}
           arcsData={visibleArcs}
           arcStartLat={(d: object) => (d as ArcEdge).startLat}
@@ -213,12 +224,28 @@ export default function WorldGlobe() {
         />
 
         {/* Legend pill */}
-        <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-full glass text-[10px] text-[var(--muted-foreground)] flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
-          </span>
-          {visiblePoints.length} markers · {visibleArcs.length} routes · drag to rotate
+        <div
+          style={{
+            position: 'absolute',
+            left: 12,
+            bottom: 12,
+            height: 26,
+            padding: '0 12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            border: '1px solid var(--line)',
+            borderRadius: 2,
+            background: 'rgba(10,15,23,.9)',
+            fontSize: 10.5,
+            color: 'var(--muted)',
+          }}
+        >
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)', flex: 'none' }} />
+          <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{visiblePoints.length}</span> markers
+          <span style={{ color: 'var(--muted-3)' }}>·</span>
+          <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{visibleArcs.length}</span> routes
+          <span style={{ color: 'var(--muted-3)' }}>·</span> drag to rotate
         </div>
       </div>
     </div>
