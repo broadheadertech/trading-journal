@@ -21,14 +21,14 @@ interface ToolDef {
 }
 
 const TOOLS: ToolDef[] = [
-  { id: 'position-size', label: 'Position Size', description: 'Optimal size based on your risk tolerance', icon: <Crosshair size={20} /> },
-  { id: 'profit-loss', label: 'Profit / Loss', description: 'Calculate trade outcome and ROI', icon: <DollarSign size={20} /> },
-  { id: 'risk-reward', label: 'Risk / Reward', description: 'Analyze risk-to-reward and breakeven win rate', icon: <Scale size={20} /> },
-  { id: 'margin-leverage', label: 'Margin & Leverage', description: 'Required margin or effective leverage', icon: <Percent size={20} /> },
-  { id: 'pip-value', label: 'Pip Value', description: 'Pip value for forex and CFD pairs', icon: <CircleDot size={20} /> },
-  { id: 'liquidation', label: 'Liquidation Price', description: 'Find your liquidation price for leveraged positions', icon: <Timer size={20} /> },
-  { id: 'drawdown', label: 'Drawdown Recovery', description: 'How much gain is needed to recover from a drawdown', icon: <TrendingDown size={20} /> },
-  { id: 'compound', label: 'Compound Growth', description: 'Project compounding returns over many trades', icon: <TrendingUp size={20} /> },
+  { id: 'position-size', label: 'Position Size', description: 'Optimal size based on your risk tolerance', icon: <Crosshair size={15} /> },
+  { id: 'profit-loss', label: 'Profit / Loss', description: 'Calculate trade outcome and ROI', icon: <DollarSign size={15} /> },
+  { id: 'risk-reward', label: 'Risk / Reward', description: 'Analyze risk-to-reward and breakeven win rate', icon: <Scale size={15} /> },
+  { id: 'margin-leverage', label: 'Margin & Leverage', description: 'Required margin or effective leverage', icon: <Percent size={15} /> },
+  { id: 'pip-value', label: 'Pip Value', description: 'Pip value for forex and CFD pairs', icon: <CircleDot size={15} /> },
+  { id: 'liquidation', label: 'Liquidation Price', description: 'Find your liquidation price for leveraged positions', icon: <Timer size={15} /> },
+  { id: 'drawdown', label: 'Drawdown Recovery', description: 'How much gain is needed to recover from a drawdown', icon: <TrendingDown size={15} /> },
+  { id: 'compound', label: 'Compound Growth', description: 'Project compounding returns over many trades', icon: <TrendingUp size={15} /> },
 ];
 
 /* ── Direction toggle component ──────────────────────────── */
@@ -868,44 +868,48 @@ export default function Tools() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6">
-      <div>
-        <h1 className="text-3xl sm:text-4xl font-black mb-1">Tools & Calculators</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow" style={{ fontWeight: 500 }}>
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--amber)', flex: 'none' }} />
+          {TOOLS.length} calculators · sizing, risk &amp; projection
+        </p>
+        <h2>Tools &amp; calculators</h2>
+        <p className="sub">
           Essential trading calculators for position sizing, risk management, and trade planning.
         </p>
       </div>
 
-      {/* Tool tabs — horizontally scrollable */}
-      <div className="relative">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {TOOLS.map(tool => (
-            <button
-              key={tool.id}
-              onClick={() => setActiveTool(tool.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm rounded-full border whitespace-nowrap font-medium transition-colors shrink-0 ${
-                activeTool === tool.id
-                  ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
-                  : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/40'
-              }`}
-            >
-              {tool.icon} {tool.label}
-            </button>
-          ))}
-        </div>
-        {/* Scroll fade indicator */}
-        <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[var(--background)] to-transparent pointer-events-none" />
+      {/* Tool tabs */}
+      <div className="tabs line">
+        {TOOLS.map(tool => (
+          <button
+            key={tool.id}
+            onClick={() => setActiveTool(tool.id)}
+            className={activeTool === tool.id ? 'on' : undefined}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 9, whiteSpace: 'nowrap' }}
+          >
+            {tool.icon} {tool.label}
+          </button>
+        ))}
       </div>
 
       {/* Active calculator card */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
+      <div className="card" style={{ padding: '23px 28px 28px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead" style={{ gap: 14, marginBottom: 26 }}>
+          <span
+            style={{
+              width: 40, height: 40, borderRadius: 3, flex: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '1px solid var(--line)', background: 'var(--panel-2)', color: 'var(--amber)',
+            }}
+          >
             {active.icon}
-          </div>
+          </span>
           <div>
-            <h2 className="text-lg font-bold">{active.label}</h2>
-            <p className="text-xs text-[var(--muted-foreground)]">{active.description}</p>
+            <h3>{active.label}</h3>
+            <p className="sub">{active.description}</p>
           </div>
         </div>
 

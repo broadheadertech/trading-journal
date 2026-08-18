@@ -211,14 +211,18 @@ function computeMetrics(trades: Trade[]) {
 
 /* ── Effort/Confidence badges ─────────────────────────────── */
 
+const ATLAS_CHIP: React.CSSProperties = {
+  height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
+};
+
 function EffortBadge({ effort }: { effort: string }) {
-  const colors = effort === 'LOW' ? 'bg-green-500/20 text-green-400' : effort === 'MEDIUM' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400';
-  return <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${colors}`}>{effort} Effort</span>;
+  const color = effort === 'LOW' ? 'var(--green)' : effort === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
+  return <span className="chip" style={{ ...ATLAS_CHIP, color }}>{effort} Effort</span>;
 }
 
 function ConfidenceBadge({ confidence }: { confidence: string }) {
-  const colors = confidence === 'HIGH' ? 'bg-fuchsia-500/20 text-fuchsia-400' : confidence === 'MEDIUM' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400';
-  return <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${colors}`}>{confidence} Confidence</span>;
+  const color = confidence === 'HIGH' ? 'var(--pink)' : confidence === 'MEDIUM' ? 'var(--teal)' : 'var(--muted-2)';
+  return <span className="chip" style={{ ...ATLAS_CHIP, color }}>{confidence} Confidence</span>;
 }
 
 /* ── Main Component ───────────────────────────────────────── */
@@ -304,101 +308,103 @@ export default function WhatIfSimulation({ trades }: Props) {
   ];
 
   return (
-    <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6 anim-fade-up">
-      <div className="hero-glow" />
+    <div className="pwrap anim-fade-up">
+      {/* ── Header ── */}
+      <div className="phead" style={{ marginBottom: 26 }}>
+        <p className="eyebrow" style={{ color: 'var(--amber)', fontWeight: 700, letterSpacing: '.04em', fontSize: 10, textTransform: 'uppercase' }}>
+          <FlaskConical size={12} /> What-If Lab
+        </p>
+        <h2>Scenario Composer for Behavior Fixes</h2>
+        <p className="sub">
+          Build leak-removal stacks, simulate period impact, and compare baseline versus projected execution profile before changing your real playbook.
+        </p>
+      </div>
 
-      {/* ── Hero Card ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-0">
-          <div className="p-6 sm:p-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--accent)]/10 text-xs text-[var(--accent)] font-semibold uppercase tracking-widest mb-4">
-              <FlaskConical size={14} /> What-If Lab
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black mb-2">Scenario Composer for Behavior Fixes</h1>
-            <p className="text-sm text-[var(--muted-foreground)] max-w-lg mb-6">
-              Build leak-removal stacks, simulate period impact, and compare baseline versus projected execution profile before changing your real playbook.
-            </p>
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--muted)] font-medium">
-                Period: <span className="font-bold text-[var(--accent)]">{format(scopeStart, 'MM/dd/yyyy')}</span> -&gt; <span className="font-bold text-[var(--accent)]">{format(new Date(), 'MM/dd/yyyy')}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--muted)] font-medium">
-                Leak pool: <span className="font-bold">{leaks.length}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--muted)] font-medium">
-                Selected: <span className="font-bold">{selectedIds.size}</span>
-              </span>
-            </div>
-          </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 22 }}>
+        <span className="chip" style={{ height: 32 }}>
+          Period: <span style={{ fontFamily: 'var(--mono)', color: 'var(--amber)' }}>{format(scopeStart, 'MM/dd/yyyy')}</span> &rarr;{' '}
+          <span style={{ fontFamily: 'var(--mono)', color: 'var(--amber)' }}>{format(new Date(), 'MM/dd/yyyy')}</span>
+        </span>
+        <span className="chip" style={{ height: 32 }}>
+          Leak pool: <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{leaks.length}</span>
+        </span>
+        <span className="chip" style={{ height: 32 }}>
+          Selected: <span style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>{selectedIds.size}</span>
+        </span>
+      </div>
 
-          <div className="grid grid-cols-2 border-t lg:border-t-0 lg:border-l border-[var(--border)]">
-            <div className="p-5 border-b border-r border-[var(--border)]">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-2">Baseline Net</p>
-              <p className={`text-2xl font-black ${baselineMetrics.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {formatCurrency(baselineMetrics.totalPnL)}
-              </p>
-            </div>
-            <div className="p-5 border-b border-[var(--border)]">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400 mb-2">Selected Leak Drag</p>
-              <p className="text-2xl font-black text-red-400">
-                {formatCurrency(selectedDrag)}
-              </p>
-            </div>
-            <div className="p-5 border-r border-[var(--border)]">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Simulated Delta</p>
-              <p className={`text-2xl font-black ${simulatedDelta >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {simulatedDelta >= 0 ? '+' : ''}{formatCurrency(simulatedDelta)}
-              </p>
-            </div>
-            <div className="p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Confidence</p>
-              <p className="text-2xl font-black">{confidence}%</p>
-              <p className="text-xs text-[var(--muted-foreground)]">{confidence < 60 ? 'Early confidence' : confidence < 80 ? 'Moderate confidence' : 'High confidence'}</p>
-            </div>
-          </div>
+      {/* ── Headline Stats ── */}
+      <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', marginTop: 0 }}>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>BASELINE NET</b>
+          <em style={{ fontSize: 22, lineHeight: '28px', color: baselineMetrics.totalPnL >= 0 ? 'var(--green)' : 'var(--red)' }}>
+            {formatCurrency(baselineMetrics.totalPnL)}
+          </em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>Realized result before fixes</small>
+        </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--red)' }} />
+          <b>SELECTED LEAK DRAG</b>
+          <em style={{ fontSize: 22, lineHeight: '28px', color: 'var(--red)' }}>{formatCurrency(selectedDrag)}</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{selectedIds.size} leak{selectedIds.size !== 1 ? 's' : ''} in stack</small>
+        </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <b>SIMULATED DELTA</b>
+          <em style={{ fontSize: 22, lineHeight: '28px', color: simulatedDelta >= 0 ? 'var(--green)' : 'var(--red)' }}>
+            {simulatedDelta >= 0 ? '+' : ''}{formatCurrency(simulatedDelta)}
+          </em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>Projected minus baseline net</small>
+        </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <b>CONFIDENCE</b>
+          <em style={{ fontSize: 22, lineHeight: '28px' }}>{confidence}%</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
+            {confidence < 60 ? 'Early confidence' : confidence < 80 ? 'Moderate confidence' : 'High confidence'}
+          </small>
         </div>
       </div>
 
       {/* ── Main 2-Column Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-6" style={{ marginTop: 24 }}>
 
         {/* ── Scenario Composer (Left) ── */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Scenario Composer</p>
-              <p className="text-sm font-medium">Select leak stack to simulate</p>
+              <h3>Scenario Composer</h3>
+              <p className="sub">Select leak stack to simulate</p>
             </div>
             {selectedIds.size > 0 && (
-              <button onClick={handleReset} className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+              <button onClick={handleReset} className="btn-g" style={{ marginLeft: 'auto', height: 30, padding: '0 14px', fontSize: 12 }}>
                 <RotateCcw size={12} /> Clear
               </button>
             )}
           </div>
 
           {/* Search */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
+          <div style={{ position: 'relative', marginTop: 20 }}>
+            <Search size={14} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search leaks"
-              className="w-full pl-9 pr-3 py-2 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg"
+              style={{ width: '100%', height: 40, paddingLeft: 38, paddingRight: 14, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2, fontSize: 12.5, color: 'var(--text)' }}
             />
           </div>
 
           {/* Top Impact button */}
-          <button
-            onClick={selectTopImpact}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full bg-[var(--muted)] border border-[var(--border)] hover:border-[var(--accent)]/40 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors font-medium"
-          >
-            <Sparkles size={12} /> Top Impact {Math.min(3, leaks.length)}
+          <button onClick={selectTopImpact} className="chip" style={{ height: 30, marginTop: 12 }}>
+            <Sparkles size={12} style={{ color: 'var(--amber)' }} /> Top Impact {Math.min(3, leaks.length)}
           </button>
 
           {/* Leak cards */}
-          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16, maxHeight: 500, overflowY: 'auto', paddingRight: 4 }}>
             {filteredLeaks.length === 0 ? (
-              <div className="text-center py-8 text-sm text-[var(--muted-foreground)]">
+              <div className="empty-line">
                 {leaks.length === 0 ? 'Not enough trades to detect behavioral leaks. Log more trades.' : 'No leaks match your search.'}
               </div>
             ) : (
@@ -408,31 +414,39 @@ export default function WhatIfSimulation({ trades }: Props) {
                   <button
                     key={leak.id}
                     onClick={() => toggleLeak(leak.id)}
-                    className={`w-full text-left rounded-xl p-4 border transition-colors ${
-                      isSelected
-                        ? 'border-[var(--accent)] bg-[var(--accent)]/5'
-                        : 'border-[var(--border)] hover:border-[var(--accent)]/40'
-                    }`}
+                    className="inset"
+                    style={{
+                      position: 'relative', width: '100%', textAlign: 'left', padding: '14px 16px',
+                      borderColor: isSelected ? 'var(--amber)' : 'var(--line)',
+                    }}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--border)]'
-                      }`}>
-                        {isSelected && <CheckCircle2 size={12} className="text-white" />}
+                    {isSelected && (
+                      <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      <div
+                        style={{
+                          marginTop: 2, width: 18, height: 18, flex: 'none', borderRadius: 2,
+                          border: `1px solid ${isSelected ? 'var(--amber)' : 'var(--line-2)'}`,
+                          background: isSelected ? 'var(--amber)' : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        {isSelected && <CheckCircle2 size={12} style={{ color: 'var(--ink)' }} />}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                          <p className="font-semibold text-sm">{leak.name}</p>
-                          <div className="text-right shrink-0">
-                            <p className="text-sm font-bold text-red-400">{formatCurrency(leak.impact)}</p>
-                            <p className="text-[10px] text-[var(--muted-foreground)]">{leak.impactPercent.toFixed(1)}%</p>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 8 }}>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{leak.name}</p>
+                          <div style={{ flex: 'none', textAlign: 'right' }}>
+                            <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--red)' }}>{formatCurrency(leak.impact)}</p>
+                            <p style={{ margin: '3px 0 0', fontSize: 10, color: 'var(--muted-2)' }}>{leak.impactPercent.toFixed(1)}%</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1.5 mb-1.5">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
                           <EffortBadge effort={leak.effort} />
                           <ConfidenceBadge confidence={leak.confidence} />
                         </div>
-                        <p className="text-xs text-[var(--muted-foreground)] line-clamp-2">{leak.description}</p>
+                        <p style={{ margin: 0, fontSize: 11, lineHeight: '17px', color: 'var(--muted-2)' }}>{leak.description}</p>
                       </div>
                     </div>
                   </button>
@@ -443,147 +457,153 @@ export default function WhatIfSimulation({ trades }: Props) {
         </div>
 
         {/* ── Simulation Engine (Right) ── */}
-        <div className="space-y-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Engine header + chart */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
+          <div className="card">
+            <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+            <div className="cardhead" style={{ flexWrap: 'wrap', gap: 14 }}>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Simulation Engine</p>
-                <p className="text-sm font-medium">Baseline vs projected equity under selected changes</p>
+                <h3>Simulation Engine</h3>
+                <p className="sub">Baseline vs projected equity under selected changes</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <button
                   onClick={handleRun}
                   disabled={selectedIds.size === 0}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold transition-colors disabled:opacity-50"
+                  className="btn-a"
+                  style={{ height: 34, padding: '0 16px', fontSize: 12.5, opacity: selectedIds.size === 0 ? 0.5 : 1 }}
                 >
-                  <Play size={14} /> Run Simulation
+                  <Play size={13} /> Run Simulation
                 </button>
-                <button
-                  onClick={handleReset}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-full border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-                >
-                  <RotateCcw size={14} /> Reset
+                <button onClick={handleReset} className="btn-g" style={{ height: 34, padding: '0 16px', fontSize: 12.5 }}>
+                  <RotateCcw size={13} /> Reset
                 </button>
               </div>
             </div>
 
             {/* Equity Curve Chart */}
-            <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl min-h-[300px] flex items-center justify-center">
-              {hasRun && equityCurve.length > 0 ? (
-                <div className="w-full p-4">
-                  <ResponsiveContainer width="100%" height={280}>
-                    <LineChart data={equityCurve} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.4} />
-                      <XAxis
-                        dataKey="idx"
-                        tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
-                        tickLine={false}
-                        axisLine={{ stroke: 'var(--border)' }}
-                        label={{ value: 'Trade #', position: 'insideBottomRight', offset: -5, fill: 'var(--muted-foreground)', fontSize: 10 }}
-                      />
-                      <YAxis
-                        tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
-                        tickLine={false}
-                        axisLine={{ stroke: 'var(--border)' }}
-                        tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(0)}`}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'var(--card)',
-                          border: '1px solid var(--border)',
-                          borderRadius: '0.75rem',
-                          fontSize: 12,
-                        }}
-                        labelStyle={{ color: 'var(--muted-foreground)', fontWeight: 600 }}
-                        formatter={((value: number, name: string) => [formatCurrency(value), name]) as any}
-                        labelFormatter={((label: number) => `Trade ${label}`) as any}
-                      />
-                      <Legend
-                        verticalAlign="bottom"
-                        iconType="plainline"
-                        wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="actual"
-                        name="Actual"
-                        stroke="#9ca3af"
-                        strokeWidth={2}
-                        dot={{ r: 3, fill: '#9ca3af', stroke: '#9ca3af' }}
-                        activeDot={{ r: 5 }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="projected"
-                        name="Projected"
-                        stroke="var(--accent)"
-                        strokeWidth={2}
-                        dot={{ r: 3, fill: 'var(--accent)', stroke: 'var(--accent)' }}
-                        activeDot={{ r: 5 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <p className="text-center text-xs text-[var(--muted-foreground)] mt-2">
-                    {removedTradeIds.size} trade{removedTradeIds.size !== 1 ? 's' : ''} removed from projection
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center text-sm text-[var(--muted-foreground)] py-12">
+            {hasRun && equityCurve.length > 0 ? (
+              <div style={{ marginTop: 20 }}>
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={equityCurve} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#182432" />
+                    <XAxis
+                      dataKey="idx"
+                      tick={{ fill: '#7f8ea3', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                      label={{ value: 'Trade #', position: 'insideBottomRight', offset: -5, fill: '#7f8ea3', fontSize: 10 }}
+                    />
+                    <YAxis
+                      tick={{ fill: '#7f8ea3', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(0)}`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        background: '#0c1119',
+                        border: '1px solid #182432',
+                        borderRadius: '2px',
+                        fontSize: '12px',
+                        color: '#edf2f7',
+                      }}
+                      labelStyle={{ color: '#7f8ea3', fontWeight: 700 }}
+                      formatter={((value: number, name: string) => [formatCurrency(value), name]) as any}
+                      labelFormatter={((label: number) => `Trade ${label}`) as any}
+                    />
+                    <Legend
+                      verticalAlign="bottom"
+                      iconType="plainline"
+                      wrapperStyle={{ fontSize: 11, color: '#7f8ea3', paddingTop: 8 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="actual"
+                      name="Actual"
+                      stroke="#7f8ea3"
+                      strokeWidth={2}
+                      dot={{ r: 2, fill: '#7f8ea3', stroke: '#7f8ea3' }}
+                      activeDot={{ r: 4 }}
+                      isAnimationActive={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="projected"
+                      name="Projected"
+                      stroke="#24c88a"
+                      strokeWidth={2}
+                      dot={{ r: 2, fill: '#24c88a', stroke: '#24c88a' }}
+                      activeDot={{ r: 4 }}
+                      isAnimationActive={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+                <p className="footnote" style={{ marginTop: 12 }}>
+                  {removedTradeIds.size} trade{removedTradeIds.size !== 1 ? 's' : ''} removed from projection
+                </p>
+              </div>
+            ) : (
+              <div className="plot">
+                <span className="empty">
                   {selectedIds.size === 0
                     ? 'Select leaks from the composer, then run simulation'
                     : 'Click "Run Simulation" to see projected equity'}
-                </div>
-              )}
-            </div>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Before / After Matrix */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl">
-            <button onClick={() => setShowMatrix(!showMatrix)} className="w-full flex items-center justify-between p-5">
+          <div className="card">
+            <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+            <button onClick={() => setShowMatrix(!showMatrix)} style={{ width: '100%', display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Before / After Matrix</p>
-                <p className="text-sm font-medium">Metric-level impact after applying selected changes</p>
+                <h3>Before / After Matrix</h3>
+                <p className="sub">Metric-level impact after applying selected changes</p>
               </div>
-              {showMatrix ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}>
+                {showMatrix ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </span>
             </button>
             {showMatrix && (
-              <div className="px-5 pb-5">
-                {hasRun ? (
-                  <div className="border border-[var(--border)] rounded-xl overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-[var(--border)] bg-[var(--muted)]/30">
-                          <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Metric</th>
-                          <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Before</th>
-                          <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">After</th>
-                          <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Delta</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matrixRows.map(row => {
-                          const delta = row.after - row.before;
-                          const improved = row.inverse ? delta < 0 : delta > 0;
-                          return (
-                            <tr key={row.label} className="border-b border-[var(--border)] last:border-b-0">
-                              <td className="px-4 py-2.5 font-medium">{row.label}</td>
-                              <td className="px-4 py-2.5 text-right text-[var(--muted-foreground)]">{row.fmt(row.before)}</td>
-                              <td className="px-4 py-2.5 text-right font-medium">{row.fmt(row.after)}</td>
-                              <td className={`px-4 py-2.5 text-right font-medium ${Math.abs(delta) < 0.01 ? 'text-[var(--muted-foreground)]' : improved ? 'text-green-400' : 'text-red-400'}`}>
-                                {Math.abs(delta) < 0.01 ? '--' : `${delta > 0 ? '+' : ''}${row.fmt(delta)}`}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-sm text-[var(--muted-foreground)]">
-                    Run simulation to populate the before/after metric matrix.
-                  </div>
-                )}
-              </div>
+              hasRun ? (
+                <div style={{ marginTop: 20, border: '1px solid var(--line)', borderRadius: 2, overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                    <thead>
+                      <tr style={{ background: 'var(--panel-2)', borderBottom: '1px solid var(--line)' }}>
+                        <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>METRIC</th>
+                        <th style={{ textAlign: 'right', padding: '10px 14px', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>BEFORE</th>
+                        <th style={{ textAlign: 'right', padding: '10px 14px', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>AFTER</th>
+                        <th style={{ textAlign: 'right', padding: '10px 14px', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>DELTA</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {matrixRows.map(row => {
+                        const delta = row.after - row.before;
+                        const improved = row.inverse ? delta < 0 : delta > 0;
+                        return (
+                          <tr key={row.label} style={{ borderBottom: '1px solid var(--hair)' }}>
+                            <td style={{ padding: '10px 14px', color: 'var(--text-2)' }}>{row.label}</td>
+                            <td style={{ padding: '10px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: 'var(--muted-2)' }}>{row.fmt(row.before)}</td>
+                            <td style={{ padding: '10px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: 'var(--text)' }}>{row.fmt(row.after)}</td>
+                            <td
+                              style={{
+                                padding: '10px 14px', textAlign: 'right', fontFamily: 'var(--mono)',
+                                color: Math.abs(delta) < 0.01 ? 'var(--muted-2)' : improved ? 'var(--green)' : 'var(--red)',
+                              }}
+                            >
+                              {Math.abs(delta) < 0.01 ? '--' : `${delta > 0 ? '+' : ''}${row.fmt(delta)}`}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="empty-line">Run simulation to populate the before/after metric matrix.</div>
+              )
             )}
           </div>
         </div>
@@ -591,22 +611,31 @@ export default function WhatIfSimulation({ trades }: Props) {
 
       {/* ── Quick Scenario Cards ── */}
       {leaks.length > 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">Quick Scenario Cards</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="card" style={{ marginTop: 24 }}>
+          <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Quick Scenario Cards</h3>
+              <p className="sub">One-click stacks for the highest-impact leaks</p>
+            </div>
+            <Sparkles size={16} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12, marginTop: 22 }}>
             {leaks.slice(0, 3).map(leak => (
               <button
                 key={leak.id}
                 onClick={() => { setSelectedIds(new Set([leak.id])); setHasRun(true); }}
-                className="text-left bg-[var(--muted)]/30 border border-[var(--border)] hover:border-[var(--accent)]/40 rounded-xl p-4 transition-colors group"
+                className="inset"
+                style={{ position: 'relative', width: '100%', textAlign: 'left', padding: '15px 16px' }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <Sparkles size={16} className="text-[var(--muted-foreground)] group-hover:text-[var(--accent)] transition-colors" />
-                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-400">One-Click</span>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                  <Sparkles size={14} style={{ color: 'var(--muted-3)' }} />
+                  <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: 'var(--pink)' }}>ONE-CLICK</span>
                 </div>
-                <p className="font-semibold text-sm mb-1">{leak.name}</p>
-                <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 mb-2">{leak.description}</p>
-                <p className="text-sm font-bold text-green-400">{formatCurrency(Math.abs(leak.impact))}</p>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{leak.name}</p>
+                <p style={{ margin: '6px 0 0', fontSize: 11, lineHeight: '17px', color: 'var(--muted-2)' }}>{leak.description}</p>
+                <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, color: 'var(--green)' }}>{formatCurrency(Math.abs(leak.impact))}</p>
               </button>
             ))}
           </div>
@@ -614,33 +643,36 @@ export default function WhatIfSimulation({ trades }: Props) {
       )}
 
       {/* ── Simulation Notes ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl">
-        <button onClick={() => setShowNotes(!showNotes)} className="w-full flex items-center justify-between p-5">
-          <div className="flex items-center gap-2">
-            <Zap size={14} className="text-amber-400" />
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Simulation Notes</p>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <button onClick={() => setShowNotes(!showNotes)} style={{ width: '100%', display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Zap size={14} style={{ color: 'var(--amber)' }} />
+            <h4>Simulation Notes</h4>
           </div>
-          {showNotes ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}>
+            {showNotes ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </span>
         </button>
         {showNotes && (
-          <div className="px-5 pb-5 space-y-2">
+          <div style={{ marginTop: 16 }}>
             {selectedIds.size > 0 ? (
               <>
-                <div className="flex items-start gap-2 text-xs">
-                  <span className="text-fuchsia-400 mt-0.5 shrink-0">&#x25CB;</span>
-                  <span>Selected stack estimated drag: {formatCurrency(Math.abs(selectedDrag)).replace(/^\+/, '')}. Run simulation to replay it on this period.</span>
+                <div className="mrow">
+                  <span className="ic" style={{ color: 'var(--pink)' }}>&#x25CB;</span>
+                  <span className="lb">Selected stack estimated drag: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(Math.abs(selectedDrag)).replace(/^\+/, '')}</span>. Run simulation to replay it on this period.</span>
                 </div>
                 {hasRun && (
-                  <div className="flex items-start gap-2 text-xs">
-                    <span className="text-green-400 mt-0.5 shrink-0">&#x25CB;</span>
-                    <span>Pre-run conservative recovery range: {formatCurrency(Math.abs(selectedDrag) * 0.4).replace(/^\+/, '')} to {formatCurrency(Math.abs(selectedDrag) * 0.7).replace(/^\+/, '')}.</span>
+                  <div className="mrow">
+                    <span className="ic" style={{ color: 'var(--green)' }}>&#x25CB;</span>
+                    <span className="lb">Pre-run conservative recovery range: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(Math.abs(selectedDrag) * 0.4).replace(/^\+/, '')}</span> to <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(Math.abs(selectedDrag) * 0.7).replace(/^\+/, '')}</span>.</span>
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-xs text-[var(--muted-foreground)]">Select leaks to see simulation notes.</p>
+              <p style={{ margin: 0, fontSize: 11.5, color: 'var(--muted-2)' }}>Select leaks to see simulation notes.</p>
             )}
-            <p className="text-xs text-[var(--muted-foreground)] pt-1 border-t border-[var(--border)]">
+            <p className="footnote" style={{ marginTop: 16, textAlign: 'left' }}>
               Deterministic replay on selected period. No execution or signal generation.
             </p>
           </div>

@@ -4,7 +4,13 @@ import { useState, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Plus, X, Layers, MoreHorizontal, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
+// shared ATLAS input chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', height: 42, padding: '0 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
 
 interface MemberStat {
   userId: string;
@@ -63,75 +69,84 @@ export default function TeamCohorts({ workspaceId, memberStats, members, myRole 
   const cohortList = cohorts ?? [];
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold">Cohorts</h2>
-          <p className="text-sm text-[var(--muted-foreground)]">{cohortList.length} cohort{cohortList.length !== 1 ? 's' : ''}</p>
-        </div>
+      <div className="phead pwrap" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Groups</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Cohorts</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
+          {cohortList.length} cohort{cohortList.length !== 1 ? 's' : ''} in this workspace
+        </p>
         {canManage && (
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-semibold transition-colors"
-          >
-            <Plus size={16} />
-            New Cohort
-          </button>
+          <div className="actions">
+            <button onClick={() => setShowCreateForm(true)} className="btn-a" style={{ height: 44 }}>
+              <Plus size={14} />
+              New Cohort
+            </button>
+          </div>
         )}
       </div>
 
       {/* Create form */}
       {showCreateForm && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-end">
-            <div>
-              <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">
-                Cohort Name
-              </label>
+        <div className="card" style={{ marginBottom: 20 }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <h3>New Cohort</h3>
+          <p className="sub">Name and code for the new group</p>
+          <div className="flex items-end gap-3 flex-wrap" style={{ marginTop: 18 }}>
+            <div className="field" style={{ flex: '1 1 220px', minWidth: 200 }}>
+              <label>COHORT NAME</label>
               <input
                 type="text"
                 value={newName}
                 onChange={e => setNewName(e.target.value)}
                 placeholder="e.g. Alpha Futures"
-                className="w-full px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--accent)]"
+                style={inputBox}
               />
             </div>
-            <div>
-              <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">
-                Code
-              </label>
+            <div className="field" style={{ width: 180 }}>
+              <label>CODE</label>
               <input
                 type="text"
                 value={newCode}
                 onChange={e => setNewCode(e.target.value)}
                 placeholder="ALPHA-2025"
-                className="w-full px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--accent)] max-w-[160px]"
+                style={inputBox}
               />
             </div>
             <button
               onClick={handleCreate}
               disabled={!newName.trim() || !newCode.trim()}
-              className="px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+              className={!newName.trim() || !newCode.trim() ? 'btn-d' : 'btn-a'}
+              style={{ height: 42 }}
             >
               Create
             </button>
             <button
               onClick={() => { setShowCreateForm(false); setNewName(''); setNewCode(''); }}
-              className="p-2.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              className="flex items-center justify-center"
+              style={{ width: 42, height: 42, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--muted)' }}
+              title="Cancel"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         </div>
       )}
 
       {/* Cohort cards */}
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         {cohortList.length === 0 && !showCreateForm && (
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-12 text-center">
-            <Layers size={32} className="mx-auto text-[var(--muted-foreground)] mb-3" />
-            <p className="text-sm text-[var(--muted-foreground)]">No cohorts yet. Create one to group your students.</p>
+          <div className="blank" style={{ padding: '48px 32px' }}>
+            <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+            <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+            <span className="badge" style={{ border: '1px solid var(--line-2)', color: 'var(--amber)', marginBottom: 20 }}>
+              <Layers size={22} />
+            </span>
+            <h4>No cohorts yet</h4>
+            <p>Create one to group your students.</p>
           </div>
         )}
 
@@ -185,35 +200,53 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
   const availableMembers = members.filter(m => !cohort.memberUserIds.includes(m.userId));
 
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+    <div className="card">
+      <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+
       {/* Cohort header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="cardhead">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[var(--accent)]/15 flex items-center justify-center">
-            <Layers size={18} className="text-[var(--accent)]" />
+          <div
+            className="flex items-center justify-center shrink-0"
+            style={{
+              width: 32, height: 32, borderRadius: 2, background: 'var(--panel-2)',
+              border: '1px solid var(--line)', color: 'var(--amber)',
+            }}
+          >
+            <Layers size={16} />
           </div>
           <div>
-            <h3 className="font-bold">{cohort.name}</h3>
-            <p className="text-[11px] text-[var(--muted-foreground)]">{cohort.code}</p>
+            <h3>{cohort.name}</h3>
+            <p className="sub" style={{ marginTop: 5, fontFamily: 'var(--mono)' }}>{cohort.code}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-[var(--muted-foreground)]">{cohortStats.count} members</span>
+        <div className="flex items-center gap-2" style={{ marginLeft: 'auto' }}>
+          <span className="chip" style={{ height: 26, padding: '0 10px', fontSize: 11 }}>
+            {cohortStats.count} members
+          </span>
           {canManage && (
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-1.5 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors"
+                className="flex items-center justify-center"
+                style={{ width: 28, height: 28, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--muted)' }}
               >
-                <MoreHorizontal size={16} />
+                <MoreHorizontal size={15} />
               </button>
               {menuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                  <div className="absolute right-0 top-full mt-1 z-50 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 min-w-[120px]">
+                  <div
+                    className="absolute right-0 top-full z-50"
+                    style={{
+                      marginTop: 6, minWidth: 140, borderRadius: 2,
+                      border: '1px solid var(--line-2)', background: '#080d14',
+                    }}
+                  >
                     <button
                       onClick={() => { setMenuOpen(false); onDelete(); }}
-                      className="w-full px-3 py-2 text-left text-xs text-red-400 hover:bg-red-500/10"
+                      className="w-full text-left"
+                      style={{ padding: '9px 12px', fontSize: 12, fontWeight: 700, color: 'var(--red)' }}
                     >
                       Delete Cohort
                     </button>
@@ -224,55 +257,72 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
           )}
           <button
             onClick={onDelete}
-            className="p-1.5 rounded-lg hover:bg-red-500/10 text-[var(--muted-foreground)] hover:text-red-400 transition-colors"
+            className="flex items-center justify-center"
+            style={{ width: 28, height: 28, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--red)' }}
+            title="Delete cohort"
           >
-            <X size={16} />
+            <X size={15} />
           </button>
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        <div className="text-center">
-          <p className={cn('text-lg font-bold', cohortStats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400')}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" style={{ marginTop: 20 }}>
+        <div className="inset">
+          <p className="lbl">P&amp;L</p>
+          <p style={{
+            margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, lineHeight: '22px',
+            color: cohortStats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)',
+          }}>
             {cohortStats.totalPnL >= 0 ? '+' : '-'}${Math.abs(cohortStats.totalPnL).toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">P&L</p>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-bold">{Math.round(cohortStats.avgCompliance)}%</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Compliance</p>
+        <div className="inset">
+          <p className="lbl">COMPLIANCE</p>
+          <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, lineHeight: '22px' }}>
+            {Math.round(cohortStats.avgCompliance)}%
+          </p>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-bold">{Math.round(cohortStats.avgWinRate)}%</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Win Rate</p>
+        <div className="inset">
+          <p className="lbl">WIN RATE</p>
+          <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, lineHeight: '22px' }}>
+            {Math.round(cohortStats.avgWinRate)}%
+          </p>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-bold">{cohortStats.totalTrades}</p>
-          <p className="text-[10px] text-[var(--muted-foreground)]">Trades</p>
+        <div className="inset">
+          <p className="lbl">TRADES</p>
+          <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 18, lineHeight: '22px' }}>
+            {cohortStats.totalTrades}
+          </p>
         </div>
       </div>
 
       {/* Members section */}
-      <div>
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">Members</p>
+      <div style={{ marginTop: 22 }}>
+        <p className="lbl">MEMBERS</p>
 
         {cohortMemberDetails.length > 0 && (
-          <div className="space-y-1.5 mb-3">
+          <div style={{ marginTop: 10, marginBottom: 14 }}>
             {cohortMemberDetails.map(m => (
-              <div key={m.userId} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-[var(--muted)]/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--accent)]">
-                    {m.displayName[0]?.toUpperCase() ?? '?'}
-                  </div>
-                  <span className="text-sm">{m.displayName}</span>
+              <div key={m.userId} className="mrow">
+                <div
+                  className="flex items-center justify-center shrink-0"
+                  style={{
+                    width: 24, height: 24, borderRadius: 2, background: 'var(--panel-2)',
+                    border: '1px solid var(--line)', fontSize: 10, fontWeight: 700, color: 'var(--amber)',
+                  }}
+                >
+                  {m.displayName[0]?.toUpperCase() ?? '?'}
                 </div>
+                <span className="lb" style={{ marginLeft: 12 }}>{m.displayName}</span>
                 {canManage && (
                   <button
                     onClick={() => onRemoveMember(m.userId)}
-                    className="p-1 text-[var(--muted-foreground)] hover:text-red-400 transition-colors"
+                    className="flex items-center justify-center"
+                    style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--red)' }}
+                    title="Remove from cohort"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 )}
               </div>
@@ -282,10 +332,15 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
 
         {/* Add member dropdown */}
         {canManage && (
-          <div className="relative">
+          <div className="relative" style={{ marginTop: 12 }}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-full flex items-center justify-between px-3 py-2 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm text-[var(--muted-foreground)]"
+              className="w-full flex items-center justify-between"
+              style={{
+                height: 38, padding: '0 14px', borderRadius: 2,
+                border: '1px solid var(--line)', background: 'var(--panel-2)',
+                fontSize: 12.5, color: 'var(--muted)',
+              }}
             >
               <span>+ Add member...</span>
               <ChevronDown size={14} />
@@ -293,20 +348,27 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
             {dropdownOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-xl py-1 max-h-48 overflow-y-auto">
-                  <div className="px-3 py-2 text-xs font-semibold text-[var(--accent)] bg-[var(--accent)]/10">
-                    + Add member...
+                <div
+                  className="absolute left-0 right-0 top-full z-50"
+                  style={{
+                    marginTop: 6, maxHeight: 200, overflowY: 'auto', borderRadius: 2,
+                    border: '1px solid var(--line-2)', background: '#080d14',
+                  }}
+                >
+                  <div className="lbl" style={{ padding: '10px 12px', color: 'var(--amber)', borderBottom: '1px solid var(--hair)' }}>
+                    ADD MEMBER
                   </div>
                   {availableMembers.length === 0 ? (
-                    <div className="px-3 py-2 text-xs text-[var(--muted-foreground)]">
+                    <p className="empty-line" style={{ padding: '18px 0', fontSize: 12.5 }}>
                       No available members
-                    </div>
+                    </p>
                   ) : (
                     availableMembers.map(m => (
                       <button
                         key={m.userId}
                         onClick={() => { onAddMember(m.userId); setDropdownOpen(false); }}
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--muted)] transition-colors"
+                        className="w-full text-left"
+                        style={{ padding: '9px 12px', fontSize: 12.5, color: 'var(--text-2)', borderBottom: '1px solid var(--hair)' }}
                       >
                         {m.displayName}
                       </button>

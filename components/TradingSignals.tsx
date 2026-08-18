@@ -909,28 +909,38 @@ function PostSignalModal({
                 const tpReward = tpValid ? Math.abs(tpNum - entryLowNum) : 0;
                 const tpRR = tpValid && tpRisk > 0 ? tpReward / tpRisk : 0;
                 return (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[var(--muted-foreground)] w-16 shrink-0 tabular-nums">Target {i + 1}</span>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                    <span style={{ width: 58, flex: 'none', fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>
+                      Target {i + 1}
+                    </span>
                     <input
                       type="number"
                       step="any"
                       value={v}
                       onChange={e => setTp(i, e.target.value)}
                       placeholder={`Target ${i + 1}`}
-                      className="flex-1"
+                      style={{ ...CONTROL, flex: 1, width: 'auto', minWidth: 0 }}
                     />
                     {showTpPips && (
-                      <span className="text-[10px] text-emerald-400/80 tabular-nums w-20 text-right">
+                      <span style={{ width: 78, flex: 'none', textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
                         {fmtPips(market, symbol || 'X', entryRef, tpNum, effectivePip)}
                       </span>
                     )}
                     {tpValid && (
-                      <span className="text-[10px] text-pink-300/90 bg-pink-500/10 tabular-nums px-1.5 py-0.5 rounded w-14 text-center">
+                      <span
+                        style={{
+                          width: 52, height: 20, flex: 'none', borderRadius: 2,
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--mono)', fontSize: 10,
+                          border: '1px solid var(--line)', background: 'var(--panel-2)', color: 'var(--muted)',
+                        }}
+                      >
                         1:{tpRR.toFixed(1)}
                       </span>
                     )}
                     <button type="button" onClick={() => removeTp(i)} disabled={tpInputs.length === 1}
-                      className="p-1 rounded text-[var(--muted-foreground)] hover:text-amber-400 transition-colors disabled:opacity-30">
+                      aria-label={`Remove target ${i + 1}`}
+                      style={{ flex: 'none', display: 'inline-flex', padding: 4, color: 'var(--muted-2)', opacity: tpInputs.length === 1 ? 0.3 : 1 }}>
                       {tpInputs.length === 1 ? <Minus size={12} /> : <Trash2 size={12} />}
                     </button>
                   </div>
@@ -940,30 +950,41 @@ function PostSignalModal({
           </div>
 
           {previewRR > 0 && (
-            <div className="text-xs text-[var(--muted-foreground)] tabular-nums">
-              R:R (vs Target 1): <span className={`font-bold ${previewRR >= 2 ? 'text-emerald-400' : previewRR >= 1 ? 'text-amber-400' : 'text-amber-500'}`}>{previewRR.toFixed(2)}</span>
-            </div>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted-2)' }}>
+              R:R (vs Target 1){' '}
+              <span
+                style={{
+                  fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5,
+                  color: previewRR >= 2 ? 'var(--green)' : previewRR >= 1 ? 'var(--teal)' : 'var(--amber)',
+                }}
+              >
+                {previewRR.toFixed(2)}
+              </span>
+            </p>
           )}
 
           {/* Adjust pip & lot */}
-          <div className="rounded-xl border border-[var(--border)] bg-black/10">
+          <div style={{ border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)' }}>
             <button
               type="button"
               onClick={() => setShowAdjust(v => !v)}
-              className="w-full px-3 py-2 flex items-center justify-between text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              style={{
+                width: '100%', height: 40, padding: '0 16px', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', gap: 12, fontWeight: 700, fontSize: 11.5, color: 'var(--text-2)',
+              }}
             >
               <span>Adjust pip / lot size{(pipSize.trim() || lotSize.trim()) ? ' · custom' : ' · using defaults'}</span>
-              <span className="text-[10px]">{showAdjust ? '▾' : '▸'}</span>
+              <ChevronDown size={13} style={{ color: 'var(--muted-2)', flex: 'none', transform: showAdjust ? 'rotate(180deg)' : undefined }} />
             </button>
             {showAdjust && (
-              <div className="px-3 pb-3 space-y-3 border-t border-[var(--border)]">
-                <div className="text-[10px] text-[var(--muted-foreground)] leading-relaxed pt-2">
+              <div style={{ padding: '14px 16px 16px', borderTop: '1px solid var(--line)', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <p style={{ margin: 0, fontSize: 11, lineHeight: '18px', color: 'var(--muted-2)' }}>
                   Defaults match MT4/MT5 broker convention. For {symbol || 'this symbol'} ({market}):
-                  <span className="text-pink-400 ml-1">1 pip = {fmtPriceUnit(market, computedDefaultPip)}</span>
-                  <span className="ml-1">·</span>
-                  <span className="text-pink-400 ml-1">{computedDefaultLot.toLocaleString()} units / lot</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
+                  <span style={{ color: 'var(--amber)', marginLeft: 5, fontFamily: 'var(--mono)' }}>1 pip = {fmtPriceUnit(market, computedDefaultPip)}</span>
+                  <span style={{ marginLeft: 5 }}>·</span>
+                  <span style={{ color: 'var(--amber)', marginLeft: 5, fontFamily: 'var(--mono)' }}>{computedDefaultLot.toLocaleString()} units / lot</span>
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <Field label="Pip size (override)">
                     <input
                       type="number"
@@ -971,6 +992,7 @@ function PostSignalModal({
                       value={pipSize}
                       onChange={e => setPipSize(e.target.value)}
                       placeholder={String(computedDefaultPip)}
+                      style={CONTROL}
                     />
                   </Field>
                   <Field label="Lot size (units)">
@@ -980,60 +1002,82 @@ function PostSignalModal({
                       value={lotSize}
                       onChange={e => setLotSize(e.target.value)}
                       placeholder={String(computedDefaultLot)}
+                      style={CONTROL}
                     />
                   </Field>
                 </div>
                 {showPips && effectivePip > 0 && allBaseValid && tpNums[0] && (
-                  <div className="text-[10px] text-emerald-400/80 tabular-nums">
+                  <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--green)' }}>
                     Preview with current settings: Target 1 = {fmtPips(market, symbol || 'X', entryRef, tpNums[0], effectivePip)}
                     {effectiveLot > 0 && (
-                      <span className="ml-2 text-[var(--muted-foreground)]">
+                      <span style={{ marginLeft: 8, color: 'var(--muted-2)' }}>
                         · ${(effectivePip * effectiveLot).toLocaleString(undefined, { maximumFractionDigits: 2 })} per pip
                       </span>
                     )}
-                  </div>
+                  </p>
                 )}
               </div>
             )}
           </div>
 
           <Field label="Rationale / Comments (optional)">
-            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={4} placeholder="Optional — why this trade, catalysts, invalidation, updates. You can add or edit this any time after posting." maxLength={1000} />
-            <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{rationale.length}/1000</div>
+            <textarea value={rationale} onChange={e => setRationale(e.target.value)} rows={4} placeholder="Optional — why this trade, catalysts, invalidation, updates. You can add or edit this any time after posting." maxLength={1000} style={TEXTAREA} />
+            <p style={{ margin: '6px 0 0', textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-2)' }}>{rationale.length}/1000</p>
           </Field>
 
           {/* Poster choice — show pip annotations on the card? */}
           <button
             type="button"
             onClick={() => setShowPips(v => !v)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-[var(--border)] bg-black/20 hover:bg-black/30 transition-colors text-left"
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+              padding: '14px 16px', border: '1px solid var(--line)', borderRadius: 2,
+              background: 'var(--panel-2)', textAlign: 'left',
+            }}
           >
-            <div className="flex items-center gap-2.5">
-              {showPips ? <Eye size={16} className="text-pink-400" /> : <EyeOff size={16} className="text-[var(--muted-foreground)]" />}
-              <div>
-                <div className="text-sm font-semibold text-[var(--foreground)]">
+            <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {showPips
+                ? <Eye size={16} style={{ color: 'var(--amber)', flex: 'none' }} />
+                : <EyeOff size={16} style={{ color: 'var(--muted-2)', flex: 'none' }} />}
+              <span>
+                <span style={{ display: 'block', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>
                   {showPips ? 'Show pips on this signal' : 'Hide pips on this signal'}
-                </div>
-                <div className="text-[11px] text-[var(--muted-foreground)] leading-snug">
+                </span>
+                <span style={{ display: 'block', marginTop: 5, fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                   {showPips
                     ? 'Followers see pip distances next to SL and every TP.'
                     : 'Followers see prices only — no pip annotations.'}
-                </div>
-              </div>
-            </div>
-            <span className={`relative inline-block w-10 h-5 rounded-full shrink-0 transition-colors ${showPips ? 'bg-pink-500' : 'bg-[var(--muted)]'}`}>
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${showPips ? 'translate-x-5' : ''}`} />
+                </span>
+              </span>
+            </span>
+            <span
+              style={{
+                position: 'relative', flex: 'none', display: 'inline-block', width: 38, height: 20, borderRadius: 2,
+                border: `1px solid ${showPips ? 'var(--amber)' : 'var(--line-2)'}`,
+                background: showPips ? 'var(--amber)' : 'var(--panel)',
+              }}
+            >
+              <span
+                style={{
+                  position: 'absolute', top: 2, left: showPips ? 20 : 2, width: 14, height: 14, borderRadius: 1,
+                  background: showPips ? 'var(--ink)' : 'var(--muted-2)',
+                }}
+              />
             </span>
           </button>
 
-          {error && <div className="text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-3 py-2">{error}</div>}
+          {error && (
+            <div className="warn" style={{ marginTop: 0 }}>
+              <b style={{ flex: 'none' }}>!</b>
+              <p style={{ margin: 0 }}>{error}</p>
+            </div>
+          )}
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, paddingTop: 4 }}>
+            <button type="button" onClick={onClose} className="btn-g">
               Cancel
             </button>
-            <button type="submit" disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)] transition-all disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="btn-a" style={submitting ? { opacity: 0.5 } : undefined}>
               {submitting ? (isEdit ? 'Saving…' : 'Posting…') : (isEdit ? 'Save changes' : 'Post Signal')}
             </button>
           </div>
@@ -1110,60 +1154,60 @@ function SignalHistoryModal({
   const activeCount = (history ?? []).filter(s => s.status === 'active' || s.status === 'pending').length;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,.72)', backdropFilter: 'blur(4px)' }}
+    >
       <div
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-4xl rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] flex flex-col"
+        className="modal"
+        style={{ width: '100%', maxWidth: 1000, maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: 0, textAlign: 'left' }}
       >
-        <div className="flex items-center justify-between p-5 border-b border-[var(--border)]">
-          <div className="flex items-center gap-3 flex-wrap">
-            <History size={18} className="text-pink-400" />
+        <span className="accent" />
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, padding: '20px 24px', borderBottom: '1px solid var(--line)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+            <History size={17} style={{ color: 'var(--amber)', flex: 'none', marginTop: 2 }} />
             <div>
-              <h2 className="text-lg font-bold text-[var(--foreground)]">{posterName}'s signal history</h2>
-              <div className="flex items-center gap-3 text-[11px] text-[var(--muted-foreground)] mt-0.5 tabular-nums">
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>
+                {posterName}'s signal history
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginTop: 9, fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted-2)' }}>
                 <span>{history?.length ?? 0} total</span>
-                <span className="text-emerald-400">{wonCount} won</span>
-                <span className="text-red-400">{lostCount} lost</span>
-                <span className="text-amber-400">{activeCount} open</span>
+                <span style={{ color: 'var(--green)' }}>{wonCount} won</span>
+                <span style={{ color: 'var(--red)' }}>{lostCount} lost</span>
+                <span style={{ color: 'var(--amber)' }}>{activeCount} open</span>
                 {stats && stats.total > 0 && (
-                  <span className="text-pink-300 font-semibold">· {Math.round(stats.hitRate * 100)}% hit-rate</span>
+                  <span style={{ color: 'var(--teal)' }}>· {Math.round(stats.hitRate * 100)}% hit-rate</span>
                 )}
               </div>
             </div>
           </div>
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
-            <X size={18} className="text-[var(--muted-foreground)]" />
+          <button type="button" onClick={onClose} aria-label="Close" style={{ display: 'inline-flex', flex: 'none', color: 'var(--muted-2)' }}>
+            <X size={18} />
           </button>
         </div>
 
-        <div className="px-5 py-3 border-b border-[var(--border)] flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Filter</span>
-          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[var(--border)] bg-black/20">
-            {(['all', 'active', 'pending', 'won', 'lost', 'cancelled', 'expired'] as const).map(s => (
-              <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize transition-all ${
-                  statusFilter === s
-                    ? 'bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900'
-                    : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, padding: '14px 24px', borderBottom: '1px solid var(--line)' }}>
+          <span style={{ marginRight: 6, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>Filter</span>
+          {(['all', 'active', 'pending', 'won', 'lost', 'cancelled', 'expired'] as const).map(s => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={statusFilter === s ? 'chip on' : 'chip'}
+              style={{ height: 26, padding: '0 12px', fontSize: 11, textTransform: 'capitalize' }}
+            >
+              {s}
+            </button>
+          ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5">
+        <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
           {history === undefined ? (
-            <div className="text-center text-sm text-[var(--muted-foreground)] py-10">Loading history…</div>
+            <p className="empty-line">Loading history…</p>
           ) : list.length === 0 ? (
-            <div className="text-center text-sm text-[var(--muted-foreground)] py-10">
-              No signals match this filter.
-            </div>
+            <p className="empty-line">No signals match this filter.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 20 }}>
               {list.map(s => (
                 <SignalCard
                   key={s._id}
