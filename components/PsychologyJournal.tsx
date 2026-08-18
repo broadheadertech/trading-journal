@@ -593,7 +593,7 @@ export default function PsychologyJournal({
                   </span>
                 </div>
                 <div style={{ height: 2, background: "var(--rail)", overflow: "hidden", marginBottom: 10 }}>
-                  <div style={{ height: 2, background: "var(--green)" }} style={{ width: `${m.compliancePercent}%` }} />
+                  <div style={{ height: 2, background: "var(--green)", width: `${m.compliancePercent}%` }} />
                 </div>
                 <div className="grid grid-cols-2 gap-x-6 text-xs text-[var(--muted-foreground)]">
                   <div>Compliance: <span className="font-semibold text-[var(--foreground)]">{m.compliancePercent}%</span></div>
