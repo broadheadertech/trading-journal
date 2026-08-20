@@ -6,10 +6,11 @@ import { MARKET_TYPE_LIST, marketMeta } from '@/lib/market-types';
 import { formatPercent, getDisciplineScore } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Search,
-  LayoutGrid, List, Calendar, TrendingUp, TrendingDown, Clock,
-  Eye, EyeOff, Sparkles, Shield, Target, BarChart3, Upload, Globe, Lock,
-} from 'lucide-react';
+  Plus, PencilSimple as Edit2, Trash as Trash2, CaretLeft as ChevronLeft, CaretRight as ChevronRight, MagnifyingGlass as Search,
+  Calendar, TrendUp as TrendingUp, TrendDown as TrendingDown, Clock,
+  Eye, EyeSlash as EyeOff, Sparkle as Sparkles, Shield, Target, ChartBar as BarChart3, UploadSimple as Upload, Globe, Lock,
+} from '@phosphor-icons/react';
+import { SquaresFour as LayoutGrid, ListBullets as List } from '@phosphor-icons/react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, parseISO, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import Modal from './ui/Modal';
 import TradeForm from './TradeForm';

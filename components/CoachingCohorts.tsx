@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Users, Calendar, DollarSign, Plus, X, Check, Loader2, Star } from 'lucide-react';
+import { Users, Calendar, CurrencyDollar as DollarSign, Plus, X, Check, CircleNotch as Loader2, Star } from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
 
 type Cohort = {

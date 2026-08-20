@@ -4,9 +4,10 @@ import { useState, useMemo, useCallback } from 'react';
 import { Trade } from '@/lib/types';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  FlaskConical, Search, RotateCcw, Play, CheckCircle2, Plus,
-  TrendingUp, TrendingDown, Minus, Sparkles, ChevronUp, ChevronDown, Zap,
-} from 'lucide-react';
+  Flask as FlaskConical, MagnifyingGlass as Search, ArrowCounterClockwise as RotateCcw, CheckCircle as CheckCircle2, Plus,
+  TrendUp as TrendingUp, TrendDown as TrendingDown, Minus, Sparkle as Sparkles, CaretUp as ChevronUp, CaretDown as ChevronDown, Lightning as Zap,
+} from '@phosphor-icons/react';
+import { Play } from '@phosphor-icons/react';
 import { format, subDays } from 'date-fns';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,

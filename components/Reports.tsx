@@ -7,9 +7,9 @@ import {
   format, subDays, subMonths, startOfWeek, endOfWeek, isAfter, isBefore, isWithinInterval,
 } from 'date-fns';
 import {
-  FileText, Download, BarChart3, Clock, Coins, Image,
-  TrendingUp, RefreshCw, Search, ChevronDown, Sparkles, Copy, Check,
-} from 'lucide-react';
+  FileText, DownloadSimple, ChartBar, Clock, Coins, Image,
+  TrendUp, ArrowsClockwise, MagnifyingGlass, CaretDown, Sparkle, Copy, Check,
+} from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -349,7 +349,7 @@ export default function Reports({ trades, strategies }: Props) {
           </div>
 
           <button onClick={handleGenerateReport} className="btn-a" style={{ marginLeft: 'auto', height: 44 }}>
-            <Sparkles size={16} /> Generate Report
+            <Sparkle size={16} /> Generate Report
           </button>
         </div>
       </div>
@@ -362,7 +362,7 @@ export default function Reports({ trades, strategies }: Props) {
             <h3>Data Exports</h3>
             <p className="sub">Raw CSV extracts of every closed trade and its aggregates.</p>
           </div>
-          <Download size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+          <DownloadSimple size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 12, marginTop: 24 }}>
@@ -378,13 +378,13 @@ export default function Reports({ trades, strategies }: Props) {
               className="btn-g"
               style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
           {/* Daily Analytics CSV */}
           <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
-            <BarChart3 size={18} style={{ color: 'var(--teal)', flex: 'none' }} />
+            <ChartBar size={18} style={{ color: 'var(--teal)', flex: 'none' }} />
             <div style={{ minWidth: 0 }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Daily Analytics (CSV)</p>
               <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Daily net PnL, fees, win/loss counts, and hold times.</p>
@@ -394,7 +394,7 @@ export default function Reports({ trades, strategies }: Props) {
               className="btn-g"
               style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
@@ -410,7 +410,7 @@ export default function Reports({ trades, strategies }: Props) {
               className="btn-g"
               style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
@@ -426,7 +426,7 @@ export default function Reports({ trades, strategies }: Props) {
               className="btn-g"
               style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
@@ -444,7 +444,7 @@ export default function Reports({ trades, strategies }: Props) {
               disabled
               title="Coming soon"
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
         </div>
@@ -459,7 +459,7 @@ export default function Reports({ trades, strategies }: Props) {
             <p className="sub">Current window measured against the immediately preceding one.</p>
           </div>
           <button className="btn-g" style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12 }}>
-            <BarChart3 size={14} /> Refresh Audit
+            <ChartBar size={14} /> Refresh Audit
           </button>
         </div>
 
@@ -528,7 +528,7 @@ export default function Reports({ trades, strategies }: Props) {
         {/* Search + Filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: '1 1 220px' }}>
-            <Search size={14} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)' }} />
+            <MagnifyingGlass size={14} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)' }} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -555,7 +555,7 @@ export default function Reports({ trades, strategies }: Props) {
                 <option key={rt.id} value={rt.id}>{rt.label}</option>
               ))}
             </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)', pointerEvents: 'none' }} />
+            <CaretDown size={14} style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)', pointerEvents: 'none' }} />
           </div>
         </div>
 
@@ -604,7 +604,7 @@ export default function Reports({ trades, strategies }: Props) {
                             className="btn-g"
                             style={{ height: 28, padding: '0 12px', fontSize: 11.5, gap: 6 }}
                           >
-                            <Download size={12} /> PDF
+                            <DownloadSimple size={12} /> PDF
                           </button>
                           <button
                             onClick={() => handleCopyReport(report)}

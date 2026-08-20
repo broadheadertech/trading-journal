@@ -2,10 +2,11 @@
 
 import { TabId } from '@/lib/types';
 import {
-  LayoutDashboard, BookOpen, Map, List,
-  BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench,
-} from 'lucide-react';
+  SquaresFour, BookOpen,
+  ChartBar, Brain, Sparkle, FileText, Sun, Moon,
+  DownloadSimple, UploadSimple, Plus, X, Target, Newspaper, ArrowsClockwise, Trophy, Wrench,
+} from '@phosphor-icons/react';
+import { MapTrifold as Map, ListBullets as List, Scales as Scale, Planet as Orbit, List as Menu } from '@phosphor-icons/react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { UserButton, useUser } from '@clerk/nextjs';
@@ -29,15 +30,15 @@ interface NavigationProps {
 }
 
 const tabs: { id: TabId; label: string; shortLabel: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: <LayoutDashboard size={20} /> },
+  { id: 'dashboard', label: 'Dashboard', shortLabel: 'Home', icon: <SquaresFour size={20} /> },
   { id: 'playbook', label: 'Playbook', shortLabel: 'Playbook', icon: <BookOpen size={20} /> },
   { id: 'checklist', label: 'Market Context', shortLabel: 'Market', icon: <Map size={20} /> },
   { id: 'journal', label: 'Journal', shortLabel: 'Journal', icon: <List size={20} /> },
-  { id: 'analytics', label: 'Analytics', shortLabel: 'Stats', icon: <BarChart3 size={20} /> },
+  { id: 'analytics', label: 'Analytics', shortLabel: 'Stats', icon: <ChartBar size={20} /> },
   { id: 'verdicts', label: 'Verdicts', shortLabel: 'Verdicts', icon: <Scale size={20} /> },
   { id: 'psychology', label: 'Psychology', shortLabel: 'Psych', icon: <Brain size={20} /> },
   { id: 'goals', label: 'Goals', shortLabel: 'Goals', icon: <Target size={20} /> },
-  { id: 'whatif', label: 'What-If', shortLabel: 'What-If', icon: <Sparkles size={20} /> },
+  { id: 'whatif', label: 'What-If', shortLabel: 'What-If', icon: <Sparkle size={20} /> },
   { id: 'reports', label: 'Reports', shortLabel: 'Reports', icon: <FileText size={20} /> },
   { id: 'news', label: 'News', shortLabel: 'News', icon: <Newspaper size={20} /> },
   { id: 'brain', label: 'Brain', shortLabel: 'Brain', icon: <Orbit size={20} /> },
@@ -101,14 +102,14 @@ export default function Navigation({
               <span className="hidden sm:inline">Add Trade</span>
             </button>
             <button onClick={onImport} className="hidden sm:flex p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors" title="Import Data">
-              <Upload size={18} />
+              <UploadSimple size={18} />
             </button>
             <button onClick={onExport} className="hidden sm:flex p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors" title="Export Data">
-              <Download size={18} />
+              <DownloadSimple size={18} />
             </button>
             {onReseedDemo && (
               <button onClick={onReseedDemo} className="hidden sm:flex p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors" title="Reset to demo data">
-                <RefreshCw size={18} />
+                <ArrowsClockwise size={18} />
               </button>
             )}
             <div ref={currencyRef} className="relative hidden sm:block">
@@ -217,14 +218,14 @@ export default function Navigation({
             </div>
             <div className="flex items-center justify-center gap-3 px-3 pb-3 pt-1 border-t border-[var(--border)]">
               <button onClick={() => { onImport(); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] text-sm">
-                <Upload size={16} /> Import
+                <UploadSimple size={16} /> Import
               </button>
               <button onClick={() => { onExport(); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] text-sm">
-                <Download size={16} /> Export
+                <DownloadSimple size={16} /> Export
               </button>
               {onReseedDemo && (
                 <button onClick={() => { onReseedDemo(); setMobileMenuOpen(false); }} className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] text-sm">
-                  <RefreshCw size={16} /> Reset Demo
+                  <ArrowsClockwise size={16} /> Reset Demo
                 </button>
               )}
             </div>

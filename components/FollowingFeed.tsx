@@ -6,8 +6,8 @@ import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { TabId } from '@/lib/types';
 import {
-  Users, Radio, TrendingUp, BookOpen, Loader2, Trophy, ArrowRight,
-} from 'lucide-react';
+  Users, Radio, TrendUp, BookOpen, CircleNotch, Trophy, ArrowRight,
+} from '@phosphor-icons/react';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import SignalRationale from '@/components/SignalRationale';
@@ -72,7 +72,7 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
         {/* Main column — the feed itself */}
         <main style={{ minWidth: 0 }}>
           {data === undefined ? (
-            <p className="empty-line"><Loader2 size={20} className="animate-spin" style={{ display: 'inline' }} /></p>
+            <p className="empty-line"><CircleNotch size={20} className="animate-spin" style={{ display: 'inline' }} /></p>
           ) : data.following === 0 ? (
             <EmptyState
               title="You're not following anyone yet"
@@ -212,7 +212,7 @@ function FeedCard({ item }: { item: FeedItem }) {
         <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
         <PosterRow item={item} verb={item.isOpen ? 'opened a trade' : 'shared a trade'} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <TrendingUp size={14} color="#24c88a" />
+          <TrendUp size={14} color="#24c88a" />
           <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--text)' }}>{item.coin}</span>
           <span
             className="chip"

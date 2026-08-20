@@ -19,7 +19,7 @@ export default function ChangelogPage() {
         <div className="wrap">
           <div className="timeline">
             <div className="rel latest">
-              <span className="ring"></span><span className="node"></span>
+              <span className="halo"></span><span className="node"></span>
               <div className="when"><b>2026-05-04</b><span className="pill">LATEST</span></div>
               <div className="body">
                 <h3>Brokers &amp; Affiliate pages</h3>

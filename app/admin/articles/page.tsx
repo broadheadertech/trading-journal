@@ -5,7 +5,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useUser } from '@clerk/nextjs';
 import { useToast } from '@/components/ui/Toast';
-import { Plus, Edit2, Trash2, Eye, FileText, CheckCircle, Clock, XCircle, BookOpen, Send, Mail } from 'lucide-react';
+import { Plus, PencilSimple, Trash, Eye, FileText, CheckCircle, Clock, XCircle, BookOpen, PaperPlaneTilt, EnvelopeSimple } from '@phosphor-icons/react';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const STATUS_FILTERS = ['all', 'draft', 'in_review', 'published', 'archived'] as const;
@@ -72,7 +72,7 @@ export default function AdminArticlesPage() {
           <Stat label="Articles"         value={analytics.totalArticles} icon={BookOpen} accent="var(--amber)" />
           <Stat label="Published"        value={analytics.published}     icon={CheckCircle} accent="var(--green)" />
           <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} accent="var(--teal)" />
-          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={Mail} accent="var(--pink)" />
+          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={EnvelopeSimple} accent="var(--pink)" />
         </div>
       )}
 
@@ -177,7 +177,7 @@ export default function AdminArticlesPage() {
                       </button>
                     </>
                   )}
-                  <button onClick={() => setEditingId(a.id)} style={iconBtn('var(--text-2)')} title="Edit"><Edit2 size={14} /></button>
+                  <button onClick={() => setEditingId(a.id)} style={iconBtn('var(--text-2)')} title="Edit"><PencilSimple size={14} /></button>
                   <button
                     onClick={async () => {
                       if (!confirm(`Delete "${a.title}"?`)) return;
@@ -187,7 +187,7 @@ export default function AdminArticlesPage() {
                     style={iconBtn('var(--red)')}
                     title="Delete"
                   >
-                    <Trash2 size={14} />
+                    <Trash size={14} />
                   </button>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export default function AdminArticlesPage() {
           <div className="max-h-80 overflow-y-auto" style={{ marginTop: 18 }}>
             {subscribers.map((s: any) => (
               <div key={s._id} className="mrow">
-                <Mail size={14} className="ic" style={{ color: 'var(--pink)' }} />
+                <EnvelopeSimple size={14} className="ic" style={{ color: 'var(--pink)' }} />
                 <span className="lb truncate flex-1">{s.email}</span>
                 <span className="chip" style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', marginLeft: 12 }}>
                   {String(s.status).toUpperCase()}
@@ -227,7 +227,7 @@ export default function AdminArticlesPage() {
                   style={{ ...iconBtn('var(--red)'), marginLeft: 8 }}
                   title="Remove"
                 >
-                  <Trash2 size={12} />
+                  <Trash size={12} />
                 </button>
               </div>
             ))}
@@ -333,7 +333,7 @@ function ArticleEditor({ article, onBack }: { article?: any; onBack: () => void 
               onClick={submit}
               className="btn-a flex-1 disabled:opacity-50"
             >
-              {busy ? 'Saving…' : <><Send size={14} /> {article ? 'Save changes' : 'Create article'}</>}
+              {busy ? 'Saving…' : <><PaperPlaneTilt size={14} /> {article ? 'Save changes' : 'Create article'}</>}
             </button>
           </div>
         </div>

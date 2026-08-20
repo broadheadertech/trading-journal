@@ -5,9 +5,9 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  GraduationCap, ArrowLeft, ArrowRight, Lock, Check, Plus, Edit2, Trash2,
-  ExternalLink, PlayCircle, FileText, Link as LinkIcon, Settings, Upload, Loader2,
-} from 'lucide-react';
+  GraduationCap, ArrowLeft, ArrowRight, Lock, Check, Plus, PencilSimple as Edit2, Trash as Trash2,
+  ArrowSquareOut as ExternalLink, PlayCircle, FileText, Link as LinkIcon, Gear as Settings, UploadSimple as Upload, CircleNotch as Loader2,
+} from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
 import BrainMascot from '@/components/BrainMascot';
 
@@ -128,7 +128,7 @@ export default function Courses() {
 
                   {owned && (
                     <span className="pill" style={{ position: 'absolute', right: 16, top: 16 }}>
-                      <Check size={10} strokeWidth={3} style={{ marginRight: 6 }} /> OWNED
+                      <Check size={10} weight="bold" style={{ marginRight: 6 }} /> OWNED
                     </span>
                   )}
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ExternalLink, RefreshCw, Newspaper, AlertCircle } from 'lucide-react';
+import { ArrowSquareOut, ArrowsClockwise, Newspaper, WarningCircle } from '@phosphor-icons/react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Article {
@@ -66,7 +66,7 @@ export default function News() {
         <div className="actions">
           <button className="btn-g" type="button" onClick={() => setRefreshKey(k => k + 1)} disabled={loading}
             style={loading ? { opacity: 0.4 } : undefined}>
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
+            <ArrowsClockwise size={14} className={loading ? 'animate-spin' : ''} /> Refresh
           </button>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function News() {
             <div className="card">
               <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                <AlertCircle size={18} color="#d99405" style={{ flex: 'none', marginTop: 2 }} />
+                <WarningCircle size={18} color="#d99405" style={{ flex: 'none', marginTop: 2 }} />
                 <div style={{ minWidth: 0 }}>
                   <h3>News API key not configured</h3>
                   <p className="sub">To display live news, you need a free API key from NewsAPI.org.</p>
@@ -116,7 +116,7 @@ export default function News() {
           {error && !isApiKeyMissing && (
             <div className="card" style={{ textAlign: 'center', padding: '34px 28px' }}>
               <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
-              <AlertCircle size={22} color="#ff4d5e" style={{ display: 'inline-block' }} />
+              <WarningCircle size={22} color="#ff4d5e" style={{ display: 'inline-block' }} />
               <p className="empty-line" style={{ padding: '14px 0 0' }}>{error}</p>
               <button
                 onClick={() => setRefreshKey(k => k + 1)}
@@ -194,7 +194,7 @@ export default function News() {
                   </div>
                   <h5>
                     {article.title}
-                    <ExternalLink size={10} style={{ display: 'inline', marginLeft: 5, opacity: 0.55 }} />
+                    <ArrowSquareOut size={10} style={{ display: 'inline', marginLeft: 5, opacity: 0.55 }} />
                   </h5>
                   {article.description && <span style={{ flex: 1 }}>{article.description}</span>}
                   <span

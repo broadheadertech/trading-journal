@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useBrainState } from '@/hooks/useBrainState';
 import { useProfile } from '@/hooks/useStore';
 import { STAGE_ORDER, STAGE_THRESHOLDS, STAGE_COLORS, STAGE_PATTERNS } from '@/lib/stage-config';

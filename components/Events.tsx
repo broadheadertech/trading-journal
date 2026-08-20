@@ -5,9 +5,10 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  CalendarDays, ArrowLeft, Check, Plus, Edit2, Trash2, Settings,
-  Globe, MapPin, Layers, Clock, Upload, Loader2, ExternalLink, ArrowRight,
-} from 'lucide-react';
+  CalendarDots, ArrowLeft, Check, Plus, PencilSimple, Trash, Gear,
+  Globe, Stack, Clock, UploadSimple, CircleNotch, ArrowSquareOut, ArrowRight,
+} from '@phosphor-icons/react';
+import { MapPin } from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
 import BrainMascot from '@/components/BrainMascot';
 
@@ -38,7 +39,7 @@ const atlasLabel: React.CSSProperties = {
 const MODE_LABEL: Record<Mode, { label: string; icon: React.ReactNode; color: string }> = {
   online:    { label: 'Online',    icon: <Globe size={12} />,  color: 'bg-blue-500/15 text-blue-500' },
   in_person: { label: 'In-Person', icon: <MapPin size={12} />, color: 'bg-emerald-500/15 text-emerald-500' },
-  hybrid:    { label: 'Hybrid',    icon: <Layers size={12} />, color: 'bg-purple-500/15 text-purple-500' },
+  hybrid:    { label: 'Hybrid',    icon: <Stack size={12} />, color: 'bg-purple-500/15 text-purple-500' },
 };
 
 function formatDate(iso: string) {
@@ -113,7 +114,7 @@ export default function Events() {
           <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
           <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
           <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
-            <CalendarDays size={24} style={{ color: 'var(--amber)' }} />
+            <CalendarDots size={24} style={{ color: 'var(--amber)' }} />
           </span>
           <h4>No events yet</h4>
           <p>New trainings drop monthly — stay tuned.</p>
@@ -137,7 +138,7 @@ export default function Events() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={e.coverImage} alt={e.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <CalendarDays size={56} style={{ color: 'var(--amber)', opacity: 0.5 }} />
+                    <CalendarDots size={56} style={{ color: 'var(--amber)', opacity: 0.5 }} />
                   )}
 
                   <span
@@ -152,7 +153,7 @@ export default function Events() {
                       className="chip"
                       style={{ position: 'absolute', right: 16, top: 16, height: 22, zIndex: 1, color: 'var(--green)', borderColor: 'var(--green)', textTransform: 'uppercase', fontSize: 9.5, fontWeight: 700, letterSpacing: '.03em' }}
                     >
-                      <Check size={11} strokeWidth={3} /> Registered
+                      <Check size={11} weight="bold" /> Registered
                     </span>
                   )}
 
@@ -247,7 +248,7 @@ function EventDetail({
               <p className="lbl" style={{ textTransform: 'uppercase' }}>Access details</p>
               {(ev.mode === 'online' || ev.mode === 'hybrid') && ev.meetingUrl && (
                 <a href={ev.meetingUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2" style={{ color: 'var(--amber)', fontWeight: 700, fontSize: 12.5 }}>
-                  <Globe size={14} /> Join {ev.platform || 'meeting'} <ExternalLink size={12} />
+                  <Globe size={14} /> Join {ev.platform || 'meeting'} <ArrowSquareOut size={12} />
                 </a>
               )}
               {(ev.mode === 'in_person' || ev.mode === 'hybrid') && (ev.venueName || ev.address) && (
@@ -344,7 +345,7 @@ export function AdminEvents({ onBack }: { onBack?: () => void }) {
             >
               {e.isPublished ? 'Unpublish' : 'Publish'}
             </button>
-            <button onClick={() => setEditingId(e.id)} className="p-2"><Edit2 size={14} /></button>
+            <button onClick={() => setEditingId(e.id)} className="p-2"><PencilSimple size={14} /></button>
             <button
               onClick={async () => {
                 if (!confirm(`Delete "${e.title}"?`)) return;
@@ -354,7 +355,7 @@ export function AdminEvents({ onBack }: { onBack?: () => void }) {
               className="p-2"
               style={{ color: 'var(--red)' }}
             >
-              <Trash2 size={14} />
+              <Trash size={14} />
             </button>
           </div>
         ))}
@@ -618,7 +619,7 @@ function FileUpload({
           disabled={busy}
           className="btn-g disabled:opacity-50"
         >
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+          {busy ? <CircleNotch size={14} className="animate-spin" /> : <UploadSimple size={14} />}
           Upload
         </button>
       </div>
@@ -680,7 +681,7 @@ function MultiImageUpload({
               className="absolute -top-1 -right-1 rounded-full p-0.5 opacity-0 group-hover:opacity-100"
               style={{ background: 'var(--red)', color: 'var(--ink)' }}
             >
-              <Trash2 size={10} />
+              <Trash size={10} />
             </button>
           </div>
         ))}
@@ -691,7 +692,7 @@ function MultiImageUpload({
           className="h-20 w-20 flex flex-col items-center justify-center gap-1 disabled:opacity-50"
           style={{ border: '1px dashed var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', fontSize: 11.5, color: 'var(--muted-2)' }}
         >
-          {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+          {busy ? <CircleNotch size={16} className="animate-spin" /> : <UploadSimple size={16} />}
           {busy ? 'Uploading' : 'Add'}
         </button>
         <input

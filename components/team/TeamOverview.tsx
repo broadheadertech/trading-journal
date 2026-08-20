@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import {
-  Users, TrendingDown, ShieldCheck, AlertTriangle, ExternalLink,
-} from 'lucide-react';
+  Users, TrendDown, ShieldCheck, Warning, ArrowSquareOut,
+} from '@phosphor-icons/react';
 
 interface MemberStat {
   userId: string;
@@ -49,7 +49,7 @@ function ComplianceRing({ value }: { value: number }) {
   const color = value >= 80 ? 'var(--green)' : value >= 60 ? 'var(--amber)' : 'var(--red)';
 
   return (
-    <div className="ring" style={{ width: 96, height: 96 }}>
+    <div className="scoredial" style={{ width: 96, height: 96 }}>
       <svg viewBox="0 0 80 80" className="w-full h-full">
         <circle cx="40" cy="40" r={radius} fill="none" stroke="#16202c" strokeWidth="5" />
         <circle
@@ -140,7 +140,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
         <StatCard
           label="TEAM NET P&L"
           value={`${stats.totalPnL < 0 ? '-' : ''}$${Math.abs(stats.totalPnL).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          icon={<TrendingDown size={16} />}
+          icon={<TrendDown size={16} />}
           color={stats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'}
           accent={stats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'}
         />
@@ -154,7 +154,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
         <StatCard
           label="RISK ALERTS"
           value={stats.riskAlerts}
-          icon={<AlertTriangle size={16} />}
+          icon={<Warning size={16} />}
           color={stats.riskAlerts > 0 ? 'var(--red)' : 'var(--muted)'}
           accent="var(--pink)"
         />
@@ -269,7 +269,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
               <p className="sub">Latest workspace events</p>
             </div>
             <button className="viewall">
-              View all <ExternalLink size={12} />
+              View all <ArrowSquareOut size={12} />
             </button>
           </div>
 

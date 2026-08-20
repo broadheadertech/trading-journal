@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SlidersHorizontal, Save, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, FloppyDisk, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { useAdminAntiGamingThresholds, useAdminUpdateThresholds } from '@/hooks/useAdminStore';
 
 // ─── Default values (match convex/lib/antiGaming.ts exported constants) ─────
@@ -234,7 +234,7 @@ export default function ThresholdsPage() {
                       border: '1px solid var(--line)', background: 'var(--panel-2)', color: 'var(--muted-2)',
                     }}
                   >
-                    <RotateCcw size={14} />
+                    <ArrowCounterClockwise size={14} />
                   </button>
                 </div>
               </div>
@@ -256,7 +256,7 @@ export default function ThresholdsPage() {
           disabled={saving || !hasChanges}
           className="btn-a disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Save size={14} />
+          <FloppyDisk size={14} />
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
 
@@ -266,7 +266,7 @@ export default function ThresholdsPage() {
           disabled={saving}
           className="btn-g disabled:opacity-40"
         >
-          <RotateCcw size={14} />
+          <ArrowCounterClockwise size={14} />
           Reset All to Defaults
         </button>
 

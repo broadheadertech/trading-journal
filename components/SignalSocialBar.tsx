@@ -5,7 +5,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { Heart, MessageCircle, Loader2, Send, Trash2 } from 'lucide-react';
+import { Heart, ChatCircle, CircleNotch, PaperPlaneTilt, Trash } from '@phosphor-icons/react';
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -64,7 +64,7 @@ export default function SignalSocialBar({ signalId }: { signalId: Id<'signals'> 
             ...(open ? { borderColor: 'var(--line-2)', color: 'var(--text)' } : {}),
           }}
         >
-          <MessageCircle size={13} />
+          <ChatCircle size={13} />
           <span style={{ fontFamily: 'var(--mono)', fontWeight: 500 }}>{commentCount}</span>
           <span style={{ color: 'var(--muted-2)' }}>{commentCount === 1 ? 'comment' : 'comments'}</span>
         </button>
@@ -98,7 +98,7 @@ function CommentsPanel({ signalId, canInteract }: { signalId: Id<'signals'>; can
     <div style={{ padding: '4px 20px 16px', background: 'var(--panel-2)', borderTop: '1px solid var(--line)' }}>
       {comments === undefined ? (
         <div style={{ padding: '16px 0', textAlign: 'center' }}>
-          <Loader2 size={14} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
+          <CircleNotch size={14} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
         </div>
       ) : comments.length === 0 ? (
         <p style={{ margin: 0, padding: '14px 0', fontSize: 12, color: 'var(--muted-2)' }}>
@@ -156,7 +156,7 @@ function CommentsPanel({ signalId, canInteract }: { signalId: Id<'signals'>; can
                   style={{ flex: 'none', color: 'var(--muted-3)', cursor: 'pointer' }}
                   title="Delete comment"
                 >
-                  <Trash2 size={12} />
+                  <Trash size={12} />
                 </button>
               )}
             </div>
@@ -201,7 +201,7 @@ function CommentsPanel({ signalId, canInteract }: { signalId: Id<'signals'>; can
               cursor: busy || !text.trim() ? 'not-allowed' : 'pointer',
             }}
           >
-            {busy ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+            {busy ? <CircleNotch size={13} className="animate-spin" /> : <PaperPlaneTilt size={13} />}
           </button>
         </form>
       ) : (

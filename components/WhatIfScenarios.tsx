@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Trade, Strategy, EmotionState } from '@/lib/types';
 import { CRYPTO_SUGGESTIONS, EMOTION_OPTIONS } from '@/lib/utils';
-import { Sparkles, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Sparkle as Sparkles, Warning as AlertTriangle, CheckCircle, XCircle } from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, Layers, Users, ShieldCheck, Plus } from 'lucide-react';
+import { ChartBar, Stack, Users, ShieldCheck, Plus } from '@phosphor-icons/react';
 
 // shared ATLAS input chrome (markup-level styling only)
 const inputBox: React.CSSProperties = {
@@ -28,8 +28,8 @@ interface TeamReportsProps {
 type ReportType = 'team-performance' | 'cohort-analysis' | 'member-audit' | 'compliance-summary';
 
 const reportTypes: { id: ReportType; label: string; icon: React.ReactNode }[] = [
-  { id: 'team-performance', label: 'Team Performance', icon: <BarChart3 size={18} /> },
-  { id: 'cohort-analysis', label: 'Cohort Analysis', icon: <Layers size={18} /> },
+  { id: 'team-performance', label: 'Team Performance', icon: <ChartBar size={18} /> },
+  { id: 'cohort-analysis', label: 'Cohort Analysis', icon: <Stack size={18} /> },
   { id: 'member-audit', label: 'Member Audit', icon: <Users size={18} /> },
   { id: 'compliance-summary', label: 'Compliance Summary', icon: <ShieldCheck size={18} /> },
 ];
@@ -169,7 +169,7 @@ export default function TeamReports({ workspaceId, memberStats }: TeamReportsPro
           <div style={{ marginTop: 18 }}>
             {generatedReports.map(report => (
               <div key={report.id} className="mrow">
-                <BarChart3 size={15} className="ic" style={{ color: 'var(--amber)' }} />
+                <ChartBar size={15} className="ic" style={{ color: 'var(--amber)' }} />
                 <div className="lb" style={{ marginLeft: 16 }}>
                   <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>
                     {reportTypes.find(r => r.id === report.type)?.label}

@@ -4,9 +4,10 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Search, Send, Eye, MessageSquare, ClipboardList, FileText, Clock,
-  ChevronDown, Paperclip,
-} from 'lucide-react';
+  MagnifyingGlass, PaperPlaneTilt, Eye, ChatText, FileText, Clock,
+  CaretDown,
+} from '@phosphor-icons/react';
+import { ClipboardText as ClipboardList, Paperclip } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface MemberStat {
@@ -113,7 +114,7 @@ export default function CoachDesk({ workspaceId, memberStats, members, myRole }:
     : 'low';
 
   const deskTabs: { id: DeskTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'chat', label: 'Chat', icon: <MessageSquare size={14} /> },
+    { id: 'chat', label: 'Chat', icon: <ChatText size={14} /> },
     { id: 'assignments', label: 'Assignments', icon: <ClipboardList size={14} /> },
     { id: 'templates', label: 'Templates', icon: <FileText size={14} /> },
     { id: 'history', label: 'History', icon: <Clock size={14} /> },
@@ -129,7 +130,7 @@ export default function CoachDesk({ workspaceId, memberStats, members, myRole }:
             className="flex items-center gap-2"
             style={{ height: 38, padding: '0 12px', borderRadius: 2, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
           >
-            <Search size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
+            <MagnifyingGlass size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
             <input
               type="text"
               placeholder="Search students..."
@@ -315,7 +316,7 @@ export default function CoachDesk({ workspaceId, memberStats, members, myRole }:
                         className={cn('flex items-center justify-center', !messageText.trim() ? 'btn-d' : 'btn-a')}
                         style={{ width: 34, height: 34, padding: 0 }}
                       >
-                        <Send size={15} />
+                        <PaperPlaneTilt size={15} />
                       </button>
                     </div>
                   </div>

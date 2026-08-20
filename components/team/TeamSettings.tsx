@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Settings, Users, ShieldCheck, AlertTriangle, Clock, Eye, Save, Trash2, Check,
-} from 'lucide-react';
+  Gear, Users, ShieldCheck, Warning, Clock, Eye, FloppyDisk, Trash, Check,
+} from '@phosphor-icons/react';
 
 interface WorkspaceMember {
   workspaceId: string;
@@ -81,7 +81,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
       <div className="card">
         <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="flex items-center gap-2">
-          <Settings size={15} style={{ color: 'var(--muted-3)' }} />
+          <Gear size={15} style={{ color: 'var(--muted-3)' }} />
           <h3>Workspace</h3>
         </div>
         <p className="sub">Identity and visibility for this workspace</p>
@@ -126,7 +126,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
 
         {isOwner && (
           <button className="btn-a" style={{ marginTop: 20 }}>
-            <Save size={14} />
+            <FloppyDisk size={14} />
             Save Changes
           </button>
         )}
@@ -217,7 +217,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
         <div className="card" style={{ marginTop: 24, borderColor: '#3a1218' }}>
           <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
           <div className="flex items-center gap-2">
-            <AlertTriangle size={15} style={{ color: 'var(--red)' }} />
+            <Warning size={15} style={{ color: 'var(--red)' }} />
             <h3 style={{ color: 'var(--red)' }}>Danger Zone</h3>
           </div>
           <p className="sub">
@@ -231,7 +231,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
               fontWeight: 700, fontSize: 13, color: 'var(--red)',
             }}
           >
-            <Trash2 size={14} />
+            <Trash size={14} />
             Delete Workspace
           </button>
         </div>

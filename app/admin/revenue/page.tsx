@@ -1,6 +1,6 @@
 'use client';
 
-import { DollarSign, CreditCard, AlertCircle, Users, XCircle } from 'lucide-react';
+import { CurrencyDollar, CreditCard, WarningCircle, Users, XCircle } from '@phosphor-icons/react';
 import AdminStatCard from '@/components/admin/AdminStatCard';
 import AdminBarChart from '@/components/admin/AdminBarChart';
 import AdminPercentageBar from '@/components/admin/AdminPercentageBar';
@@ -33,13 +33,13 @@ export default function AdminRevenuePage() {
       {/* Revenue stats */}
       <div className="stats" style={{ marginTop: 0 }}>
         <AdminStatCard
-          icon={DollarSign}
+          icon={CurrencyDollar}
           label="MRR"
           value={statsLoading ? '...' : fmt(stats?.mrr ?? 0)}
           subtitle="Monthly recurring revenue"
         />
         <AdminStatCard
-          icon={DollarSign}
+          icon={CurrencyDollar}
           label="ARR"
           value={statsLoading ? '...' : fmt(stats?.arr ?? 0)}
           subtitle="Annual recurring revenue"
@@ -51,7 +51,7 @@ export default function AdminRevenuePage() {
           subtitle="Active paid users"
         />
         <AdminStatCard
-          icon={AlertCircle}
+          icon={WarningCircle}
           label="Failed Payments"
           value={statsLoading ? '...' : String(stats?.pastDue ?? 0)}
           subtitle="Needs attention"

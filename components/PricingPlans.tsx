@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useSubscription } from '@/hooks/useSubscription';
-import { X, Check, Loader2, Crown } from 'lucide-react';
+import { X, Check, CircleNotch, Crown } from '@phosphor-icons/react';
 
 interface PricingPlansProps {
   open: boolean;
@@ -80,9 +80,29 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      {/*
+        .modal is a shared class (also used by EditProfileModal, OnboardingWizard,
+        CoachingCohorts, Courses, TeamMembers, TradingSignals) so its base rule in
+        app/atlas-dashboard.css is left untouched. This instance overrides padding
+        to 0 and becomes a fixed-height, non-scrolling FRAME: the close button is
+        now a direct child of that frame, not of the scrolling content, so it can
+        never scroll out of view — it's visible the instant the modal opens.
+        The inner .pricing-modal-body div owns the scroll and keeps the original
+        32/28/40 padding, so the last row of Subscribe buttons gets real breathing
+        room at the bottom instead of being flush against the modal edge.
+        90dvh (dynamic viewport height) accounts for mobile browser chrome that
+        a plain vh unit ignores, which is what caused the footer row to overlap
+        the browser's own UI on short viewports.
+      */}
       <div
         className="modal w-full max-w-6xl"
-        style={{ maxHeight: '90vh', overflowY: 'auto' }}
+        style={{
+          maxHeight: '90dvh',
+          padding: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
       >
         <span className="accent" />
         <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
@@ -93,11 +113,16 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
         <button
           onClick={onClose}
           className="absolute"
-          style={{ top: 16, right: 16, color: 'var(--muted)', zIndex: 2 }}
+          style={{ top: 16, right: 16, color: 'var(--muted)', zIndex: 3 }}
           aria-label="Close"
         >
           <X size={18} />
         </button>
+
+        <div
+          className="pricing-modal-body"
+          style={{ overflowY: 'auto', padding: '32px 28px 40px', textAlign: 'center' }}
+        >
 
         <h2>Choose Your Plan</h2>
         <p className="sub">Unlock premium features for your trading journal</p>
@@ -142,7 +167,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
         {!plans ? (
           <div className="flex justify-center py-8">
-            <Loader2 size={24} className="animate-spin" style={{ color: 'var(--muted)' }} />
+            <CircleNotch size={24} className="animate-spin" style={{ color: 'var(--muted)' }} />
           </div>
         ) : sorted.length === 0 ? (
           <p className="empty-line">No plans available yet. Check back soon!</p>
@@ -201,7 +226,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                       disabled={loading === 'portal'}
                       className="cta ghost disabled:opacity-50"
                     >
-                      {loading === 'portal' && <Loader2 size={14} className="animate-spin" style={{ marginRight: 8 }} />}
+                      {loading === 'portal' && <CircleNotch size={14} className="animate-spin" style={{ marginRight: 8 }} />}
                       Manage Subscription
                     </button>
                   ) : (
@@ -210,7 +235,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                       disabled={loading === plan.planId || !canSubscribe}
                       className="cta amber disabled:opacity-50"
                     >
-                      {loading === plan.planId && <Loader2 size={14} className="animate-spin" style={{ marginRight: 8 }} />}
+                      {loading === plan.planId && <CircleNotch size={14} className="animate-spin" style={{ marginRight: 8 }} />}
                       {canSubscribe ? 'Subscribe' : 'Coming Soon'}
                     </button>
                   )}
@@ -232,6 +257,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
             </button>
           </p>
         )}
+        </div>
       </div>
     </div>
   );

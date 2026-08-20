@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { BookOpen, ArrowLeft, Search, Eye, Tag, Calendar, ArrowRight, Lock } from 'lucide-react';
+import { BookOpen, ArrowLeft, MagnifyingGlass as Search, Eye, Tag, Calendar, ArrowRight, Lock } from '@phosphor-icons/react';
 import { useSubscription } from '@/hooks/useSubscription';
 
 type View = 'list' | 'detail';

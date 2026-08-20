@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Loader2, UserPlus, UserCheck, ArrowRight, Radio } from 'lucide-react';
+import { CircleNotch, UserPlus, UserCheck, ArrowRight, Radio } from '@phosphor-icons/react';
 
 type Provider = {
   posterId: string;
@@ -51,7 +51,7 @@ export default function SignalProviders() {
   if (providers === undefined) {
     return (
       <div className="empty-line">
-        <Loader2 size={20} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
+        <CircleNotch size={20} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
       </div>
     );
   }

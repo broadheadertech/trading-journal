@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { MonthlyGoal, Trade } from '@/lib/types';
 import { format, getDaysInMonth, getDate, parseISO } from 'date-fns';
-import { Target, Flag, Edit2, CheckCircle, XCircle } from 'lucide-react';
+import { Target, Flag, PencilSimple, CheckCircle, XCircle } from '@phosphor-icons/react';
 import Modal from './ui/Modal';
 import { useToast } from './ui/Toast';
 
@@ -111,7 +111,7 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
         <p className="sub">Set monthly targets and track your performance against live journal data.</p>
         <div className="actions">
           <button onClick={openForm} className="btn-a">
-            {currentGoal ? <Edit2 size={14} /> : <Flag size={14} />}
+            {currentGoal ? <PencilSimple size={14} /> : <Flag size={14} />}
             {currentGoal ? 'Edit Goals' : 'Set Goals'}
           </button>
         </div>

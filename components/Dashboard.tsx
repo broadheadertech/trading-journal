@@ -12,10 +12,11 @@ import {
   getDrawdownStats,
 } from '@/lib/utils';
 import {
-  TrendingUp, TrendingDown, BarChart3, Target,
-  Flame, AlertCircle, ArrowRight, Clock, Calendar,
-  Zap, Shield, CircleDot, ChevronRight, Activity,
-} from 'lucide-react';
+  TrendUp, TrendDown, ChartBar, Target,
+  Fire, WarningCircle, ArrowRight, Clock, Calendar,
+  Lightning, Shield, CaretRight,
+} from '@phosphor-icons/react';
+import { RadioButton as CircleDot, Pulse as Activity } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -278,7 +279,10 @@ export default function Dashboard({
   const fmtPnl = (v: number) => formatCurrency(v);
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
   const isPositive = metrics.totalPnL >= 0;
-  const scoreColor = metrics.execScore >= 7 ? '#22c55e' : metrics.execScore >= 4 ? '#eab308' : '#ef4444';
+  // ATLAS tokens, not the old Tailwind hexes. The empty state scores 0, so the
+  // pre-rebrand #ef4444 painted the whole Execution Score card alarm-red on a
+  // brand-new account.
+  const scoreColor = metrics.execScore >= 7 ? '#24c88a' : metrics.execScore >= 4 ? '#d99405' : '#ff4d5e';
   const circumference = 2 * Math.PI * 54;
   const strokeDashoffset = circumference - (metrics.execScore / 10) * circumference;
 
@@ -367,7 +371,7 @@ export default function Dashboard({
 
         {/* execution score */}
         <div className="card score" style={{ alignSelf: 'stretch' }}>
-          <div className="ring">
+          <div className="scoredial">
             <svg viewBox="0 0 120 120" width="80" height="80" fill="none">
               <circle cx="60" cy="60" r="54" stroke="#16202c" strokeWidth="7.5" />
               <circle
@@ -379,7 +383,9 @@ export default function Dashboard({
             </svg>
             <span className="v">{metrics.execScore}</span>
           </div>
-          <p className="ttl" style={{ color: scoreColor }}>Execution Score</p>
+          {/* Label stays amber per .score .ttl — the ring stroke already carries
+              the score colour. Tinting both made the whole card read as an alarm. */}
+          <p className="ttl">Execution Score</p>
           <p>Win Rate + Profit Factor<br />+ Net Outcome</p>
         </div>
       </div>
@@ -716,7 +722,7 @@ export default function Dashboard({
       </div>
 
       {/* recent trades */}
-      <div className="card" style={{ maxWidth: 800, marginTop: 32 }}>
+      <div className="card" style={{ maxWidth: 'calc(100% - 320px)', marginTop: 32 }}>
         <div className="cardhead">
           <div>
             <h3>Recent Trades</h3>
@@ -762,7 +768,7 @@ export default function Dashboard({
       </div>
 
       {/* next best actions */}
-      <div id="next-best-actions" className="card" style={{ maxWidth: 800, marginTop: 32, padding: '23px 28px' }}>
+      <div id="next-best-actions" className="card" style={{ maxWidth: 'calc(100% - 320px)', marginTop: 32, padding: '23px 28px' }}>
         <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <h3>Next Best Actions</h3>

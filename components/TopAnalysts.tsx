@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Loader2, UserPlus, UserCheck } from 'lucide-react';
+import { CircleNotch, UserPlus, UserCheck } from '@phosphor-icons/react';
 
 type Analyst = {
   posterId: string; name: string; handle: string; avatar: string | null;
@@ -26,7 +26,7 @@ export default function TopAnalysts({ limit = 10 }: { limit?: number }) {
   if (analysts === undefined) {
     return (
       <div className="empty-line" style={{ padding: '28px 0' }}>
-        <Loader2 size={18} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
+        <CircleNotch size={18} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
       </div>
     );
   }

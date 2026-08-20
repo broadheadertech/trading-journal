@@ -2,9 +2,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Trophy, AlertTriangle, TrendingUp,
-  Flame, HeartPulse, ShieldAlert, Star, Zap, Sparkles,
-} from 'lucide-react';
+  Medal, Warning, TrendUp,
+  Fire, ShieldWarning, Star, Lightning, Sparkle,
+} from '@phosphor-icons/react';
+import { Heartbeat as HeartPulse } from '@phosphor-icons/react';
 import type { CoachingMessage, CoachingCategory } from '@/lib/types';
 
 // ─── Category Visual Config ────────────────────────────────────────
@@ -19,31 +20,31 @@ const T = {
 };
 
 const CATEGORY_CONFIG: Record<CoachingCategory, {
-  icon: typeof Trophy;
+  icon: typeof Medal;
   color: string;
   glow: string;
   label: string;
 }> = {
   reinforcement: {
-    icon: Trophy,
+    icon: Medal,
     color: '#24c88a',
     glow: 'rgba(36,200,138,0.12)',
     label: 'Great execution',
   },
   encouragement: {
-    icon: TrendingUp,
+    icon: TrendUp,
     color: '#2fd3c4',
     glow: 'rgba(47,211,196,0.12)',
     label: 'Keep improving',
   },
   correction: {
-    icon: AlertTriangle,
+    icon: Warning,
     color: '#ff4d5e',
     glow: 'rgba(255,77,94,0.12)',
     label: 'Needs attention',
   },
   streak: {
-    icon: Flame,
+    icon: Fire,
     color: '#d99405',
     glow: 'rgba(217,148,5,0.12)',
     label: 'Streak bonus',
@@ -55,7 +56,7 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
     label: 'Recovery mode',
   },
   anti_gaming: {
-    icon: ShieldAlert,
+    icon: ShieldWarning,
     color: '#ff3d87',
     glow: 'rgba(255,61,135,0.12)',
     label: 'Flagged',
@@ -67,13 +68,13 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
     label: 'Stage transition',
   },
   comeback: {
-    icon: Zap,
+    icon: Lightning,
     color: '#2fd3c4',
     glow: 'rgba(47,211,196,0.12)',
     label: 'Welcome back',
   },
   onboarding: {
-    icon: Sparkles,
+    icon: Sparkle,
     color: '#d99405',
     glow: 'rgba(217,148,5,0.12)',
     label: 'Getting started',

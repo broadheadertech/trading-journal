@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import { Upload, FileText, Check, X, AlertTriangle, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
+import { UploadSimple as Upload, FileText, Check, X, Warning as AlertTriangle, CaretRight as ChevronRight, CaretLeft as ChevronLeft, CircleNotch as Loader2 } from '@phosphor-icons/react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

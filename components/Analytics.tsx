@@ -9,10 +9,11 @@ import {
 } from 'recharts';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, subMonths, addMonths } from 'date-fns';
 import {
-  TrendingUp, TrendingDown, BarChart3, Target,
-  Clock, Zap, Shield, ArrowRight, AlertCircle,
-  Activity, Flame, ChevronLeft, ChevronRight, Calendar,
-} from 'lucide-react';
+  TrendUp as TrendingUp, TrendDown as TrendingDown, ChartBar as BarChart3, Target,
+  Clock, Lightning as Zap, Shield, ArrowRight, WarningCircle as AlertCircle,
+  Fire as Flame, CaretLeft as ChevronLeft, CaretRight as ChevronRight, Calendar,
+} from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import PerformanceMetrics from './PerformanceMetrics';
 
 interface AnalyticsProps {

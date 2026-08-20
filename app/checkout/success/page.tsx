@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle, CircleNotch } from '@phosphor-icons/react';
 
 // Stripe redirects here after a completed Checkout Session. The webhook
 // (handled by /api/stripe/webhook) writes the userSubscription row a moment
@@ -27,7 +27,7 @@ export default function CheckoutSuccessPage() {
 function CheckoutSuccessFallback() {
   return (
     <div className="atlas-site" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Loader2 size={26} className="animate-spin" style={{ color: 'var(--amber)' }} />
+      <CircleNotch size={26} className="animate-spin" style={{ color: 'var(--amber)' }} />
     </div>
   );
 }
@@ -65,7 +65,7 @@ function CheckoutSuccessInner() {
         {isPaidActive ? (
           <>
             <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(47,211,196,.35)', borderRadius: '3px', background: 'rgba(47,211,196,.08)' }}>
-              <CheckCircle2 size={24} style={{ color: 'var(--teal)' }} />
+              <CheckCircle size={24} style={{ color: 'var(--teal)' }} />
             </div>
             <p className="eyebrow" style={{ margin: '0 0 12px' }}>PAYMENT CONFIRMED</p>
             <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>You&rsquo;re in.</h1>
@@ -85,7 +85,7 @@ function CheckoutSuccessInner() {
         ) : (
           <>
             <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(217,148,5,.35)', borderRadius: '3px', background: 'rgba(217,148,5,.08)' }}>
-              <Loader2 size={24} className="animate-spin" style={{ color: 'var(--amber)' }} />
+              <CircleNotch size={24} className="animate-spin" style={{ color: 'var(--amber)' }} />
             </div>
             <p className="eyebrow" style={{ margin: '0 0 12px' }}>AWAITING WEBHOOK</p>
             <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>Confirming your payment…</h1>

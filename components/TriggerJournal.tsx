@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { TriggerEntry, EmotionState, TriggerSource } from '@/lib/types';
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { TRIGGER_SOURCE_OPTIONS, analyzeTriggerPatterns } from '@/lib/discipline-engine';
-import { Plus, Trash2, Zap, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { Plus, Trash as Trash2, Lightning as Zap, TrendUp as TrendingUp, TrendDown as TrendingDown, Warning as AlertTriangle } from '@phosphor-icons/react';
 import { SpeechButton } from '@/components/SpeechButton';
 import { format } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';

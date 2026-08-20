@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, Wrench } from 'lucide-react';
+import { Brain, Wrench } from '@phosphor-icons/react';
 import { useAdminBrainDistribution, useAdminMigrateBrainStages } from '@/hooks/useAdminStore';
 import type { Stage } from '@/lib/types';
 import { STAGE_COLORS } from '@/lib/stage-config';

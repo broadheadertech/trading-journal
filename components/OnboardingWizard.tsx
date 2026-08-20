@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp, BarChart3, DollarSign, Globe } from 'lucide-react';
+import { TrendUp, ChartBar, CurrencyDollar, Globe } from '@phosphor-icons/react';
 import BrainMascot from './BrainMascot';
 
 interface OnboardingWizardProps {
@@ -11,9 +11,9 @@ interface OnboardingWizardProps {
 }
 
 const MARKETS = [
-  { id: 'crypto', label: 'Crypto', icon: TrendingUp, desc: 'Bitcoin, Ethereum, altcoins' },
-  { id: 'stocks', label: 'Stocks', icon: BarChart3, desc: 'Equities, ETFs, indices' },
-  { id: 'forex', label: 'Forex', icon: DollarSign, desc: 'Currency pairs, FX markets' },
+  { id: 'crypto', label: 'Crypto', icon: TrendUp, desc: 'Bitcoin, Ethereum, altcoins' },
+  { id: 'stocks', label: 'Stocks', icon: ChartBar, desc: 'Equities, ETFs, indices' },
+  { id: 'forex', label: 'Forex', icon: CurrencyDollar, desc: 'Currency pairs, FX markets' },
   { id: 'multi', label: 'Multiple', icon: Globe, desc: 'I trade across markets' },
 ] as const;
 

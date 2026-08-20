@@ -7,7 +7,7 @@ import { format, subDays, startOfDay, startOfWeek } from 'date-fns';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-import { Shield, AlertTriangle, Clock, Zap, Brain } from 'lucide-react';
+import { Shield, Warning, Clock, Lightning, Brain } from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -319,7 +319,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
             <span className="accent" style={{ background: redFlags.breakersLast7d > 3 ? 'var(--red)' : redFlags.breakersLast7d > 0 ? 'var(--amber)' : 'var(--green)' }} />
             <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               BREAKERS (7D)
-              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><AlertTriangle size={13} /></span>
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Warning size={13} /></span>
             </b>
             <em style={{ color: redFlags.breakersLast7d > 3 ? 'var(--red)' : redFlags.breakersLast7d > 0 ? 'var(--amber)' : 'var(--green)' }}>
               {redFlags.breakersLast7d}
@@ -339,7 +339,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
             <span className="accent" style={{ background: redFlags.emotionalVolatility > 70 ? 'var(--red)' : redFlags.emotionalVolatility > 40 ? 'var(--amber)' : 'var(--green)' }} />
             <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               EMOTION VOLATILITY
-              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Zap size={13} /></span>
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Lightning size={13} /></span>
             </b>
             <em style={{ color: redFlags.emotionalVolatility > 70 ? 'var(--red)' : redFlags.emotionalVolatility > 40 ? 'var(--amber)' : 'var(--green)' }}>
               {redFlags.emotionalVolatility}%

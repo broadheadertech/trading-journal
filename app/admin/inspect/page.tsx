@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Microscope, Search, ArrowDown, ArrowUp, Minus } from 'lucide-react';
+import { Microscope, MagnifyingGlass, ArrowDown, ArrowUp, Minus } from '@phosphor-icons/react';
 import { useAdminUserBrainState, useAdminUserScoreEvents, useAdminLogBrainInspection } from '@/hooks/useAdminStore';
 import { STAGE_COLORS } from '@/lib/stage-config';
 import type { Stage } from '@/lib/types';
@@ -127,7 +127,7 @@ export default function InspectPage() {
         <div className="flex-1 min-w-0">
           <label>USER ID</label>
           <div className="box" style={{ gap: 12 }}>
-            <Search size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
             <input
               type="text"
               value={searchInput}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ChartBar as BarChart3, CheckCircle, Warning as AlertTriangle } from '@phosphor-icons/react';
 import UsageBar from './UsageBar';
 import PricingPlans from './PricingPlans';
 

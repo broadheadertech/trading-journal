@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Trade, EmotionState, RuleCompliance, Direction } from '@/lib/types';
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
-import { TrendingUp, TrendingDown, SkipForward } from 'lucide-react';
+import { TrendUp, TrendDown, SkipForward } from '@phosphor-icons/react';
 
 export interface PostTradeSnapshot {
   coin: string;
@@ -106,8 +106,8 @@ export default function PostTradeReview({ snapshot, allTrades, onSave, onSkip }:
           </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
             {isWin
-              ? <TrendingUp size={18} style={{ color: 'var(--green)', alignSelf: 'center' }} />
-              : <TrendingDown size={18} style={{ color: 'var(--red)', alignSelf: 'center' }} />
+              ? <TrendUp size={18} style={{ color: 'var(--green)', alignSelf: 'center' }} />
+              : <TrendDown size={18} style={{ color: 'var(--red)', alignSelf: 'center' }} />
             }
             <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 26, color: tone }}>
               {pnlPercent !== null

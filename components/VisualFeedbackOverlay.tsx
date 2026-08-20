@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { EmotionState, CircuitBreakerResult } from '@/lib/types';
 import { getVisualFeedback, getEmotionRiskLevel } from '@/lib/discipline-engine';
-import { AlertTriangle, ShieldAlert, CheckCircle, X } from 'lucide-react';
+import { Warning as AlertTriangle, ShieldWarning as ShieldAlert, CheckCircle, X } from '@phosphor-icons/react';
 import { EMOTION_OPTIONS } from '@/lib/utils';
 
 /* ── ATLAS raw tokens ────────────────────────────────────────────────────────

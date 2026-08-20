@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import {
-  X, ShieldAlert, ShieldCheck, Activity, User as UserIcon,
-  TrendingUp, TrendingDown, BookOpen, Map, Brain, AlertTriangle,
-  Zap, Sparkles, Target, FileText, CreditCard, Crown,
-  ChevronDown, ChevronRight,
-} from 'lucide-react';
+  X, ShieldWarning, ShieldCheck, User as UserIcon,
+  TrendUp, TrendDown, BookOpen, MapTrifold, Brain, Warning,
+  Lightning, Sparkle, Target, FileText, CreditCard, Crown,
+  CaretDown, CaretRight,
+} from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import {
   useAdminUserDetail,
   useAdminUserSubscription,
@@ -170,7 +171,7 @@ function OverviewPanel({
         <span className="lb" style={{ marginLeft: 0 }}>Status</span>
         {detail.isBanned ? (
           <span className="chip" style={{ marginLeft: 'auto', height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--amber)' }}>
-            <ShieldAlert size={12} /> Banned
+            <ShieldWarning size={12} /> Banned
           </span>
         ) : (
           <span className="chip" style={{ marginLeft: 'auto', height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--green)' }}>
@@ -293,7 +294,7 @@ function OverviewPanel({
 
       <div style={{ marginTop: 20, paddingTop: 18, borderTop: '1px solid #3a1218' }}>
         <div className="flex items-center" style={{ gap: 8, marginBottom: 12 }}>
-          <AlertTriangle size={13} style={{ color: 'var(--red)' }} />
+          <Warning size={13} style={{ color: 'var(--red)' }} />
           <p className="lbl" style={{ margin: 0, color: 'var(--red)' }}>DANGER ZONE</p>
         </div>
         <button
@@ -334,20 +335,20 @@ function Row({ label, value, mono, valueClass }: { label: string; value: string;
 type EventStyle = { icon: typeof Activity; tint: string; label: string };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:             { icon: TrendingUp,     tint: 'var(--teal)',   label: 'Trade logged' },
-  trade_closed:             { icon: TrendingDown,   tint: 'var(--green)',  label: 'Trade closed' },
+  trade_logged:             { icon: TrendUp,        tint: 'var(--teal)',   label: 'Trade logged' },
+  trade_closed:             { icon: TrendDown,      tint: 'var(--green)',  label: 'Trade closed' },
   strategy_created:         { icon: BookOpen,       tint: 'var(--pink)',   label: 'Strategy' },
-  checklist_created:        { icon: Map,            tint: 'var(--amber)',  label: 'Checklist' },
+  checklist_created:        { icon: MapTrifold,     tint: 'var(--amber)',  label: 'Checklist' },
   journal_entry:            { icon: FileText,       tint: 'var(--pink)',   label: 'Journal' },
   monthly_goal:             { icon: Target,         tint: 'var(--amber)',  label: 'Goal' },
-  trigger_entry:            { icon: Zap,            tint: 'var(--amber)',  label: 'Trigger' },
-  daily_reflection:         { icon: Sparkles,       tint: 'var(--pink)',   label: 'Reflection' },
-  weekly_review:            { icon: Sparkles,       tint: 'var(--pink)',   label: 'Review' },
-  rule_break:               { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Rule break' },
-  circuit_breaker:          { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Circuit breaker' },
-  circuit_breaker_override: { icon: AlertTriangle,  tint: 'var(--amber)',  label: 'CB override' },
+  trigger_entry:            { icon: Lightning,      tint: 'var(--amber)',  label: 'Trigger' },
+  daily_reflection:         { icon: Sparkle,        tint: 'var(--pink)',   label: 'Reflection' },
+  weekly_review:            { icon: Sparkle,        tint: 'var(--pink)',   label: 'Review' },
+  rule_break:               { icon: Warning,        tint: 'var(--red)',    label: 'Rule break' },
+  circuit_breaker:          { icon: Warning,        tint: 'var(--red)',    label: 'Circuit breaker' },
+  circuit_breaker_override: { icon: Warning,        tint: 'var(--amber)',  label: 'CB override' },
   score_event:              { icon: Brain,          tint: 'var(--amber)',  label: 'Brain score' },
-  anti_gaming_flag:         { icon: ShieldAlert,    tint: 'var(--red)',    label: 'Anti-gaming' },
+  anti_gaming_flag:         { icon: ShieldWarning,  tint: 'var(--red)',    label: 'Anti-gaming' },
   subscription_created:     { icon: CreditCard,     tint: 'var(--green)',  label: 'Subscription' },
   subscription_change:      { icon: CreditCard,     tint: 'var(--green)',  label: 'Sub change' },
   signup:                   { icon: UserIcon,       tint: 'var(--teal)',   label: 'Signup' },
@@ -509,7 +510,7 @@ function TimelineRow({ event }: { event: TimelineEvent }) {
         </div>
         {hasMeta && (
           <span className="shrink-0" style={{ marginTop: 4, color: 'var(--muted-3)' }}>
-            {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            {open ? <CaretDown size={14} /> : <CaretRight size={14} />}
           </span>
         )}
       </button>

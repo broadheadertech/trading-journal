@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, Zap, Star } from 'lucide-react';
+import { Sparkle, Lightning, Star } from '@phosphor-icons/react';
 
 export type TierName = 'free' | 'core' | 'pro' | 'elite';
 
@@ -22,17 +22,17 @@ const TIERS: Record<TierName, {
   core: {
     label: 'Core',
     color: 'var(--teal)',
-    icon: <Sparkles size={9} strokeWidth={3} />,
+    icon: <Sparkle size={9} weight="bold" />,
   },
   pro: {
     label: 'Pro',
     color: 'var(--amber)',
-    icon: <Zap size={9} strokeWidth={3} />,
+    icon: <Lightning size={9} weight="bold" />,
   },
   elite: {
     label: 'Elite',
     color: 'var(--pink)',
-    icon: <Star size={9} strokeWidth={3} />,
+    icon: <Star size={9} weight="bold" />,
   },
 };
 

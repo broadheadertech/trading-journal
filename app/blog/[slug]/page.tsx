@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from 'lucide-react';
+// This is a Server Component (SSG via generateStaticParams, no 'use client').
+// @phosphor-icons/react's default export uses React Context (IconContext) for
+// shared default props, which breaks during the RSC/server bundle build with
+// "createContext is not a function" — lucide-react never had this problem.
+// The /dist/ssr subpath is Phosphor's dedicated server-component-safe entry.
+import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from '@phosphor-icons/react/dist/ssr';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 import { BLOG_ARTICLES } from '@/lib/blog-articles';

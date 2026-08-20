@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldWarning } from '@phosphor-icons/react';
 import { TabId, TimeRange } from '@/lib/types';
 import { storage } from '@/lib/storage';
 import { filterTradesByTimeRange } from '@/lib/utils';
@@ -42,7 +42,7 @@ import News from '@/components/News';
 import Leaderboard from '@/components/Leaderboard';
 import Tools from '@/components/Tools';
 import TeamLayout from '@/components/team/TeamLayout';
-import { Loader2 } from 'lucide-react';
+import { CircleNotch } from '@phosphor-icons/react';
 
 
 type MigrationState = 'checking' | 'show' | 'migrating' | 'done';
@@ -330,7 +330,7 @@ function AppContent() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
         <div className="max-w-md w-full bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 text-center space-y-5">
           <div className="mx-auto w-16 h-16 rounded-full bg-[var(--red)]/10 flex items-center justify-center">
-            <ShieldAlert size={32} className="text-[var(--red)]" />
+            <ShieldWarning size={32} className="text-[var(--red)]" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-[var(--foreground)]">Account Suspended</h2>

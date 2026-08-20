@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { FloppyDisk, Plus, Trash } from '@phosphor-icons/react';
 import { useAdminSettings, useAdminPlans } from '@/hooks/useAdminStore';
 
 // shared ATLAS input chrome (markup-level styling only)
@@ -96,7 +96,7 @@ export default function AdminSettingsPage() {
               style={{ ...inputBox, flex: 1 }}
             />
             <button onClick={savePlatformName} className="btn-a shrink-0" style={{ height: 42 }}>
-              <Save size={14} />
+              <FloppyDisk size={14} />
               Save
             </button>
           </div>
@@ -286,7 +286,7 @@ export default function AdminSettingsPage() {
                 className="btn-a disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ height: 34, padding: '0 16px', fontSize: 12 }}
               >
-                <Save size={14} />
+                <FloppyDisk size={14} />
                 Save Plan
               </button>
             </div>

@@ -3,8 +3,11 @@
 import { useState, useMemo } from 'react';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  Crosshair, DollarSign, Scale, Percent, CircleDot, Timer, TrendingDown, TrendingUp,
-} from 'lucide-react';
+  Crosshair, CurrencyDollar, Timer, TrendDown, TrendUp,
+} from '@phosphor-icons/react';
+import {
+  Scales as Scale, Percent, RadioButton as CircleDot,
+} from '@phosphor-icons/react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -22,13 +25,13 @@ interface ToolDef {
 
 const TOOLS: ToolDef[] = [
   { id: 'position-size', label: 'Position Size', description: 'Optimal size based on your risk tolerance', icon: <Crosshair size={15} /> },
-  { id: 'profit-loss', label: 'Profit / Loss', description: 'Calculate trade outcome and ROI', icon: <DollarSign size={15} /> },
+  { id: 'profit-loss', label: 'Profit / Loss', description: 'Calculate trade outcome and ROI', icon: <CurrencyDollar size={15} /> },
   { id: 'risk-reward', label: 'Risk / Reward', description: 'Analyze risk-to-reward and breakeven win rate', icon: <Scale size={15} /> },
   { id: 'margin-leverage', label: 'Margin & Leverage', description: 'Required margin or effective leverage', icon: <Percent size={15} /> },
   { id: 'pip-value', label: 'Pip Value', description: 'Pip value for forex and CFD pairs', icon: <CircleDot size={15} /> },
   { id: 'liquidation', label: 'Liquidation Price', description: 'Find your liquidation price for leveraged positions', icon: <Timer size={15} /> },
-  { id: 'drawdown', label: 'Drawdown Recovery', description: 'How much gain is needed to recover from a drawdown', icon: <TrendingDown size={15} /> },
-  { id: 'compound', label: 'Compound Growth', description: 'Project compounding returns over many trades', icon: <TrendingUp size={15} /> },
+  { id: 'drawdown', label: 'Drawdown Recovery', description: 'How much gain is needed to recover from a drawdown', icon: <TrendDown size={15} /> },
+  { id: 'compound', label: 'Compound Growth', description: 'Project compounding returns over many trades', icon: <TrendUp size={15} /> },
 ];
 
 /* ── Direction toggle component ──────────────────────────── */

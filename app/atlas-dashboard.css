@@ -19,6 +19,47 @@
    ========================================================================== */
 
 .atlas-dash{
+
+  /* ── MARKETING LEAKAGE GUARD — read before editing ──────────────────────
+     app/atlas.css is GLOBAL (unscoped), and 30 class names exist in both
+     sheets. Any property the marketing rule sets that the dashboard rule
+     does not re-declare leaks straight into the app.
+
+     This was not theoretical. `.plan` is the topbar plan chip here and the
+     PRICING CARD there — so `min-height:744px` + a card background painted a
+     744px dark column down the middle of the dashboard, over the content.
+     `.hero` and `.nav` were leaking too.
+
+     These resets come FIRST so the real rules below (same specificity, later
+     in the file) win. Only properties the dashboard does not set are reset.
+     If you add a class that also exists in atlas.css, add it here. */
+  .plan{min-height:0;background:none;border:0;border-radius:0;padding:0;
+        position:static;flex-direction:row}
+  .hero{position:relative}
+  .nav{position:static;height:auto;background:none;border-bottom:0;z-index:auto}
+  .brand{margin-right:0}
+  .card{backdrop-filter:none}
+  .stat{padding:21px 20px}
+  .num{padding:0}
+  /* .num span is marketing's homepage stat caption (unscoped, direct match on
+     any span inside a .num-classed ancestor). .klist.num (Trading rules list)
+     carries the leaked "num" class too, and its rule-text <span> has no color
+     of its own in the dashboard sheet — it only INHERITS #c0ccda from the row
+     div. A rule that directly matches an element always wins over an
+     inherited value, regardless of specificity, so the marketing rule's
+     color/size/weight/spacing overrode the inherited style: numbered rules
+     rendered in var(--muted-5) (a blue-gray, #b9c6d4) at 10px/700 instead of
+     the intended #c0ccda at 13.5px/400 — visibly bluer, smaller, and bolder
+     than the "Key concepts" list beside it, which has no "num" class and so
+     was never touched. (The numeral <b> was unaffected because the dashboard
+     DOES directly target .klist.num div b, so that one resolved by ordinary
+     specificity instead of falling through to inheritance.) */
+  .num span{color:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;margin-top:0;display:inline}
+  /* .cta is the marketing CTA BAND (height:420px; padding:73px 0 0) and the
+     Subscribe BUTTON here. .plan4 .cta re-declared height and margin-top but
+     not padding, so every button carried 73px of top padding and its label
+     was pushed out of the 40px box and clipped by the card edge. */
+  .cta{padding:0;margin-top:0;height:auto;border-top:0;overflow:visible;background:none}
   &{
     --bg:#05080d; --panel:#0a0f17; --panel-2:#0c1119; --grid:#0e1725; --hair:#101922;
     --line:#182432; --line-2:#24344a; --rail:#141e2a;
@@ -209,8 +250,17 @@
   .daygroup .dh b{font-weight:700;font-size:11.5px;letter-spacing:.03em}
   .daygroup .dh span{font-size:11.5px;color:var(--muted-2)}
   .daygroup .dh em{margin-left:auto;font-style:normal;font-size:11px;color:var(--muted-2)}
-  .ev{display:grid;grid-template-columns:104px 1fr 130px 130px 100px;gap:0 16px;align-items:center;min-height:66px;margin-top:8px;
-    border:1px solid var(--line);border-left-width:3px;border-radius:2px;background:var(--panel);padding:0 24px}
+  /* align-items:start, not center. Each row mixes single-line content (.t
+     time, .evwho badges — ~19-20px tall) with the two-line .col blocks
+     (label + value — ~30-34px tall). center() centers every item in the
+     row's own auto height, which is set by the TALLEST item — so the
+     single-line time and badges get pushed down to center against the
+     taller metric blocks, and end up sitting lower than FORECAST/PREVIOUS/
+     ACTUAL instead of sharing a top edge with them. start makes every
+     column's content begin at the same line, which is what a header row
+     is supposed to do. */
+  .ev{display:grid;grid-template-columns:104px 1fr 130px 130px 100px;gap:0 16px;align-items:start;min-height:66px;margin-top:8px;
+    border:1px solid var(--line);border-left-width:3px;border-radius:2px;background:var(--panel);padding:16px 24px}
   .ev .t{font-family:var(--display);font-weight:700;font-size:15px}
   .ev .evwho{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:400;font-size:13px;margin-left:0}
   .ev .evwho .cc{font-weight:700;font-size:10.5px;color:var(--muted-2)}
@@ -388,13 +438,26 @@
   }
 
   /* ============================= SIDEBAR ============================= */
+  /* The SIDEBAR itself must not scroll — the NAV does. Scrolling .side while
+     its children can shrink is what let .foot ("Light Mode"/"Logout") paint on
+     top of the last nav rows. Here .nav is the only flexible child and owns the
+     overflow; brand, foot and collapse are all flex:none, so they can never
+     collapse into each other regardless of how many tabs a tier unlocks. */
   .side{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:var(--bg);border-right:1px solid var(--line);
-    display:flex;flex-direction:column;z-index:40;overflow-y:auto;overflow-x:hidden}
+    display:flex;flex-direction:column;z-index:40;overflow:hidden}
   .side::-webkit-scrollbar{width:6px}
   .side::-webkit-scrollbar-thumb{background:#16202c;border-radius:3px}
   .brand{display:flex;align-items:center;gap:12px;height:72px;padding:0 28px;border-bottom:1px solid var(--line);flex:none}
   .brand svg{display:block}
-  .nav{padding:12px 0 0}
+  /* flex:0 0 auto is load-bearing. .side is a flex column with overflow-y:auto;
+     without it .nav (18 items = 720px) shrinks below its content height, its
+     rows spill out of the shrunken box, and .foot renders ON TOP of them —
+     which is why "Light Mode"/"Logout" overlapped "Connect Broker"/"Courses". */
+  /* min-height:0 is required: without it a flex child refuses to shrink below
+     its content height and overflows the column instead of scrolling. */
+  .nav{padding:12px 0 0;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+  .nav::-webkit-scrollbar{width:6px}
+  .nav::-webkit-scrollbar-thumb{background:#16202c;border-radius:3px}
   .nav a,.nav .dead{display:flex;align-items:center;gap:0;height:40px;padding:0 0 0 26px;position:relative;
     font-size:13.5px;color:var(--text-2)}
   .nav a .ic,.nav .dead .ic{width:16px;height:16px;flex:none;display:block}
@@ -405,12 +468,12 @@
   .nav a.on .ic{color:var(--amber)}
   .nav .dead{color:var(--text-2);opacity:.55;cursor:default}
   .nav h5{margin:32px 0 8px;padding:0 26px;font-weight:700;font-size:9.5px;color:var(--muted-3);letter-spacing:.05em}
-  .side .foot{margin-top:28px;border-top:1px solid var(--line);padding:20px 0 8px}
+  .side .foot{flex:none;border-top:1px solid var(--line);padding:20px 0 8px}
   .side .foot a{display:flex;align-items:center;height:44px;padding:0 0 0 26px;font-size:13.5px;color:var(--text-2)}
   .side .foot a:hover{color:var(--text)}
   .side .foot .ic{width:16px;height:16px;flex:none}
   .side .foot .lb{margin-left:17px}
-  .collapse{align-self:center;margin:16px 0 24px;width:24px;height:26px;border:1px solid var(--line-2);border-radius:2px;
+  .collapse{flex:none;align-self:center;margin:16px 0 24px;width:24px;height:26px;border:1px solid var(--line-2);border-radius:2px;
     display:flex;align-items:center;justify-content:center}
   .collapse:hover{border-color:var(--muted)}
 
@@ -453,13 +516,29 @@
 
   /* ============================= MAIN ============================= */
   .main{margin-left:var(--side);padding-top:var(--top);position:relative;min-height:100vh}
+  /* Page background grid. Dialled back from full strength — at opacity 1 the
+     60px lattice competed with the card borders and read as noise behind the
+     data. Kept as a texture, not a feature. */
   .main::before{content:"";position:absolute;left:0;right:0;top:var(--top);bottom:0;pointer-events:none;z-index:0;
+    opacity:.35;
     background-image:repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 60px),
                      repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 60px)}
-  .page{position:relative;z-index:1;padding:32px 40px 64px;display:none}
+  /* overflow-x:clip (not hidden) contains anything that would bleed past the
+     right edge without creating a scroll container — so it cannot clip the
+     fixed topbar or its dropdowns, which live outside .page. */
+  .page{position:relative;z-index:1;padding:32px 40px 64px;display:none;overflow-x:clip;max-width:100%}
+
+  /* Clerk mounts portal containers for <UserButton>. In dev these can be left
+     empty in the DOM; an empty one with a painted background shows up as a
+     stray dark strip over the content. Empty portals render nothing. */
+  #clerk-components:empty,
+  [data-clerk-portal]:empty{display:none!important}
   .page.on{display:block}
-  .grid2{display:grid;grid-template-columns:800px 288px;gap:24px 32px;align-items:start}
-  @media(max-width:1420px){.grid2{grid-template-columns:1fr 288px}}
+  /* Fluid left column, fixed right rail. The reference hard-codes 800px because
+     it was drawn at 1440 (240 sidebar + 80 padding leaves exactly 1120 = 800+
+     288+32). On anything wider the fixed 800 stopped growing while .stats kept
+     stretching, so the hero row ended ~470px short of the stat row below it. */
+  .grid2{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:24px 32px;align-items:start}
   @media(max-width:1080px){.grid2{grid-template-columns:1fr}}
 
   /* cards */
@@ -470,7 +549,14 @@
   .card .sub{margin:9px 0 0;font-size:12.5px;color:var(--muted-2)}
   .card .sub.sm{font-size:11.5px}
   .inset{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:11px 16px}
-  .lbl{font-weight:700;font-size:9px;color:var(--muted-2);letter-spacing:.04em;margin:0}
+  /* .lbl is the micro-caption label used everywhere (BEST DAY, NET P&L, WIN
+     RATE, ...) — 245 uses across 36 files. Started at --muted-2 (#5c6b7e,
+     near-invisible on --panel/--panel-2 at 9px). One tier up to --muted
+     (#7f8ea3) still read as too dim on screen — now --text-2 (#9fb0c2),
+     clearly legible while staying a visible step below the full-bright
+     --text (#edf2f7) values sitting directly beneath these labels, so the
+     label/value hierarchy is preserved without the labels washing out. */
+  .lbl{font-weight:700;font-size:9px;color:var(--text-2);letter-spacing:.04em;margin:0}
   .lbl.b10{font-size:10px}
   .lbl.b95{font-size:9.5px}
 
@@ -491,17 +577,27 @@
 
   /* execution score */
   .score{min-height:210px;text-align:center;padding:34px 22px}
-  .ring{position:relative;width:80px;height:80px;margin:0 auto}
-  .ring .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  /* Renamed from `.ring` — that name collides with Tailwind's built-in `ring`
+     utility (a box-shadow ring), which Tailwind generates for ANY element
+     whose className is exactly "ring" regardless of which stylesheet it came
+     from. The result was a square box-shadow painted around this round SVG
+     dial. `.scoredial` cannot collide with any Tailwind utility name. */
+  .scoredial{position:relative;width:80px;height:80px;margin:0 auto}
+  .scoredial .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     font-family:var(--mono);font-size:34px;color:var(--text)}
-  .score .ttl{font-family:var(--display);font-weight:700;font-size:14px;color:var(--amber);margin:14px 0 0}
+  /* .score .ttl sits directly under the 80px dial with only 14px of margin;
+     on the "Execution Score" title that reads as touching/overlapping the
+     ring's bottom edge. Give it real clearance. */
+  .score .ttl{font-family:var(--display);font-weight:700;font-size:14px;color:var(--amber);margin:22px 0 0}
   .score p{margin:9px 0 0;font-size:11.5px;line-height:18px;color:var(--muted-2)}
 
   /* stat strip */
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
   .stat{min-height:104px;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:21px 20px}
   .stat .accent{position:absolute;left:0;top:-1px;width:44px;height:2.5px}
-  .stat b{display:block;font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em}
+  /* Same role as .lbl (stat-tile caption e.g. "TOTAL TRADES") — matched to the
+     same tone for consistency. */
+  .stat b{display:block;font-weight:700;font-size:9.5px;color:var(--text-2);letter-spacing:.04em}
   .stat em{display:block;font-style:normal;font-family:var(--mono);font-size:26px;line-height:34px;margin-top:8px}
   @media(max-width:1080px){.stats{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:560px){.stats{grid-template-columns:1fr}}

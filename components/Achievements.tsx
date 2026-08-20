@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Trophy, Lock } from 'lucide-react';
+import { Trophy, Lock } from '@phosphor-icons/react';
 import { computeBadges, type BadgeCategory, type BadgeTier, type EarnedBadge } from '@/lib/badges';
 import type { Trade, DailyReflection } from '@/lib/types';
 
@@ -66,7 +66,7 @@ export default function Achievements({ trades, reflections }: Props) {
 
         {/* Circular progress */}
         <div className="card score">
-          <div className="ring">
+          <div className="scoredial">
             <svg viewBox="0 0 80 80" width="80" height="80" fill="none">
               <circle cx="40" cy="40" r="37.5" stroke="#16202c" strokeWidth="5" />
               <circle

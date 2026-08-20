@@ -5,7 +5,7 @@ import { Trade } from '@/lib/types';
 import { EMOTION_OPTIONS, getRMultiple } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { format } from 'date-fns';
-import { Edit2, TrendingUp, TrendingDown, Minus, Eye, Zap, RefreshCw, MessageSquare, Star, FlaskConical, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PencilSimple as Edit2, TrendUp as TrendingUp, TrendDown as TrendingDown, Minus, Eye, Lightning as Zap, ArrowsClockwise as RefreshCw, ChatText as MessageSquare, Star, Flask as FlaskConical, X, CaretLeft as ChevronLeft, CaretRight as ChevronRight } from '@phosphor-icons/react';
 import MarketTypeBadge from './MarketTypeBadge';
 
 interface Props {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useToast } from '@/components/ui/Toast';
-import { Plus, Trash2, Calendar, CalendarClock } from 'lucide-react';
+import { Plus, Trash as Trash2, Calendar, Calendar as CalendarClock } from '@phosphor-icons/react';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 

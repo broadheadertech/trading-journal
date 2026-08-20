@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Monitor, TrendingUp, User } from 'lucide-react';
+import { Calendar, Monitor, TrendUp, User } from '@phosphor-icons/react';
 
 export default function Rewards() {
   return (
@@ -77,7 +77,7 @@ export default function Rewards() {
         <div className="earn">
           {[
             { icon: Calendar,   label: 'Daily reflection',       reward: '+1 streak point' },
-            { icon: TrendingUp, label: 'Hit weekly profit goal', reward: '+1 raffle ticket' },
+            { icon: TrendUp, label: 'Hit weekly profit goal', reward: '+1 raffle ticket' },
             { icon: User,       label: 'Refer a friend',         reward: '1 month free per signup' },
             { icon: Monitor,    label: 'Complete a course',      reward: '+3 raffle tickets' },
           ].map(({ icon: Icon, label, reward }) => (

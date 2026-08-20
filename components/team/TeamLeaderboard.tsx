@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { EyeOff } from 'lucide-react';
+import { EyeSlash } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface MemberStat {
@@ -119,7 +119,7 @@ export default function TeamLeaderboard({ memberStats }: TeamLeaderboardProps) {
           className={cn('chip', anonymize && 'on')}
           style={{ marginLeft: 'auto' }}
         >
-          <EyeOff size={13} />
+          <EyeSlash size={13} />
           Anonymize
         </button>
       </div>

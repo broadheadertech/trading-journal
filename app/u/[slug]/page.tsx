@@ -7,9 +7,10 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Radio, BookOpen, TrendingUp, Pencil, Loader2, Lock, Globe,
-  UserPlus, UserCheck, Twitter, Instagram, Youtube, Send, Music2, X,
-} from 'lucide-react';
+  Radio, BookOpen, TrendUp as TrendingUp, Pencil, CircleNotch as Loader2, Lock, Globe,
+  UserPlus, UserCheck, YoutubeLogo as Youtube, PaperPlaneTilt as Send, X,
+} from '@phosphor-icons/react';
+import { TwitterLogo as Twitter, InstagramLogo as Instagram, MusicNotes as Music2 } from '@phosphor-icons/react';
 import EditProfileModal from '@/components/EditProfileModal';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import SignalRationale from '@/components/SignalRationale';

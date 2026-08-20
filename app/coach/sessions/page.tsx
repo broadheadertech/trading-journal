@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { SessionRow, SessionView } from '@/components/Coaching';
-import { Headphones } from 'lucide-react';
+import { Headphones } from '@phosphor-icons/react';
 
 export default function CoachSessionsPage() {
   const sessions = useQuery(api.coachSessions.myCoachSessions) ?? [];

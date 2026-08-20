@@ -10,7 +10,7 @@ import SignalSocialBar from '@/components/SignalSocialBar';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalRationale from '@/components/SignalRationale';
 import SignalProviders from '@/components/SignalProviders';
-import { Radio, Clock, Target, ShieldAlert, Filter, Plus, Lock, X, Award, Flame, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash2, XCircle, Ban, Eye, EyeOff, History, Pencil, ChevronDown } from 'lucide-react';
+import { Radio, Clock, Target, ShieldWarning as ShieldAlert, Funnel as Filter, Plus, Lock, X, Medal as Award, Fire as Flame, Warning as AlertTriangle, ArrowUpRight, ArrowDownRight, Minus, Trash as Trash2, XCircle, Prohibit as Ban, Eye, EyeSlash as EyeOff, ClockCounterClockwise as History, Pencil, CaretDown as ChevronDown } from '@phosphor-icons/react';
 
 type Direction = 'long' | 'short';
 type OrderType = 'market' | 'stop' | 'limit';
@@ -427,7 +427,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
           return (
             <div key={i} className="mrow" style={hit ? { background: 'rgba(36,200,138,.07)' } : undefined}>
               <span className="ic" style={hit ? { color: 'var(--green)' } : undefined}>
-                <Target size={13} strokeWidth={hit ? 2.5 : 2} />
+                <Target size={13} weight={hit ? 'bold' : undefined} />
               </span>
               <span className="lb" style={hit ? { color: 'var(--green)', fontWeight: 700 } : undefined}>
                 {hit ? `WON · TARGET ${i + 1}` : `TARGET ${i + 1}`}
@@ -618,7 +618,7 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
       {takeProfits.length > 1 ? (
         <>
           <button onClick={() => setTpPickerOpen(v => !v)} title="Mark target hit" className="chip" style={{ ...act, color: 'var(--green)', borderColor: 'var(--green)' }}>
-            <Target size={10} strokeWidth={2.5} /> Target hit
+            <Target size={10} weight="bold" /> Target hit
           </button>
           {tpPickerOpen && (
             <div
@@ -642,7 +642,7 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
         </>
       ) : (
         <button onClick={() => onUpdate('won', 1)} title="Target hit" className="chip" style={{ ...act, color: 'var(--green)', borderColor: 'var(--green)' }}>
-          <Target size={10} strokeWidth={2.5} /> Target hit
+          <Target size={10} weight="bold" /> Target hit
         </button>
       )}
 

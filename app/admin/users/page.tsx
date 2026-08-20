@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useAdminUsers, useAdminUserActions } from '@/hooks/useAdminStore';
 import AdminUserDetail from '@/components/admin/AdminUserDetail';
 
@@ -73,7 +73,7 @@ export default function AdminUsersPage() {
       <div className="field" style={{ maxWidth: 420 }}>
         <label>SEARCH</label>
         <div className="box" style={{ gap: 12 }}>
-          <Search size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+          <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
           <input
             type="text"
             placeholder="Search by name, email, or user ID..."

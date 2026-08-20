@@ -1,6 +1,6 @@
 'use client';
 
-import { Mic, MicOff } from 'lucide-react';
+import { Microphone, MicrophoneSlash } from '@phosphor-icons/react';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 
 interface SpeechButtonProps {
@@ -30,7 +30,7 @@ export function SpeechButton({ value, onChange, className = '' }: SpeechButtonPr
           : 'text-(--muted) hover:text-(--foreground) hover:bg-(--surface-2)'
       } ${className}`}
     >
-      {isListening ? <MicOff size={14} /> : <Mic size={14} />}
+      {isListening ? <MicrophoneSlash size={14} /> : <Microphone size={14} />}
     </button>
   );
 }

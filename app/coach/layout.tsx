@@ -5,7 +5,7 @@ import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Headphones, User, Calendar, MessageSquare, DollarSign, ArrowLeft } from 'lucide-react';
+import { Headphones, User, Calendar, ChatText as MessageSquare, CurrencyDollar as DollarSign, ArrowLeft } from '@phosphor-icons/react';
 import BrainMascot from '@/components/BrainMascot';
 
 const NAV = [

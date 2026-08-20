@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { SessionView } from '@/components/Coaching';
-import { MessageSquare, ArrowRight } from 'lucide-react';
+import { ChatText as MessageSquare, ArrowRight } from '@phosphor-icons/react';
 
 export default function CoachMessagesPage() {
   const sessions = useQuery(api.coachSessions.myCoachSessions) ?? [];

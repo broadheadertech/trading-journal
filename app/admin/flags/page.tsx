@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldAlert, ChevronRight } from 'lucide-react';
+import { ShieldWarning, CaretRight } from '@phosphor-icons/react';
 import { useAdminAntiGamingFlags, useAdminLogFlagView } from '@/hooks/useAdminStore';
 import type { Id } from '@/convex/_generated/dataModel';
 
@@ -55,7 +55,7 @@ export default function AntiGamingFlagsPage() {
       <div className="max-w-5xl">
         <div className="phead" style={{ marginBottom: 24 }}>
           <p className="eyebrow" style={{ margin: '0 0 12px' }}>
-            <ShieldAlert size={13} style={{ color: 'var(--amber)' }} /> Integrity
+            <ShieldWarning size={13} style={{ color: 'var(--amber)' }} /> Integrity
           </p>
           <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Anti-Gaming Alerts</h2>
           <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
@@ -66,7 +66,7 @@ export default function AntiGamingFlagsPage() {
           <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
           <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
           <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
-            <ShieldAlert size={22} style={{ color: 'var(--amber)' }} />
+            <ShieldWarning size={22} style={{ color: 'var(--amber)' }} />
           </div>
           <h4>No anti-gaming flags detected</h4>
           <p>Flags will appear here when phantom trades, P&amp;L anomalies, or recovery lock violations are detected.</p>
@@ -80,7 +80,7 @@ export default function AntiGamingFlagsPage() {
       {/* Header */}
       <div className="phead" style={{ marginBottom: 24 }}>
         <p className="eyebrow" style={{ margin: '0 0 12px' }}>
-          <ShieldAlert size={13} style={{ color: 'var(--amber)' }} /> Integrity
+          <ShieldWarning size={13} style={{ color: 'var(--amber)' }} /> Integrity
         </p>
         <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Anti-Gaming Alerts</h2>
         <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
@@ -175,7 +175,7 @@ export default function AntiGamingFlagsPage() {
                   </span>
 
                   {/* Expand arrow */}
-                  <ChevronRight
+                  <CaretRight
                     size={14}
                     className={`transition-transform ${isExpanded ? 'rotate-90' : ''}`}
                     style={{ color: 'var(--muted-3)' }}

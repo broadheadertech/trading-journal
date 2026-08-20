@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
-import { X, Loader2, BarChart3 } from 'lucide-react';
+import { X, CircleNotch, ChartBar } from '@phosphor-icons/react';
 
 export interface ProfileSocials {
   x: string;
@@ -164,7 +164,7 @@ export default function EditProfileModal({
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, width: '100%', textAlign: 'left', padding: '13px 16px' }}
           >
             <span style={{ display: 'flex', alignItems: 'flex-start', gap: 10, minWidth: 0 }}>
-              <BarChart3 size={15} style={{ color: shareStats ? 'var(--teal)' : 'var(--muted-2)', flex: 'none', marginTop: 2 }} />
+              <ChartBar size={15} style={{ color: shareStats ? 'var(--teal)' : 'var(--muted-2)', flex: 'none', marginTop: 2 }} />
               <span style={{ minWidth: 0 }}>
                 <span style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>Share overall stats publicly</span>
                 <span style={{ display: 'block', marginTop: 5, fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>
@@ -225,7 +225,7 @@ export default function EditProfileModal({
               Cancel
             </button>
             <button type="submit" disabled={submitting} className="btn-a disabled:opacity-50" style={{ marginTop: 16 }}>
-              {submitting && <Loader2 size={14} className="animate-spin" />}
+              {submitting && <CircleNotch size={14} className="animate-spin" />}
               Save
             </button>
           </div>

@@ -490,8 +490,12 @@
   }
   .rel:last-child { padding-bottom: 0; }
 
-  /* marker on the spine — .ring/.pill also exist in the dashboard sheet,
-     so both stay scoped to .rel */
+  /* marker on the spine. Named .halo, not .ring — a bare className="ring" on
+     the element collides with Tailwind's built-in `ring` utility (a
+     box-shadow ring), which paints a square box over any element carrying
+     that exact class name regardless of source stylesheet. Hit this same bug
+     on the dashboard's Execution Score dial; .pill also exists in the
+     dashboard sheet, so it stays scoped to .rel here. */
   .rel .node {
     position: absolute;
     left: 3px;
@@ -506,7 +510,7 @@
     background: var(--amber);
     border-color: var(--amber);
   }
-  .rel .ring {
+  .rel .halo {
     position: absolute;
     left: -4px;
     top: -1px;
@@ -675,14 +679,14 @@
       border-left: 0;
       padding: 0 32px 0 0;
     }
-    /* The node/ring offsets must beat the base `.rel .node` / `.rel .ring`
+    /* The node/halo offsets must beat the base `.rel .node` / `.rel .halo`
        rules above — written bare they lost on specificity, so the markers
        stayed at their desktop offset and sat 3.5px to the RIGHT of the spine
        instead of on it. Spine moved to 4px so both centres land on 4.5px. */
     .timeline::before { left: 4px; }
     .rel        { padding-left: 30px; }
     .rel .node  { left: 0; }
-    .rel .ring  { left: -7px; }
+    .rel .halo  { left: -7px; }
   }
 
   @media (max-width: 560px) {

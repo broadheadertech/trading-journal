@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { ArrowLeft, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, ShieldWarning } from '@phosphor-icons/react';
 import AdminSidebar from './AdminSidebar';
 import BrainMascot from '@/components/BrainMascot';
 
@@ -31,7 +31,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             className="badge"
             style={{ border: '1px solid rgba(255,77,94,.4)', background: 'var(--panel-2)' }}
           >
-            <ShieldAlert size={22} style={{ color: 'var(--red)' }} />
+            <ShieldWarning size={22} style={{ color: 'var(--red)' }} />
           </div>
           <h4>Access Denied</h4>
           <p>You don&apos;t have permission to access the admin panel.</p>

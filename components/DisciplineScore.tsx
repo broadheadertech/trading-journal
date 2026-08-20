@@ -7,7 +7,7 @@ import {
   DISCIPLINE_BADGES,
   getGradeLabel,
 } from '@/lib/discipline-engine';
-import { Flame, Trophy, Star, Shield, Lock } from 'lucide-react';
+import { Fire, Trophy, Star, Shield, Lock } from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -115,7 +115,7 @@ export default function DisciplineScore({ trades, breakerEvents }: Props) {
             <span className="accent" style={{ background: 'var(--amber)' }} />
             <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               DISCIPLINE STREAK
-              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Flame size={13} /></span>
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Fire size={13} /></span>
             </b>
             <em style={{ color: state.currentStreak > 0 ? 'var(--amber)' : 'var(--text)' }}>{state.currentStreak}</em>
             <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 4 }}>

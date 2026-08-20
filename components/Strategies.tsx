@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp, Crosshair, Sparkles, Sunrise, Waves, Layers, Clock, LineChart } from 'lucide-react';
+import { TrendUp, Crosshair, Sparkle, Sun, Waves, Stack, Clock, ChartLineUp } from '@phosphor-icons/react';
 
 type StrategyId =
   | 'inner-circle'
@@ -48,7 +48,7 @@ const STRATEGIES: StrategyDef[] = [
     id: 'fibonacci',
     title: 'Fibonacci Mastery',
     tag: 'Retracement',
-    icon: Sparkles,
+    icon: Sparkle,
     summary: 'Master golden ratios for entry, exit, and confluence with market structure.',
     keyConcepts: [
       'Key retracement levels: 38.2%, 50%, 61.8%, 78.6%',
@@ -69,7 +69,7 @@ const STRATEGIES: StrategyDef[] = [
     id: 'opening-range',
     title: 'Opening Range Breakouts',
     tag: 'Day Trading',
-    icon: Sunrise,
+    icon: Sun,
     summary: 'Trade the first range of the session for high-probability directional moves.',
     keyConcepts: [
       'The Opening Range = first 15/30/60 minutes of a session',
@@ -111,7 +111,7 @@ const STRATEGIES: StrategyDef[] = [
     id: 'supply-demand',
     title: 'Supply and Demand',
     tag: 'Zones',
-    icon: Layers,
+    icon: Stack,
     summary: 'Map institutional supply and demand zones for precise reversal entries.',
     keyConcepts: [
       'Demand zone = base before a strong rally',
@@ -151,9 +151,12 @@ const STRATEGIES: StrategyDef[] = [
   },
   {
     id: 'support-resistance',
-    title: 'Support and Resistance Mastery',
+    // Reference tab label is "Support and Resistance" (no "Mastery") — this
+    // was the one entry running longer than its siblings in `.tabs.line`,
+    // since `title` drives both the tab button and the page heading.
+    title: 'Support and Resistance',
     tag: 'Levels',
-    icon: LineChart,
+    icon: ChartLineUp,
     summary: 'Build confluence from horizontal levels, trendlines, and round numbers.',
     keyConcepts: [
       'Horizontal levels at clear swing highs/lows',
@@ -179,7 +182,7 @@ export default function Strategies() {
   return (
     <div>
       <div className="phead">
-        <p className="eyebrow"><TrendingUp size={13} /> Curated playbooks</p>
+        <p className="eyebrow"><TrendUp size={13} /> Curated playbooks</p>
         <h2>Trading strategies</h2>
         <p className="sub">Explore vetted, battle-tested strategies built by senior traders.</p>
       </div>
@@ -228,7 +231,7 @@ function StrategyContent({ strategy }: { strategy: StrategyDef }) {
         {/* Key concepts */}
         <div>
           <h4 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Sparkles size={14} style={{ color: 'var(--amber)' }} /> Key concepts
+            <Sparkle size={14} style={{ color: 'var(--amber)' }} /> Key concepts
           </h4>
           <div className="klist">
             {strategy.keyConcepts.map((c, i) => (

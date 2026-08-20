@@ -5,9 +5,10 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Headphones, ArrowLeft, ArrowRight, Star, Clock, Send, Check,
-  Calendar, MessageCircle, Video, X, Loader2, UserPlus, Users,
-} from 'lucide-react';
+  Headphones, ArrowLeft, ArrowRight, Star, Clock, PaperPlaneTilt as Send, Check,
+  Calendar, ChatCircle as MessageCircle, X, CircleNotch as Loader2, UserPlus, Users,
+} from '@phosphor-icons/react';
+import { VideoCamera as Video } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast';
 import CoachingCohorts from './CoachingCohorts';

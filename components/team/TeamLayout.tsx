@@ -7,9 +7,10 @@ import { api } from '@/convex/_generated/api';
 import { TeamTabId } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard, Users, Layers, MessageSquare, FileText, Trophy, Settings,
-  ChevronLeft, Search, Bell,
-} from 'lucide-react';
+  SquaresFour, Users, Stack, ChatText, FileText, Trophy, Gear,
+  CaretLeft, MagnifyingGlass,
+} from '@phosphor-icons/react';
+import { Bell } from '@phosphor-icons/react';
 import BrainMascot from '@/components/BrainMascot';
 import TeamOverview from './TeamOverview';
 import TeamMembers from './TeamMembers';
@@ -27,13 +28,13 @@ interface TeamLayoutProps {
 }
 
 const teamTabs: { id: TeamTabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'overview', label: 'Overview', icon: <LayoutDashboard size={20} /> },
+  { id: 'overview', label: 'Overview', icon: <SquaresFour size={20} /> },
   { id: 'members', label: 'Members', icon: <Users size={20} /> },
-  { id: 'cohorts', label: 'Cohorts', icon: <Layers size={20} /> },
-  { id: 'coach-desk', label: 'Coach Desk', icon: <MessageSquare size={20} /> },
+  { id: 'cohorts', label: 'Cohorts', icon: <Stack size={20} /> },
+  { id: 'coach-desk', label: 'Coach Desk', icon: <ChatText size={20} /> },
   { id: 'reports', label: 'Reports', icon: <FileText size={20} /> },
   { id: 'leaderboard', label: 'Leaderboard', icon: <Trophy size={20} /> },
-  { id: 'settings', label: 'Settings', icon: <Settings size={20} /> },
+  { id: 'settings', label: 'Settings', icon: <Gear size={20} /> },
 ];
 
 export default function TeamLayout({ workspaceId, workspaceName, role, onBackToPersonal }: TeamLayoutProps) {
@@ -108,7 +109,7 @@ export default function TeamLayout({ workspaceId, workspaceName, role, onBackToP
             className="w-full flex items-center"
             style={{ height: 44, padding: '0 0 0 26px', fontSize: 13.5, color: 'var(--text-2)' }}
           >
-            <ChevronLeft size={16} className="shrink-0" />
+            <CaretLeft size={16} className="shrink-0" />
             <span style={{ marginLeft: 17 }}>Back to Personal</span>
           </button>
 
@@ -160,7 +161,7 @@ export default function TeamLayout({ workspaceId, workspaceName, role, onBackToP
                 border: '1px solid var(--line)', background: 'var(--panel-2)',
               }}
             >
-              <Search size={14} style={{ color: 'var(--muted-3)' }} />
+              <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)' }} />
               <input
                 type="text"
                 placeholder="Search students, cohorts, rules..."
@@ -314,7 +315,7 @@ export default function TeamLayout({ workspaceId, workspaceName, role, onBackToP
           className="flex flex-col items-center gap-1 px-2 py-1"
           style={{ borderRadius: 2, fontSize: 10, fontWeight: 700, color: 'var(--muted-2)' }}
         >
-          <ChevronLeft size={20} />
+          <CaretLeft size={20} />
           <span>Personal</span>
         </button>
       </div>

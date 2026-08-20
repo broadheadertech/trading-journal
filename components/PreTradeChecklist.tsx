@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { PreTradeChecklist as ChecklistType, Strategy, Trade } from '@/lib/types';
-import { Globe, TrendingUp, Activity, Zap, Clock, BarChart3, Calendar, ArrowUpRight, ChevronRight, RefreshCw } from 'lucide-react';
+import { Globe, TrendUp, Lightning, Clock, ChartBar, Calendar, ArrowUpRight, CaretRight, ArrowsClockwise } from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -285,7 +286,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
             <p className="sub">Current market read derived from your latest checklists and closed trades.</p>
           </div>
           <button className="btn-g" style={{ marginLeft: 'auto', height: 34 }}>
-            <RefreshCw size={13} /> Refresh context
+            <ArrowsClockwise size={13} /> Refresh context
           </button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, marginTop: 20 }}>
@@ -334,7 +335,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
           <b>ACTIVE WIN RATE</b>
           <em style={{ color: m.activeWinRate >= 50 ? 'var(--green)' : 'var(--red)' }}>{m.activeWinRate}%</em>
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
-            <TrendingUp size={10} style={{ display: 'inline', marginRight: 5 }} />{fmtPnl(m.activeRegimePnl)} in regime
+            <TrendUp size={10} style={{ display: 'inline', marginRight: 5 }} />{fmtPnl(m.activeRegimePnl)} in regime
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
@@ -342,7 +343,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
           <b>VOLATILITY STATE</b>
           <em style={{ fontSize: 22 }}>{m.volState}</em>
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
-            <Zap size={10} style={{ display: 'inline', marginRight: 5 }} />7d {m.vol7d.toFixed(1)} vs 30d {m.vol30d.toFixed(1)}
+            <Lightning size={10} style={{ display: 'inline', marginRight: 5 }} />7d {m.vol7d.toFixed(1)} vs 30d {m.vol30d.toFixed(1)}
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
@@ -378,7 +379,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Overview</span>
-                <ChevronRight size={14} style={{ marginLeft: 'auto', color: 'var(--muted-2)' }} />
+                <CaretRight size={14} style={{ marginLeft: 'auto', color: 'var(--muted-2)' }} />
               </div>
               <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 5 }}>Full-period trajectory and regime transitions</div>
             </button>
@@ -533,7 +534,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
               <h3>Volatility Pressure</h3>
               <p className="sub">PnL response during changing volatility.</p>
             </div>
-            <Zap size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
+            <Lightning size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
           <div style={{ height: 16 }} />
           {m.equityData.length > 0 ? (
@@ -566,7 +567,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
               <h3>Context Correlations</h3>
               <p className="sub">How strongly each market factor aligns with your PnL.</p>
             </div>
-            <BarChart3 size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
+            <ChartBar size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
           <div style={{ marginTop: 20 }}>
             {m.correlations.map(c => (

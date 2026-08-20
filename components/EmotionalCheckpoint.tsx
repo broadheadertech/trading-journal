@@ -5,9 +5,10 @@ import { Trade, EmotionState, CircuitBreakerResult, CircuitBreakerType, CircuitB
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { runAllCircuitBreakers, getEmotionWarning, generateEmotionCoachAdvice, getCooldownDuration } from '@/lib/emotional-engine';
 import {
-  Shield, Brain, CheckCircle, AlertTriangle, XOctagon,
-  ChevronRight, ChevronLeft, Sparkles, Lock,
-} from 'lucide-react';
+  Shield, Brain, CheckCircle, Warning,
+  CaretRight, CaretLeft, Sparkle, Lock,
+} from '@phosphor-icons/react';
+import { Prohibit as XOctagon } from '@phosphor-icons/react';
 import CooldownOverlay from './CooldownOverlay';
 
 interface Props {
@@ -428,7 +429,7 @@ export default function EmotionalCheckpoint({
               {breakerResults.length > 0 && (
                 <div style={{ display: 'grid', gap: 8 }}>
                   <p className="lbl b10" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <AlertTriangle size={12} style={{ color: 'var(--amber)' }} />
+                    <Warning size={12} style={{ color: 'var(--amber)' }} />
                     CIRCUIT BREAKER RESULTS
                   </p>
                   {breakerResults.map((result, i) => {
@@ -450,7 +451,7 @@ export default function EmotionalCheckpoint({
                       >
                         {result.severity === 'block'
                           ? <XOctagon size={14} style={{ color: c, flex: 'none', marginTop: 2 }} />
-                          : <AlertTriangle size={14} style={{ color: c, flex: 'none', marginTop: 2 }} />
+                          : <Warning size={14} style={{ color: c, flex: 'none', marginTop: 2 }} />
                         }
                         <span>{result.message}</span>
                       </div>
@@ -481,7 +482,7 @@ export default function EmotionalCheckpoint({
               <div className="card" style={{ padding: '19px 24px 22px' }}>
                 <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
                 <div className="cardhead" style={{ alignItems: 'center', gap: 10 }}>
-                  <Sparkles size={14} style={{ color: 'var(--teal)' }} />
+                  <Sparkle size={14} style={{ color: 'var(--teal)' }} />
                   <h4>AI Emotion Coach</h4>
                 </div>
                 <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '21px', color: 'var(--text-2)', whiteSpace: 'pre-line' }}>
@@ -536,7 +537,7 @@ export default function EmotionalCheckpoint({
           <div>
             {stage > 0 ? (
               <button onClick={handleBack} className="btn-g">
-                <ChevronLeft size={14} /> Back
+                <CaretLeft size={14} /> Back
               </button>
             ) : (
               <button onClick={onCancel} className="btn-g">
@@ -552,7 +553,7 @@ export default function EmotionalCheckpoint({
                 className="btn-a"
                 style={{ opacity: canProceedStage(stage) ? 1 : 0.5 }}
               >
-                Next <ChevronRight size={14} />
+                Next <CaretRight size={14} />
               </button>
             ) : (
               <>

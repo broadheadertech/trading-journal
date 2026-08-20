@@ -2,11 +2,12 @@
 
 import { TabId, TimeRange } from '@/lib/types';
 import {
-  LayoutDashboard, BookOpen, Map, List,
-  BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe, Radio, Plug,
-  ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
-} from 'lucide-react';
+  SquaresFour, BookOpen, MapTrifold,
+  ChartBar, Brain, Sparkle, FileText, Sun, Moon,
+  DownloadSimple, UploadSimple, Plus, Target, Newspaper, ArrowsClockwise, Trophy, Wrench, GraduationCap, CalendarDots, Chats, Headphones, TrendUp, Calendar, Globe, Radio, Plug,
+  CaretLeft, Gear, CreditCard, Users, Check,
+} from '@phosphor-icons/react';
+import { ListBullets as List, Scales as Scale, Planet as Orbit, Gift, GameController as Gamepad2, SignOut as LogOut, Bell, Question as HelpCircle, Pulse as Activity } from '@phosphor-icons/react';
 import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { UserButton, useUser, useClerk } from '@clerk/nextjs';
@@ -39,8 +40,8 @@ interface SidebarProps {
 const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={16} /> },
-  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={16} /> },
+  { id: 'dashboard',   label: 'Dashboard',           icon: <SquaresFour size={16} /> },
+  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendUp size={16} /> },
   { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={16} /> },
   { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={16} /> },
   { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={16} /> },
@@ -49,11 +50,11 @@ const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={16} /> },
   { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={16} /> },
   { id: 'indicators',  label: 'Indicators',          icon: <Activity size={16} /> },
-  { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={16} /> },
+  { id: 'economic',    label: 'Economic Calendar',   icon: <Calendar size={16} /> },
   { id: 'world',       label: 'World Monitoring',    icon: <Globe size={16} /> },
   { id: 'articles',    label: 'Articles',            icon: <BookOpen size={16} /> },
-  { id: 'community',   label: 'Community',           icon: <MessagesSquare size={16} /> },
-  { id: 'events',      label: 'Events',              icon: <CalendarDays size={16} /> },
+  { id: 'community',   label: 'Community',           icon: <Chats size={16} /> },
+  { id: 'events',      label: 'Events',              icon: <CalendarDots size={16} /> },
   { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={16} /> },
   { id: 'news',        label: 'News',                icon: <Newspaper size={16} /> },
   { id: 'tools',       label: 'Tools',               icon: <Wrench size={16} /> },
@@ -144,25 +145,25 @@ export default function Sidebar({
           )}
 
           <a role="button" tabIndex={0} onClick={onImport} style={{ cursor: 'pointer' }} title={collapsed ? 'Imports' : undefined}>
-            <span className="ic"><Upload size={16} /></span>
+            <span className="ic"><UploadSimple size={16} /></span>
             {!collapsed && <span className="lb">Imports</span>}
           </a>
 
           <a role="button" tabIndex={0} onClick={onExport} style={{ cursor: 'pointer' }} title={collapsed ? 'Export' : undefined}>
-            <span className="ic"><Download size={16} /></span>
+            <span className="ic"><DownloadSimple size={16} /></span>
             {!collapsed && <span className="lb">Export</span>}
           </a>
 
           {isAdmin && (
             <Link href="/admin" title={collapsed ? 'Admin' : undefined}>
-              <span className="ic"><Settings size={16} /></span>
+              <span className="ic"><Gear size={16} /></span>
               {!collapsed && <span className="lb">Admin</span>}
             </Link>
           )}
 
           {onReseedDemo && (
             <a role="button" tabIndex={0} onClick={onReseedDemo} style={{ cursor: 'pointer' }} title={collapsed ? 'Reset Demo' : undefined}>
-              <span className="ic"><RefreshCw size={16} /></span>
+              <span className="ic"><ArrowsClockwise size={16} /></span>
               {!collapsed && <span className="lb">Reset Demo</span>}
             </a>
           )}
@@ -184,7 +185,7 @@ export default function Sidebar({
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           onClick={() => setCollapsed(!collapsed)}
         >
-          <ChevronLeft size={12} style={{ color: '#7f8ea3', transform: collapsed ? 'rotate(180deg)' : undefined }} />
+          <CaretLeft size={12} style={{ color: '#7f8ea3', transform: collapsed ? 'rotate(180deg)' : undefined }} />
         </button>
       </aside>
 
@@ -230,7 +231,7 @@ export default function Sidebar({
 
             {/* 2. Add Trade */}
             <button className="addtrade" onClick={onAddTrade}>
-              <Plus size={11} strokeWidth={2.6} />
+              <Plus size={11} weight="bold" />
               Add Trade
             </button>
 

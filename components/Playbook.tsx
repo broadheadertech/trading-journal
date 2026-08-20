@@ -5,11 +5,14 @@ import { Strategy, StrategyType, Trade } from '@/lib/types';
 import { STRATEGY_TYPES, getDisciplineScore } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  Plus, Edit2, Trash2, X, ChevronDown, ChevronUp, AlertTriangle,
-  Shield, Sparkles, Zap, BookOpen, Target, Clock, BarChart3,
-  CheckCircle2, Circle, ArrowRight, ArrowLeft, Search, ToggleLeft, ToggleRight,
-  ChevronRight, Layers, FileText, Check,
-} from 'lucide-react';
+  Plus, PencilSimple, Trash, X, CaretDown, CaretUp, Warning,
+  Shield, Sparkle, Lightning, BookOpen, Target, Clock, ChartBar,
+  CheckCircle, ArrowRight, ArrowLeft, MagnifyingGlass,
+  CaretRight, Stack, FileText, Check,
+} from '@phosphor-icons/react';
+import {
+  Circle, ToggleLeft, ToggleRight,
+} from '@phosphor-icons/react';
 import Modal from './ui/Modal';
 import { useToast } from './ui/Toast';
 import {
@@ -457,14 +460,14 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </button>
           <button onClick={openRuleSetComposer} disabled={usage.strategies.isAtLimit}
             className="btn-g" style={usage.strategies.isAtLimit ? { opacity: .5 } : undefined}>
-            <Layers size={14} /> Create Ruleset
+            <Stack size={14} /> Create Ruleset
           </button>
           <button onClick={openStratComposer} disabled={usage.strategies.isAtLimit}
             className="btn-g" style={usage.strategies.isAtLimit ? { opacity: .5 } : undefined}>
             <FileText size={14} /> Create Strategy
           </button>
           <button onClick={openActivationMixer} className="btn-g" style={{ borderColor: 'rgba(36,200,138,.4)', color: 'var(--green)' }}>
-            <Zap size={14} /> Activate Set
+            <Lightning size={14} /> Activate Set
           </button>
         </div>
       </div>
@@ -513,7 +516,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <h3>How to Run This Page</h3>
               <p className="sub">Follow the sequence in order</p>
             </div>
-            <Zap size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
+            <Lightning size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div className="klist num">
             {['Create your core trading rules.', 'Combine those rules into a reusable rule-set template.', 'Activate your rule set and run it live.'].map((step, i) => (
@@ -528,7 +531,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <h3>Advices</h3>
               <p className="sub">Operating guidance for this cycle</p>
             </div>
-            <Sparkles size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+            <Sparkle size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
           </div>
           <div className="klist num">
             {['Execute active rule set for 5-7 sessions before changing plan.', 'Keep compliance above 80% so rule impact compounds.', 'Review results and adjust rules and rule sets.'].map((tip, i) => (
@@ -542,11 +545,11 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       <div className="tabs" style={{ marginTop: 28, marginBottom: 24, overflowX: 'auto' }}>
         {SUB_SECTIONS.map(s => (
           <button key={s.key} onClick={() => scrollToSection(s.key)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
-            {s.key === 'Active Rule Sets' && <Sparkles size={13} style={{ color: 'var(--amber)' }} />}
+            {s.key === 'Active Rule Sets' && <Sparkle size={13} style={{ color: 'var(--amber)' }} />}
             {s.key === 'Playbook Library' && <BookOpen size={13} style={{ color: 'var(--muted-3)' }} />}
             {s.key === 'Rules Library' && <Circle size={13} style={{ color: 'var(--muted-3)' }} />}
             {s.key === 'Weekly Focus' && <Target size={13} style={{ color: 'var(--muted-3)' }} />}
-            {s.key === 'Impact' && <BarChart3 size={13} style={{ color: 'var(--muted-3)' }} />}
+            {s.key === 'Impact' && <ChartBar size={13} style={{ color: 'var(--muted-3)' }} />}
             <span style={{ fontWeight: 700 }}>{s.label}</span>
             <span className="hidden sm:inline" style={{ color: 'var(--muted-2)', fontSize: 11 }}>&middot; {s.desc}</span>
           </button>
@@ -578,7 +581,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
                   <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
                   <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(36,200,138,.4)', background: 'var(--panel-2)' }}>
-                    <Zap size={22} style={{ color: 'var(--green)' }} />
+                    <Lightning size={22} style={{ color: 'var(--green)' }} />
                   </div>
                   <h4>No active rule sets</h4>
                   <p>Activate one from the Playbook Library to start live tracking.</p>
@@ -750,7 +753,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
                         {/* Actions */}
                         <div style={{ display: 'flex', gap: 10, marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
-                          <button onClick={() => openEdit(strategy)} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}><Edit2 size={12} /> Edit</button>
+                          <button onClick={() => openEdit(strategy)} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}><PencilSimple size={12} /> Edit</button>
                           <button onClick={() => { setActivatedIds(prev => { const next = new Set(prev); next.delete(strategy.id); return next; }); showToast(`"${strategy.name}" deactivated`); }}
                             className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12, borderColor: 'rgba(255,77,94,.4)', color: 'var(--red)' }}><X size={12} /> Deactivate</button>
                         </div>
@@ -797,7 +800,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                       <div key={strategy.id} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
                         <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: levelColor }} />
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Zap size={14} style={{ color: 'var(--muted-3)' }} />
+                          <Lightning size={14} style={{ color: 'var(--muted-3)' }} />
                           <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: levelColor }}>{level}</span>
                           {isActive
                             ? <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)' }}>ACTIVE</span>
@@ -831,10 +834,10 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                             </button>
                           )}
                           <button onClick={() => openEdit(strategy)} className="btn-g" style={{ width: '100%', height: 34, fontSize: 12 }}>
-                            <Edit2 size={12} /> Open &amp; Adjust
+                            <PencilSimple size={12} /> Open &amp; Adjust
                           </button>
                           <button onClick={() => setDeleteConfirm(strategy.id)} className="btn-g" style={{ width: '100%', height: 30, fontSize: 11.5, border: 0, color: 'var(--red)' }}>
-                            <Trash2 size={12} /> Delete
+                            <Trash size={12} /> Delete
                           </button>
                         </div>
                       </div>
@@ -911,7 +914,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   { label: 'Risk Rules', value: behaviorTargets.risk, icon: Shield },
                   { label: 'Time Rules', value: behaviorTargets.time, icon: Clock },
                   { label: 'Behavior Rules', value: behaviorTargets.behavior, icon: Target },
-                  { label: 'Overall', value: behaviorTargets.overall, icon: CheckCircle2 },
+                  { label: 'Overall', value: behaviorTargets.overall, icon: CheckCircle },
                 ].map(item => (
                   <div key={item.label} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
                     <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: (item.value ?? 0) >= 80 ? 'var(--green)' : 'var(--amber)' }} />
@@ -991,7 +994,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <p className="lbl">MONEY LEFT ON TABLE</p>
-                    <BarChart3 size={12} style={{ marginLeft: 'auto', color: 'var(--red)' }} />
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--red)' }} />
                   </div>
                   <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{formatCurrency(-metrics.recoverable)}</p>
                   <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--red)' }}>Missed opportunity</p>
@@ -1000,7 +1003,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <p className="lbl">PROJECTED GAIN</p>
-                    <BarChart3 size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
                   </div>
                   <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--green)' }}>{formatCurrency(metrics.recoverable)}</p>
                   <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--green)' }}>If rules followed</p>
@@ -1009,7 +1012,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <p className="lbl">AVG COMPLIANCE</p>
-                    <BarChart3 size={12} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
                   </div>
                   <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{metrics.compliance}%</p>
                 </div>
@@ -1017,7 +1020,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--teal)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <p className="lbl">BEST WEEK</p>
-                    <CheckCircle2 size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
+                    <CheckCircle size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
                   </div>
                   <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{metrics.bestWeek ? metrics.bestWeek[0] : '—'}</p>
                 </div>
@@ -1086,7 +1089,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <div className="card" style={{ padding: '19px 22px 20px' }}>
             <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <CheckCircle2 size={14} style={{ color: 'var(--amber)' }} />
+              <CheckCircle size={14} style={{ color: 'var(--amber)' }} />
               <h4>Execution Checklist</h4>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
@@ -1139,7 +1142,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <div className="card" style={{ padding: '19px 22px 20px' }}>
             <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <AlertTriangle size={14} style={{ color: 'var(--amber)' }} />
+              <Warning size={14} style={{ color: 'var(--amber)' }} />
               <h4>Hour Window Radar</h4>
             </div>
             {metrics.riskWindows.length > 0 && (
@@ -1173,7 +1176,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <div className="card" style={{ padding: '19px 22px 20px' }}>
             <span className="accent" style={{ width: 44, background: 'var(--pink)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <Sparkles size={14} style={{ color: 'var(--pink)' }} />
+              <Sparkle size={14} style={{ color: 'var(--pink)' }} />
               <h4>Symbol Focus</h4>
             </div>
             {metrics.symbolFocus.length > 0 ? (
@@ -1272,7 +1275,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 <span style={{ fontWeight: 700, fontSize: 11.5, color: rcStep === s ? 'var(--text)' : 'var(--muted-2)' }}>
                   {s === 1 ? 'Category & Type' : s === 2 ? 'Details' : 'Review'}
                 </span>
-                {s < 3 && <ChevronRight size={13} style={{ color: 'var(--muted-3)' }} />}
+                {s < 3 && <CaretRight size={13} style={{ color: 'var(--muted-3)' }} />}
               </div>
             ))}
           </div>
@@ -1288,7 +1291,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                       className="inset" style={{ textAlign: 'left', padding: '13px 16px', borderColor: rcCategory === cat ? 'var(--amber)' : 'var(--line)' }}>
                       {cat === 'Behavior' ? <Target size={15} style={{ color: 'var(--teal)' }} /> :
                        cat === 'Discipline' ? <Shield size={15} style={{ color: 'var(--amber)' }} /> :
-                       <BarChart3 size={15} style={{ color: 'var(--green)' }} />}
+                       <ChartBar size={15} style={{ color: 'var(--green)' }} />}
                       <p style={{ margin: '10px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{cat}</p>
                       <p style={{ margin: '5px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
                         {cat === 'Behavior' ? 'Emotional & impulse controls' : cat === 'Discipline' ? 'Risk & session limits' : 'Target & outcome rules'}
@@ -1362,7 +1365,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <div className="inset" style={{ position: 'relative', padding: '13px 16px' }}>
                 <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: 'var(--green)' }} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <CheckCircle2 size={14} style={{ color: 'var(--green)' }} />
+                  <CheckCircle size={14} style={{ color: 'var(--green)' }} />
                   <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--green)' }}>Ready to Create</p>
                 </div>
                 <p style={{ margin: '8px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
@@ -1381,7 +1384,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <button onClick={() => setRcStep((rcStep + 1) as RuleComposerStep)}
                 disabled={rcStep === 1 && !rcRuleType}
                 className="btn-a" style={rcStep === 1 && !rcRuleType ? { opacity: .5 } : undefined}>
-                Continue <ChevronRight size={14} />
+                Continue <CaretRight size={14} />
               </button>
             ) : (
               <button onClick={saveRule} className="btn-a" style={{ background: 'var(--green)' }}>
@@ -1417,7 +1420,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <textarea value={rsDescription} onChange={e => setRsDescription(e.target.value)} placeholder="Describe what this rule set is designed to do..." rows={4} className="box w-full" style={{ height: 'auto', padding: '11px 14px' }} />
                 </div>
                 <button onClick={() => setRsStep(2)} disabled={!rsName.trim()} className="btn-a" style={!rsName.trim() ? { opacity: .5 } : undefined}>
-                  Next: Select Rules <ChevronRight size={14} />
+                  Next: Select Rules <CaretRight size={14} />
                 </button>
               </div>
             )}
@@ -1426,7 +1429,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1">
-                    <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
+                    <MagnifyingGlass size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
                     <input value={rsSearch} onChange={e => setRsSearch(e.target.value)} placeholder="Search rules..." className="box w-full" style={{ paddingLeft: 34 }} />
                   </div>
                   <button onClick={() => setRsSelectedRules(allRuleStrings)} className="btn-g" style={{ height: 42, fontSize: 12 }}>Select All</button>
@@ -1498,7 +1501,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </button>
           {rsStep === 1 ? (
             <button onClick={() => setRsStep(2)} disabled={!rsName.trim()} className="btn-a" style={!rsName.trim() ? { opacity: .5 } : undefined}>
-              Next <ChevronRight size={14} />
+              Next <CaretRight size={14} />
             </button>
           ) : (
             <button onClick={saveRuleSet} disabled={!rsName.trim() || rsSelectedRules.length === 0}
@@ -1514,7 +1517,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         <div>
           {/* Header badge */}
           <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
-            <Sparkles size={13} style={{ color: 'var(--amber)' }} /> Template Composer
+            <Sparkle size={13} style={{ color: 'var(--amber)' }} /> Template Composer
           </p>
           <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>Create Strategy Template</h3>
           <p className="sub" style={{ margin: '10px 0 24px' }}>Design manual execution sequences with ordered text steps.</p>
@@ -1564,7 +1567,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     {scSteps.map((step, i) => (
                       <div key={i} className="inset" style={{ padding: '11px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                          <BarChart3 size={12} style={{ color: 'var(--muted-3)', transform: 'rotate(90deg)', cursor: 'grab' }} />
+                          <ChartBar size={12} style={{ color: 'var(--muted-3)', transform: 'rotate(90deg)', cursor: 'grab' }} />
                           <p className="lbl">STEP {i + 1}</p>
                           <button onClick={() => setScSteps(prev => prev.filter((_, idx) => idx !== i))}
                             style={{ marginLeft: 'auto', flex: 'none', fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: 'var(--red)' }}>
@@ -1630,7 +1633,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         <div>
           {/* Header badge */}
           <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
-            <Zap size={13} style={{ color: 'var(--amber)' }} /> Activation Mixer
+            <Lightning size={13} style={{ color: 'var(--amber)' }} /> Activation Mixer
           </p>
           <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>Add Templates</h3>
           <p className="sub" style={{ margin: '10px 0 24px' }}>Select one or more templates, then set priorities per item or in bulk.</p>
@@ -1646,7 +1649,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <button onClick={() => setAmSelected([])} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}>Clear</button>
                 </div>
                 <div className="relative">
-                  <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
+                  <MagnifyingGlass size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
                   <input value={amSearch} onChange={e => setAmSearch(e.target.value)} placeholder="Search templates by name or description..." className="box w-full" style={{ paddingLeft: 34 }} />
                 </div>
               </div>
@@ -1720,7 +1723,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   ))}
                 </div>
                 <button onClick={applyGlobalPriority} className="viewall" style={{ marginLeft: 0, fontSize: 12 }}>
-                  <ChevronDown size={12} /> Apply Global Priority To Selected
+                  <CaretDown size={12} /> Apply Global Priority To Selected
                 </button>
               </div>
 
@@ -1757,7 +1760,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             <button onClick={() => setActivationMixerOpen(false)} className="btn-g">Cancel</button>
             <button onClick={handleActivate} disabled={amSelected.length === 0}
               className="btn-a" style={amSelected.length === 0 ? { background: 'var(--green)', opacity: .5 } : { background: 'var(--green)' }}>
-              <Zap size={14} /> Activate {amSelected.length > 0 ? `(${amSelected.length})` : ''}
+              <Lightning size={14} /> Activate {amSelected.length > 0 ? `(${amSelected.length})` : ''}
             </button>
           </div>
         </div>
@@ -1791,7 +1794,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             <div>
               {/* Header badge */}
               <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
-                <Layers size={13} style={{ color: 'var(--amber)' }} /> Active Ruleset
+                <Stack size={13} style={{ color: 'var(--amber)' }} /> Active Ruleset
               </p>
               <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>{strategy.name}</h3>
               <p className="sub" style={{ margin: '10px 0 0' }}>{getStrategyDescription(strategy)}</p>

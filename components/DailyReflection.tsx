@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { DailyReflection as DailyReflectionType, WeeklyReview, DisciplineGrade, Trade } from '@/lib/types';
 import { getWeeklyDataQuestions } from '@/lib/utils';
-import { Sun, Moon, CalendarDays, CheckCircle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sun, Moon, CalendarDots, CheckCircle, XCircle, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { SpeechButton } from '@/components/SpeechButton';
 import { format, startOfWeek } from 'date-fns';
 import { useToast } from './ui/Toast';
@@ -114,7 +114,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
         <div className="cardhead" style={{ flexWrap: 'wrap', gap: 16 }}>
           <div>
             <p className="lbl b10" style={{ color: 'var(--teal)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <CalendarDays size={12} /> REFLECTION LOG
+              <CalendarDots size={12} /> REFLECTION LOG
             </p>
             <h3>Reflections</h3>
             <p className="sub">End-of-day reflections and weekly reviews.</p>
@@ -399,7 +399,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
             <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
             <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
             <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(47,211,196,.4)', background: 'var(--panel-2)' }}>
-              <CalendarDays size={20} style={{ color: 'var(--teal)' }} />
+              <CalendarDots size={20} style={{ color: 'var(--teal)' }} />
             </div>
             <h4>No reflections logged yet</h4>
             <p>Close out a session with a daily reflection to start building the record.</p>
@@ -428,7 +428,7 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                     {r.overallRating}/10
                   </span>
                   <span style={{ marginLeft: 'auto', color: 'var(--muted-3)', display: 'inline-flex' }}>
-                    {expandedId === r.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    {expandedId === r.id ? <CaretUp size={14} /> : <CaretDown size={14} />}
                   </span>
                 </button>
                 {expandedId === r.id && (

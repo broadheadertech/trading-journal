@@ -3,7 +3,8 @@
 import { useState, useMemo, Fragment } from 'react';
 import { Trade, JournalEntry, EmotionState, CircuitBreakerEvent, TriggerEntry, DailyReflection as DailyReflectionType, WeeklyReview } from '@/lib/types';
 import { EMOTION_OPTIONS, getDisciplineScore, getCoolingOffPairs, getEmotionalRuleMap } from '@/lib/utils';
-import { Brain, Shield, AlertTriangle, RefreshCw, Heart, Activity, Zap, ChevronRight, Lightbulb, X, Check, Minus } from 'lucide-react';
+import { Brain, Shield, Warning, ArrowsClockwise, Heart, Lightning, CaretRight, Lightbulb, X, Check, Minus } from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import { format, subDays } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -453,11 +454,11 @@ export default function PsychologyJournal({
         {[
           { label: 'HEALTH SCORE', icon: <Shield size={14} />, accent: 'var(--green)', desc: 'Composite behavior quality signal across discipline, risk, and emotional control.',
             value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? '↑' : '0'}%`, color: m.healthScore >= 60 ? 'var(--green)' : m.healthScore >= 40 ? 'var(--amber)' : 'var(--red)' },
-          { label: 'TILT PRESSURE', icon: <Zap size={14} />, accent: 'var(--amber)', desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
+          { label: 'TILT PRESSURE', icon: <Lightning size={14} />, accent: 'var(--amber)', desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
             value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'var(--green)' : m.tiltPressure < 70 ? 'var(--amber)' : 'var(--red)' },
-          { label: 'REVENGE CLUSTERS', icon: <AlertTriangle size={14} />, accent: 'var(--pink)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
+          { label: 'REVENGE CLUSTERS', icon: <Warning size={14} />, accent: 'var(--pink)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
             value: m.revengeClusterCount, valueSub: `Cluster net ${formatCurrency(m.revengeClusterPnL)} \u2022 Avg ${m.avgClusterSize.toFixed(1)} trades/cluster`, color: m.revengeClusterCount === 0 ? 'var(--green)' : 'var(--red)' },
-          { label: 'RECOVERY PROFILE', icon: <RefreshCw size={14} />, accent: 'var(--teal)', desc: 'Average recovery effort and time after adverse trading periods.',
+          { label: 'RECOVERY PROFILE', icon: <ArrowsClockwise size={14} />, accent: 'var(--teal)', desc: 'Average recovery effort and time after adverse trading periods.',
             value: m.avgRecoveryTrades.toFixed(1), valueSub: `Avg trades to recover \u2022 ${m.avgRecoveryDays.toFixed(1)} days average`, color: 'var(--text)' },
         ].map(card => (
           <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
@@ -568,7 +569,7 @@ export default function PsychologyJournal({
 
         <div className="card">
           <div className="flex items-center gap-2 mb-1">
-            <Zap size={18} className="text-[var(--muted-foreground)]" />
+            <Lightning size={18} className="text-[var(--muted-foreground)]" />
             <h3>Action Queue</h3>
           </div>
           <p className="sub" style={{ marginBottom: 18 }}>Top active rule priorities with compliance status and impact telemetry.</p>
@@ -585,7 +586,7 @@ export default function PsychologyJournal({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-[var(--muted-foreground)]">P{i + 1}</span>
-                    <ChevronRight size={14} className="text-fuchsia-400" />
+                    <CaretRight size={14} className="text-fuchsia-400" />
                     <span className="text-sm font-semibold text-[var(--foreground)]">{action.split('.')[0]}</span>
                   </div>
                   <span className="chip" style={{ height: 22, fontSize: "10px", fontWeight: 700, color: m.revengeClusterCount === 0 && m.overtradeDays === 0 ? "var(--green)" : "var(--amber)" }}>
@@ -690,7 +691,7 @@ export default function PsychologyJournal({
         {/* Selected session */}
         <div className="card">
           <div className="flex items-center gap-2 mb-3">
-            <Zap size={16} className="text-amber-400" />
+            <Lightning size={16} className="text-amber-400" />
             <span className="lbl b10">Selected Session</span>
           </div>
           {selectedSession ? (
@@ -766,10 +767,10 @@ export default function PsychologyJournal({
               <div className="text-xs font-semibold text-emerald-400 flex items-center justify-center gap-1"><Check size={12} /> Productive {m.productivePercent}%</div>
             </div>
             <div className="inset" style={{ padding: "12px 10px", textAlign: "center" }}>
-              <div className="text-xs font-semibold text-amber-400 flex items-center justify-center gap-1"><AlertTriangle size={12} /> Risky {m.riskyPercent}%</div>
+              <div className="text-xs font-semibold text-amber-400 flex items-center justify-center gap-1"><Warning size={12} /> Risky {m.riskyPercent}%</div>
             </div>
             <div className="inset" style={{ padding: "12px 10px", textAlign: "center" }}>
-              <div className="text-xs font-semibold text-red-400 flex items-center justify-center gap-1"><AlertTriangle size={12} /> Failure {m.failurePercent}%</div>
+              <div className="text-xs font-semibold text-red-400 flex items-center justify-center gap-1"><Warning size={12} /> Failure {m.failurePercent}%</div>
             </div>
           </div>
         </div>
@@ -951,7 +952,7 @@ export default function PsychologyJournal({
       {/* ── Behavior Edge Context ── */}
       <div className="card">
         <div className="flex items-center gap-2 mb-1">
-          <RefreshCw size={16} className="text-fuchsia-400" />
+          <ArrowsClockwise size={16} className="text-fuchsia-400" />
           <span className="lbl b10">Behavior Edge Context</span>
         </div>
         <p className="sub" style={{ marginBottom: 18 }}>Highest-confidence strength and highest-risk loop with direct narrative context.</p>

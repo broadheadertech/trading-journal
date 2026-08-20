@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Loader2 } from 'lucide-react';
+import { CircleNotch } from '@phosphor-icons/react';
 
 export default function NewsletterSignup() {
   const subscribe = useMutation(api.newsletter.subscribe);
@@ -54,7 +54,7 @@ export default function NewsletterSignup() {
           aria-label="Email address"
         />
         <button type="submit" disabled={busy} style={{ opacity: busy ? 0.5 : 1 }}>
-          {busy ? <Loader2 size={14} className="animate-spin" style={{ display: 'inline-block' }} /> : 'Subscribe'}
+          {busy ? <CircleNotch size={14} className="animate-spin" style={{ display: 'inline-block' }} /> : 'Subscribe'}
         </button>
       </form>
       {error && (

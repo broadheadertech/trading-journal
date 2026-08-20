@@ -5,10 +5,11 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  MessagesSquare, ArrowLeft, Plus, Edit2, Trash2, Settings,
-  ChevronUp, ChevronDown, Pin, Lock, MessageCircle, Image as ImageIcon,
-  Loader2, Upload, Send,
-} from 'lucide-react';
+  Chats as MessagesSquare, ArrowLeft, Plus, PencilSimple as Edit2, Trash as Trash2, Gear as Settings,
+  CaretUp as ChevronUp, CaretDown as ChevronDown, Lock, ChatCircle as MessageCircle, Image as ImageIcon,
+  CircleNotch as Loader2, UploadSimple as Upload, PaperPlaneTilt as Send,
+} from '@phosphor-icons/react';
+import { PushPin as Pin } from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
 import { useSubscription } from '@/hooks/useSubscription';
 import TierBadge from '@/components/TierBadge';

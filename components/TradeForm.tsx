@@ -5,7 +5,7 @@ import { Trade, EmotionState, TradeTag, Strategy, Direction, MarketType, RuleCom
 import { CRYPTO_SUGGESTIONS, FOREX_SUGGESTIONS, METALS_SUGGESTIONS, OIL_SUGGESTIONS, STOCK_SUGGESTIONS, EMOTION_OPTIONS, TAG_OPTIONS } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { defaultPipSize, defaultLotSize, pipsBetween, notionalAmount, realizedPnL } from '@/lib/pip-math';
-import { TrendingUp, TrendingDown, AlertTriangle, X } from 'lucide-react';
+import { TrendUp as TrendingUp, TrendDown as TrendingDown, Warning as AlertTriangle, X } from '@phosphor-icons/react';
 import { format, parseISO } from 'date-fns';
 
 // ─── Constants ───────────────────────────────────────────────────────

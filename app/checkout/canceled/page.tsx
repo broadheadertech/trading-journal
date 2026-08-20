@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { XCircle } from 'lucide-react';
+import { XCircle } from '@phosphor-icons/react';
 
 export default function CheckoutCanceledPage() {
   const router = useRouter();

@@ -4,8 +4,8 @@ import { useState, useMemo } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Search, UserPlus, ChevronDown, ChevronUp, Ban, X as XIcon,
-} from 'lucide-react';
+  MagnifyingGlass, UserPlus, CaretDown, CaretUp, Prohibit, X as XIcon,
+} from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface MemberStat {
@@ -70,14 +70,14 @@ function SortIcon({ field, current, dir }: { field: SortField; current: SortFiel
   if (field !== current) {
     return (
       <span className="inline-flex flex-col ml-1 opacity-30">
-        <ChevronUp size={10} />
-        <ChevronDown size={10} className="-mt-1" />
+        <CaretUp size={10} />
+        <CaretDown size={10} className="-mt-1" />
       </span>
     );
   }
   return dir === 'asc'
-    ? <ChevronUp size={12} className="ml-1" />
-    : <ChevronDown size={12} className="ml-1" />;
+    ? <CaretUp size={12} className="ml-1" />
+    : <CaretDown size={12} className="ml-1" />;
 }
 
 export default function TeamMembers({ workspaceId, memberStats, members, myRole }: TeamMembersProps) {
@@ -193,7 +193,7 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
           className="flex items-center gap-2 flex-1 max-w-md"
           style={{ height: 40, padding: '0 14px', borderRadius: 2, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
         >
-          <Search size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
+          <MagnifyingGlass size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
           <input
             type="text"
             placeholder="Search by name or email..."
@@ -353,7 +353,7 @@ export default function TeamMembers({ workspaceId, memberStats, members, myRole 
                           style={{ width: 32, height: 32, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--amber)' }}
                           title="Ban member"
                         >
-                          <Ban size={15} />
+                          <Prohibit size={15} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleRemove(member.userId, member.displayName); }}
@@ -506,7 +506,7 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
             onClick={() => { setTab('invite'); setError(''); }}
             className={cn('flex items-center gap-2', tab === 'invite' && 'on')}
           >
-            <Search size={13} />
+            <MagnifyingGlass size={13} />
             Invite
           </button>
         </div>
@@ -533,7 +533,7 @@ function AddMemberModal({ workspaceId, onClose }: { workspaceId: string; onClose
               className="flex items-center gap-2"
               style={{ height: 42, padding: '0 14px', borderRadius: 2, border: '1px solid var(--line)', background: 'var(--panel-2)' }}
             >
-              <Search size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
+              <MagnifyingGlass size={14} className="shrink-0" style={{ color: 'var(--muted-3)' }} />
               <input
                 type="text"
                 value={searchQuery}

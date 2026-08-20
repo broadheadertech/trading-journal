@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import {
-  Activity, TrendingUp, TrendingDown, AlertTriangle, Brain, ShieldAlert,
-  FileText, Sparkles, Zap, BookOpen, Search,
-} from 'lucide-react';
+  TrendUp, TrendDown, Warning, Brain, ShieldWarning,
+  FileText, Sparkle, Lightning, BookOpen, MagnifyingGlass,
+} from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import { useAdminFirehose } from '@/hooks/useAdminStore';
 
 type EventStyle = { icon: any; tint: string; label: string };
@@ -19,15 +20,15 @@ type FirehoseEvent = {
 };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:     { icon: TrendingUp,     tint: 'var(--teal)',   label: 'Trade logged' },
-  trade_closed:     { icon: TrendingDown,   tint: 'var(--green)',  label: 'Trade closed' },
-  rule_break:       { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Rule break' },
-  circuit_breaker:  { icon: AlertTriangle,  tint: 'var(--red)',    label: 'Circuit breaker' },
+  trade_logged:     { icon: TrendUp,        tint: 'var(--teal)',   label: 'Trade logged' },
+  trade_closed:     { icon: TrendDown,      tint: 'var(--green)',  label: 'Trade closed' },
+  rule_break:       { icon: Warning,        tint: 'var(--red)',    label: 'Rule break' },
+  circuit_breaker:  { icon: Warning,        tint: 'var(--red)',    label: 'Circuit breaker' },
   score_event:      { icon: Brain,          tint: 'var(--amber)',  label: 'Brain score' },
-  anti_gaming_flag: { icon: ShieldAlert,    tint: 'var(--red)',    label: 'Anti-gaming' },
-  daily_reflection: { icon: Sparkles,       tint: 'var(--pink)',   label: 'Reflection' },
+  anti_gaming_flag: { icon: ShieldWarning,  tint: 'var(--red)',    label: 'Anti-gaming' },
+  daily_reflection: { icon: Sparkle,        tint: 'var(--pink)',   label: 'Reflection' },
   journal_entry:    { icon: FileText,       tint: 'var(--pink)',   label: 'Journal' },
-  trigger_entry:    { icon: Zap,            tint: 'var(--amber)',  label: 'Trigger' },
+  trigger_entry:    { icon: Lightning,      tint: 'var(--amber)',  label: 'Trigger' },
   strategy_created: { icon: BookOpen,       tint: 'var(--teal)',   label: 'Strategy' },
 };
 
@@ -104,7 +105,7 @@ export default function AdminFirehosePage() {
         </div>
         <div className="field flex items-center" style={{ gap: 10, marginTop: 16 }}>
           <div className="box flex-1 min-w-0" style={{ height: 38, gap: 12 }}>
-            <Search size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
             <input
               type="text"
               placeholder="Filter by user ID (paste full Clerk subject)…"

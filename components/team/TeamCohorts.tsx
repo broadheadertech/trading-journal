@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Plus, X, Layers, MoreHorizontal, ChevronDown } from 'lucide-react';
+import { Plus, X, Stack, DotsThree, CaretDown } from '@phosphor-icons/react';
 
 // shared ATLAS input chrome (markup-level styling only)
 const inputBox: React.CSSProperties = {
@@ -143,7 +143,7 @@ export default function TeamCohorts({ workspaceId, memberStats, members, myRole 
             <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
             <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
             <span className="badge" style={{ border: '1px solid var(--line-2)', color: 'var(--amber)', marginBottom: 20 }}>
-              <Layers size={22} />
+              <Stack size={22} />
             </span>
             <h4>No cohorts yet</h4>
             <p>Create one to group your students.</p>
@@ -213,7 +213,7 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
               border: '1px solid var(--line)', color: 'var(--amber)',
             }}
           >
-            <Layers size={16} />
+            <Stack size={16} />
           </div>
           <div>
             <h3>{cohort.name}</h3>
@@ -231,7 +231,7 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
                 className="flex items-center justify-center"
                 style={{ width: 28, height: 28, borderRadius: 2, border: '1px solid var(--line-2)', color: 'var(--muted)' }}
               >
-                <MoreHorizontal size={15} />
+                <DotsThree size={15} />
               </button>
               {menuOpen && (
                 <>
@@ -343,7 +343,7 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
               }}
             >
               <span>+ Add member...</span>
-              <ChevronDown size={14} />
+              <CaretDown size={14} />
             </button>
             {dropdownOpen && (
               <>

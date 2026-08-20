@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Trade } from '@/lib/types';
 import { useCurrency } from '@/hooks/useCurrency';
-import { TrendingUp, Shield, Clock, Flame, BarChart3, Brain, DollarSign, ChevronDown } from 'lucide-react';
+import { TrendUp, Shield, Clock, Fire, ChartBar, Brain, CurrencyDollar, CaretDown } from '@phosphor-icons/react';
 
 interface PerformanceMetricsProps {
   trades: Trade[];
@@ -118,7 +118,7 @@ function MiniTable({ headers, rows }: { headers: string[]; rows: (string | numbe
 
 function Section({ title, icon: Icon, children, defaultOpen = true }: {
   title: string;
-  icon: typeof TrendingUp;
+  icon: typeof TrendUp;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
@@ -150,7 +150,7 @@ function Section({ title, icon: Icon, children, defaultOpen = true }: {
         >
           {title}
         </span>
-        <ChevronDown
+        <CaretDown
           size={14}
           style={{
             color: 'var(--muted-2)',
@@ -417,7 +417,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           className="badge"
           style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}
         >
-          <BarChart3 size={22} style={{ color: 'var(--amber)' }} />
+          <ChartBar size={22} style={{ color: 'var(--amber)' }} />
         </div>
         <h4>No closed trades yet</h4>
         <p>Log some trades to unlock 50+ performance metrics.</p>
@@ -427,7 +427,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
 
   return (
     <div>
-      <Section title="Overview" icon={TrendingUp} defaultOpen>
+      <Section title="Overview" icon={TrendUp} defaultOpen>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
           <MetricCard label="Total Trades" value={String(m.totalTrades)} />
           <MetricCard label="Win Rate" value={fmtPct(m.winRate)} color={m.winRate >= 50 ? 'var(--green)' : 'var(--red)'} />
@@ -438,7 +438,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
         </div>
       </Section>
 
-      <Section title="Profitability" icon={DollarSign}>
+      <Section title="Profitability" icon={CurrencyDollar}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>
           <MetricCard label="Gross Profit" value={fmtDollar(m.grossProfit)} color="var(--green)" />
           <MetricCard label="Gross Loss" value={fmtDollar(-m.grossLoss)} color="var(--red)" />
@@ -475,7 +475,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
         </div>
       </Section>
 
-      <Section title="Streaks" icon={Flame}>
+      <Section title="Streaks" icon={Fire}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
           <MetricCard label="Current Win Streak" value={String(m.curWinStreak)} color={m.curWinStreak >= 3 ? 'var(--green)' : 'var(--text)'} />
           <MetricCard label="Current Loss Streak" value={String(m.curLossStreak)} color={m.curLossStreak >= 3 ? 'var(--red)' : 'var(--text)'} />
@@ -486,7 +486,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
         </div>
       </Section>
 
-      <Section title="Breakdown Analysis" icon={BarChart3}>
+      <Section title="Breakdown Analysis" icon={ChartBar}>
         <div style={{ display: 'grid', gap: 28 }}>
           {/* Strategy */}
           <div>
@@ -575,7 +575,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
         </div>
       </Section>
 
-      <Section title="Position Sizing" icon={DollarSign}>
+      <Section title="Position Sizing" icon={CurrencyDollar}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>
           <MetricCard label="Avg Position Size" value={fmtDollar(m.avgCap)} />
           <MetricCard label="Position Std Dev" value={fmtDollar(m.capStdDev)} />

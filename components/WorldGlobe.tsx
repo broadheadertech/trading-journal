@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Building2, Banknote, TrendingUp, Anchor, DollarSign } from 'lucide-react';
+import { Buildings as Building2, Money as Banknote, TrendUp as TrendingUp, Anchor, CurrencyDollar as DollarSign } from '@phosphor-icons/react';
 
 // Globe component is client-only (touches window/three.js)
 const Globe = dynamic(() => import('react-globe.gl'), { ssr: false });

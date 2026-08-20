@@ -1,9 +1,9 @@
 'use client';
 
-import { type LucideIcon } from 'lucide-react';
+import { type Icon } from '@phosphor-icons/react';
 
 interface AdminStatCardProps {
-  icon: LucideIcon;
+  icon: Icon;
   label: string;
   value: string | number;
   subtitle?: string;

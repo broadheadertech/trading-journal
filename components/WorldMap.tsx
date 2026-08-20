@@ -10,7 +10,7 @@ import {
   ZoomableGroup,
 } from 'react-simple-maps';
 import { geoCentroid } from 'd3-geo';
-import { Layers, Search, ZoomIn, ZoomOut, RotateCcw, TrendingUp, Building2, Banknote, Anchor, Cable, Pipette, Coins, DollarSign, Type } from 'lucide-react';
+import { Stack as Layers, MagnifyingGlass as Search, MagnifyingGlassPlus as ZoomIn, MagnifyingGlassMinus as ZoomOut, ArrowCounterClockwise as RotateCcw, TrendUp as TrendingUp, Buildings as Building2, Money as Banknote, Anchor, PlugsConnected as Cable, Eyedropper as Pipette, Coins, CurrencyDollar as DollarSign, TextT as Type } from '@phosphor-icons/react';
 
 // Continent groupings for country names (ISO numeric codes used by world-atlas)
 const CONTINENT_BY_ISO: Record<string, string> = {

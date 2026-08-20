@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Globe, TrendingUp, Flame, Swords, Plane, Ship, Zap, Radio, BarChart3, Map as MapIcon } from 'lucide-react';
+import { Globe, TrendUp as TrendingUp, Fire as Flame, Sword as Swords, Airplane as Plane, Package as Ship, Lightning as Zap, Radio, ChartBar as BarChart3, MapTrifold as MapIcon } from '@phosphor-icons/react';
 
 // SSR-safe dynamic imports — these touch window during init
 const WorldMap = dynamic(() => import('./WorldMap'), { ssr: false });

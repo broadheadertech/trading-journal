@@ -1,20 +1,21 @@
 'use client';
 
 import {
-  Users, UserPlus, Activity, BarChart3, DollarSign,
-  CreditCard, ShieldAlert, ShieldCheck, ArrowUpDown, Trash2,
-} from 'lucide-react';
+  Users, UserPlus, ChartBar, CurrencyDollar,
+  CreditCard, ShieldWarning, ShieldCheck, Trash,
+} from '@phosphor-icons/react';
+import { ArrowsDownUp as ArrowUpDown, Pulse as Activity } from '@phosphor-icons/react';
 import AdminStatCard from '@/components/admin/AdminStatCard';
 import { useAdminDashboard, useAdminRevenueStats, useAdminRecentEvents } from '@/hooks/useAdminStore';
-import type { LucideIcon } from 'lucide-react';
+import type { Icon } from '@phosphor-icons/react';
 
-const EVENT_CONFIG: Record<string, { icon: LucideIcon; color: string; label: string }> = {
-  user_signup:         { icon: UserPlus,    color: 'var(--green)',  label: 'New signup' },
-  subscription_change: { icon: CreditCard,  color: 'var(--teal)',   label: 'Subscription changed' },
-  user_banned:         { icon: ShieldAlert, color: 'var(--red)',    label: 'User banned' },
-  user_unbanned:       { icon: ShieldCheck, color: 'var(--green)',  label: 'User unbanned' },
-  plan_override:       { icon: ArrowUpDown, color: 'var(--pink)',   label: 'Plan overridden' },
-  data_reset:          { icon: Trash2,      color: 'var(--amber)',  label: 'Data reset' },
+const EVENT_CONFIG: Record<string, { icon: Icon | typeof ArrowUpDown; color: string; label: string }> = {
+  user_signup:         { icon: UserPlus,      color: 'var(--green)',  label: 'New signup' },
+  subscription_change: { icon: CreditCard,    color: 'var(--teal)',   label: 'Subscription changed' },
+  user_banned:         { icon: ShieldWarning, color: 'var(--red)',    label: 'User banned' },
+  user_unbanned:       { icon: ShieldCheck,   color: 'var(--green)',  label: 'User unbanned' },
+  plan_override:       { icon: ArrowUpDown,   color: 'var(--pink)',   label: 'Plan overridden' },
+  data_reset:          { icon: Trash,         color: 'var(--amber)',  label: 'Data reset' },
 };
 
 function getRelativeTime(isoString: string): string {
@@ -119,7 +120,7 @@ export default function AdminDashboard() {
           subtitle="Users who traded in last 7 days"
         />
         <AdminStatCard
-          icon={BarChart3}
+          icon={ChartBar}
           label="Total Trades"
           value={stats.totalTrades.toLocaleString()}
           subtitle="Across all users"
@@ -131,7 +132,7 @@ export default function AdminDashboard() {
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
           <span className="accent" style={{ background: 'var(--green)' }} />
           <div className="flex items-center" style={{ gap: 8 }}>
-            <DollarSign size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <CurrencyDollar size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
             <b>MRR</b>
           </div>
           <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--green)' }}>{revenue ? fmt(revenue.mrr) : '$0.00'}</em>
@@ -140,7 +141,7 @@ export default function AdminDashboard() {
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
           <span className="accent" style={{ background: 'var(--teal)' }} />
           <div className="flex items-center" style={{ gap: 8 }}>
-            <DollarSign size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <CurrencyDollar size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
             <b>ARR</b>
           </div>
           <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--teal)' }}>{revenue ? fmt(revenue.arr) : '$0.00'}</em>

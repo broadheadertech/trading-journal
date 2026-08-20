@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+import { TrendUp } from '@phosphor-icons/react';
 
 // Story 7.2 — FR35: soft ceiling trigger at 85% of Kid cap (350 × 0.85 = 297.5 → 300)
 // Upper bound: 350 = Kid stage cap. At 350+ user has HIT ceiling (Story 7.3 handles that).
@@ -46,7 +46,7 @@ export default function SoftCeilingBanner({ currentScore, planId, onUpgradeClick
       }}
     >
       {/* Icon */}
-      <TrendingUp size={16} style={{ flex: 'none', color: T.amber }} aria-hidden="true" />
+      <TrendUp size={16} style={{ flex: 'none', color: T.amber }} aria-hidden="true" />
 
       {/* Message */}
       <div style={{ flex: '1 1 240px', minWidth: 0 }}>

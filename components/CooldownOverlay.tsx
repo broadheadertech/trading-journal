@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { CircuitBreakerType } from '@/lib/types';
 import { getReflectivePrompts } from '@/lib/emotional-engine';
-import { Timer, Wind, AlertOctagon } from 'lucide-react';
+import { Timer, Wind, WarningOctagon as AlertOctagon } from '@phosphor-icons/react';
 
 interface Props {
   expiresAt: string;

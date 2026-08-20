@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown, Activity, AlertTriangle, RefreshCw, DollarSign, Bitcoin, Flame, Newspaper, MessageCircle, ArrowUp, PlayCircle, Youtube } from 'lucide-react';
+import { TrendUp as TrendingUp, TrendDown as TrendingDown, Warning as AlertTriangle, ArrowsClockwise as RefreshCw, CurrencyDollar as DollarSign, CurrencyBtc as Bitcoin, Fire as Flame, Newspaper, ChatCircle as MessageCircle, ArrowUp, PlayCircle, YoutubeLogo as Youtube } from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 
 interface Quote {
   symbol: string;

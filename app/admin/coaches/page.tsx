@@ -3,7 +3,7 @@
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useToast } from '@/components/ui/Toast';
-import { Check, X, Pause, Headphones, Users } from 'lucide-react';
+import { Check, X, Pause, Headphones, Users } from '@phosphor-icons/react';
 
 // shared ATLAS chrome (markup-level styling only)
 const iconBtn = (color: string): React.CSSProperties => ({

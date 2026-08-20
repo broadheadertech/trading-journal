@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp } from 'lucide-react';
+import { TrendUp } from '@phosphor-icons/react';
 import { useAdminNeuroScoreTrends } from '@/hooks/useAdminStore';
 import { STAGE_COLORS, STAGE_ORDER } from '@/lib/stage-config';
 import type { Stage } from '@/lib/types';
@@ -57,7 +57,7 @@ export default function TrendsPage() {
           <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
           <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
           <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
-            <TrendingUp size={22} style={{ color: 'var(--amber)' }} />
+            <TrendUp size={22} style={{ color: 'var(--amber)' }} />
           </div>
           <h4>No snapshot data</h4>
           <p>Daily snapshots are created at midnight UTC. Check back after the first snapshot runs.</p>
@@ -227,7 +227,7 @@ function Header() {
   return (
     <div className="phead" style={{ marginBottom: 24 }}>
       <p className="eyebrow" style={{ margin: '0 0 12px' }}>
-        <TrendingUp size={13} style={{ color: 'var(--amber)' }} />
+        <TrendUp size={13} style={{ color: 'var(--amber)' }} />
         Neuro monitoring
       </p>
       <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Score Trends</h2>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Plug, Copy, Check, RefreshCw, Power, ExternalLink, Download, ShieldCheck, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plug, Copy, Check, ArrowsClockwise, Power, ArrowSquareOut, DownloadSimple, ShieldCheck, Warning, CaretDown, CaretUp } from '@phosphor-icons/react';
 
 const WEBHOOK_PATH = '/api/mt5-sync';
 
@@ -177,7 +177,7 @@ export default function MTConnect() {
               </>
             ) : (
               <button onClick={() => setConfirmRegen(true)} className="btn-g" style={{ height: 36, fontSize: 12.5 }}>
-                <RefreshCw size={12} /> Regenerate token
+                <ArrowsClockwise size={12} /> Regenerate token
               </button>
             )}
 
@@ -202,11 +202,11 @@ export default function MTConnect() {
           onClick={() => setShowInstructions(v => !v)}
           style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left' }}
         >
-          <Download size={16} style={{ color: 'var(--teal)' }} />
+          <DownloadSimple size={16} style={{ color: 'var(--teal)' }} />
           <h3 style={{ fontSize: 17 }}>Install instructions (MetaTrader 5)</h3>
           {showInstructions
-            ? <ChevronUp size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
-            : <ChevronDown size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />}
+            ? <CaretUp size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
+            : <CaretDown size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />}
         </button>
 
         {showInstructions && (
@@ -219,10 +219,10 @@ export default function MTConnect() {
               <Step n={1} title="Download the EA">
                 <div className="btns">
                   <a href="/atlas-sync.mq5" download className="sm amber">
-                    <Download size={12} /> Download atlas-sync.mq5
+                    <DownloadSimple size={12} /> Download atlas-sync.mq5
                   </a>
                   <a href="/atlas-sync.ex5" download className="sm ghost">
-                    <Download size={12} /> atlas-sync.ex5
+                    <DownloadSimple size={12} /> atlas-sync.ex5
                   </a>
                   <span className="hint">(if compiled)</span>
                 </div>
@@ -274,7 +274,7 @@ export default function MTConnect() {
             </div>
 
             <div className="warn">
-              <AlertTriangle size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
+              <Warning size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
               <p style={{ margin: 0 }}>
                 <b>MT5 must be running</b> for trades to sync in real time.
                 If MT5 is offline, the EA backfills any deals that closed while it was off the next time you open it.
@@ -283,7 +283,7 @@ export default function MTConnect() {
             </div>
 
             <a href="https://www.metaquotes.net/en/metatrader5/help/expertadvisors/installing_ea" target="_blank" rel="noopener noreferrer" className="doclink">
-              MetaQuotes EA install docs <ExternalLink size={13} />
+              MetaQuotes EA install docs <ArrowSquareOut size={13} />
             </a>
           </>
         )}

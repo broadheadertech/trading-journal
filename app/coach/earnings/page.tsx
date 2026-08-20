@@ -2,7 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { DollarSign, TrendingUp, Wallet, Receipt } from 'lucide-react';
+import { CurrencyDollar as DollarSign, TrendUp as TrendingUp, Wallet, Receipt } from '@phosphor-icons/react';
 
 export default function CoachEarningsPage() {
   const profile = useQuery(api.coaches.getMyCoachProfile);

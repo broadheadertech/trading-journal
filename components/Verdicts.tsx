@@ -11,9 +11,9 @@ import {
 } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import {
-  Shield, TrendingDown, TrendingUp, ChevronDown, ChevronRight,
-  Target, AlertTriangle, Sparkles, ArrowRight, Eye, Crosshair,
-} from 'lucide-react';
+  Shield, TrendDown as TrendingDown, TrendUp as TrendingUp, CaretDown as ChevronDown, CaretRight as ChevronRight,
+  Target, Warning as AlertTriangle, Sparkle as Sparkles, ArrowRight, Eye, Crosshair,
+} from '@phosphor-icons/react';
 
 /* ── Sub-tab types ───────────────────────────────────────────────── */
 type SubTab = 'Summary' | 'Diagnostics' | 'Action Plan' | 'Coach Notes';

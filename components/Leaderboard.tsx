@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { Trade } from '@/lib/types';
 import { useCurrency } from '@/hooks/useCurrency';
-import { Trophy, RefreshCw, Users } from 'lucide-react';
+import { Trophy, ArrowsClockwise, Users } from '@phosphor-icons/react';
 
 interface LeaderboardProps {
   trades: Trade[];
@@ -50,7 +50,7 @@ export default function Leaderboard({ trades }: LeaderboardProps) {
         </p>
         <div className="actions">
           <button className="btn-g" type="button">
-            <RefreshCw size={14} /> Refresh board
+            <ArrowsClockwise size={14} /> Refresh board
           </button>
         </div>
       </div>

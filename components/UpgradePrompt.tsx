@@ -1,6 +1,6 @@
 'use client';
 
-import { Lock } from 'lucide-react';
+import { Lock } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { TierName, TIERS } from '@/lib/features';
 import PricingPlans from '@/components/PricingPlans';
