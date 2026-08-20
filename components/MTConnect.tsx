@@ -70,7 +70,7 @@ export default function MTConnect() {
     <div className="pwrap">
       <div className="phead">
         <p className="eyebrow">
-          <Plug size={13} style={{ color: 'var(--teal)' }} />
+          <Plug size={13} style={{ color: 'var(--amber)' }} />
           Read-only · auto-imports closed trades from MT4/MT5
         </p>
         <h2>Connect your broker</h2>
@@ -202,7 +202,7 @@ export default function MTConnect() {
           onClick={() => setShowInstructions(v => !v)}
           style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left' }}
         >
-          <DownloadSimple size={16} style={{ color: 'var(--teal)' }} />
+          <DownloadSimple size={16} style={{ color: 'var(--amber)' }} />
           <h3 style={{ fontSize: 17 }}>Install instructions (MetaTrader 5)</h3>
           {showInstructions
             ? <CaretUp size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />

@@ -7,8 +7,8 @@ import AdminPercentageBar from '@/components/admin/AdminPercentageBar';
 import { useAdminPlans, useAdminRevenueStats, useAdminSubscriberGrowth, useAdminPlanDistribution } from '@/hooks/useAdminStore';
 
 const paymentProviders = [
-  { name: 'Stripe', description: 'Credit card & bank payments worldwide', color: 'var(--pink)', connected: true },
-  { name: 'PayPal', description: 'Digital wallet & buyer protection', color: 'var(--teal)', connected: false },
+  { name: 'Stripe', description: 'Credit card & bank payments worldwide', color: 'var(--amber)', connected: true },
+  { name: 'PayPal', description: 'Digital wallet & buyer protection', color: 'var(--amber)', connected: false },
   { name: 'PayMongo', description: 'Philippine payment methods (GCash, Maya)', color: 'var(--green)', connected: false },
 ];
 
@@ -110,7 +110,7 @@ export default function AdminRevenuePage() {
 
         {/* Plan Distribution */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <h3>Plan Distribution</h3>
           <p className="sub">Share of active subscribers by plan</p>
           <div style={{ marginTop: 24 }}>
@@ -124,7 +124,10 @@ export default function AdminRevenuePage() {
                   label: d.planName,
                   value: d.count,
                   percentage: d.percentage,
-                  color: ['var(--amber)', 'var(--green)', 'var(--pink)', 'var(--teal)'][i % 4],
+                  // Purely categorical (one colour per plan tier), so these
+                  // step down the neutral ramp after amber rather than reusing
+                  // it — four identical amber segments would read as one bar.
+                  color: ['var(--amber)', 'var(--text-2)', 'var(--muted)', 'var(--muted-3)'][i % 4],
                 }))}
               />
             )}

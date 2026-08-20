@@ -27,8 +27,11 @@ const NOTE_TEXT: React.CSSProperties = { margin: 0, fontSize: '12.5px', lineHeig
 const NOTE_ACCENTS = {
   default: 'var(--muted-2)',
   amber: 'var(--amber)',
-  purple: 'var(--pink)',
-  blue: 'var(--teal)',
+  // purple/blue kept as distinct steps on the neutral ramp — these tag
+  // different note types, so collapsing them all onto amber erased the
+  // distinction the accent bar exists to convey.
+  purple: 'var(--text-2)',
+  blue: 'var(--muted)',
   orange: 'var(--red)',
 } as const;
 

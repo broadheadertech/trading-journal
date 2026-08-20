@@ -112,7 +112,7 @@ export default function BrainMonitorPage() {
       {/* Summary stats */}
       <div className="stats" style={{ marginTop: 0, gridTemplateColumns: cappedUsers > 0 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)' }}>
         <div className="stat">
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>USERS WITH ACTIVE BRAINS</b>
           <em>{data.total}</em>
         </div>
@@ -206,7 +206,7 @@ export default function BrainMonitorPage() {
 
       {/* Stage migration tool */}
       <div className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="flex items-center gap-2">
           <Wrench size={15} style={{ color: 'var(--muted-3)' }} />
           <h3>Stage Migration Tool</h3>

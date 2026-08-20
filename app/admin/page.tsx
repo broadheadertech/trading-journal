@@ -11,10 +11,10 @@ import type { Icon } from '@phosphor-icons/react';
 
 const EVENT_CONFIG: Record<string, { icon: Icon | typeof ArrowUpDown; color: string; label: string }> = {
   user_signup:         { icon: UserPlus,      color: 'var(--green)',  label: 'New signup' },
-  subscription_change: { icon: CreditCard,    color: 'var(--teal)',   label: 'Subscription changed' },
+  subscription_change: { icon: CreditCard,    color: 'var(--amber)',   label: 'Subscription changed' },
   user_banned:         { icon: ShieldWarning, color: 'var(--red)',    label: 'User banned' },
   user_unbanned:       { icon: ShieldCheck,   color: 'var(--green)',  label: 'User unbanned' },
-  plan_override:       { icon: ArrowUpDown,   color: 'var(--pink)',   label: 'Plan overridden' },
+  plan_override:       { icon: ArrowUpDown,   color: 'var(--amber)',   label: 'Plan overridden' },
   data_reset:          { icon: Trash,         color: 'var(--amber)',  label: 'Data reset' },
 };
 
@@ -139,12 +139,12 @@ export default function AdminDashboard() {
           <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>Monthly recurring revenue</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <div className="flex items-center" style={{ gap: 8 }}>
             <CurrencyDollar size={13} style={{ color: 'var(--muted-3)', flex: 'none' }} />
             <b>ARR</b>
           </div>
-          <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--teal)' }}>{revenue ? fmt(revenue.arr) : '$0.00'}</em>
+          <em style={{ fontSize: 24, lineHeight: '32px', color: 'var(--amber)' }}>{revenue ? fmt(revenue.arr) : '$0.00'}</em>
           <small style={{ display: 'block', marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>Annual recurring revenue</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>

@@ -203,17 +203,23 @@ export default function Sidebar({
           </button>
           <h1>{mainTabs.find(t => t.id === activeTab)?.label ?? 'Dashboard'}</h1>
 
-          <div className="range">
-            {TIME_RANGES.map(r => (
-              <button
-                key={r}
-                onClick={() => onTimeRangeChange(r)}
-                className={cn(timeRange === r && 'on')}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
+          {/* Dashboard-only: this range picker drives the dashboard's metrics.
+              Every other tab has its own filtering (or none), so on those the
+              control was inert chrome. .top .right{margin-left:auto} keeps the
+              topbar's right cluster in place when this isn't rendered. */}
+          {activeTab === 'dashboard' && (
+            <div className="range">
+              {TIME_RANGES.map(r => (
+                <button
+                  key={r}
+                  onClick={() => onTimeRangeChange(r)}
+                  className={cn(timeRange === r && 'on')}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="right">
             {/* 1. SYNCED */}

@@ -14,7 +14,7 @@ export default function HowItWorks() {
           <div>
             <div className="panel">
               <div className="drop">
-                <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0 V14 M6 0 L0 6 M6 0 L12 6" stroke="#ff3d87" strokeWidth="1.6" strokeLinecap="round" /></svg>
+                <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0 V14 M6 0 L0 6 M6 0 L12 6" stroke="#d99405" strokeWidth="1.6" strokeLinecap="round" /></svg>
                 <small>trades_q4_2026.csv</small>
               </div>
               <div className="tick-list">

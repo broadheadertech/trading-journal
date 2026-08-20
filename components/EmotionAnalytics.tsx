@@ -303,10 +303,10 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* ── Header + Red Flag Metrics ── */}
       <div className="card">
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
-            <p className="lbl b10" style={{ color: 'var(--pink)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <p className="lbl b10" style={{ color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
               <Shield size={12} /> EMOTION ANALYTICS
             </p>
             <h3>Emotion-Based Analytics</h3>
@@ -326,7 +326,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
             </em>
           </div>
           <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
-            <span className="accent" style={{ background: redFlags.overrideRate > 50 ? 'var(--red)' : 'var(--teal)' }} />
+            <span className="accent" style={{ background: redFlags.overrideRate > 50 ? 'var(--red)' : 'var(--green)' }} />
             <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               OVERRIDES (30D)
               <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Shield size={13} /></span>
@@ -359,7 +359,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
       {/* ── Emotion vs Avg P&L Chart ── */}
       {emotionPnlChart.length > 0 && (
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Average P&amp;L% by Emotion</h4>
@@ -473,7 +473,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
       {/* ── Confidence Calibration ── */}
       {confidenceCalibration.data.length >= 3 && (
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Confidence Calibration</h4>
@@ -537,7 +537,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
             {triggerAnalysis.map((t, i) => {
-              const tone = t.severity === 'danger' ? 'var(--red)' : t.severity === 'warning' ? 'var(--amber)' : 'var(--teal)';
+              const tone = t.severity === 'danger' ? 'var(--red)' : t.severity === 'warning' ? 'var(--amber)' : 'var(--green)';
               return (
                 <div key={i} className="inset" style={{ position: 'relative', padding: '14px 16px' }}>
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: tone }} />
@@ -563,7 +563,7 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
             {cognitiveBiases.map((b, i) => {
-              const tone = b.severity === 'danger' ? 'var(--red)' : b.severity === 'warning' ? 'var(--amber)' : 'var(--teal)';
+              const tone = b.severity === 'danger' ? 'var(--red)' : b.severity === 'warning' ? 'var(--amber)' : 'var(--green)';
               return (
                 <div key={i} className="inset" style={{ position: 'relative', padding: '14px 16px' }}>
                   <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: tone }} />

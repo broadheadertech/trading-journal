@@ -64,14 +64,14 @@ export default function PricingPage() {
             <div className="price"><b>{PLAN_PRICES.core[k]}</b><span>/month</span></div>
             <p className="billed">{BILLED[k]}</p>
             <ul>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Unlimited trade journaling</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Basic performance analytics (PnL, win rate, equity curve)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Trading journal + notes system</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Basic playbook rules</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Manual trade entry</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Dashboard insights (Net PnL, trades, win rate)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Access to trading tools (calculator, session tracker)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Economic calendar access</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Unlimited trade journaling</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Basic performance analytics (PnL, win rate, equity curve)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Trading journal + notes system</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Basic playbook rules</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Manual trade entry</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Dashboard insights (Net PnL, trades, win rate)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Access to trading tools (calculator, session tracker)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Economic calendar access</span></li>
             </ul>
             <div className="foot">
               <div className="goal" style={{ marginTop: 0, paddingTop: 0, border: 0 }}><i></i><span><b>Goal:</b> Get traders consistent &amp; disciplined</span></div>
@@ -113,17 +113,17 @@ export default function PricingPage() {
             <div className="price"><b>{PLAN_PRICES.elite[k]}</b><span>/month</span></div>
             <p className="billed">{BILLED[k]}</p>
             <ul>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Everything in Pro</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Team / student management system</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Shared workspace (Discord / community integration)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Cohort analytics (track students or members)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Trade review &amp; coaching tools</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Leaderboards &amp; performance rankings</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Audit logs (track member activity)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Aggregated reports (group performance)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Invite system (build your academy inside Atlas)</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>Early access to new features</span></li>
-              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg><span>VIP support</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Everything in Pro</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Team / student management system</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Shared workspace (Discord / community integration)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Cohort analytics (track students or members)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Trade review &amp; coaching tools</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Leaderboards &amp; performance rankings</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Audit logs (track member activity)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Aggregated reports (group performance)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Invite system (build your academy inside Atlas)</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>Early access to new features</span></li>
+              <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg><span>VIP support</span></li>
             </ul>
             <div className="foot">
               <div className="goal" style={{ marginTop: 0, paddingTop: 0, border: 0 }}><i></i><span><b>Goal:</b> Build your Atlas Trading Academy ecosystem</span></div>
@@ -135,16 +135,16 @@ export default function PricingPage() {
         </div>
 
         <div className="pricenotes" style={{ gap: '90px', marginTop: '57px' }}>
-          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg>No credit card required</div>
-          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg>Cancel anytime</div>
-          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6"/></svg>Full access during trial</div>
+          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg>No credit card required</div>
+          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg>Cancel anytime</div>
+          <div><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6"/></svg>Full access during trial</div>
         </div>
       </div>
 
       {/* compare */}
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '88px', paddingTop: '75px' }}>
         <div className="wrap">
-          <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--teal)', letterSpacing: '.03em' }}>COMPARE</p>
+          <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--amber)', letterSpacing: '.03em' }}>COMPARE</p>
           <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>What&rsquo;s included on each tier</h2>
           <div className="cmpwrap">
             <table className="cmp">
@@ -176,7 +176,7 @@ export default function PricingPage() {
 
       {/* first week */}
       <div className="wrap" style={{ marginTop: '126px' }}>
-        <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--teal)', letterSpacing: '.03em' }}>YOUR FIRST WEEK</p>
+        <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '12px', color: 'var(--amber)', letterSpacing: '.03em' }}>YOUR FIRST WEEK</p>
         <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '27px 0 0' }}>From signup to measurable improvement</h2>
         <p className="lede-lg" style={{ marginTop: '22px' }}>The fastest path from &ldquo;I just signed up&rdquo; to &ldquo;I know exactly what&rsquo;s costing me money.&rdquo;</p>
         <div className="week3">
@@ -185,8 +185,8 @@ export default function PricingPage() {
             <h4>Upload your first trades</h4>
             <p>Connect any of 67+ brokers via CSV or API. Auto-detected and normalized in under 60 seconds.</p>
             <div className="panel">
-              <div className="drop" style={{ left: '22px', right: '22px', top: '22px', height: '66px', borderColor: 'var(--teal)', opacity: .6 }}>
-                <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0 V14 M6 0 L0 6 M6 0 L12 6" stroke="#2fd3c4" strokeWidth="1.6" strokeLinecap="round"/></svg>
+              <div className="drop" style={{ left: '22px', right: '22px', top: '22px', height: '66px', borderColor: 'var(--amber)', opacity: .6 }}>
+                <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><path d="M6 0 V14 M6 0 L0 6 M6 0 L12 6" stroke="#d99405" strokeWidth="1.6" strokeLinecap="round"/></svg>
                 <small>trades_q4.csv</small>
               </div>
               <div className="tick-list" style={{ top: '102px' }}>
@@ -238,7 +238,7 @@ export default function PricingPage() {
       {/* pricing faq */}
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '82px', paddingTop: '76px' }}>
         <div className="wrap">
-          <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--teal)', letterSpacing: '.03em' }}>FAQ</p>
+          <p style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--amber)', letterSpacing: '.03em' }}>FAQ</p>
           <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '22px 0 0' }}>Pricing questions</h2>
           <div className="faq">
             {FAQ.map((item, i) => {
@@ -264,12 +264,12 @@ export default function PricingPage() {
       <div className="pcta" style={{ marginTop: '100px', paddingBottom: '120px' }}>
         <div className="gridwash"></div><div className="glow"></div>
         <div className="wrap">
-          <p className="kicker" style={{ justifyContent: 'center', color: 'var(--teal)', fontWeight: 700, fontSize: '12px', marginBottom: '12px' }}>EVERY PLAN</p>
+          <p className="kicker" style={{ justifyContent: 'center', color: 'var(--amber)', fontWeight: 700, fontSize: '12px', marginBottom: '12px' }}>EVERY PLAN</p>
           <h2>14-day free trial on every plan</h2>
-          <div style={{ display: 'flex', gap: '52px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '26px', fontSize: '14px', color: 'var(--muted-5)' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.7"/></svg>No credit card required</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.7"/></svg>Full Pro access for 14 days</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.7"/></svg>Cancel anytime — one click</span>
+          <div style={{ display: 'flex', gap: '52px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '26px', fontSize: '14px', color: 'var(--text-3)' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>No credit card required</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>Full Pro access for 14 days</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>Cancel anytime — one click</span>
           </div>
           <div className="row" style={{ marginTop: '26px' }}><Link className="btn btn-amber" href="/pricing">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round"/></svg></Link></div>
           <p style={{ margin: '44px 0 0', fontSize: '12.5px', color: 'var(--muted-2)' }}>15-day free trial · No credit card · Cancel in one click</p>

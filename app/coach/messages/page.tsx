@@ -33,8 +33,8 @@ export default function CoachMessagesPage() {
           <span className="corner" style={{ right: -1, top: -1, borderLeft: 0, borderBottom: 0 }} />
           <span className="corner" style={{ left: -1, bottom: -1, borderRight: 0, borderTop: 0 }} />
           <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
-          <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)', background: 'var(--panel-2)' }}>
-            <MessageSquare size={22} style={{ color: 'var(--teal)' }} />
+          <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)', background: 'var(--panel-2)' }}>
+            <MessageSquare size={22} style={{ color: 'var(--amber)' }} />
           </span>
           <h4>No conversations yet</h4>
           <p>Threads open automatically once a trader books a session with you.</p>

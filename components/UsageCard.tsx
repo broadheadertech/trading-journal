@@ -27,7 +27,7 @@ export default function UsageCard({ trades, strategies, tierName }: UsageCardPro
   const anyNearLimit = trades.isNearLimit || strategies.isNearLimit;
   const anyAtLimit = trades.isAtLimit || strategies.isAtLimit;
 
-  const accent = anyAtLimit ? 'var(--red)' : anyNearLimit ? 'var(--amber)' : 'var(--teal)';
+  const accent = anyAtLimit ? 'var(--red)' : anyNearLimit ? 'var(--amber)' : 'var(--green)';
 
   return (
     <div className="card" style={{ padding: '18px 20px 20px' }}>

@@ -29,8 +29,8 @@ export default function ContactPage() {
         <div className="wrap">
           <h1>Talk to the<em>Atlas team</em></h1>
           <p className="sub" style={{ marginTop: '32px' }}>Email-routed support so your question lands with the right specialist on the first try.</p>
-          <p style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '52px 0 0', fontSize: '12.5px', color: 'var(--text-4)' }}>
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x=".65" y=".65" width="11.7" height="11.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M6.5 4v.5M6.5 6.2v3" stroke="#2fd3c4" strokeWidth="1.3" strokeLinecap="round"/></svg>
+          <p style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '52px 0 0', fontSize: '12.5px', color: 'var(--text-3)' }}>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x=".65" y=".65" width="11.7" height="11.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M6.5 4v.5M6.5 6.2v3" stroke="#d99405" strokeWidth="1.3" strokeLinecap="round"/></svg>
             Monday-Friday, UTC business hours · Priority response for Pro subscribers
           </p>
         </div>
@@ -40,22 +40,22 @@ export default function ContactPage() {
         <div className="wrap">
           <div className="channels">
             <a className="channel" href="mailto:support@atlas.app">
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#2fd3c4" strokeWidth="1.3"/></svg><span className="lbl">Product &amp; onboarding</span></div>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Product &amp; onboarding</span></div>
               <p className="mail">support@atlas.app</p>
               <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
             </a>
             <a className="channel" href="mailto:sales@atlas.app">
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#2fd3c4" strokeWidth="1.3"/></svg><span className="lbl">Pricing &amp; plans</span></div>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Pricing &amp; plans</span></div>
               <p className="mail">sales@atlas.app</p>
               <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
             </a>
             <a className="channel" href="mailto:ops@atlas.app" style={{ marginTop: '32px' }}>
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#2fd3c4" strokeWidth="1.3"/></svg><span className="lbl">Integrations &amp; imports</span></div>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Integrations &amp; imports</span></div>
               <p className="mail">ops@atlas.app</p>
               <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
             </a>
             <a className="channel" href="mailto:security@atlas.app" style={{ marginTop: '32px' }}>
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#2fd3c4" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#2fd3c4" strokeWidth="1.3"/></svg><span className="lbl">Security &amp; privacy</span></div>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Security &amp; privacy</span></div>
               <p className="mail">security@atlas.app</p>
               <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
             </a>
@@ -64,13 +64,13 @@ export default function ContactPage() {
           <hr className="inset-rule" style={{ marginTop: '55px' }} />
           <div className="scope">
             <div>
-              <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>WHAT WE CAN HELP WITH</h4>
+              <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>WHAT WE CAN HELP WITH</h4>
               <ul>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>Product and workflow questions</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>Import and integration guidance</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>Plan and pricing questions</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>Security and privacy requests</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2"/></svg>Partnership and collaboration inquiries</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Product and workflow questions</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Import and integration guidance</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Plan and pricing questions</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Security and privacy requests</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Partnership and collaboration inquiries</li>
               </ul>
             </div>
             <div>

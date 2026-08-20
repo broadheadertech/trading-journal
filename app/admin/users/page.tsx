@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
         <p className="empty-line">No users found.</p>
       ) : (
         <div className="card" style={{ marginTop: 24, padding: '19px 22px 12px' }}>
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="overflow-x-auto" style={{ marginTop: 4 }}>
             <table className="w-full">
               <thead>

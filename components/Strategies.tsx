@@ -216,7 +216,7 @@ function StrategyContent({ strategy }: { strategy: StrategyDef }) {
       {/* Strategy header */}
       <div style={{ position: 'relative', paddingTop: 23 }}>
         <span style={{ position: 'absolute', left: 0, top: 0, width: 56, height: 3, background: 'var(--amber)' }} />
-        <p style={{ margin: 0, fontWeight: 500, fontSize: 10, color: 'var(--teal)', letterSpacing: '.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <p style={{ margin: 0, fontWeight: 500, fontSize: 10, color: 'var(--amber)', letterSpacing: '.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Icon size={12} />{strategy.tag}
         </p>
         <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 28, lineHeight: '30px', margin: '16px 0 0' }}>

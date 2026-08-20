@@ -279,13 +279,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       {/* ── Outcome Snapshot + Action Priority ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,360px)] gap-6 items-start mt-6">
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Outcome Snapshot</h3>
               <p className="sub">Current result vs realistic recovery from detected leaks</p>
             </div>
-            <Activity size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+            <Activity size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div className="nba">
             <div className="inset">
@@ -310,7 +310,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
           <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', lineHeight: '18px' }}>
             <span>
               Gross detected leak burden: <span style={{ color: 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.gross)}</span> &bull;
-              Overlap-adjusted: <span style={{ color: 'var(--amber)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.overlap)}</span> &bull;
+              Overlap-adjusted: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.overlap)}</span> &bull;
               Conservative recovery: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(m.leakAmount.conservative)}</span>
             </span>
           </div>
@@ -318,13 +318,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
 
         {/* Action Priority */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Action Priority</h3>
               <p className="sub">Execute one change at a time</p>
             </div>
-            <Target size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+            <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
             {m.actions.map((a, i) => (
@@ -346,11 +346,11 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', marginTop: 24 }}>
         {[
           { label: 'Net P&L', icon: '$', value: fmtPnl(m.totalPnL), sub: 'Realized outcome', color: pnlColor(m.totalPnL), accent: 'var(--green)' },
-          { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--text)]', accent: 'var(--teal)' },
+          { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--text)]', accent: 'var(--amber)' },
           { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--amber)' },
-          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--pink)' },
+          { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--amber)' },
           { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-[var(--red)]', accent: 'var(--red)' },
-          { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--text)]', accent: 'var(--teal)' },
+          { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--text)]', accent: 'var(--amber)' },
         ].map(card => (
           <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
             <span className="accent" style={{ background: card.accent }} />
@@ -471,13 +471,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
 
         {/* Session & Hourly Diagnostics */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Session &amp; Hourly Diagnostics</h3>
               <p className="sub">Timing quality and trade concentration by UTC window</p>
             </div>
-            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div style={{ marginTop: 20 }}>
             {m.sessionData.map(s => (
@@ -526,13 +526,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       {/* ── Hold Profile + Size & Cost ── */}
       <div className="split" style={{ marginTop: 24 }}>
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Hold Profile Quality</h3>
               <p className="sub">Which hold durations create or destroy P&amp;L</p>
             </div>
-            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {m.holdData.map(h => {
@@ -617,17 +617,17 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         </div>
 
         <div className="card">
-          <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Process Stability</h4>
               <p className="sub sm">Consistency and volatility blend</p>
             </div>
-            <Shield size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+            <Shield size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 14 }}>{m.processScore}<span style={{ fontSize: 16, color: 'var(--muted-2)' }}>/100</span></p>
           <div style={{ height: 2, background: 'var(--rail)', marginTop: 10 }}>
-            <i style={{ display: 'block', height: 2, background: 'var(--teal)', width: `${m.processScore}%` }} />
+            <i style={{ display: 'block', height: 2, background: 'var(--amber)', width: `${m.processScore}%` }} />
           </div>
           <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Daily volatility: {formatCurrency(m.dailyVolatility)}</p>
         </div>

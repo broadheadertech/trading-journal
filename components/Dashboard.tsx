@@ -297,6 +297,10 @@ export default function Dashboard({
   const GREEN = '#24c88a';
   const RED = '#ff4d5e';
   const c = (v: number) => (v > 0 ? GREEN : v < 0 ? RED : 'var(--muted)');
+  // Money figures are always green when non-negative and red when negative —
+  // never amber. Unlike c(), zero counts as positive here, because these
+  // amounts render with a leading "+" and so read as positive at $0.00.
+  const amt = (v: number) => (v < 0 ? RED : GREEN);
 
   return (
     <div className="pwrap">
@@ -398,7 +402,7 @@ export default function Dashboard({
           <em style={{ color: c(metrics.totalPnL) }}>{fmtPnl(metrics.totalPnL)}</em>
         </div>
         <div className="stat">
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>TOTAL TRADES</b>
           <em>{metrics.closed.length}</em>
         </div>
@@ -408,7 +412,7 @@ export default function Dashboard({
           <em style={{ color: metrics.winRate >= 50 ? GREEN : RED }}>{metrics.winRate.toFixed(1)}%</em>
         </div>
         <div className="stat">
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>PROFIT FACTOR</b>
           <em style={{ color: metrics.profitFactor >= 1 ? GREEN : RED }}>
             {metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2)}
@@ -416,7 +420,15 @@ export default function Dashboard({
         </div>
       </div>
 
+      {/* Equity Curve/Activity Map (left) and their sidebar cards (right) used to
+          live in two separate .grid2 rows, each row's height forced by its own
+          tallest column. The left cards are short (chart w/ empty state, a
+          compact heatmap) while the right sidebar stacks are naturally tall,
+          so each row left a dead gap under the short left card before the
+          next row began. Merged into one .grid2 with two independently
+          flowing columns (masonry-style) so there's no forced row pairing. */}
       <div className="grid2" style={{ marginTop: 32 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
         {/* equity curve */}
         <div className="card">
           <div className="cardhead">
@@ -443,8 +455,8 @@ export default function Dashboard({
                 <AreaChart data={equityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#2fd3c4'} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#2fd3c4'} stopOpacity={0} />
+                      <stop offset="5%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'} stopOpacity={0.3} />
+                      <stop offset="95%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'} stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
@@ -456,7 +468,7 @@ export default function Dashboard({
                   />
                   <Area
                     type="monotone" dataKey="pnl"
-                    stroke={equityMode === 'drawdown' ? '#ff4d5e' : '#2fd3c4'}
+                    stroke={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'}
                     strokeWidth={2} fill="url(#equityGrad)" dot={false} isAnimationActive={false}
                   />
                 </AreaChart>
@@ -467,6 +479,193 @@ export default function Dashboard({
           </div>
         </div>
 
+        {/* activity map */}
+        <div className="card">
+          <h3>Activity Map</h3>
+          <p className="sub">Net P&L by weekday and session (local time)</p>
+          <div className="amap">
+            <div className="amaphead">
+              <b>Sessions</b>
+              {metrics.sessions.map(s => <span key={s.label}>{s.label.split(' ')[0]}</span>)}
+            </div>
+            <div>
+              {metrics.weekdays.map((day, dayIdx) => (
+                <div className="amaprow" key={day}>
+                  <b>{day}</b>
+                  {metrics.sessions.map((_, sessIdx) => {
+                    const cell = metrics.heatmap.find(h => h.day === dayIdx && h.session === sessIdx);
+                    const pnl = cell?.pnl ?? 0;
+                    const count = cell?.count ?? 0;
+                    const intensity = count > 0 ? Math.min(Math.abs(pnl) / metrics.heatmapMax, 1) : 0;
+                    const alpha = count === 0 ? 0.05 : 0.18 + intensity * 0.62;
+                    const bg = count === 0
+                      ? undefined
+                      : pnl >= 0
+                        ? `rgba(36,200,138,${alpha})`
+                        : `rgba(255,77,94,${alpha})`;
+                    return (
+                      <span
+                        key={sessIdx}
+                        className="cell"
+                        style={bg ? { background: bg, color: 'var(--text)' } : undefined}
+                        title={count > 0 ? `${fmtPnl(pnl)} across ${count} trade${count === 1 ? '' : 's'}` : 'No trades'}
+                      >
+                        {count > 0 ? (
+                          <>
+                            <span style={{ fontFamily: 'var(--mono)', color: c(pnl) }}>{fmtPnl(pnl)}</span>
+                            <small style={{ marginLeft: 6, fontSize: 10, color: 'var(--muted-2)' }}>{count}</small>
+                          </>
+                        ) : '–'}
+                      </span>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="amapnote">Each cell shows total $ P&L and trade count for that weekday × session bucket.</p>
+
+          {/* gross losses ◀ ▶ gross wins — total $ on each side of the ledger. */}
+          {(metrics.grossProfit > 0 || metrics.grossLoss > 0) && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ display: 'flex', height: 6, background: 'var(--rail)', borderRadius: 2, overflow: 'hidden' }}>
+                {(() => {
+                  const total = metrics.grossProfit + metrics.grossLoss;
+                  const lossPct = total > 0 ? (metrics.grossLoss / total) * 100 : 0;
+                  const winPct = total > 0 ? (metrics.grossProfit / total) * 100 : 0;
+                  return (
+                    <>
+                      {metrics.grossLoss > 0 && <div style={{ height: '100%', width: `${lossPct}%`, background: 'var(--red)' }} />}
+                      {metrics.grossProfit > 0 && <div style={{ height: '100%', width: `${winPct}%`, background: 'var(--green)' }} />}
+                    </>
+                  );
+                })()}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontFamily: 'var(--mono)', fontSize: 11 }}>
+                <span style={{ color: 'var(--red)' }}>{fmtPnl(-metrics.grossLoss)}</span>
+                <span style={{ color: 'var(--green)' }}>{fmtPnl(metrics.grossProfit)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* recent trades — lives in the left column now (not a separate
+            full-width block after the grid) so it flows directly under
+            Activity Map instead of waiting for the taller right sidebar
+            column to finish, which was leaving a dead gap here. */}
+        <div className="card">
+          <div className="cardhead">
+            <div>
+              <h3>Recent Trades</h3>
+              <p className="sub">Last activity in the selected period</p>
+            </div>
+            <button className="viewall" onClick={() => onNavigate('journal')}>
+              View all
+              <svg width="9" height="10" viewBox="0 0 9 10" fill="none"><path d="M4 0 L9 5 L4 10 M9 5 H0" stroke="#d99405" strokeWidth="1.5" /></svg>
+            </button>
+          </div>
+          {recentTrades.length > 0 ? (
+            <div style={{ marginTop: 18 }}>
+              {recentTrades.map(t => {
+                const dir = (t.direction ?? 'long')[0].toUpperCase();
+                const dirColor = (t.direction ?? 'long') === 'long' ? GREEN : RED;
+                const elapsed = t.exitDate
+                  ? Math.round((Date.now() - new Date(t.exitDate).getTime()) / 3600000)
+                  : null;
+                const timeLabel = elapsed !== null
+                  ? elapsed < 24 ? `${elapsed}h` : `${Math.round(elapsed / 24)}d`
+                  : '';
+                return (
+                  <div className="mrow" key={t.id}>
+                    <span className="ic" style={{ color: dirColor, fontWeight: 700 }}>{dir}</span>
+                    <span className="lb" style={{ color: 'var(--text)', fontWeight: 700 }}>{t.coin}</span>
+                    <span style={{ marginLeft: 12, fontSize: 11, color: 'var(--muted-2)' }}>{timeLabel} ago</span>
+                    <span style={{
+                      marginLeft: 'auto', minWidth: 0, fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      ENTRY {formatCurrency(t.entryPrice)}
+                      {t.exitPrice ? ` · EXIT ${formatCurrency(t.exitPrice)}` : ''}
+                      {t.exitDate ? ` · ${format(new Date(t.exitDate), 'dd/MM/yyyy, HH:mm')}` : ''}
+                    </span>
+                    <span className="val" style={{ flex: 'none', marginLeft: 20, color: c(t.actualPnL ?? 0) }}>{fmtPnl(t.actualPnL ?? 0)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="empty-line" style={{ padding: '36px 0 0' }}>No closed trades in this period</p>
+          )}
+        </div>
+
+        {/* next best actions */}
+        <div id="next-best-actions" className="card" style={{ padding: '23px 28px' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <h3>Next Best Actions</h3>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--amber)' }} />
+          </div>
+          <p className="sub">Execute these top fixes first for the active period.</p>
+          <p className="sub sm" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Run active rule set for 5-7 sessions before switching.</p>
+          <div className="nba">
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              <p className="lbl">TOTAL LEAK BURDEN</p>
+              <em style={{ color: amt(metrics.totalLeakBurden) }}>{formatCurrency(metrics.totalLeakBurden)}</em>
+              <small>gross drag detected</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--green)' }} />
+              <p className="lbl">REALISTIC RECOVERABLE</p>
+              <em style={{ color: amt(metrics.realisticRecoverable) }}>{formatCurrency(metrics.realisticRecoverable)}</em>
+              <small>realistic in period</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              <p className="lbl">CONSERVATIVE (TOP-3)</p>
+              <em style={{ color: amt(metrics.conservativeRecoverable) }}>{formatCurrency(metrics.conservativeRecoverable)}</em>
+              <small>focus-first amount</small>
+            </div>
+          </div>
+
+          {metrics.leaks.length > 0 ? (
+            <div style={{ marginTop: 26 }}>
+              {metrics.leaks.map((leak, i) => {
+                const sev = leak.severity === 'high' ? 'var(--red)' : leak.severity === 'medium' ? 'var(--amber)' : 'var(--green)';
+                return (
+                  <div key={i} className="mrow" style={{ alignItems: 'flex-start', padding: '14px 0' }}>
+                    <span className="ic" style={{ color: sev, fontWeight: 700, fontFamily: 'var(--display)' }}>{i + 1}</span>
+                    <span className="lb" style={{ flex: 1 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <b style={{ color: 'var(--text)', fontWeight: 700, fontSize: 13 }}>{leak.title}</b>
+                        <span style={{
+                          height: 18, padding: '0 8px', border: '1px solid currentColor', borderRadius: 2,
+                          display: 'inline-flex', alignItems: 'center', fontWeight: 700, fontSize: 9, color: sev,
+                        }}>{leak.severity}</span>
+                      </span>
+                      <span style={{ display: 'block', marginTop: 6, fontSize: 12, color: 'var(--muted-2)' }}>{leak.description}</span>
+                    </span>
+                    <span className="val" style={{ color: 'var(--green)' }}>
+                      {formatCurrency(leak.amount)}
+                      <small style={{ display: 'block', fontFamily: 'var(--body)', fontWeight: 400, fontSize: 10, color: 'var(--muted-2)', textAlign: 'right' }}>in range</small>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="empty-line" style={{ padding: '18px 0 0' }}>No significant leaks detected. Keep it up!</p>
+          )}
+
+          <div className="note">Track this weekly: realized drag should move toward the conservative recoverable level.</div>
+          <button className="ghostbtn" onClick={() => onNavigate('journal:verdicts')}>
+            Open Verdicts
+            <svg width="5" height="10" viewBox="0 0 5 10" fill="none"><path d="M0 0 L5 5 L0 10" stroke="#edf2f7" strokeWidth="1.5" /></svg>
+          </button>
+        </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* top vs worst symbols */}
           <div className="card" style={{ padding: '19px 22px 8px' }}>
@@ -554,78 +753,6 @@ export default function Dashboard({
               )}
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="grid2" style={{ marginTop: 32 }}>
-        {/* activity map */}
-        <div className="card">
-          <h3>Activity Map</h3>
-          <p className="sub">Net P&L by weekday and session (local time)</p>
-          <div className="amap">
-            <div className="amaphead">
-              <b>Sessions</b>
-              {metrics.sessions.map(s => <span key={s.label}>{s.label.split(' ')[0]}</span>)}
-            </div>
-            <div>
-              {metrics.weekdays.map((day, dayIdx) => (
-                <div className="amaprow" key={day}>
-                  <b>{day}</b>
-                  {metrics.sessions.map((_, sessIdx) => {
-                    const cell = metrics.heatmap.find(h => h.day === dayIdx && h.session === sessIdx);
-                    const pnl = cell?.pnl ?? 0;
-                    const count = cell?.count ?? 0;
-                    const intensity = count > 0 ? Math.min(Math.abs(pnl) / metrics.heatmapMax, 1) : 0;
-                    const alpha = count === 0 ? 0.05 : 0.18 + intensity * 0.62;
-                    const bg = count === 0
-                      ? undefined
-                      : pnl >= 0
-                        ? `rgba(36,200,138,${alpha})`
-                        : `rgba(255,77,94,${alpha})`;
-                    return (
-                      <span
-                        key={sessIdx}
-                        className="cell"
-                        style={bg ? { background: bg, color: 'var(--text)' } : undefined}
-                        title={count > 0 ? `${fmtPnl(pnl)} across ${count} trade${count === 1 ? '' : 's'}` : 'No trades'}
-                      >
-                        {count > 0 ? (
-                          <>
-                            <span style={{ fontFamily: 'var(--mono)', color: c(pnl) }}>{fmtPnl(pnl)}</span>
-                            <small style={{ marginLeft: 6, fontSize: 10, color: 'var(--muted-2)' }}>{count}</small>
-                          </>
-                        ) : '–'}
-                      </span>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="amapnote">Each cell shows total $ P&L and trade count for that weekday × session bucket.</p>
-
-          {/* gross losses ◀ ▶ gross wins — total $ on each side of the ledger. */}
-          {(metrics.grossProfit > 0 || metrics.grossLoss > 0) && (
-            <div style={{ marginTop: 14 }}>
-              <div style={{ display: 'flex', height: 6, background: 'var(--rail)', borderRadius: 2, overflow: 'hidden' }}>
-                {(() => {
-                  const total = metrics.grossProfit + metrics.grossLoss;
-                  const lossPct = total > 0 ? (metrics.grossLoss / total) * 100 : 0;
-                  const winPct = total > 0 ? (metrics.grossProfit / total) * 100 : 0;
-                  return (
-                    <>
-                      {metrics.grossLoss > 0 && <div style={{ height: '100%', width: `${lossPct}%`, background: 'var(--red)' }} />}
-                      {metrics.grossProfit > 0 && <div style={{ height: '100%', width: `${winPct}%`, background: 'var(--green)' }} />}
-                    </>
-                  );
-                })()}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontFamily: 'var(--mono)', fontSize: 11 }}>
-                <span style={{ color: 'var(--red)' }}>{fmtPnl(-metrics.grossLoss)}</span>
-                <span style={{ color: 'var(--green)' }}>{fmtPnl(metrics.grossProfit)}</span>
-              </div>
-            </div>
-          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -719,119 +846,9 @@ export default function Dashboard({
             </div>
           </div>
         </div>
+        </div>
       </div>
 
-      {/* recent trades */}
-      <div className="card" style={{ maxWidth: 'calc(100% - 320px)', marginTop: 32 }}>
-        <div className="cardhead">
-          <div>
-            <h3>Recent Trades</h3>
-            <p className="sub">Last activity in the selected period</p>
-          </div>
-          <button className="viewall" onClick={() => onNavigate('journal')}>
-            View all
-            <svg width="9" height="10" viewBox="0 0 9 10" fill="none"><path d="M4 0 L9 5 L4 10 M9 5 H0" stroke="#d99405" strokeWidth="1.5" /></svg>
-          </button>
-        </div>
-        {recentTrades.length > 0 ? (
-          <div style={{ marginTop: 18 }}>
-            {recentTrades.map(t => {
-              const dir = (t.direction ?? 'long')[0].toUpperCase();
-              const dirColor = (t.direction ?? 'long') === 'long' ? GREEN : RED;
-              const elapsed = t.exitDate
-                ? Math.round((Date.now() - new Date(t.exitDate).getTime()) / 3600000)
-                : null;
-              const timeLabel = elapsed !== null
-                ? elapsed < 24 ? `${elapsed}h` : `${Math.round(elapsed / 24)}d`
-                : '';
-              return (
-                <div className="mrow" key={t.id}>
-                  <span className="ic" style={{ color: dirColor, fontWeight: 700 }}>{dir}</span>
-                  <span className="lb" style={{ color: 'var(--text)', fontWeight: 700 }}>{t.coin}</span>
-                  <span style={{ marginLeft: 12, fontSize: 11, color: 'var(--muted-2)' }}>{timeLabel} ago</span>
-                  <span style={{
-                    marginLeft: 'auto', minWidth: 0, fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                  }}>
-                    ENTRY {formatCurrency(t.entryPrice)}
-                    {t.exitPrice ? ` · EXIT ${formatCurrency(t.exitPrice)}` : ''}
-                    {t.exitDate ? ` · ${format(new Date(t.exitDate), 'dd/MM/yyyy, HH:mm')}` : ''}
-                  </span>
-                  <span className="val" style={{ flex: 'none', marginLeft: 20, color: c(t.actualPnL ?? 0) }}>{fmtPnl(t.actualPnL ?? 0)}</span>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="empty-line" style={{ padding: '36px 0 0' }}>No closed trades in this period</p>
-        )}
-      </div>
-
-      {/* next best actions */}
-      <div id="next-best-actions" className="card" style={{ maxWidth: 'calc(100% - 320px)', marginTop: 32, padding: '23px 28px' }}>
-        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h3>Next Best Actions</h3>
-          <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--amber)' }} />
-        </div>
-        <p className="sub">Execute these top fixes first for the active period.</p>
-        <p className="sub sm" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Run active rule set for 5-7 sessions before switching.</p>
-        <div className="nba">
-          <div className="inset">
-            <span className="accent" style={{ background: 'var(--amber)' }} />
-            <p className="lbl">TOTAL LEAK BURDEN</p>
-            <em style={{ color: 'var(--amber)' }}>{formatCurrency(metrics.totalLeakBurden)}</em>
-            <small>gross drag detected</small>
-          </div>
-          <div className="inset">
-            <span className="accent" style={{ background: 'var(--green)' }} />
-            <p className="lbl">REALISTIC RECOVERABLE</p>
-            <em style={{ color: 'var(--green)' }}>{formatCurrency(metrics.realisticRecoverable)}</em>
-            <small>realistic in period</small>
-          </div>
-          <div className="inset">
-            <span className="accent" style={{ background: 'var(--teal)' }} />
-            <p className="lbl">CONSERVATIVE (TOP-3)</p>
-            <em style={{ color: 'var(--teal)' }}>{formatCurrency(metrics.conservativeRecoverable)}</em>
-            <small>focus-first amount</small>
-          </div>
-        </div>
-
-        {metrics.leaks.length > 0 ? (
-          <div style={{ marginTop: 26 }}>
-            {metrics.leaks.map((leak, i) => {
-              const sev = leak.severity === 'high' ? 'var(--red)' : leak.severity === 'medium' ? 'var(--amber)' : 'var(--teal)';
-              return (
-                <div key={i} className="mrow" style={{ alignItems: 'flex-start', padding: '14px 0' }}>
-                  <span className="ic" style={{ color: sev, fontWeight: 700, fontFamily: 'var(--display)' }}>{i + 1}</span>
-                  <span className="lb" style={{ flex: 1 }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <b style={{ color: 'var(--text)', fontWeight: 700, fontSize: 13 }}>{leak.title}</b>
-                      <span style={{
-                        height: 18, padding: '0 8px', border: '1px solid currentColor', borderRadius: 2,
-                        display: 'inline-flex', alignItems: 'center', fontWeight: 700, fontSize: 9, color: sev,
-                      }}>{leak.severity}</span>
-                    </span>
-                    <span style={{ display: 'block', marginTop: 6, fontSize: 12, color: 'var(--muted-2)' }}>{leak.description}</span>
-                  </span>
-                  <span className="val" style={{ color: 'var(--green)' }}>
-                    {formatCurrency(leak.amount)}
-                    <small style={{ display: 'block', fontFamily: 'var(--body)', fontWeight: 400, fontSize: 10, color: 'var(--muted-2)', textAlign: 'right' }}>in range</small>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="empty-line" style={{ padding: '18px 0 0' }}>No significant leaks detected. Keep it up!</p>
-        )}
-
-        <div className="note">Track this weekly: realized drag should move toward the conservative recoverable level.</div>
-        <button className="ghostbtn" onClick={() => onNavigate('journal:verdicts')}>
-          Open Verdicts
-          <svg width="5" height="10" viewBox="0 0 5 10" fill="none"><path d="M0 0 L5 5 L0 10" stroke="#edf2f7" strokeWidth="1.5" /></svg>
-        </button>
-      </div>
     </div>
   );
 }

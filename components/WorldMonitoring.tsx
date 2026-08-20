@@ -90,12 +90,12 @@ const CONTEXT: MonitorLink[] = [
 
 // Presentational only — maps an existing tag to its ATLAS accent colour.
 const TAG_ACCENT: Record<string, string> = {
-  Markets: '#2fd3c4',
+  Markets: '#d99405',
   Energy: '#d99405',
   Commodities: '#d99405',
-  Geopolitics: '#ff3d87',
-  Aerospace: '#2fd3c4',
-  Maritime: '#2fd3c4',
+  Geopolitics: '#d99405',
+  Aerospace: '#d99405',
+  Maritime: '#d99405',
   Infrastructure: '#d99405',
   Civil: '#ff4d5e',
   Tech: '#24c88a',
@@ -170,13 +170,13 @@ export default function WorldMonitoring() {
         <span
           className="ic"
           style={{
-            border: '1px solid rgba(47,211,196,.55)',
+            border: '1px solid rgba(217,148,5,.55)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Globe size={16} color="#2fd3c4" />
+          <Globe size={16} color="#d99405" />
         </span>
         <div>
           <h4>Open intelligence by World Monitor</h4>
@@ -189,7 +189,7 @@ export default function WorldMonitoring() {
 
 function Card({ m, idx }: { m: MonitorLink; idx: number }) {
   const Icon = m.icon;
-  const accent = TAG_ACCENT[m.tag] ?? '#2fd3c4';
+  const accent = TAG_ACCENT[m.tag] ?? '#d99405';
   return (
     <div className="domain" style={{ animationDelay: `${idx * 60}ms` }}>
       <span

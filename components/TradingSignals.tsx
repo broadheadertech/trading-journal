@@ -134,7 +134,7 @@ export default function TradingSignals() {
     <div>
       <div className="phead pwrap">
         <p className="eyebrow">
-          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--pink)', flex: 'none' }} />
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--amber)', flex: 'none' }} />
           {activeCount} active · {pendingCount} pending · community + AI signals
         </p>
         <h2>Trading signals</h2>
@@ -576,18 +576,20 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   // New poster — no closed signals yet
   if (stats.total === 0) {
     return (
-      <span className="chip" style={{ height: 24, padding: '0 10px', fontSize: 11, fontWeight: 700, color: 'var(--teal)', borderColor: 'var(--teal)' }}>
+      <span className="chip" style={{ height: 24, padding: '0 10px', fontSize: 11, fontWeight: 700, color: 'var(--amber)', borderColor: 'var(--amber)' }}>
         New analyst
       </span>
     );
   }
 
-  // Tier the badge color by hit rate — green (great), teal (good), amber (mediocre)
+  // Tier the badge color by hit rate — green (great), amber (good), muted (weak).
+  // The bottom tier steps onto the neutral ramp rather than repeating amber, so
+  // all three tiers stay tellable apart now that teal is gone.
   const pct = Math.round(stats.hitRate * 100);
   const tone =
     stats.hitRate >= 0.6 ? 'var(--green)' :
-    stats.hitRate >= 0.4 ? 'var(--teal)' :
-                            'var(--amber)';
+    stats.hitRate >= 0.4 ? 'var(--amber)' :
+                            'var(--muted)';
 
   return (
     <span className="chip" style={{ height: 24, padding: '0 10px', gap: 7, borderColor: tone }}>
@@ -610,7 +612,7 @@ function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: 
         <Pencil size={10} /> Edit
       </button>
       {status === 'pending' && (
-        <button onClick={() => onUpdate('active')} title="Mark active" className="chip" style={{ ...act, color: 'var(--teal)', borderColor: 'var(--teal)' }}>
+        <button onClick={() => onUpdate('active')} title="Mark active" className="chip" style={{ ...act, color: 'var(--amber)', borderColor: 'var(--amber)' }}>
           Activate
         </button>
       )}
@@ -955,7 +957,7 @@ function PostSignalModal({
               <span
                 style={{
                   fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5,
-                  color: previewRR >= 2 ? 'var(--green)' : previewRR >= 1 ? 'var(--teal)' : 'var(--amber)',
+                  color: previewRR >= 2 ? 'var(--green)' : previewRR >= 1 ? 'var(--amber)' : 'var(--amber)',
                 }}
               >
                 {previewRR.toFixed(2)}
@@ -1177,7 +1179,7 @@ function SignalHistoryModal({
                 <span style={{ color: 'var(--red)' }}>{lostCount} lost</span>
                 <span style={{ color: 'var(--amber)' }}>{activeCount} open</span>
                 {stats && stats.total > 0 && (
-                  <span style={{ color: 'var(--teal)' }}>· {Math.round(stats.hitRate * 100)}% hit-rate</span>
+                  <span style={{ color: 'var(--amber)' }}>· {Math.round(stats.hitRate * 100)}% hit-rate</span>
                 )}
               </div>
             </div>

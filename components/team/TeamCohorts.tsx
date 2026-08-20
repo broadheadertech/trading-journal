@@ -201,7 +201,7 @@ function CohortCard({ cohort, memberStats, members, canManage, onAddMember, onRe
 
   return (
     <div className="card">
-      <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+      <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
 
       {/* Cohort header */}
       <div className="cardhead">

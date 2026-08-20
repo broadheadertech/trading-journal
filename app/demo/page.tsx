@@ -125,13 +125,13 @@ export default function DemoPage() {
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
             <div className="body">
-              <p className="lbl teal">BEHAVIORAL HEALTH · 30D</p>
+              <p className="lbl amber">BEHAVIORAL HEALTH · 30D</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '18px' }}>
                 <div className="tile" style={{ padding: '20px 26px', display: 'flex', alignItems: 'center', gap: '22px' }}>
                   <div className="dial2">
                     <svg viewBox="0 0 68 68" width="68" height="68" fill="none">
                       <circle cx="34" cy="34" r="31" stroke="#16202c" strokeWidth="6" />
-                      <circle cx="34" cy="34" r="31" stroke="#2fd3c4" strokeWidth="6" strokeLinecap="round" strokeDasharray="194.8" strokeDashoffset="42.9" transform="rotate(-90 34 34)" />
+                      <circle cx="34" cy="34" r="31" stroke="#d99405" strokeWidth="6" strokeLinecap="round" strokeDasharray="194.8" strokeDashoffset="42.9" transform="rotate(-90 34 34)" />
                     </svg>
                     <div className="v"><b>78</b><i>/100</i></div>
                   </div>
@@ -188,7 +188,7 @@ export default function DemoPage() {
                 <div style={{ display: 'flex', alignItems: 'baseline' }}><b>HOURLY P&amp;L DISTRIBUTION</b><span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: '10px', color: 'var(--amber)' }}>Peak 13:00</span></div>
                 <div className="hours" id="demohours">
                   {HOUR_BARS.map((h, i) => (
-                    <i key={i} style={{ height: `${Math.round((h / 58) * 62)}px`, background: i < 9 ? '#d99405' : '#2fd3c4' }} />
+                    <i key={i} style={{ height: `${Math.round((h / 58) * 62)}px`, background: i < 9 ? '#d99405' : '#8a6a18' }} />
                   ))}
                 </div>
                 <div className="hourlbl"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
@@ -219,7 +219,7 @@ export default function DemoPage() {
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
             <div className="body">
-              <div style={{ display: 'flex', alignItems: 'baseline' }}><p className="lbl teal">PLAYBOOK COMPLIANCE</p><span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: '10px', color: 'var(--green)' }}>86% overall</span></div>
+              <div style={{ display: 'flex', alignItems: 'baseline' }}><p className="lbl amber">PLAYBOOK COMPLIANCE</p><span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: '10px', color: 'var(--green)' }}>86% overall</span></div>
               <div style={{ marginTop: '14px', border: '1px solid #1d3a2e', borderRadius: '2px', background: '#0c1119', padding: '14px 21px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                   <b style={{ fontFamily: 'var(--mono)', fontSize: '38px', lineHeight: '49px', color: 'var(--green)' }}>86</b>
@@ -229,12 +229,12 @@ export default function DemoPage() {
                 <div style={{ height: '4px', background: '#16202c', marginTop: '14px', position: 'relative' }}><i style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '86%', background: 'var(--green)' }} /></div>
               </div>
               <div style={{ marginTop: '24px' }}>
-                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>Max 3 trades per session</span><span className="track"><i style={{ width: '92%', background: 'var(--green)' }} /></span><span className="pct">92%</span></div>
-                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>Risk ≤1.5% per trade</span><span className="track"><i style={{ width: '88%', background: 'var(--green)' }} /></span><span className="pct">88%</span></div>
-                <div className="rule-row" style={{ color: 'var(--amber)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>No trading 21:00–06:00 UTC</span><span className="track"><i style={{ width: '78%', background: 'var(--amber)' }} /></span><span className="pct">78%</span></div>
-                <div className="rule-row" style={{ color: 'var(--amber)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>Stop loss within 0.8% of entry</span><span className="track"><i style={{ width: '65%', background: 'var(--amber)' }} /></span><span className="pct">65%</span></div>
-                <div className="rule-row" style={{ color: '#f0722a' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>No revenge trade after −2R loss</span><span className="track"><i style={{ width: '64%', background: '#f0722a' }} /></span><span className="pct">64%</span></div>
-                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-5)' }}>Avoid first 15min after news</span><span className="track"><i style={{ width: '100%', background: 'var(--green)' }} /></span><span className="pct">100%</span></div>
+                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>Max 3 trades per session</span><span className="track"><i style={{ width: '92%', background: 'var(--green)' }} /></span><span className="pct">92%</span></div>
+                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>Risk ≤1.5% per trade</span><span className="track"><i style={{ width: '88%', background: 'var(--green)' }} /></span><span className="pct">88%</span></div>
+                <div className="rule-row" style={{ color: 'var(--amber)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>No trading 21:00–06:00 UTC</span><span className="track"><i style={{ width: '78%', background: 'var(--amber)' }} /></span><span className="pct">78%</span></div>
+                <div className="rule-row" style={{ color: 'var(--amber)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>Stop loss within 0.8% of entry</span><span className="track"><i style={{ width: '65%', background: 'var(--amber)' }} /></span><span className="pct">65%</span></div>
+                <div className="rule-row" style={{ color: '#f0722a' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>No revenge trade after −2R loss</span><span className="track"><i style={{ width: '64%', background: '#f0722a' }} /></span><span className="pct">64%</span></div>
+                <div className="rule-row" style={{ color: 'var(--green)' }}><span className="box"><i></i></span><span style={{ color: 'var(--text-3)' }}>Avoid first 15min after news</span><span className="track"><i style={{ width: '100%', background: 'var(--green)' }} /></span><span className="pct">100%</span></div>
               </div>
             </div>
             <span className="sample">SAMPLE DATA</span>
@@ -245,7 +245,7 @@ export default function DemoPage() {
       <div className="pcta" style={{ marginTop: '134px', paddingBottom: '130px' }}>
         <div className="gridwash"></div>
         <div className="wrap">
-          <p className="kicker" style={{ justifyContent: 'center', color: 'var(--teal)', fontWeight: 700, fontSize: '12px', marginBottom: '12px' }}>READY WHEN YOU ARE</p>
+          <p className="kicker" style={{ justifyContent: 'center', color: 'var(--amber)', fontWeight: 700, fontSize: '12px', marginBottom: '12px' }}>READY WHEN YOU ARE</p>
           <h2>Ready to see your own numbers?</h2>
           <p className="sub">Upload your first CSV and get your real dashboard — with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.</p>
           <div className="row"><Link className="btn btn-amber" href="/pricing">Start with Your Own Trades<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg></Link></div>

@@ -107,7 +107,7 @@ export default function CoachingCohorts() {
             <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
             <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
             <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-            <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)', color: 'var(--teal)' }}>
+            <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)', color: 'var(--amber)' }}>
               <Users size={24} />
             </span>
             <h4>No cohorts available yet</h4>
@@ -230,7 +230,7 @@ function MyCohortCard({ cohort, membership }: { cohort: Cohort; membership: any 
 function CoachCohortCard({ cohort }: { cohort: Cohort }) {
   return (
     <div className="card" style={{ padding: '19px 22px 20px' }}>
-      <span className="accent" style={{ width: 44, background: cohort.isActive ? 'var(--teal)' : 'var(--muted-3)' }} />
+      <span className="accent" style={{ width: 44, background: cohort.isActive ? 'var(--green)' : 'var(--muted-3)' }} />
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
         <h4 style={{ minWidth: 0 }}>{cohort.name}</h4>
         <span
@@ -238,8 +238,8 @@ function CoachCohortCard({ cohort }: { cohort: Cohort }) {
           style={{
             marginLeft: 'auto', flex: 'none', height: 20, fontSize: 9.5, fontWeight: 700,
             letterSpacing: '.06em', textTransform: 'uppercase',
-            borderColor: cohort.isActive ? 'var(--teal)' : 'var(--line)',
-            color: cohort.isActive ? 'var(--teal)' : 'var(--muted-2)',
+            borderColor: cohort.isActive ? 'var(--green)' : 'var(--line)',
+            color: cohort.isActive ? 'var(--green)' : 'var(--muted-2)',
           }}
         >
           {cohort.isActive ? 'Live' : 'Paused'}

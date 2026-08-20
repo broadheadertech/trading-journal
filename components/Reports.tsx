@@ -356,13 +356,13 @@ export default function Reports({ trades, strategies }: Props) {
 
       {/* ── Data Exports ── */}
       <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
             <h3>Data Exports</h3>
             <p className="sub">Raw CSV extracts of every closed trade and its aggregates.</p>
           </div>
-          <DownloadSimple size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+          <DownloadSimple size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 12, marginTop: 24 }}>
@@ -384,7 +384,7 @@ export default function Reports({ trades, strategies }: Props) {
 
           {/* Daily Analytics CSV */}
           <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
-            <ChartBar size={18} style={{ color: 'var(--teal)', flex: 'none' }} />
+            <ChartBar size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
             <div style={{ minWidth: 0 }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Daily Analytics (CSV)</p>
               <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Daily net PnL, fees, win/loss counts, and hold times.</p>
@@ -416,7 +416,7 @@ export default function Reports({ trades, strategies }: Props) {
 
           {/* Symbol Analytics CSV */}
           <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
-            <Coins size={18} style={{ color: 'var(--pink)', flex: 'none' }} />
+            <Coins size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
             <div style={{ minWidth: 0 }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Symbol Analytics (CSV)</p>
               <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Per-symbol PnL, win rate, trade counts, and fees.</p>
@@ -516,13 +516,13 @@ export default function Reports({ trades, strategies }: Props) {
 
       {/* ── Report Library ── */}
       <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
             <h3>Report Library</h3>
             <p className="sub">{reports.length} item{reports.length !== 1 ? 's' : ''} generated in this session.</p>
           </div>
-          <FileText size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+          <FileText size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
 
         {/* Search + Filter */}

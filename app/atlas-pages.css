@@ -151,10 +151,10 @@
     color: var(--muted-3);
   }
   .body { font-size: 14.5px; line-height: 24px; color: var(--atlas-muted); }
-  .eb   { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
-  .teal { color: var(--teal); }
-  /* Sibling of .teal — several sub-pages tag labels `lbl amber` but only
-     `.h2 .amber` existed, so those rendered muted instead of amber. */
+  .eb   { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--amber); }
+  /* Several sub-pages tag labels `lbl amber` but only `.h2 .amber` existed,
+     so those rendered muted instead of amber. (A `.teal` twin of this rule
+     was dropped with the teal colour — its 4 call sites now use `amber`.) */
   .amber { color: var(--amber); }
 
   /* atlas.css defines .kicker only scoped (.leakcard/.minicard/.cta). The
@@ -168,7 +168,7 @@
     font-weight: 700;
     font-size: 12.5px;
     letter-spacing: .02em;
-    color: var(--teal);
+    color: var(--amber);
     margin: 0;
   }
 
@@ -223,7 +223,7 @@
     gap: 12px;
     font-size: 14px;
     line-height: 22px;
-    color: var(--text-4);
+    color: var(--text-3);
   }
   .setupcard li svg { flex: none; margin-top: 6px; }
 
@@ -252,7 +252,7 @@
     margin: 0 0 16px;
     color: var(--text-3);
   }
-  .scope h4.yes { color: var(--teal); }
+  .scope h4.yes { color: var(--green); }
   .scope h4.no  { color: var(--muted-2); }
   .scope ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
   .scope li {
@@ -261,7 +261,7 @@
     gap: 10px;
     font-size: 13.5px;
     line-height: 21px;
-    color: var(--text-4);
+    color: var(--text-3);
   }
   .scope li svg { flex: none; margin-top: 5px; }
   .scope li.no { color: var(--muted-2); }

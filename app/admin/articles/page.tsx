@@ -71,15 +71,15 @@ export default function AdminArticlesPage() {
         <div className="stats" style={{ marginTop: 0 }}>
           <Stat label="Articles"         value={analytics.totalArticles} icon={BookOpen} accent="var(--amber)" />
           <Stat label="Published"        value={analytics.published}     icon={CheckCircle} accent="var(--green)" />
-          <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} accent="var(--teal)" />
-          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={EnvelopeSimple} accent="var(--pink)" />
+          <Stat label="Total views"      value={analytics.totalViews}    icon={Eye} accent="var(--amber)" />
+          <Stat label="Newsletter subs"  value={analytics.newsletterConfirmed} icon={EnvelopeSimple} accent="var(--amber)" />
         </div>
       )}
 
       {/* Top articles */}
       {analytics && analytics.top.length > 0 && (
         <div className="card" style={{ marginTop: 24 }}>
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <h3>Top Articles by Views</h3>
           <p className="sub">Ranked by lifetime reads</p>
           <div style={{ marginTop: 18 }}>
@@ -198,7 +198,7 @@ export default function AdminArticlesPage() {
 
       {/* Newsletter subscribers section */}
       <section className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
             <h3>Newsletter</h3>
@@ -214,7 +214,7 @@ export default function AdminArticlesPage() {
           <div className="max-h-80 overflow-y-auto" style={{ marginTop: 18 }}>
             {subscribers.map((s: any) => (
               <div key={s._id} className="mrow">
-                <EnvelopeSimple size={14} className="ic" style={{ color: 'var(--pink)' }} />
+                <EnvelopeSimple size={14} className="ic" style={{ color: 'var(--amber)' }} />
                 <span className="lb truncate flex-1">{s.email}</span>
                 <span className="chip" style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', marginLeft: 12 }}>
                   {String(s.status).toUpperCase()}

@@ -76,7 +76,7 @@ export default function Leaderboard({ trades }: LeaderboardProps) {
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>RANK PERCENTILE</b>
           <em style={{ color: 'var(--amber)' }}>{rankPercentile.toFixed(1)}%</em>
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>higher is stronger</small>
@@ -88,7 +88,7 @@ export default function Leaderboard({ trades }: LeaderboardProps) {
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>selected period</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>BOARD INTEGRITY</b>
           {hasEnoughTrades ? (
             <>
@@ -152,8 +152,8 @@ export default function Leaderboard({ trades }: LeaderboardProps) {
             <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
             <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
             <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-            <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)' }}>
-              <Users size={24} color="#2fd3c4" />
+            <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+              <Users size={24} color="#d99405" />
             </span>
             <h4>No leaderboard rows in this scope</h4>
             <p style={{ maxWidth: 420 }}>

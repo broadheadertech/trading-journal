@@ -122,8 +122,8 @@ export default function Articles() {
               <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
               <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
               <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-              <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)' }}>
-                <BookOpen size={24} color="#2fd3c4" />
+              <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+                <BookOpen size={24} color="#d99405" />
               </span>
               <h4>No articles yet</h4>
               <p>New content drops weekly. Stay tuned.</p>
@@ -164,7 +164,7 @@ function ArticleCard({ article: a, idx, onOpen }: { article: any; idx: number; o
           <img src={a.coverImage} alt={a.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <i style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BookOpen size={16} color="#2fd3c4" />
+            <BookOpen size={16} color="#d99405" />
           </i>
         )}
         <b

@@ -33,8 +33,8 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
   },
   encouragement: {
     icon: TrendUp,
-    color: '#2fd3c4',
-    glow: 'rgba(47,211,196,0.12)',
+    color: '#24c88a',
+    glow: 'rgba(36,200,138,0.12)',
     label: 'Keep improving',
   },
   correction: {
@@ -51,14 +51,14 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
   },
   recovery: {
     icon: HeartPulse,
-    color: '#2fd3c4',
-    glow: 'rgba(47,211,196,0.12)',
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Recovery mode',
   },
   anti_gaming: {
     icon: ShieldWarning,
-    color: '#ff3d87',
-    glow: 'rgba(255,61,135,0.12)',
+    color: '#ff4d5e',
+    glow: 'rgba(255,77,94,0.12)',
     label: 'Flagged',
   },
   transition: {
@@ -69,8 +69,8 @@ const CATEGORY_CONFIG: Record<CoachingCategory, {
   },
   comeback: {
     icon: Lightning,
-    color: '#2fd3c4',
-    glow: 'rgba(47,211,196,0.12)',
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Welcome back',
   },
   onboarding: {

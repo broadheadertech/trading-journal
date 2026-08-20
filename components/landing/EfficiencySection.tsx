@@ -35,7 +35,7 @@ function EffChartSvg() {
         );
       })}
 
-      <path d={PRICE_LINE} stroke="#2fd3c4" strokeWidth={2} fill="none" opacity={0.9} transform="translate(40,40)" />
+      <path d={PRICE_LINE} stroke="#d99405" strokeWidth={2} fill="none" opacity={0.9} transform="translate(40,40)" />
     </svg>
   );
 }

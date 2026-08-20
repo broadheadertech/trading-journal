@@ -240,7 +240,7 @@ export default function TradesLog({
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>REVIEW COVERAGE (FILTERED)</b>
           <em style={{ color: 'var(--green)' }}>{metrics.reviewCoverage}%</em>
           <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
@@ -256,7 +256,7 @@ export default function TradesLog({
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 115 }}>
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>PROCESS HEALTH</b>
           <em>{metrics.processHealth}</em>
           <small style={{ display: 'block', fontSize: '10.5px', color: 'var(--muted-2)', marginTop: 8 }}>
@@ -561,7 +561,7 @@ export default function TradesLog({
             ) : (
               <div>
                 {patterns.map((p, i) => {
-                  const tone = p.color === 'green' ? 'var(--green)' : p.color === 'red' ? 'var(--red)' : 'var(--teal)';
+                  const tone = p.color === 'green' ? 'var(--green)' : p.color === 'red' ? 'var(--red)' : 'var(--amber)';
                   return (
                     <div key={i} className="inset" style={{ marginTop: 12, borderLeft: `3px solid ${tone}`, padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>

@@ -43,10 +43,10 @@ function classifyEmotion(emotion: EmotionState): BehaviorState {
 
 const STATE_COLORS: Record<BehaviorState, string> = {
   Calm: '#24c88a',
-  Focused: '#2fd3c4',
+  Focused: '#24c88a',
   Heated: '#d99405',
   Tilted: '#ff4d5e',
-  Revenge: '#ff3d87',
+  Revenge: '#ff4d5e',
 };
 
 // Bias detection types
@@ -436,7 +436,7 @@ export default function PsychologyJournal({
               <p className="lbl b10">SCORECARD</p>
               <span style={{
                 marginLeft: 'auto', fontWeight: 700, fontSize: '10.5px',
-                color: m.scorecardLabel === 'ELITE' ? 'var(--green)' : m.scorecardLabel === 'HIGH' ? 'var(--teal)' : m.scorecardLabel === 'MEDIUM' ? 'var(--amber)' : 'var(--red)',
+                color: m.scorecardLabel === 'ELITE' ? 'var(--green)' : m.scorecardLabel === 'HIGH' ? 'var(--green)' : m.scorecardLabel === 'MEDIUM' ? 'var(--amber)' : 'var(--red)',
               }}>{m.scorecardLabel}</span>
             </div>
             <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 32, lineHeight: '40px', margin: '6px 0 10px' }}>{m.scorecardValue.toFixed(1)}</div>
@@ -456,9 +456,9 @@ export default function PsychologyJournal({
             value: m.healthScore, valueSub: `${m.healthLabel} \u2022 Trend ${m.sessions.length > 1 ? '↑' : '0'}%`, color: m.healthScore >= 60 ? 'var(--green)' : m.healthScore >= 40 ? 'var(--amber)' : 'var(--red)' },
           { label: 'TILT PRESSURE', icon: <Lightning size={14} />, accent: 'var(--amber)', desc: 'Short-term reactivity pressure based on loss response and sequence stress.',
             value: m.tiltPressure, valueSub: `Risk ${m.tiltPressure < 40 ? 'Stable' : m.tiltPressure < 70 ? 'Elevated' : 'Critical'} \u2022 Next-trade loss ${m.nextTradeLossRisk.toFixed(1)}%`, color: m.tiltPressure < 40 ? 'var(--green)' : m.tiltPressure < 70 ? 'var(--amber)' : 'var(--red)' },
-          { label: 'REVENGE CLUSTERS', icon: <Warning size={14} />, accent: 'var(--pink)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
+          { label: 'REVENGE CLUSTERS', icon: <Warning size={14} />, accent: 'var(--amber)', desc: 'Loss-driven cascades detected from executed trades in this date range.',
             value: m.revengeClusterCount, valueSub: `Cluster net ${formatCurrency(m.revengeClusterPnL)} \u2022 Avg ${m.avgClusterSize.toFixed(1)} trades/cluster`, color: m.revengeClusterCount === 0 ? 'var(--green)' : 'var(--red)' },
-          { label: 'RECOVERY PROFILE', icon: <ArrowsClockwise size={14} />, accent: 'var(--teal)', desc: 'Average recovery effort and time after adverse trading periods.',
+          { label: 'RECOVERY PROFILE', icon: <ArrowsClockwise size={14} />, accent: 'var(--amber)', desc: 'Average recovery effort and time after adverse trading periods.',
             value: m.avgRecoveryTrades.toFixed(1), valueSub: `Avg trades to recover \u2022 ${m.avgRecoveryDays.toFixed(1)} days average`, color: 'var(--text)' },
         ].map(card => (
           <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
@@ -495,7 +495,7 @@ export default function PsychologyJournal({
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { label: 'Discipline', value: m.disciplineScore, icon: <Activity size={14} />, color: m.disciplineScore >= 70 ? 'var(--teal)' : m.disciplineScore >= 40 ? 'var(--amber)' : 'var(--red)' },
+                { label: 'Discipline', value: m.disciplineScore, icon: <Activity size={14} />, color: m.disciplineScore >= 70 ? 'var(--green)' : m.disciplineScore >= 40 ? 'var(--amber)' : 'var(--red)' },
                 { label: 'Emotional Control', value: m.emotionalControl, icon: <Heart size={14} />, color: m.emotionalControl >= 70 ? 'var(--green)' : m.emotionalControl >= 40 ? 'var(--amber)' : 'var(--red)' },
                 { label: 'Risk Mgmt', value: m.riskMgmt, icon: <Shield size={14} />, color: m.riskMgmt >= 70 ? 'var(--green)' : m.riskMgmt >= 40 ? 'var(--amber)' : 'var(--red)' },
                 { label: 'Consistency', value: m.consistency, icon: <Activity size={14} />, color: m.consistency >= 70 ? 'var(--green)' : m.consistency >= 40 ? 'var(--amber)' : 'var(--red)' },
@@ -586,7 +586,7 @@ export default function PsychologyJournal({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-[var(--muted-foreground)]">P{i + 1}</span>
-                    <CaretRight size={14} className="text-fuchsia-400" />
+                    <CaretRight size={14} className="text-amber-400" />
                     <span className="text-sm font-semibold text-[var(--foreground)]">{action.split('.')[0]}</span>
                   </div>
                   <span className="chip" style={{ height: 22, fontSize: "10px", fontWeight: 700, color: m.revengeClusterCount === 0 && m.overtradeDays === 0 ? "var(--green)" : "var(--amber)" }}>
@@ -952,7 +952,7 @@ export default function PsychologyJournal({
       {/* ── Behavior Edge Context ── */}
       <div className="card">
         <div className="flex items-center gap-2 mb-1">
-          <ArrowsClockwise size={16} className="text-fuchsia-400" />
+          <ArrowsClockwise size={16} className="text-amber-400" />
           <span className="lbl b10">Behavior Edge Context</span>
         </div>
         <p className="sub" style={{ marginBottom: 18 }}>Highest-confidence strength and highest-risk loop with direct narrative context.</p>

@@ -222,7 +222,7 @@ function EffortBadge({ effort }: { effort: string }) {
 }
 
 function ConfidenceBadge({ confidence }: { confidence: string }) {
-  const color = confidence === 'HIGH' ? 'var(--pink)' : confidence === 'MEDIUM' ? 'var(--teal)' : 'var(--muted-2)';
+  const color = confidence === 'HIGH' ? 'var(--green)' : confidence === 'MEDIUM' ? 'var(--amber)' : 'var(--muted-2)';
   return <span className="chip" style={{ ...ATLAS_CHIP, color }}>{confidence} Confidence</span>;
 }
 
@@ -351,7 +351,7 @@ export default function WhatIfSimulation({ trades }: Props) {
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{selectedIds.size} leak{selectedIds.size !== 1 ? 's' : ''} in stack</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>SIMULATED DELTA</b>
           <em style={{ fontSize: 22, lineHeight: '28px', color: simulatedDelta >= 0 ? 'var(--green)' : 'var(--red)' }}>
             {simulatedDelta >= 0 ? '+' : ''}{formatCurrency(simulatedDelta)}
@@ -359,7 +359,7 @@ export default function WhatIfSimulation({ trades }: Props) {
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>Projected minus baseline net</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>CONFIDENCE</b>
           <em style={{ fontSize: 22, lineHeight: '28px' }}>{confidence}%</em>
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
@@ -461,7 +461,7 @@ export default function WhatIfSimulation({ trades }: Props) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Engine header + chart */}
           <div className="card">
-            <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
             <div className="cardhead" style={{ flexWrap: 'wrap', gap: 14 }}>
               <div>
                 <h3>Simulation Engine</h3>
@@ -557,7 +557,7 @@ export default function WhatIfSimulation({ trades }: Props) {
 
           {/* Before / After Matrix */}
           <div className="card">
-            <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
             <button onClick={() => setShowMatrix(!showMatrix)} style={{ width: '100%', display: 'flex', alignItems: 'flex-start', textAlign: 'left' }}>
               <div>
                 <h3>Before / After Matrix</h3>
@@ -632,7 +632,7 @@ export default function WhatIfSimulation({ trades }: Props) {
                 <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                   <Sparkles size={14} style={{ color: 'var(--muted-3)' }} />
-                  <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: 'var(--pink)' }}>ONE-CLICK</span>
+                  <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: 'var(--amber)' }}>ONE-CLICK</span>
                 </div>
                 <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{leak.name}</p>
                 <p style={{ margin: '6px 0 0', fontSize: 11, lineHeight: '17px', color: 'var(--muted-2)' }}>{leak.description}</p>
@@ -660,7 +660,7 @@ export default function WhatIfSimulation({ trades }: Props) {
             {selectedIds.size > 0 ? (
               <>
                 <div className="mrow">
-                  <span className="ic" style={{ color: 'var(--pink)' }}>&#x25CB;</span>
+                  <span className="ic" style={{ color: 'var(--amber)' }}>&#x25CB;</span>
                   <span className="lb">Selected stack estimated drag: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(Math.abs(selectedDrag)).replace(/^\+/, '')}</span>. Run simulation to replay it on this period.</span>
                 </div>
                 {hasRun && (

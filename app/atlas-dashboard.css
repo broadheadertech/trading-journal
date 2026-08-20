@@ -36,6 +36,16 @@
   .plan{min-height:0;background:none;border:0;border-radius:0;padding:0;
         position:static;flex-direction:row}
   .hero{position:relative}
+  /* Marketing's .hero paints a full-bleed scrim through a pseudo-element:
+     .hero::before{height:712px; background:linear-gradient(180deg,
+     rgba(10,20,32,.9), rgba(5,8,13,0))}. The `.hero{position:relative}` reset
+     above is what gives it a containing block here, so it laid a 90%-opaque
+     dark veil straight over the Net P&L card — washing out the big number,
+     the win/loss counts and the BEST/WORST/AVG insets. It reads as "blurry"
+     rather than "dark" because it is a translucent film over live text, and
+     pointer-events:none meant nothing but the visuals gave it away.
+     The dashboard defines no .hero pseudo-elements of its own. */
+  .hero::before{content:none}
   .nav{position:static;height:auto;background:none;border-bottom:0;z-index:auto}
   .brand{margin-right:0}
   .card{backdrop-filter:none}
@@ -48,13 +58,22 @@
      div. A rule that directly matches an element always wins over an
      inherited value, regardless of specificity, so the marketing rule's
      color/size/weight/spacing overrode the inherited style: numbered rules
-     rendered in var(--muted-5) (a blue-gray, #b9c6d4) at 10px/700 instead of
+     rendered in a blue-gray (#b9c6d4) at 10px/700 instead of
      the intended #c0ccda at 13.5px/400 — visibly bluer, smaller, and bolder
      than the "Key concepts" list beside it, which has no "num" class and so
      was never touched. (The numeral <b> was unaffected because the dashboard
      DOES directly target .klist.num div b, so that one resolved by ordinary
      specificity instead of falling through to inheritance.) */
   .num span{color:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;margin-top:0;display:inline}
+  /* .steps is marketing's homepage "How It Works" 5-step row (unscoped,
+     display:grid;grid-template-columns:repeat(5,1fr);margin-top:-14px) and
+     the Connect Broker install checklist here. The dashboard's own .steps
+     rule only sets margin-top/border-top — it never declares `display` — so
+     the leaked grid-of-5-columns applied unopposed, squeezing all five
+     numbered steps into cramped side-by-side columns instead of the intended
+     stacked list. margin-top isn't reset here: the dashboard's own
+     margin-top:22px already wins that property by specificity. */
+  .steps{display:block}
   /* .cta is the marketing CTA BAND (height:420px; padding:73px 0 0) and the
      Subscribe BUTTON here. .plan4 .cta re-declared height and margin-top but
      not padding, so every button carried 73px of top padding and its label
@@ -63,7 +82,7 @@
   &{
     --bg:#05080d; --panel:#0a0f17; --panel-2:#0c1119; --grid:#0e1725; --hair:#101922;
     --line:#182432; --line-2:#24344a; --rail:#141e2a;
-    --amber:#d99405; --teal:#2fd3c4; --green:#24c88a; --red:#ff4d5e; --pink:#ff3d87;
+    --amber:#d99405; --green:#24c88a; --red:#ff4d5e;
     --ink:#0a0a0a;
     --text:#edf2f7; --text-2:#9fb0c2; --muted:#7f8ea3; --muted-2:#5c6b7e; --muted-3:#4a5867; --muted-4:#3a4a5c;
     --display:'Archivo',system-ui,sans-serif;
@@ -127,7 +146,7 @@
   .klist{margin-top:20px;border-top:1px solid var(--line-2)}
   .klist div{display:grid;grid-template-columns:4px 1fr;gap:14px;align-items:start;padding:11px 0;border-bottom:1px solid var(--hair);
     font-size:13.5px;line-height:18px;color:#c0ccda}
-  .klist div i{width:4px;height:4px;background:var(--teal);margin-top:7px}
+  .klist div i{width:4px;height:4px;background:var(--amber);margin-top:7px}
   .klist.num div{grid-template-columns:22px 1fr;gap:0}
   .klist.num div b{font-family:var(--display);font-weight:700;font-size:12px;color:var(--amber)}
 
@@ -168,7 +187,11 @@
   .disclaim b{color:var(--amber);font-weight:700}
 
   /* ---- connect broker ---- */
-  .field label{display:block;font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em;margin-bottom:9px}
+  /* Field captions (DATE, PAIR, SESSION, ...) were 9.5px on --muted-2, the same
+     near-invisible pairing the .lbl captions had. Same remedy: one step up in
+     size and onto --text-2, which stays a clear step below the --text input
+     values so the label/value hierarchy still reads. */
+  .field label{display:block;font-weight:700;font-size:10.5px;color:var(--text-2);letter-spacing:.04em;margin-bottom:9px}
   .field .box{height:42px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
     padding:0 16px;font-size:13px;color:var(--text)}
   .field .box.ph{color:var(--muted-3)}
@@ -286,7 +309,7 @@
   .layers span i{width:8px;height:8px;border-radius:1px}
   .layers span.off{color:var(--muted-4)}
   .globe{position:absolute;left:50%;top:94px;transform:translateX(-50%);width:412px;height:412px;border:1px solid rgba(217,148,5,.25);border-radius:50%}
-  .globe .inner{position:absolute;inset:16px;border:1px solid rgba(47,211,196,.75);border-radius:50%}
+  .globe .inner{position:absolute;inset:16px;border:1px solid rgba(217,148,5,.75);border-radius:50%}
   .globe .node{position:absolute;width:16px;height:16px;border:1px solid;border-radius:50%}
   .tickgrid{display:grid;gap:12px;margin-top:14px}
   .tick{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:15px 16px}
@@ -297,7 +320,7 @@
   .news{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
   .news a{border:1px solid var(--line);border-radius:2px;background:var(--panel);overflow:hidden;display:block}
   .news .art{height:110px;background:#070c13;display:flex;align-items:center;justify-content:center}
-  .news .art i{width:34px;height:34px;border-radius:3px;border:1px solid rgba(47,211,196,.7)}
+  .news .art i{width:34px;height:34px;border-radius:3px;border:1px solid rgba(217,148,5,.7)}
   .news h5{margin:0;padding:16px 16px 0;font-weight:700;font-size:11.5px;line-height:17px;color:var(--text)}
   .news span{display:block;padding:12px 16px 16px;font-size:11px;color:var(--muted-2)}
   @media(max-width:1100px){.news{grid-template-columns:repeat(2,1fr)}}
@@ -335,7 +358,14 @@
   .post .vote{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted)}
   .post .vote b{font-family:var(--display);font-weight:700;font-size:13px;color:var(--text)}
   .post .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11.5px;font-weight:400;color:var(--muted-2)}
-  .post .meta .cat{height:20px;padding:0 12px;border:1px solid currentColor;border-radius:2px;display:inline-flex;align-items:center;
+  /* Fixed width, not shrink-to-fit. The category badge is the first item on
+     the meta line, so when it sized to its label ("Q&A" vs "Trade Reviews")
+     everything after it — by <author>, tier badge, date — started at a
+     different x on every row, and the list read as ragged down the page.
+     104px clears the longest label ("Announcements"/"Trade Reviews") at
+     9.5px, so the metadata now lines up in a column across all posts. */
+  .post .meta .cat{height:20px;min-width:104px;padding:0 12px;border:1px solid currentColor;border-radius:2px;
+    display:inline-flex;align-items:center;justify-content:center;
     font-size:9.5px;opacity:.85}
   .post .meta strong{color:var(--text);font-weight:700}
   .post h5{font-family:var(--display);font-weight:700;font-size:15px;margin:8px 0 0;color:var(--text)}
@@ -563,8 +593,14 @@
   /* hero P&L */
   .hero{min-height:210px;padding:30px 28px}
   .hero .row1{display:flex;align-items:center;gap:27px}
+  /* NET P&L label sits at the very top of the hero card, right against the
+     page's grid-textured background near the card edge — the generic .lbl
+     tone (--text-2) still read as low-contrast/washed out here specifically,
+     even after the broader .lbl legibility pass. Full-bright --text for this
+     one label, since it's effectively the hero card's title. */
+  .hero .row1 .lbl{color:var(--text);opacity:1}
   .pill{height:20px;padding:0 12px;border-radius:2px;background:#0f2018;display:inline-flex;align-items:center;
-    font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green)}
+    font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green);opacity:1}
   .bignum{font-family:var(--mono);font-weight:500;font-size:44px;line-height:57px;margin:6px 0 0;color:var(--text)}
   .wl{display:flex;gap:0;align-items:center;margin-top:4px;font-family:var(--mono);font-size:13px}
   .wl span{display:flex;align-items:center;gap:7px}
@@ -639,7 +675,12 @@
   .nba small{display:block;font-size:10.5px;color:var(--muted-2);margin-top:6px}
   .note{min-height:44px;margin-top:22px;display:flex;align-items:center;padding:0 18px;font-size:12px;color:var(--muted);
     border:1px solid var(--line);border-radius:2px;background:var(--panel-2)}
-  .ghostbtn{display:flex;align-items:center;justify-content:center;gap:12px;height:44px;margin-top:14px;
+  /* width:100% is load-bearing: the reference build uses <a class="ghostbtn">,
+     which is block-level and stretches on its own. The app renders a <button>
+     (it navigates via onClick, not href), and form controls shrink-to-fit even
+     as block-level flex containers — so the button collapsed to the width of
+     its label instead of spanning the card like the .note above it. */
+  .ghostbtn{display:flex;align-items:center;justify-content:center;gap:12px;height:44px;margin-top:14px;width:100%;
     border:1px solid var(--line-2);border-radius:2px;font-weight:700;font-size:14px}
   .ghostbtn:hover{border-color:var(--muted)}
   @media(max-width:900px){.nba{grid-template-columns:1fr}}
@@ -653,12 +694,28 @@
   textarea:not(.chip),
   select:not(.chip){
     background:var(--panel-2);border:1px solid var(--line);border-radius:2px;color:var(--text);
-    min-height:38px;padding:0 14px;font-family:var(--body);font-size:12.5px}
-  textarea:not(.chip){min-height:84px;padding:11px 14px;line-height:19px}
+    min-height:40px;padding:0 14px;font-family:var(--body);font-size:13.5px}
+  textarea:not(.chip){min-height:84px;padding:11px 14px;line-height:20px}
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.chip):focus,
   textarea:not(.chip):focus,
   select:not(.chip):focus{border-color:var(--amber);box-shadow:none}
   input::placeholder,textarea::placeholder{color:var(--muted-3)}
+
+  /* Native date/time controls paint their picker icon from the UA stylesheet,
+     which assumes a light page — on --panel-2 the calendar/clock glyphs came
+     out near-black on near-black and read as invisible. color-scheme:dark is
+     the standards-based fix: it tells the UA to render its built-in widgetry
+     (the indicator, and the picker popup itself) for a dark surface. No
+     invert() filter here — that would fight color-scheme and double-invert. */
+  input[type="date"],input[type="time"],input[type="datetime-local"],input[type="month"]{color-scheme:dark}
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+  input[type="month"]::-webkit-calendar-picker-indicator{opacity:.75;cursor:pointer}
+  input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  input[type="time"]::-webkit-calendar-picker-indicator:hover,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+  input[type="month"]::-webkit-calendar-picker-indicator:hover{opacity:1}
 
   .viewall{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13px;color:var(--amber)}
   .cardhead{display:flex;align-items:flex-start}

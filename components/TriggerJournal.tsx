@@ -125,7 +125,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
       {/* ── Trigger Frequency Chart ── */}
       {chartData.length > 0 && (
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Trigger Sources</h4>
@@ -143,7 +143,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
                   contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '11px', color: '#edf2f7' }}
                   formatter={(value, name) => [typeof value === 'number' ? value : 0, name === 'count' ? 'Occurrences' : 'Led to Trade']}
                 />
-                <Bar dataKey="count" name="Occurrences" fill="#2fd3c4" radius={[0, 2, 2, 0]} />
+                <Bar dataKey="count" name="Occurrences" fill="#d99405" radius={[0, 2, 2, 0]} />
                 <Bar dataKey="traded" name="Led to Trade" radius={[0, 2, 2, 0]}>
                   {chartData.map((entry, i) => (
                     <Cell key={i} fill={entry.winRate >= 50 ? '#24c88a' : entry.traded > 0 ? '#ff4d5e' : '#4a5867'} />
@@ -209,7 +209,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
                 <input
                   type="range" min="1" max="10" value={intensityBefore}
                   onChange={e => setIntensityBefore(parseInt(e.target.value))}
-                  className="w-full" style={{ accentColor: 'var(--teal)' }}
+                  className="w-full" style={{ accentColor: 'var(--amber)' }}
                 />
               </div>
               <div className="field" style={{ margin: 0 }}>
@@ -248,7 +248,7 @@ export default function TriggerJournal({ triggers, onAdd, onDelete }: Props) {
 
       {/* ── Trigger Entries ── */}
       <div className="card">
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
             <h4>Logged Triggers</h4>

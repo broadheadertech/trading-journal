@@ -89,7 +89,7 @@ export default function Pricing() {
             <p className="who">For beginners to intermediate traders</p>
             <div className="price"><b data-m="$29" data-a="$23">{price('$29', '$23')}</b><span>/month</span></div>
             <p className="billed" data-m="Billed monthly" data-a="Billed annually">{billed}</p>
-            <Features items={CORE_FEATURES} stroke="#2fd3c4" />
+            <Features items={CORE_FEATURES} stroke="#24c88a" />
             <div className="foot">
               <div className="best"><em>BEST</em><p>Best for traders who want to build a track record</p></div>
               <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
@@ -116,7 +116,7 @@ export default function Pricing() {
             <p className="who">For mentors, funded traders and trading communities</p>
             <div className="price"><b data-m="$59" data-a="$47">{price('$59', '$47')}</b><span>/month</span></div>
             <p className="billed" data-m="Billed monthly" data-a="Billed annually">{billed}</p>
-            <Features items={ELITE_FEATURES} stroke="#2fd3c4" />
+            <Features items={ELITE_FEATURES} stroke="#24c88a" />
             <div className="foot">
               <div className="best"><em>BEST</em><p>Best for communities that need visibility across every account</p></div>
               <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>

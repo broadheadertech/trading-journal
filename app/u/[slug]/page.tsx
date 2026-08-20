@@ -284,7 +284,7 @@ export default function PublicProfilePage() {
             </StatLane>
 
             {/* Social */}
-            <StatLane label="SOCIAL" accent="var(--teal)">
+            <StatLane label="SOCIAL" accent="var(--amber)">
               <div style={{ display: 'flex', gap: '34px' }}>
                 <button onClick={() => setFollowList('followers')} className="pp-count">
                   <b>{followCounts?.followers ?? 0}</b>

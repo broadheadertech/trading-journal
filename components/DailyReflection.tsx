@@ -20,9 +20,9 @@ interface Props {
 // Presentational only — maps a grade to an ATLAS token colour.
 const GRADE_TONE: Record<string, string> = {
   A: 'var(--green)',
-  B: 'var(--teal)',
+  B: 'var(--green)',
   C: 'var(--amber)',
-  D: 'var(--pink)',
+  D: 'var(--red)',
   F: 'var(--red)',
 };
 
@@ -110,10 +110,10 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* ── Header ── */}
       <div className="card">
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead" style={{ flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <p className="lbl b10" style={{ color: 'var(--teal)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <p className="lbl b10" style={{ color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
               <CalendarDots size={12} /> REFLECTION LOG
             </p>
             <h3>Reflections</h3>
@@ -398,8 +398,8 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
           <div className="blank" style={{ marginTop: 20, padding: '38px 28px', textAlign: 'center' }}>
             <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
             <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
-            <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(47,211,196,.4)', background: 'var(--panel-2)' }}>
-              <CalendarDots size={20} style={{ color: 'var(--teal)' }} />
+            <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+              <CalendarDots size={20} style={{ color: 'var(--amber)' }} />
             </div>
             <h4>No reflections logged yet</h4>
             <p>Close out a session with a daily reflection to start building the record.</p>
@@ -447,13 +447,13 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
                     )}
                     {r.biggestLesson && (
                       <div>
-                        <p className="lbl" style={{ color: 'var(--pink)' }}>LESSON</p>
+                        <p className="lbl" style={{ color: 'var(--amber)' }}>LESSON</p>
                         <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.biggestLesson}</p>
                       </div>
                     )}
                     {r.tomorrowGoal && (
                       <div>
-                        <p className="lbl" style={{ color: 'var(--teal)' }}>GOAL</p>
+                        <p className="lbl" style={{ color: 'var(--amber)' }}>GOAL</p>
                         <p style={{ margin: '6px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{r.tomorrowGoal}</p>
                       </div>
                     )}
@@ -468,13 +468,13 @@ export default function DailyReflection({ reflections, reviews, trades, onAddRef
       {/* ── Weekly Reviews ── */}
       {reviews.length > 0 && (
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Weekly Reviews</h4>
               <p className="sub sm">Self-graded week-over-week process notes.</p>
             </div>
-            <Moon size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+            <Moon size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
             {reviews.slice(0, 5).map(review => (

@@ -169,7 +169,7 @@ function ExistingProfile({ profile, onSave }: { profile: any; onSave: (d: any) =
           <em style={{ color: 'var(--text)' }}>{profile.avgRating?.toFixed(1) ?? '—'}</em>
         </div>
         <div className="stat">
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><ShieldCheck size={11} /> REVIEWS</b>
           <em style={{ color: 'var(--text)' }}>{profile.reviewCount ?? 0}</em>
         </div>

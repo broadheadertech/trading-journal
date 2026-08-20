@@ -27,7 +27,7 @@ type Provider = {
   lastPostedAt: string;
 };
 
-const ACCENTS = ['var(--teal)', 'var(--pink)', 'var(--amber)', 'var(--green)'];
+const ACCENTS = ['var(--amber)', 'var(--amber)', 'var(--amber)', 'var(--green)'];
 
 function rateColor(rate: number) {
   if (rate >= 60) return 'var(--green)';

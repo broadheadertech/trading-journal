@@ -21,7 +21,7 @@ const TIERS: Record<TierName, {
   },
   core: {
     label: 'Core',
-    color: 'var(--teal)',
+    color: 'var(--amber)',
     icon: <Sparkle size={9} weight="bold" />,
   },
   pro: {
@@ -31,7 +31,7 @@ const TIERS: Record<TierName, {
   },
   elite: {
     label: 'Elite',
-    color: 'var(--pink)',
+    color: 'var(--amber)',
     icon: <Star size={9} weight="bold" />,
   },
 };

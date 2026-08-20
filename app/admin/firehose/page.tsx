@@ -20,16 +20,16 @@ type FirehoseEvent = {
 };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:     { icon: TrendUp,        tint: 'var(--teal)',   label: 'Trade logged' },
+  trade_logged:     { icon: TrendUp,        tint: 'var(--amber)',   label: 'Trade logged' },
   trade_closed:     { icon: TrendDown,      tint: 'var(--green)',  label: 'Trade closed' },
   rule_break:       { icon: Warning,        tint: 'var(--red)',    label: 'Rule break' },
   circuit_breaker:  { icon: Warning,        tint: 'var(--red)',    label: 'Circuit breaker' },
   score_event:      { icon: Brain,          tint: 'var(--amber)',  label: 'Brain score' },
   anti_gaming_flag: { icon: ShieldWarning,  tint: 'var(--red)',    label: 'Anti-gaming' },
-  daily_reflection: { icon: Sparkle,        tint: 'var(--pink)',   label: 'Reflection' },
-  journal_entry:    { icon: FileText,       tint: 'var(--pink)',   label: 'Journal' },
+  daily_reflection: { icon: Sparkle,        tint: 'var(--amber)',   label: 'Reflection' },
+  journal_entry:    { icon: FileText,       tint: 'var(--amber)',   label: 'Journal' },
   trigger_entry:    { icon: Lightning,      tint: 'var(--amber)',  label: 'Trigger' },
-  strategy_created: { icon: BookOpen,       tint: 'var(--teal)',   label: 'Strategy' },
+  strategy_created: { icon: BookOpen,       tint: 'var(--amber)',   label: 'Strategy' },
 };
 
 const FILTERS: { type: string; label: string }[] = [

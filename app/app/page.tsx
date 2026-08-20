@@ -301,7 +301,9 @@ function AppContent() {
     setTeamMode(false);
   }, []);
 
-  // Filter trades by selected time range
+  // Filter trades by selected time range. Dashboard-only: the topbar range
+  // picker renders on the dashboard tab alone, so applying it to other tabs
+  // would filter them by a control the user cannot see or reset.
   const filteredTrades = filterTradesByTimeRange(trades, timeRange);
 
   // Last synced — use the most recent trade's timestamp as a proxy
@@ -466,7 +468,7 @@ function AppContent() {
           {activeTab === 'journal' && (
             <JournalTab
               initialSubTab={journalSubTab}
-              trades={filteredTrades}
+              trades={trades}
               strategies={strategies}
               addTrade={addTrade}
               updateTrade={updateTrade}
@@ -549,7 +551,7 @@ function AppContent() {
           )}
           {activeTab === 'leaderboard' && (
             canAccessTab('leaderboard') ? (
-              <Leaderboard trades={filteredTrades} />
+              <Leaderboard trades={trades} />
             ) : <UpgradePrompt requiredTier={getRequiredTier('leaderboard')} />
           )}
           {activeTab === 'tools' && (

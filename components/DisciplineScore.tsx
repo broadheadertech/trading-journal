@@ -17,9 +17,9 @@ interface Props {
 // Presentational only — maps a grade to an ATLAS token colour.
 const GRADE_TONE: Record<string, string> = {
   A: 'var(--green)',
-  B: 'var(--teal)',
+  B: 'var(--green)',
   C: 'var(--amber)',
-  D: 'var(--pink)',
+  D: 'var(--red)',
   F: 'var(--red)',
 };
 
@@ -125,12 +125,12 @@ export default function DisciplineScore({ trades, breakerEvents }: Props) {
 
           {/* Best Streak */}
           <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-            <span className="accent" style={{ background: 'var(--teal)' }} />
+            <span className="accent" style={{ background: 'var(--amber)' }} />
             <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               BEST STREAK
               <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Star size={13} /></span>
             </b>
-            <em style={{ color: 'var(--teal)' }}>{state.longestStreak}</em>
+            <em style={{ color: 'var(--amber)' }}>{state.longestStreak}</em>
             <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 4 }}>days</small>
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function DisciplineScore({ trades, breakerEvents }: Props) {
       {/* ── Recent Daily Grades ── */}
       {recentScores.length > 0 && (
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h4>Recent Discipline Grades</h4>

@@ -5,9 +5,9 @@ import { useSubscription } from '@/hooks/useSubscription';
 // Tier accent map — must stay in sync with components/TierBadge.tsx.
 const TIER_COLOR: Record<string, string> = {
   free: 'var(--muted-2)',
-  core: 'var(--teal)',
+  core: 'var(--amber)',
   pro: 'var(--amber)',
-  elite: 'var(--pink)',
+  elite: 'var(--amber)',
 };
 
 export default function SubscriptionBadge() {

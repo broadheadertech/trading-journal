@@ -11,10 +11,10 @@ const INDICATORS = [
 
 // Presentation-only: accent colour per tag, mirroring the ATLAS reference.
 const TAG_ACCENT: Record<string, string> = {
-  'Smart Money': '#2fd3c4',
+  'Smart Money': '#d99405',
   'Regime': '#d99405',
-  'Levels': '#2fd3c4',
-  'Momentum': '#ff3d87',
+  'Levels': '#d99405',
+  'Momentum': '#d99405',
   'Trend': '#d99405',
 };
 
@@ -31,7 +31,7 @@ export default function Indicators() {
 
       <div className="split-3">
         {INDICATORS.map((ind) => {
-          const accent = TAG_ACCENT[ind.tag] ?? '#2fd3c4';
+          const accent = TAG_ACCENT[ind.tag] ?? '#d99405';
           return (
             <div key={ind.name} className="ind">
               <span className="accent" style={{ background: accent }} />

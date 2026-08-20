@@ -34,10 +34,10 @@ export default function CoachEarningsPage() {
         <div className="stat">
           <span className="accent" style={{ background: 'var(--amber)' }} />
           <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><TrendingUp size={11} /> PENDING</b>
-          <em style={{ color: 'var(--amber)' }}>${pendingEarnings.toFixed(2)}</em>
+          <em style={{ color: 'var(--green)' }}>${pendingEarnings.toFixed(2)}</em>
         </div>
         <div className="stat">
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b style={{ display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={11} /> SESSIONS DONE</b>
           <em style={{ color: 'var(--text)' }}>{completed.length}</em>
         </div>

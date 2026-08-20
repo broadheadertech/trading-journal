@@ -18,10 +18,13 @@ const CATEGORY_LABELS: Record<BadgeCategory | 'all', string> = {
 };
 
 const TIER_TONE: Record<BadgeTier, string> = {
-  bronze: '#d99405',
+  // An ordered progression, so these need to stay distinguishable. Rendered
+  // from the surviving palette: dim amber reads as bronze, amber as gold, and
+  // near-white as platinum.
+  bronze: '#8a6a18',
   silver: '#9fb0c2',
-  gold: '#2fd3c4',
-  platinum: '#ff3d87',
+  gold: '#d99405',
+  platinum: '#edf2f7',
 };
 
 export default function Achievements({ trades, reflections }: Props) {

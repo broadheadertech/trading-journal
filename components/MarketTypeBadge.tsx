@@ -12,7 +12,7 @@ interface Props {
 // ATLAS accent per asset class (replaces the legacy Tailwind colorClass palette).
 const ACCENT: Record<MarketType, string> = {
   crypto: 'var(--amber)',
-  stocks: 'var(--teal)',
+  stocks: 'var(--amber)',
   forex: 'var(--green)',
   metals: '#f0a409',
   oil: 'var(--muted)',

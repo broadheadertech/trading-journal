@@ -335,15 +335,15 @@ function Row({ label, value, mono, valueClass }: { label: string; value: string;
 type EventStyle = { icon: typeof Activity; tint: string; label: string };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:             { icon: TrendUp,        tint: 'var(--teal)',   label: 'Trade logged' },
+  trade_logged:             { icon: TrendUp,        tint: 'var(--amber)',   label: 'Trade logged' },
   trade_closed:             { icon: TrendDown,      tint: 'var(--green)',  label: 'Trade closed' },
-  strategy_created:         { icon: BookOpen,       tint: 'var(--pink)',   label: 'Strategy' },
+  strategy_created:         { icon: BookOpen,       tint: 'var(--amber)',   label: 'Strategy' },
   checklist_created:        { icon: MapTrifold,     tint: 'var(--amber)',  label: 'Checklist' },
-  journal_entry:            { icon: FileText,       tint: 'var(--pink)',   label: 'Journal' },
+  journal_entry:            { icon: FileText,       tint: 'var(--amber)',   label: 'Journal' },
   monthly_goal:             { icon: Target,         tint: 'var(--amber)',  label: 'Goal' },
   trigger_entry:            { icon: Lightning,      tint: 'var(--amber)',  label: 'Trigger' },
-  daily_reflection:         { icon: Sparkle,        tint: 'var(--pink)',   label: 'Reflection' },
-  weekly_review:            { icon: Sparkle,        tint: 'var(--pink)',   label: 'Review' },
+  daily_reflection:         { icon: Sparkle,        tint: 'var(--amber)',   label: 'Reflection' },
+  weekly_review:            { icon: Sparkle,        tint: 'var(--amber)',   label: 'Review' },
   rule_break:               { icon: Warning,        tint: 'var(--red)',    label: 'Rule break' },
   circuit_breaker:          { icon: Warning,        tint: 'var(--red)',    label: 'Circuit breaker' },
   circuit_breaker_override: { icon: Warning,        tint: 'var(--amber)',  label: 'CB override' },
@@ -351,7 +351,7 @@ const EVENT_STYLES: Record<string, EventStyle> = {
   anti_gaming_flag:         { icon: ShieldWarning,  tint: 'var(--red)',    label: 'Anti-gaming' },
   subscription_created:     { icon: CreditCard,     tint: 'var(--green)',  label: 'Subscription' },
   subscription_change:      { icon: CreditCard,     tint: 'var(--green)',  label: 'Sub change' },
-  signup:                   { icon: UserIcon,       tint: 'var(--teal)',   label: 'Signup' },
+  signup:                   { icon: UserIcon,       tint: 'var(--amber)',   label: 'Signup' },
 };
 
 function styleFor(type: string): EventStyle {

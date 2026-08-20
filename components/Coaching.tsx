@@ -138,7 +138,7 @@ export default function Coaching() {
           <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
           <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
           <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-          <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)', color: '#00ffe8' }}>
+          <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)', color: '#00ffe8' }}>
             <Headphones size={24} />
           </span>
           <h4>No coaches available yet</h4>
@@ -432,8 +432,8 @@ export function MySessionsView({
 
 export function SessionRow({ session, onOpen }: { session: any; onOpen: () => void }) {
   const STATUS_COLORS: Record<string, string> = {
-    confirmed:   'var(--pink)',
-    in_progress: 'var(--teal)',
+    confirmed:   'var(--amber)',
+    in_progress: 'var(--amber)',
     completed:   'var(--green)',
     cancelled:   'var(--muted-2)',
     disputed:    'var(--red)',

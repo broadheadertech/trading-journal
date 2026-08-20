@@ -32,8 +32,8 @@ export default function NewsletterSignup() {
     return (
       <div className="news">
         <h5>NEWSLETTER</h5>
-        <p style={{ display: 'flex', alignItems: 'center', gap: '9px', color: 'var(--teal)' }}>
-          <svg width="13" height="10" viewBox="0 0 13 10" fill="none" aria-hidden="true"><path d="M0 5 L4.5 10 L13 0" stroke="#2fd3c4" strokeWidth="1.8" /></svg>
+        <p style={{ display: 'flex', alignItems: 'center', gap: '9px', color: 'var(--green)' }}>
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none" aria-hidden="true"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8" /></svg>
           You&apos;re in. Watch your inbox.
         </p>
       </div>

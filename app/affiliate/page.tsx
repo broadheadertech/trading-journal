@@ -54,9 +54,9 @@ export default function AffiliatePage() {
           <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '19px 0 0' }}>How it works</h2>
           <p className="lede-lg" style={{ marginTop: '16px' }}>Three steps from sign-up to your first payout.</p>
           <div className="howsteps">
-            <div className="howstep"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i><span className="n" style={{ color: 'var(--teal)' }}>STEP 1</span>
+            <div className="howstep"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i><span className="n" style={{ color: 'var(--amber)' }}>STEP 1</span>
               <h4>Get your link</h4><p>Sign up free, grab your unique referral link from the affiliate dashboard.</p></div>
-            <div className="howstep"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i><span className="n" style={{ color: 'var(--teal)' }}>STEP 2</span>
+            <div className="howstep"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i><span className="n" style={{ color: 'var(--amber)' }}>STEP 2</span>
               <h4>Share with traders</h4><p>Drop the link in Twitter, YouTube, Discord, blogs — anywhere traders gather.</p></div>
             <div className="howstep"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i><span className="n" style={{ color: 'var(--amber)' }}>STEP 3</span>
               <h4>Earn recurring</h4><p>Get paid every month they stay subscribed. Lifetime commissions, no caps.</p></div>
@@ -71,14 +71,14 @@ export default function AffiliatePage() {
           <p className="lede-lg" style={{ marginTop: '16px' }}>Earn more as you grow. Tiers unlock automatically.</p>
           <div className="tiers">
             <div className="tier">
-              <p className="lbl teal" style={{ margin: '0' }}>AFFILIATE</p>
+              <p className="lbl amber" style={{ margin: '0' }}>AFFILIATE</p>
               <div className="pct"><b>30%</b><span>/ referral / month</span></div>
               <p className="cond">Recurring, lifetime</p>
               <ul>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Personal referral link &amp; dashboard</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Real-time click &amp; conversion tracking</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Monthly payouts (PayPal / Wise / USDT)</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>$50 minimum payout</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Personal referral link &amp; dashboard</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Real-time click &amp; conversion tracking</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Monthly payouts (PayPal / Wise / USDT)</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>$50 minimum payout</span></li>
               </ul>
             </div>
             <div className="tier hot">
@@ -93,14 +93,14 @@ export default function AffiliatePage() {
               </ul>
             </div>
             <div className="tier">
-              <p className="lbl teal" style={{ margin: '0' }}>AMBASSADOR</p>
+              <p className="lbl amber" style={{ margin: '0' }}>AMBASSADOR</p>
               <div className="pct"><b>50%</b><span>/ referral / month</span></div>
               <p className="cond">By invitation</p>
               <ul>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Top-tier recurring commission</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Direct line to founding team</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Exclusive content &amp; early features</span></li>
-                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#2fd3c4" strokeWidth="1.6" /></svg><span>Revenue-share on enterprise deals</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Top-tier recurring commission</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Direct line to founding team</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Exclusive content &amp; early features</span></li>
+                <li><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.6" /></svg><span>Revenue-share on enterprise deals</span></li>
               </ul>
             </div>
           </div>

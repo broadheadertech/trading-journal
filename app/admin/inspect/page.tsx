@@ -256,7 +256,7 @@ export default function InspectPage() {
           {/* ── Stage History ────────────────────────────────────────── */}
           {brainState.stageHistory && brainState.stageHistory.length > 0 && (
             <div className="card" style={{ marginTop: 24 }}>
-              <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               <h3>Stage History</h3>
               <p className="sub">Every stage this user has occupied</p>
               <div style={{ marginTop: 18 }}>
@@ -280,7 +280,7 @@ export default function InspectPage() {
 
           {/* ── Score Event Timeline ──────────────────────────────────── */}
           <div className="card" style={{ marginTop: 24 }}>
-            <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
             <div className="cardhead">
               <div>
                 <h3>Score Events</h3>

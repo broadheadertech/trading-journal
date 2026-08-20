@@ -130,7 +130,7 @@ export default function AdminSettingsPage() {
 
       {/* Admin access info */}
       <section className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <h3>Admin Access</h3>
         <div className="warn" style={{ marginTop: 16 }}>
           <div>

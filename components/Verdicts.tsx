@@ -404,7 +404,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
     switch (p) {
       case 'P1 PRIORITY': return 'text-[var(--red)]';
       case 'P2 PRIORITY': return 'text-[var(--amber)]';
-      case 'P3 PRIORITY': return 'text-[var(--teal)]';
+      case 'P3 PRIORITY': return 'text-[var(--amber)]';
     }
   }
 
@@ -489,7 +489,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
             <small>Overlap-adjusted leak recovery estimate</small>
           </div>
           <div className="inset">
-            <span className="accent" style={{ background: 'var(--teal)' }} />
+            <span className="accent" style={{ background: 'var(--amber)' }} />
             <p className="lbl">PROJECTED NET AFTER FIXES</p>
             <em style={{ color: metrics.projectedNet >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.projectedNet)}</em>
             <small>Current net plus recoverable estimate</small>
@@ -555,14 +555,14 @@ export default function Verdicts({ trades }: VerdictsProps) {
 
           {/* Trades analyzed */}
           <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
-            <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--teal)' }} />
+            <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <TrendingUp size={13} style={{ color: 'var(--teal)' }} />
-              <p className="lbl" style={{ color: 'var(--teal)' }}>TRADES ANALYZED</p>
+              <TrendingUp size={13} style={{ color: 'var(--amber)' }} />
+              <p className="lbl" style={{ color: 'var(--amber)' }}>TRADES ANALYZED</p>
             </div>
             <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 8 }}>{assessed.length}</p>
             <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
-              Coverage <span style={{ color: 'var(--teal)', fontFamily: 'var(--mono)' }}>{metrics.coverage}%</span>
+              Coverage <span style={{ color: 'var(--amber)', fontFamily: 'var(--mono)' }}>{metrics.coverage}%</span>
             </p>
           </div>
         </div>
@@ -585,13 +585,13 @@ export default function Verdicts({ trades }: VerdictsProps) {
       <div ref={summaryRef} className="scroll-mt-4" style={{ marginTop: 24 }}>
           {/* The Big Picture */}
           <div className="card">
-            <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
             <div className="cardhead">
               <div>
                 <h3>The Big Picture</h3>
                 <p className="sub">Where the range landed, and where it could land after fixes</p>
               </div>
-              <Target size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+              <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12, alignItems: 'stretch', marginTop: 22 }}>
               {/* Current Net P&L */}
@@ -703,8 +703,8 @@ export default function Verdicts({ trades }: VerdictsProps) {
               </div>
               <p style={{ margin: '16px 0 0', fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)' }}>
                 Gross absolute signal impact: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(metrics.grossLeakImpact)}</span>.
-                {' '}Overlap-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--amber)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span>.
-                {' '}Uniqueness-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--teal)' }}>{formatCurrency(metrics.grossLeakImpact * 0.26)}</span>.
+                {' '}Overlap-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span>.
+                {' '}Uniqueness-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(metrics.grossLeakImpact * 0.26)}</span>.
               </p>
               <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)' }}>
                 Directional net signal: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(-metrics.grossLeakImpact)}</span>.
@@ -769,7 +769,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
 
             {/* Right: Impact details */}
             <div className="card">
-              <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               {diagnostics.length > 0 && diagnostics[selectedDiagnostic] ? (() => {
                 const d = diagnostics[selectedDiagnostic];
                 return (
@@ -956,15 +956,15 @@ export default function Verdicts({ trades }: VerdictsProps) {
       <div ref={coachNotesRef} className="scroll-mt-4" style={{ marginTop: 32 }}>
         <p className="lbl b10" style={{ marginBottom: 14 }}>COACH NOTES</p>
         <div className="card" style={{ padding: '34px 28px 30px', textAlign: 'center' }}>
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div
             style={{
               width: 52, height: 52, borderRadius: 3, margin: '0 auto 22px',
-              border: '1px solid rgba(47,211,196,.4)', background: 'var(--panel-2)',
+              border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
-            <Sparkles size={22} style={{ color: 'var(--teal)' }} />
+            <Sparkles size={22} style={{ color: 'var(--amber)' }} />
           </div>
           <h3 style={{ fontSize: 22, lineHeight: '24px' }}>You&apos;re Doing Better Than You Think</h3>
 
@@ -1010,7 +1010,7 @@ export default function Verdicts({ trades }: VerdictsProps) {
         </span>
         <span>
           Leak diagnostics: <span style={{ color: 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(-metrics.grossLeakImpact)}</span> &bull;
-          Overlap-adjusted: <span style={{ color: 'var(--amber)', fontFamily: 'var(--mono)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span> &bull;
+          Overlap-adjusted: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span> &bull;
           Conservative recoverable: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(metrics.conservativeRecoverable)}</span> &bull;
           Detected strengths: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(totalEdgeValue)}</span>
         </span>

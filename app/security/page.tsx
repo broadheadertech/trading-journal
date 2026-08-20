@@ -23,17 +23,17 @@ export default function SecurityPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '80px' }}>
         <div className="wrap">
           <div className="bounds">
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>Read-only account access</h4><p>Use read-only credentials wherever connectors require them. Atlas is designed for post-trade data retrieval only.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>No order execution path</h4><p>The platform is analytics software. It does not submit, modify, or cancel orders — there is no code path that could.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>Scoped data usage</h4><p>Imported payloads are used for normalization, analytics, and verdict generation only. Nothing else, nowhere else.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>Background task isolation</h4><p>Import, aggregate, and verdict computations run via service/task boundaries to reduce request-layer risk.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>Idempotent imports</h4><p>Deterministic hashes prevent duplicate trade creation during reruns and recovery. Re-importing the same file is always safe.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#2fd3c4" strokeWidth="1.2"/></svg>
+            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
               <h4>Operational visibility</h4><p>Import logs track statuses, sources, and errors to support incident response and reproducibility.</p></div>
           </div>
 
@@ -41,10 +41,10 @@ export default function SecurityPage() {
           <div className="setupcard">
             <p className="hd" style={{ margin: 0 }}>RECOMMENDED ACCOUNT SETUP</p>
             <ul>
-              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#2fd3c4" strokeWidth="1.8"/></svg>Create dedicated exchange API keys for analytics only</li>
-              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#2fd3c4" strokeWidth="1.8"/></svg>Disable trading and withdrawal permissions on those keys</li>
-              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#2fd3c4" strokeWidth="1.8"/></svg>Rotate keys when access policies or account ownership changes</li>
-              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#2fd3c4" strokeWidth="1.8"/></svg>Enable account-level MFA and exchange-side IP allowlists where available</li>
+              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8"/></svg>Create dedicated exchange API keys for analytics only</li>
+              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8"/></svg>Disable trading and withdrawal permissions on those keys</li>
+              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8"/></svg>Rotate keys when access policies or account ownership changes</li>
+              <li><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8"/></svg>Enable account-level MFA and exchange-side IP allowlists where available</li>
             </ul>
           </div>
         </div>

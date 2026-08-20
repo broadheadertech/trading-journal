@@ -50,7 +50,7 @@ export default function SignUpPage() {
             <Image src="/atlas-icon.svg" alt="" width={26} height={26} priority />
             <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '16px', letterSpacing: '.22em', color: 'var(--text)' }}>ATLAS</span>
           </Link>
-          <Link href="/sign-in" style={{ fontSize: '14px', color: 'var(--text-4)' }}>Sign in</Link>
+          <Link href="/sign-in" style={{ fontSize: '14px', color: 'var(--text-3)' }}>Sign in</Link>
         </div>
       </header>
 
@@ -66,7 +66,7 @@ export default function SignUpPage() {
             </p>
 
             <div className="card-solid" style={{ marginTop: '40px', padding: '28px 30px' }}>
-              <p style={{ margin: 0, fontFamily: 'var(--micro)', fontWeight: 700, fontSize: '10px', letterSpacing: '.06em', color: 'var(--teal)' }}>
+              <p style={{ margin: 0, fontFamily: 'var(--micro)', fontWeight: 700, fontSize: '10px', letterSpacing: '.06em', color: 'var(--amber)' }}>
                 DATA COLLECTION CONSENT
               </p>
               <p style={{ margin: '16px 0 0', fontSize: '13px', lineHeight: '21px', color: 'var(--atlas-muted)' }}>
@@ -87,7 +87,7 @@ export default function SignUpPage() {
                   onChange={(e) => setChecked(e.target.checked)}
                   style={{ marginTop: '3px', width: '15px', height: '15px', flex: 'none', accentColor: '#d99405', cursor: 'pointer' }}
                 />
-                <span style={{ fontSize: '13px', lineHeight: '21px', color: 'var(--text-4)' }}>
+                <span style={{ fontSize: '13px', lineHeight: '21px', color: 'var(--text-3)' }}>
                   I have read and agree to the{' '}
                   <Link href="/terms" style={{ color: 'var(--amber)' }} target="_blank">Terms of Service</Link>
                   {' '}and{' '}

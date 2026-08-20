@@ -292,7 +292,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, marginTop: 20 }}>
           <div className="inset">
             <p className="lbl">CURRENT REGIME</p>
-            <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, marginTop: 8, color: 'var(--teal)' }}>
+            <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, marginTop: 8, color: 'var(--amber)' }}>
               {m.currentRegime}
             </em>
             <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
@@ -323,9 +323,9 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
       {/* ── 4 Stat Cards ── */}
       <div className="stats">
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>CURRENT REGIME</b>
-          <em style={{ fontSize: 19, color: 'var(--teal)' }}>{m.currentRegime}</em>
+          <em style={{ fontSize: 19, color: 'var(--amber)' }}>{m.currentRegime}</em>
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
             <Globe size={10} style={{ display: 'inline', marginRight: 5 }} />{m.regimeStability}% confidence
           </small>
@@ -347,7 +347,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
           </small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>VOL CORRELATION</b>
           <em style={{ color: pnlColor(m.volCorrelation) }}>{m.volCorrelation >= 0 ? '+' : ''}{m.volCorrelation.toFixed(2)}</em>
           <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
@@ -358,7 +358,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
 
       {/* ── Regime Navigator ── */}
       <div className="card" style={{ marginTop: 32 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <h3>Regime Navigator</h3>
         <p className="sub">Click a regime to inspect isolated performance and context fit.</p>
 
@@ -408,7 +408,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                         height: 7,
                         borderRadius: 1,
                         flex: 'none',
-                        background: regime === 'Trending Up' ? 'var(--green)' : regime === 'Trending Down' ? 'var(--red)' : 'var(--teal)',
+                        background: regime === 'Trending Up' ? 'var(--green)' : regime === 'Trending Down' ? 'var(--red)' : 'var(--amber)',
                       }}
                     />
                     <span style={{ fontSize: 12.5, color: 'var(--text)' }}>{regime}</span>
@@ -457,7 +457,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
               {m.closed.length > 0 && (['Trending Up', 'Trending Down', 'Ranging'] as Regime[]).map(r => {
                 const pct = (m.regimeCounts[r].trades.length / m.closed.length) * 100;
                 if (pct === 0) return null;
-                return <div key={r} className="h-full" style={{ width: `${pct}%`, backgroundColor: r === 'Trending Up' ? '#24c88a' : r === 'Trending Down' ? '#ff4d5e' : '#2fd3c4' }} />;
+                return <div key={r} className="h-full" style={{ width: `${pct}%`, backgroundColor: r === 'Trending Up' ? '#24c88a' : r === 'Trending Down' ? '#ff4d5e' : '#d99405' }} />;
               })}
             </div>
 
@@ -561,7 +561,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
       {/* ── Context Correlations + Action Blueprint ── */}
       <div className="split" style={{ marginTop: 32 }}>
         <div className="card">
-          <span className="accent" style={{ width: 48, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Context Correlations</h3>
@@ -587,7 +587,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                 <div style={{ height: 2, background: 'var(--rail)', position: 'relative', marginTop: 12 }}>
                   <div
                     className="transition-all"
-                    style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${Math.abs(c.value) * 100}%`, background: 'var(--pink)' }}
+                    style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${Math.abs(c.value) * 100}%`, background: 'var(--amber)' }}
                   />
                 </div>
               </div>
@@ -624,7 +624,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
       {/* ── Weekday Bias Map + High-Impact Days ── */}
       <div className="split" style={{ marginTop: 32 }}>
         <div className="card">
-          <span className="accent" style={{ width: 48, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Weekday Bias Map</h3>
@@ -661,7 +661,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
         </div>
 
         <div className="card">
-          <span className="accent" style={{ width: 48, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>High-Impact Days</h3>
@@ -693,8 +693,8 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                           style={{
                             display: 'inline-flex', alignItems: 'center', height: 20, padding: '0 10px', borderRadius: 2,
                             fontWeight: 700, fontSize: 9.5, letterSpacing: '.03em',
-                            border: `1px solid ${d.verdict === 'Edge' ? 'var(--green)' : 'var(--pink)'}`,
-                            color: d.verdict === 'Edge' ? 'var(--green)' : 'var(--pink)',
+                            border: `1px solid ${d.verdict === 'Edge' ? 'var(--green)' : 'var(--red)'}`,
+                            color: d.verdict === 'Edge' ? 'var(--green)' : 'var(--red)',
                           }}
                         >
                           {d.verdict.toUpperCase()}

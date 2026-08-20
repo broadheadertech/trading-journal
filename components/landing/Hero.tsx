@@ -103,10 +103,10 @@ export default function Hero() {
           <Link className="btn btn-ghost" href="/demo">Watch Free Training</Link>
         </div>
         <div className="hero-checks">
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#2fd3c4" strokeWidth="1.8" strokeLinecap="round" /></svg>Daily Live Market Analysis</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#2fd3c4" strokeWidth="1.8" strokeLinecap="round" /></svg>Trade Journal &amp; Analytics</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#2fd3c4" strokeWidth="1.8" strokeLinecap="round" /></svg>Funded Trader Roadmap</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#2fd3c4" strokeWidth="1.8" strokeLinecap="round" /></svg>Global Trading Community</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Daily Live Market Analysis</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Trade Journal &amp; Analytics</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Funded Trader Roadmap</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Global Trading Community</div>
         </div>
         <div className="hero-badge"><b>128,326+</b><span>TRADERS WORLDWIDE</span></div>
         <div className="hero-map"><HeroMapSvg /></div>

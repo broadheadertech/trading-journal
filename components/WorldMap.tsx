@@ -57,9 +57,9 @@ const LAYERS: LayerDef[] = [
   { id: 'financialCenters', label: 'Financial Centers',  icon: Building2,  color: '#f59e0b', defaultOn: true },
   { id: 'centralBanks',     label: 'Central Banks',      icon: Banknote,   color: '#3b82f6', defaultOn: true },
   { id: 'commodityHubs',    label: 'Commodity Hubs',     icon: Coins,      color: '#a855f7', defaultOn: false },
-  { id: 'gccInvestments',   label: 'GCC Investments',    icon: DollarSign, color: '#ff3d87', defaultOn: false },
+  { id: 'gccInvestments',   label: 'GCC Investments',    icon: DollarSign, color: '#d99405', defaultOn: false },
   { id: 'tradeRoutes',      label: 'Trade Routes',       icon: Anchor,     color: '#06b6d4', defaultOn: true },
-  { id: 'underseaCables',   label: 'Undersea Cables',    icon: Cable,      color: '#2fd3c4', defaultOn: true },
+  { id: 'underseaCables',   label: 'Undersea Cables',    icon: Cable,      color: '#d99405', defaultOn: true },
   { id: 'pipelines',        label: 'Pipelines',          icon: Pipette,    color: '#d99405', defaultOn: true },
 ];
 
@@ -322,8 +322,8 @@ export default function WorldMap() {
                 height: 14,
                 flex: 'none',
                 borderRadius: 2,
-                border: `1px solid ${showCountryNames ? '#ff3d87' : 'var(--line-2)'}`,
-                background: showCountryNames ? '#ff3d87' : 'transparent',
+                border: `1px solid ${showCountryNames ? '#d99405' : 'var(--line-2)'}`,
+                background: showCountryNames ? '#d99405' : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -334,7 +334,7 @@ export default function WorldMap() {
             >
               {showCountryNames ? '✓' : ''}
             </span>
-            <Type size={12} color="#ff3d87" style={{ flex: 'none' }} />
+            <Type size={12} color="#d99405" style={{ flex: 'none' }} />
             <span style={{ fontSize: 12, color: showCountryNames ? '#c0ccda' : 'var(--muted-4)' }}>Country names</span>
             <input type="checkbox" checked={showCountryNames} onChange={() => setShowCountryNames(s => !s)} style={{ display: 'none' }} />
           </label>

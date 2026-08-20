@@ -696,7 +696,7 @@ export default function TradeForm({
                     onClick={() => setExitEmotion(exitEmotion === opt.value ? null : opt.value as EmotionState)}
                     className="chip"
                     style={exitEmotion === opt.value
-                      ? { height: 30, borderColor: 'var(--teal)', color: 'var(--teal)', fontWeight: 700 }
+                      ? { height: 30, borderColor: 'var(--amber)', color: 'var(--amber)', fontWeight: 700 }
                       : { height: 30 }}
                   >
                     <span aria-hidden>{opt.emoji}</span> {opt.label}

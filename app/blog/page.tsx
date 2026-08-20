@@ -37,7 +37,7 @@ function ReadArrow() {
 }
 
 function ArticleCard({ article, idx }: { article: BlogArticle; idx: number }) {
-  const c = idx === 0 ? '#d99405' : '#2fd3c4';
+  const c = idx === 0 ? '#d99405' : '#8a6a18';
   const d = SPARK[idx % SPARK.length];
   const cat = article.category.toUpperCase();
   return (
@@ -150,8 +150,8 @@ export default function BlogPage() {
                       style={{ position: 'absolute', left: '18px', top: '28px', width: '104px', height: i === 2 ? '64px' : '104px' }}
                       fill="none"
                     >
-                      <path d={`${SIDE_PATHS[i]} ${i === 2 ? 'L104 64 L0 64 Z' : 'L104 104 L0 104 Z'}`} fill="#2fd3c4" fillOpacity=".12" />
-                      <path d={SIDE_PATHS[i]} stroke="#2fd3c4" strokeWidth="1.8" />
+                      <path d={`${SIDE_PATHS[i]} ${i === 2 ? 'L104 64 L0 64 Z' : 'L104 104 L0 104 Z'}`} fill="#d99405" fillOpacity=".12" />
+                      <path d={SIDE_PATHS[i]} stroke="#d99405" strokeWidth="1.8" />
                     </svg>
                   </div>
                   <div><b>{a.category.toUpperCase()}</b><h4>{a.title}</h4><span>5 min read</span></div>

@@ -146,7 +146,7 @@ export default function CooldownOverlay({ expiresAt, breakerType, reason, onExpi
       {/* Breathing Exercise */}
       <div className="card" style={{ padding: '19px 28px 28px' }}>
         <div className="cardhead" style={{ alignItems: 'center', gap: 10, justifyContent: 'center' }}>
-          <Wind size={14} style={{ color: 'var(--teal)' }} />
+          <Wind size={14} style={{ color: 'var(--amber)' }} />
           <h4>Breathing Exercise</h4>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, marginTop: 26 }}>
@@ -155,13 +155,13 @@ export default function CooldownOverlay({ expiresAt, breakerType, reason, onExpi
               width: 76,
               height: 76,
               borderRadius: 3,
-              background: 'rgba(47,211,196,.10)',
-              border: '1px solid var(--teal)',
+              background: 'rgba(217,148,5,.10)',
+              border: '1px solid var(--amber)',
               transition: 'transform 4000ms ease-in-out',
               transform: `scale(${currentBreath.scale})`,
             }}
           />
-          <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, color: 'var(--teal)' }}>
+          <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, color: 'var(--amber)' }}>
             {currentBreath.label}
           </span>
           <p style={{ margin: 0, fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)', textAlign: 'center' }}>

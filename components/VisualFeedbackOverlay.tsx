@@ -11,7 +11,6 @@ import { EMOTION_OPTIONS } from '@/lib/utils';
    render outside the `.atlas-dash` scope. All ATLAS values are inlined.       */
 const T = {
   amber: '#d99405',
-  teal: '#2fd3c4',
   green: '#24c88a',
   red: '#ff4d5e',
   ink: '#0a0a0a',

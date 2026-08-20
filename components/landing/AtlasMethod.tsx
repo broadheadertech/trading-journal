@@ -10,11 +10,11 @@ export default function AtlasMethod() {
           <div className="steps">
             <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
               <h4>Learn</h4><p>Master trading from beginner to advanced.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i>
+            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
               <h4>Execute</h4><p>Apply proven market structure concepts.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i>
+            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
               <h4>Analyze</h4><p>Review every trade with data.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--teal)' }}></i><i className="dot" style={{ background: 'var(--teal)' }}></i>
+            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
               <h4>Improve</h4><p>Refine your process continuously.</p></div>
             <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
               <h4>Scale</h4><p>Pass funding challenges and grow capital.</p></div>

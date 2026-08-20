@@ -12,7 +12,7 @@ type Analyst = {
   signals: number; trades: number; avgR: number; followers: number; isFollowing: boolean;
 };
 
-const ACCENTS = ['var(--teal)', 'var(--pink)', 'var(--amber)', 'var(--green)'];
+const ACCENTS = ['var(--amber)', 'var(--amber)', 'var(--amber)', 'var(--green)'];
 
 function rateColor(rate: number) {
   if (rate >= 60) return 'var(--green)';

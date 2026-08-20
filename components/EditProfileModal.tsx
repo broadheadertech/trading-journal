@@ -164,7 +164,7 @@ export default function EditProfileModal({
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, width: '100%', textAlign: 'left', padding: '13px 16px' }}
           >
             <span style={{ display: 'flex', alignItems: 'flex-start', gap: 10, minWidth: 0 }}>
-              <ChartBar size={15} style={{ color: shareStats ? 'var(--teal)' : 'var(--muted-2)', flex: 'none', marginTop: 2 }} />
+              <ChartBar size={15} style={{ color: shareStats ? 'var(--amber)' : 'var(--muted-2)', flex: 'none', marginTop: 2 }} />
               <span style={{ minWidth: 0 }}>
                 <span style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>Share overall stats publicly</span>
                 <span style={{ display: 'block', marginTop: 5, fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>

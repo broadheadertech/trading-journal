@@ -82,7 +82,7 @@ export default function Rewards() {
             { icon: Monitor,    label: 'Complete a course',      reward: '+3 raffle tickets' },
           ].map(({ icon: Icon, label, reward }) => (
             <div key={label}>
-              <Icon size={16} style={{ color: 'var(--teal)', flex: 'none' }} />
+              <Icon size={16} style={{ color: 'var(--amber)', flex: 'none' }} />
               {label}
               <b>{reward}</b>
             </div>

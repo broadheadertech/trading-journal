@@ -136,7 +136,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
       <div className="split" style={{ marginTop: 24 }}>
         {/* Seats */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="flex items-center gap-2">
             <Users size={15} style={{ color: 'var(--muted-3)' }} />
             <h3>Seats</h3>
@@ -153,7 +153,7 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
 
         {/* Role Distribution */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="flex items-center gap-2">
             <ShieldCheck size={15} style={{ color: 'var(--muted-3)' }} />
             <h3>Role Distribution</h3>

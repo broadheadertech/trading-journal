@@ -32,7 +32,7 @@ interface TeamOverviewProps {
 function StatCard({ label, value, icon, color, accent }: { label: string; value: string | number; icon: React.ReactNode; color?: string; accent?: string }) {
   return (
     <div className="stat" style={{ height: 'auto', paddingBottom: 20 }}>
-      <span className="accent" style={{ background: accent ?? 'var(--teal)' }} />
+      <span className="accent" style={{ background: accent ?? 'var(--amber)' }} />
       <div className="flex items-start justify-between">
         <b>{label}</b>
         <span style={{ color: color ?? 'var(--muted-3)' }}>{icon}</span>
@@ -136,7 +136,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
 
       {/* Top stat cards */}
       <div className="stats" style={{ marginTop: 0 }}>
-        <StatCard label="ACTIVE STUDENTS" value={stats.activeStudents} icon={<Users size={16} />} accent="var(--teal)" />
+        <StatCard label="ACTIVE STUDENTS" value={stats.activeStudents} icon={<Users size={16} />} accent="var(--amber)" />
         <StatCard
           label="TEAM NET P&L"
           value={`${stats.totalPnL < 0 ? '-' : ''}$${Math.abs(stats.totalPnL).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
@@ -156,7 +156,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
           value={stats.riskAlerts}
           icon={<Warning size={16} />}
           color={stats.riskAlerts > 0 ? 'var(--red)' : 'var(--muted)'}
-          accent="var(--pink)"
+          accent="var(--amber)"
         />
       </div>
 
@@ -188,7 +188,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
 
         {/* Student Risk Map */}
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Student Risk Map</h3>
@@ -262,7 +262,7 @@ export default function TeamOverview({ memberStats, activityFeed, timeRange }: T
 
         {/* Activity Feed */}
         <div className="lg:col-span-2 card">
-          <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Activity Feed</h3>

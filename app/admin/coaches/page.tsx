@@ -154,7 +154,7 @@ export default function AdminCoachesPage() {
 
       {/* Sessions */}
       <section className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
             <h3>All sessions</h3>
@@ -168,7 +168,7 @@ export default function AdminCoachesPage() {
           <div style={{ marginTop: 18 }}>
             {sessions.map((s: any) => (
               <div key={s.id} className="mrow">
-                <Headphones size={14} className="ic" style={{ color: 'var(--teal)' }} />
+                <Headphones size={14} className="ic" style={{ color: 'var(--amber)' }} />
                 <div className="lb" style={{ marginLeft: 16 }}>
                   <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>{s.clientName}</p>
                   <p style={{ margin: '3px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>

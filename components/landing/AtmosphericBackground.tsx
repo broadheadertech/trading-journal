@@ -48,7 +48,7 @@ export default function AtmosphericBackground({ variant = 'subtle' }: { variant?
       {/* 4. Three soft color blobs */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className={`absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-[#d99405] ${isHero ? 'opacity-[0.06]' : 'opacity-[0.025]'} rounded-full blur-[140px]`} />
-        <div className={`absolute top-1/4 right-1/3 w-[420px] h-[360px] bg-cyan-400 ${isHero ? 'opacity-[0.05]' : 'opacity-[0.022]'} rounded-full blur-[130px]`} />
+        <div className={`absolute top-1/4 right-1/3 w-[420px] h-[360px] bg-[#8a6a18] ${isHero ? 'opacity-[0.05]' : 'opacity-[0.022]'} rounded-full blur-[130px]`} />
         <div className={`absolute bottom-0 right-1/4 w-[400px] h-[350px] bg-emerald-400 ${isHero ? 'opacity-[0.04]' : 'opacity-[0.018]'} rounded-full blur-[120px]`} />
       </div>
     </>

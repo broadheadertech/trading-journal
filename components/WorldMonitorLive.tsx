@@ -136,7 +136,7 @@ export default function WorldMonitorLive() {
       {data && (
         <>
           {/* Indices */}
-          <Section title="MAJOR INDICES" icon={<TrendingUp size={13} color="#2fd3c4" />}>
+          <Section title="MAJOR INDICES" icon={<TrendingUp size={13} color="#d99405" />}>
             <div className="tickgrid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(150px,1fr))' }}>
               {data.indices.map(q => <Tile key={q.symbol} q={q} />)}
             </div>
@@ -150,7 +150,7 @@ export default function WorldMonitorLive() {
           </Section>
 
           {/* Crypto */}
-          <Section title="CRYPTO" icon={<Bitcoin size={13} color="#ff3d87" />}>
+          <Section title="CRYPTO" icon={<Bitcoin size={13} color="#d99405" />}>
             <div className="tickgrid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))' }}>
               {data.crypto.map(q => <Tile key={q.symbol} q={q} />)}
             </div>
@@ -158,7 +158,7 @@ export default function WorldMonitorLive() {
 
           {/* World News */}
           {data.news && data.news.length > 0 && (
-            <Section title="TOP HEADLINES" icon={<Newspaper size={13} color="#2fd3c4" />}>
+            <Section title="TOP HEADLINES" icon={<Newspaper size={13} color="#d99405" />}>
               <div className="card" style={{ padding: '6px 22px 10px' }}>
                 {data.news.map((n, i) => (
                   <div
@@ -189,7 +189,7 @@ export default function WorldMonitorLive() {
                             style={{
                               height: 18,
                               padding: '0 9px',
-                              border: '1px solid rgba(255,61,135,.45)',
+                              border: '1px solid rgba(217,148,5,.45)',
                               borderRadius: 2,
                               background: 'var(--panel-2)',
                               display: 'inline-flex',
@@ -198,7 +198,7 @@ export default function WorldMonitorLive() {
                               fontSize: 9,
                               letterSpacing: '.04em',
                               textTransform: 'uppercase',
-                              color: '#ff3d87',
+                              color: '#d99405',
                             }}
                           >
                             {n.flair}

@@ -61,11 +61,11 @@ function CheckoutSuccessInner() {
   return (
     <div className="atlas-site" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 20px' }}>
       <div className="card-solid" style={{ width: '100%', maxWidth: '480px', padding: '38px 36px', textAlign: 'center', position: 'relative' }}>
-        <span style={{ position: 'absolute', left: 0, top: '-1px', width: '120px', height: '2px', background: isPaidActive ? 'var(--teal)' : 'var(--amber)' }} />
+        <span style={{ position: 'absolute', left: 0, top: '-1px', width: '120px', height: '2px', background: isPaidActive ? 'var(--green)' : 'var(--amber)' }} />
         {isPaidActive ? (
           <>
-            <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(47,211,196,.35)', borderRadius: '3px', background: 'rgba(47,211,196,.08)' }}>
-              <CheckCircle size={24} style={{ color: 'var(--teal)' }} />
+            <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(36,200,138,.35)', borderRadius: '3px', background: 'rgba(36,200,138,.08)' }}>
+              <CheckCircle size={24} style={{ color: 'var(--green)' }} />
             </div>
             <p className="eyebrow" style={{ margin: '0 0 12px' }}>PAYMENT CONFIRMED</p>
             <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>You&rsquo;re in.</h1>

@@ -98,7 +98,7 @@ export default function TeamReports({ workspaceId, memberStats }: TeamReportsPro
 
       {/* Generate form */}
       <div className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <h3>Generate Report</h3>
         <p className="sub">Pick a type, range and cohort scope</p>
         <div className="flex items-end gap-4 flex-wrap" style={{ marginTop: 20 }}>

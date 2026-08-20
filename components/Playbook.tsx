@@ -488,7 +488,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>engine armed</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--teal)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>COMPLIANCE</b>
           <em style={{ color: metrics.compliance >= 80 ? 'var(--green)' : metrics.compliance >= 60 ? 'var(--amber)' : 'var(--red)' }}>{metrics.compliance}%</em>
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{metrics.violations} violations</small>
@@ -500,7 +500,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{metrics.total} trades</small>
         </div>
         <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
-          <span className="accent" style={{ background: 'var(--pink)' }} />
+          <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>RECOVERABLE IN RANGE</b>
           <em style={{ color: 'var(--green)' }}>{formatCurrency(metrics.recoverable)}</em>
           <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>selected period</small>
@@ -525,13 +525,13 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
         </div>
         <div className="card">
-          <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           <div className="cardhead">
             <div>
               <h3>Advices</h3>
               <p className="sub">Operating guidance for this cycle</p>
             </div>
-            <Sparkle size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+            <Sparkle size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
           <div className="klist num">
             {['Execute active rule set for 5-7 sessions before changing plan.', 'Keep compliance above 80% so rule impact compounds.', 'Review results and adjust rules and rule sets.'].map((tip, i) => (
@@ -603,9 +603,9 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     const compliancePct = ss?.compliance ?? 100;
                     const violationCount = sTrades.filter(t => t.ruleChecklist.some(r => r.compliance === 'no')).length;
                     const progressLabel = compliancePct >= 80 ? 'STRONG' : compliancePct >= 50 ? 'BUILDING' : 'WEAK';
-                    const progressColor = compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--pink)' : 'var(--red)';
+                    const progressColor = compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--amber)' : 'var(--red)';
                     const level = totalRules >= 5 ? 'ADVANCED' : totalRules >= 3 ? 'STARTER' : 'BASIC';
-                    const levelColor = level === 'ADVANCED' ? 'var(--teal)' : level === 'STARTER' ? 'var(--pink)' : 'var(--amber)';
+                    const levelColor = level === 'ADVANCED' ? 'var(--amber)' : level === 'STARTER' ? 'var(--text-2)' : 'var(--muted)';
                     // Leak / capture calculation
                     const poorLosses = sTrades.filter(t => t.verdict === 'Poorly Executed' && (t.actualPnL ?? 0) < 0);
                     const estLeak = poorLosses.reduce((s, t) => s + Math.abs(t.actualPnL ?? 0), 0);
@@ -738,7 +738,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           <div style={{ marginTop: 14 }}>
                             {ruleBreakdown.map((rb, i) => {
                               const status = rb.compliance >= 80 ? 'ON TRACK' : rb.compliance >= 50 ? 'BUILDING' : 'AT RISK';
-                              const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--pink)' : 'var(--red)';
+                              const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--amber)' : 'var(--red)';
                               return (
                                 <div key={i} className="mrow">
                                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
@@ -794,7 +794,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 20 }}>
                   {strategies.map(strategy => {
                     const level = strategy.rules.length >= 5 ? 'ADVANCED' : strategy.rules.length >= 3 ? 'INTERMEDIATE' : 'BEGINNER';
-                    const levelColor = level === 'ADVANCED' ? 'var(--pink)' : level === 'INTERMEDIATE' ? 'var(--teal)' : 'var(--green)';
+                    const levelColor = level === 'ADVANCED' ? 'var(--amber)' : level === 'INTERMEDIATE' ? 'var(--amber)' : 'var(--green)';
                     const isActive = activatedIds.has(strategy.id);
                     return (
                       <div key={strategy.id} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
@@ -851,13 +851,13 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           {/* â•â•â•â•â•â•â•â•â•â• RULES LIBRARY â•â•â•â•â•â•â•â•â•â• */}
           <div ref={rulesLibraryRef} className="scroll-mt-4">
             <div className="card">
-              <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               <div className="cardhead">
                 <div>
                   <h3>Rules Library</h3>
                   <p className="sub">Create, tune, and manage guardrails for this account.</p>
                 </div>
-                <Target size={16} style={{ marginLeft: 'auto', color: 'var(--teal)' }} />
+                <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
               </div>
 
               {/* Category filter */}
@@ -901,13 +901,13 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
             {/* Behavior Targets */}
             <div className="card" style={{ marginTop: 24 }}>
-              <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               <div className="cardhead">
                 <div>
                   <h3>Behavior Targets</h3>
                   <p className="sub">Tracking your key discipline metrics</p>
                 </div>
-                <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--pink)' }} />
+                <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, marginTop: 22 }}>
                 {[
@@ -962,7 +962,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   </p>
                 </div>
                 <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
-                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--teal)' }} />
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
                   <p className="lbl">SESSION TARGET</p>
                   <p style={{ margin: '10px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                     Run 5-7 sessions with current rule set before making adjustments. Track compliance daily.
@@ -1017,7 +1017,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{metrics.compliance}%</p>
                 </div>
                 <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
-                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--teal)' }} />
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <p className="lbl">BEST WEEK</p>
                     <CheckCircle size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
@@ -1112,9 +1112,9 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* Active Rule Health */}
           <div className="card" style={{ padding: '19px 22px 20px' }}>
-            <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <Shield size={14} style={{ color: 'var(--teal)' }} />
+              <Shield size={14} style={{ color: 'var(--amber)' }} />
               <h4>Active Rule Health</h4>
             </div>
             <p className="lbl" style={{ marginTop: 10 }}>SORTED BY HIGHEST IMPACT FIRST</p>
@@ -1174,9 +1174,9 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* Symbol Focus */}
           <div className="card" style={{ padding: '19px 22px 20px' }}>
-            <span className="accent" style={{ width: 44, background: 'var(--pink)' }} />
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <Sparkle size={14} style={{ color: 'var(--pink)' }} />
+              <Sparkle size={14} style={{ color: 'var(--amber)' }} />
               <h4>Symbol Focus</h4>
             </div>
             {metrics.symbolFocus.length > 0 ? (
@@ -1289,7 +1289,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   {(['Behavior', 'Discipline', 'Performance'] as RuleComposerCategory[]).map(cat => (
                     <button key={cat} onClick={() => { setRcCategory(cat); setRcRuleType(''); }}
                       className="inset" style={{ textAlign: 'left', padding: '13px 16px', borderColor: rcCategory === cat ? 'var(--amber)' : 'var(--line)' }}>
-                      {cat === 'Behavior' ? <Target size={15} style={{ color: 'var(--teal)' }} /> :
+                      {cat === 'Behavior' ? <Target size={15} style={{ color: 'var(--amber)' }} /> :
                        cat === 'Discipline' ? <Shield size={15} style={{ color: 'var(--amber)' }} /> :
                        <ChartBar size={15} style={{ color: 'var(--green)' }} />}
                       <p style={{ margin: '10px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{cat}</p>
@@ -1543,8 +1543,8 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
               {/* Step 2: Build Strategy Steps */}
               <div className="card" style={{ padding: '19px 22px 20px' }}>
-                <span className="accent" style={{ width: 44, background: 'var(--pink)' }} />
-                <p className="lbl b10" style={{ color: 'var(--pink)', marginBottom: 16 }}>STEP 2 &middot; BUILD STRATEGY STEPS</p>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10" style={{ color: 'var(--amber)', marginBottom: 16 }}>STEP 2 &middot; BUILD STRATEGY STEPS</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                   <p className="lbl">ORDERED EXECUTION LIST</p>
                   <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--amber)' }}>{scSteps.length} STEP{scSteps.length !== 1 ? 'S' : ''}</span>
@@ -1587,7 +1587,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             <div className="lg:col-span-2 space-y-4">
               {/* Strategy Sequence Preview */}
               <div className="card" style={{ padding: '19px 22px 20px' }}>
-                <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
                 <p className="lbl b10">STRATEGY SEQUENCE PREVIEW</p>
                 {scSteps.length === 0 ? (
                   <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No steps added yet. Type a step and click Add.</p>
@@ -1673,7 +1673,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{strategy.name}</p>
-                              <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--pink)' }}>RULESET</span>
+                              <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--amber)' }}>RULESET</span>
                               {selected && <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)' }}>ACTIVE</span>}
                               {!selected && <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--muted-2)' }}>SAVED</span>}
                             </div>
@@ -1710,15 +1710,15 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
               {/* Global Priority */}
               <div className="card" style={{ padding: '19px 22px 20px' }}>
-                <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
                 <p className="lbl b10">GLOBAL PRIORITY</p>
                 <div className="flex gap-1.5" style={{ marginTop: 12, marginBottom: 14 }}>
                   {(['High', 'Medium', 'Low'] as ActivationPriority[]).map(p => (
                     <button key={p} onClick={() => setAmPriority(p)}
                       className="chip" style={{
                         flex: 1, justifyContent: 'center', height: 30, padding: '0 8px', fontSize: 10.5, fontWeight: 700,
-                        borderColor: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--teal)') : 'var(--line)',
-                        color: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--teal)') : 'var(--muted-2)',
+                        borderColor: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--muted)') : 'var(--line)',
+                        color: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--muted)') : 'var(--muted-2)',
                       }}>{p} priority</button>
                   ))}
                 </div>
@@ -1801,7 +1801,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
               {/* Progress bar */}
               <div style={{ height: 2, margin: '20px 0 24px', background: 'var(--rail)', position: 'relative' }}>
-                <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${compliancePct}%`, background: compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--pink)' : 'var(--red)' }} />
+                <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${compliancePct}%`, background: compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--amber)' : 'var(--red)' }} />
               </div>
 
               {/* 4 Stat Cards */}
@@ -1812,7 +1812,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <em style={{ color: 'var(--text)' }}>{compliancePct}%</em>
                 </div>
                 <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
-                  <span className="accent" style={{ background: 'var(--teal)' }} />
+                  <span className="accent" style={{ background: 'var(--amber)' }} />
                   <b>RULES MET</b>
                   <em style={{ color: 'var(--text)' }}>{metRules}/{totalRules}</em>
                 </div>
@@ -1841,7 +1841,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
               {/* Tracking Start */}
               <div className="card" style={{ padding: '19px 22px 20px', marginBottom: 24 }}>
-                <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
                 <p className="lbl b10">TRACKING START</p>
                 <div className="flex items-center gap-3" style={{ marginTop: 12, flexWrap: 'wrap' }}>
                   <input type="datetime-local" defaultValue={format(new Date(strategy.createdAt), "yyyy-MM-dd'T'HH:mm")} className="box" />
@@ -1859,7 +1859,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
                     {ruleBreakdown.map((rb, i) => {
                       const status = rb.compliance >= 80 ? 'ON TRACK' : rb.compliance >= 50 ? 'BUILDING' : 'AT RISK';
-                      const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--pink)' : 'var(--red)';
+                      const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--amber)' : 'var(--red)';
                       return (
                         <div key={i} className="inset" style={{ position: 'relative', padding: '13px 16px' }}>
                           <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: statusColor }} />

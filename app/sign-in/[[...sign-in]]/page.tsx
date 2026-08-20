@@ -44,7 +44,7 @@ export default function SignInPage() {
             <Image src="/atlas-icon.svg" alt="" width={26} height={26} priority />
             <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '16px', letterSpacing: '.22em', color: 'var(--text)' }}>ATLAS</span>
           </Link>
-          <Link href="/sign-up" style={{ fontSize: '14px', color: 'var(--text-4)' }}>Create an account</Link>
+          <Link href="/sign-up" style={{ fontSize: '14px', color: 'var(--text-3)' }}>Create an account</Link>
         </div>
       </header>
 

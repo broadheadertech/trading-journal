@@ -116,7 +116,7 @@ function PosterRow({ item, verb }: { item: FeedItem; verb: string }) {
           <div
             style={{
               width: 30, height: 30, borderRadius: 3, background: '#0f1620',
-              border: '1px solid var(--pink)', color: 'var(--pink)',
+              border: '1px solid var(--amber)', color: 'var(--amber)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12,
             }}
@@ -156,7 +156,7 @@ function FeedCard({ item }: { item: FeedItem }) {
     const entry = item.entryHigh !== item.entryLow ? `${item.entryLow}–${item.entryHigh}` : `${item.entryLow}`;
     return (
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div style={{ padding: '20px 22px 22px' }}>
           <PosterRow item={item} verb="posted a signal" />
 
@@ -171,7 +171,7 @@ function FeedCard({ item }: { item: FeedItem }) {
           {/* Embedded signal ticket */}
           <div className="inset" style={{ marginTop: 16, padding: '14px 16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <Radio size={14} color="#ff3d87" />
+              <Radio size={14} color="#d99405" />
               <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 15, color: 'var(--text)' }}>{item.symbol}</span>
               <span
                 className="chip"
@@ -189,7 +189,7 @@ function FeedCard({ item }: { item: FeedItem }) {
               >
                 {item.status}
               </span>
-              <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--pink)' }}>
+              <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--amber)' }}>
                 R:R {(item.rrRatio ?? 0).toFixed(1)}
               </span>
             </div>
@@ -242,10 +242,10 @@ function FeedCard({ item }: { item: FeedItem }) {
   // article
   return (
     <Link href={`/blog/${item.slug}`} className="card" style={{ display: 'block', padding: '20px 22px 22px' }}>
-      <span className="accent" style={{ width: 56, background: 'var(--teal)' }} />
+      <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
       <PosterRow item={item} verb="published a post" />
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-        <BookOpen size={14} color="#2fd3c4" style={{ flex: 'none', marginTop: 3 }} />
+        <BookOpen size={14} color="#d99405" style={{ flex: 'none', marginTop: 3 }} />
         <div style={{ minWidth: 0 }}>
           <h4>{item.title}</h4>
           {item.excerpt && <p className="sub">{item.excerpt}</p>}
@@ -282,8 +282,8 @@ function EmptyState({ title, body }: { title: string; body: string }) {
       <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
       <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
       <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-      <span className="badge" style={{ border: '1px solid rgba(255,61,135,.5)' }}>
-        <Users size={24} color="#ff3d87" />
+      <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+        <Users size={24} color="#d99405" />
       </span>
       <h4>{title}</h4>
       <p style={{ maxWidth: 420 }}>{body}</p>

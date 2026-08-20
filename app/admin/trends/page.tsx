@@ -123,7 +123,7 @@ export default function TrendsPage() {
               type="monotone"
               dataKey="avgScore"
               name="Avg Score"
-              stroke="#2fd3c4"
+              stroke="#d99405"
               strokeWidth={2}
               dot={false}
             />
@@ -183,7 +183,7 @@ export default function TrendsPage() {
 
       {/* Stage distribution — latest snapshot */}
       <div className="card" style={{ marginTop: 24 }}>
-        <span className="accent" style={{ width: 56, background: 'var(--pink)' }} />
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <h3>Stage Distribution</h3>
         <p className="sub">Latest snapshot: {shortDate(latest.date)}</p>
         <div style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>

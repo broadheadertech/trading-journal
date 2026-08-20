@@ -480,9 +480,9 @@ export default function EmotionalCheckpoint({
 
               {/* AI Coach */}
               <div className="card" style={{ padding: '19px 24px 22px' }}>
-                <span className="accent" style={{ width: 44, background: 'var(--teal)' }} />
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
                 <div className="cardhead" style={{ alignItems: 'center', gap: 10 }}>
-                  <Sparkle size={14} style={{ color: 'var(--teal)' }} />
+                  <Sparkle size={14} style={{ color: 'var(--amber)' }} />
                   <h4>AI Emotion Coach</h4>
                 </div>
                 <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '21px', color: 'var(--text-2)', whiteSpace: 'pre-line' }}>

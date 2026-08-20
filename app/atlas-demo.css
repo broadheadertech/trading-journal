@@ -347,7 +347,7 @@
     font-weight: 400;
     font-size: 20px;
     line-height: 1;
-    color: var(--teal);
+    color: var(--amber);
   }
   .dial2 .v i {
     margin-top: 3px;
@@ -368,7 +368,7 @@
     border-radius: 1px;
     background: var(--rail);
   }
-  .streak i.on { background: var(--teal); }
+  .streak i.on { background: var(--green); }
 
   /* ── shared meter track (emotions, symbols, playbook rules) ─────────── */
   .track {
@@ -409,7 +409,7 @@
   }
   .emo > span {
     font-size: 11px;
-    color: var(--text-5);
+    color: var(--text-3);
   }
 
   /* by-symbol rows: symbol / meter / amount / trade count */
@@ -423,7 +423,7 @@
   .sym b {
     font-weight: 600;
     font-size: 10.5px;
-    color: var(--text-5);
+    color: var(--text-3);
   }
   .sym .n {
     font-family: var(--mono);
@@ -470,7 +470,7 @@
     font-weight: 600;
     font-size: 12px;
     line-height: 16px;
-    color: var(--text-4);
+    color: var(--text-3);
     margin: 0;
   }
   .vrow .t em {
@@ -516,7 +516,13 @@
   }
   .rule-row:last-child { border-bottom: 0; }
   /* .rule-row carries an inline status color; the checkbox inherits it */
-  .box {
+  /* Scoped to .rule-row (its only consumer here) on purpose. As a bare
+     `.box` this 13px checkbox escaped into every form input on any page that
+     nests .atlas-dash inside .atlas-site — the /u/[slug] profile page does,
+     so EditProfileModal's username field and bio textarea collapsed to 13px
+     wide. `.field .box` sets no width, so this was the only width in play,
+     and it outranks Tailwind's w-full (0,2,0 vs 0,1,0). */
+  .rule-row .box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -525,7 +531,7 @@
     border: 1px solid currentColor;
     border-radius: 2px;
   }
-  .box i {
+  .rule-row .box i {
     display: block;
     width: 5px;
     height: 5px;

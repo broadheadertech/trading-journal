@@ -4,7 +4,7 @@
 @property --accent {
   syntax: "<color>";
   inherits: true;
-  /* Aurora fuchsia (was pure pink #ff3d87) — sits in the middle of the brand
+  /* Aurora fuchsia (was pure pink) — sits in the middle of the brand
      gradient so chrome reads as part of the multi-color ramp rather than
      pink-dominant. The aurora ramp's pink/cyan/emerald stops still exist as
      --aurora-pink / --aurora-cyan / --aurora-emerald for spots that genuinely
@@ -50,7 +50,7 @@
   /* Secondary text tier — brighter than --muted-foreground, dimmer than
      --foreground. Use for page subtitles / lead copy that should read clearly. */
   --fg-2: #c3cdda;
-  /* Accent — fuchsia (was pure pink #ff3d87) so the chrome aligns with the
+  /* Accent — fuchsia (was pure pink) so the chrome aligns with the
      multi-color aurora ramp instead of reading as pink-dominant. */
   --accent: #d99405;
   --accent-hover: #f0a409;
@@ -72,8 +72,8 @@
   --atlas-amber:     #d99405;
   --atlas-amber-hi:  #f0a409;
   --atlas-amber-dim: #8a6a18;
-  --atlas-teal:      #2fd3c4;
-  --atlas-pink:      #ff3d87;
+  --atlas-teal:      #d99405;
+  --atlas-pink:      #d99405;
   --atlas-green:     #24c88a;
   --atlas-red:       #ff4d5e;
   --atlas-ink:       #0a0a0a;
@@ -82,9 +82,9 @@
 
   /* ── Legacy Aurora aliases — retained so existing var() call sites keep
      resolving. Values now map onto the ATLAS palette above. */
-  --aurora-pink:    #ff3d87;
+  --aurora-pink:    #d99405;
   --aurora-fuchsia: #d99405;
-  --aurora-cyan:    #2fd3c4;
+  --aurora-cyan:    #d99405;
   --aurora-emerald: #24c88a;
   --cta-orange:     #d99405;
   --cta-amber:      #f0a409;
@@ -100,11 +100,11 @@
      dark surface; box-shadow alone is nearly invisible by design. */
   --glow-pink:    0 0 30px -4px rgba(217, 148, 5, 0.50);
   --glow-orange:  0 0 30px -4px rgba(217, 148, 5, 0.60);
-  --glow-cyan:    0 0 30px -8px rgba(47, 211, 196, 0.35);
+  --glow-cyan:    0 0 30px -8px rgba(217, 148, 5, 0.35);
   --glow-emerald: 0 0 30px -8px rgba(36, 200, 138, 0.30);
   --aurora-ring:
     0 0 0 1px rgba(217, 148, 5, 0.18),
-    0 0 30px -8px rgba(47, 211, 196, 0.30),
+    0 0 30px -8px rgba(217, 148, 5, 0.30),
     0 0 60px -20px rgba(36, 200, 138, 0.25);
   --shadow-card-lift: 0 20px 40px -20px rgba(217, 148, 5, 0.40);
 }
@@ -414,13 +414,13 @@ h1, h2, h3 {
 */
 .aurora-text {
   background: linear-gradient(120deg,
-    #ff3d87 0%,
+    #d99405 0%,
     #d99405 15%,
-    #2fd3c4 32%,
+    #d99405 32%,
     #24c88a 50%,
     #d99405 68%,
     #d99405 86%,
-    #ff3d87 100%);
+    #d99405 100%);
   background-size: 220% 220%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -429,7 +429,7 @@ h1, h2, h3 {
 }
 
 .aurora-text-static {
-  background: linear-gradient(120deg, #ff3d87 0%, #2fd3c4 38%, #24c88a 68%, #d99405 100%);
+  background: linear-gradient(120deg, #d99405 0%, #d99405 38%, #24c88a 68%, #d99405 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -449,7 +449,7 @@ h1, h2, h3 {
   background-clip: text;
   color: transparent;
   filter:
-    drop-shadow(0 0 12px rgba(47, 211, 196, 0.35))
+    drop-shadow(0 0 12px rgba(217, 148, 5, 0.35))
     drop-shadow(0 0 22px rgba(217, 148, 5, 0.16))
     drop-shadow(0 0 30px rgba(217, 148, 5, 0.16));
 }
@@ -463,7 +463,7 @@ h1, h2, h3 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 8px rgba(47, 211, 196, 0.45));
+  filter: drop-shadow(0 0 8px rgba(217, 148, 5, 0.45));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -538,7 +538,7 @@ h1, h2, h3 {
   pointer-events: none;
   background-image:
     radial-gradient(ellipse 60% 40% at 18% 10%,  rgba(217, 148, 5, 0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 45% at 82% 18%,  rgba(47, 211, 196, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 18%,  rgba(217, 148, 5, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 35% at 50% 95%,  rgba(36, 200, 138, 0.13) 0%, transparent 60%),
     radial-gradient(ellipse 40% 30% at 92% 70%,  rgba(217, 148, 5, 0.10) 0%, transparent 60%);
   filter: blur(40px);
@@ -565,13 +565,13 @@ h1, h2, h3 {
 .aurora-glow {
   box-shadow:
     0 0 0 1px rgba(217, 148, 5, 0.18),
-    0 0 30px -8px rgba(47, 211, 196, 0.30),
+    0 0 30px -8px rgba(217, 148, 5, 0.30),
     0 0 60px -20px rgba(36, 200, 138, 0.25);
 }
 
 /* Gradient text accent — Northern Lights aurora */
 .gradient-text {
-  background: linear-gradient(120deg, #ff3d87 0%, #2fd3c4 38%, #24c88a 68%, #d99405 100%);
+  background: linear-gradient(120deg, #d99405 0%, #d99405 38%, #24c88a 68%, #d99405 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

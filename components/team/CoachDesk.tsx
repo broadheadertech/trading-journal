@@ -360,7 +360,7 @@ export default function CoachDesk({ workspaceId, memberStats, members, myRole }:
             </div>
 
             <div className="inset" style={{ position: 'relative' }}>
-              <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--teal)' }} />
+              <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
               <p className="lbl">WIN RATE</p>
               <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 19, lineHeight: '24px' }}>{Math.round(selectedStat.winRate)}%</p>
             </div>
@@ -372,7 +372,7 @@ export default function CoachDesk({ workspaceId, memberStats, members, myRole }:
             </div>
 
             <div className="inset" style={{ position: 'relative' }}>
-              <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--pink)' }} />
+              <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
               <p className="lbl">COMPLIANCE</p>
               <p style={{ margin: '7px 0 0', fontFamily: 'var(--mono)', fontSize: 19, lineHeight: '24px' }}>{Math.round(selectedStat.compliance)}%</p>
             </div>

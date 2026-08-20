@@ -153,8 +153,8 @@ export default function News() {
               <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
               <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
               <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-              <span className="badge" style={{ border: '1px solid rgba(47,211,196,.5)' }}>
-                <Newspaper size={24} color="#2fd3c4" />
+              <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+                <Newspaper size={24} color="#d99405" />
               </span>
               <h4>No articles found</h4>
               <p>Nothing on the wire for this category right now.</p>
@@ -178,7 +178,7 @@ export default function News() {
                       <img src={article.urlToImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <i style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Newspaper size={16} color="#2fd3c4" />
+                        <Newspaper size={16} color="#d99405" />
                       </i>
                     )}
                     <b

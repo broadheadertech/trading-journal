@@ -43,12 +43,12 @@ export default function AboutPage() {
           <hr className="inset-rule" style={{ marginTop: '67px' }} />
           <div className="scope">
             <div>
-              <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2" /></svg>WHO ATLAS IS FOR</h4>
+              <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2" /></svg>WHO ATLAS IS FOR</h4>
               <ul>
-                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2" /></svg>Active traders — crypto, futures, forex, stocks, options</li>
-                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2" /></svg>Prop firm traders working toward funded accounts</li>
-                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2" /></svg>Trading coaches reviewing student performance</li>
-                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#2fd3c4" strokeWidth="2" /></svg>Trading teams enforcing playbook discipline at scale</li>
+                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2" /></svg>Active traders — crypto, futures, forex, stocks, options</li>
+                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2" /></svg>Prop firm traders working toward funded accounts</li>
+                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2" /></svg>Trading coaches reviewing student performance</li>
+                <li className="yes" style={{ fontSize: '15.5px' }}><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2" /></svg>Trading teams enforcing playbook discipline at scale</li>
               </ul>
             </div>
             <div>
