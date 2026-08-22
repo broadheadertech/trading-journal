@@ -36,13 +36,16 @@ function colorize(text: string, symbol?: string): React.ReactNode[] {
     if (/pips/i.test(token)) {
       const negative = token.includes('-');
       out.push(
-        <span key={key++} className={`font-semibold ${negative ? 'text-red-400' : 'text-emerald-400'}`}>
+        <span
+          key={key++}
+          style={{ fontFamily: 'var(--mono)', fontWeight: 500, color: negative ? 'var(--red)' : 'var(--green)' }}
+        >
           {token}
         </span>,
       );
     } else {
       out.push(
-        <span key={key++} className="font-semibold text-pink-300">
+        <span key={key++} style={{ fontWeight: 700, color: 'var(--amber)' }}>
           {token}
         </span>,
       );

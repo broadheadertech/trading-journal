@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Microscope, Search, ArrowDown, ArrowUp, Minus } from 'lucide-react';
+import { Microscope, MagnifyingGlass, ArrowDown, ArrowUp, Minus } from '@phosphor-icons/react';
 import { useAdminUserBrainState, useAdminUserScoreEvents, useAdminLogBrainInspection } from '@/hooks/useAdminStore';
 import { STAGE_COLORS } from '@/lib/stage-config';
 import type { Stage } from '@/lib/types';
@@ -21,10 +21,10 @@ const EVENT_TYPE_LABEL: Record<string, string> = {
 
 // ─── Anti-gaming flag badges (matches flags page pattern) ────────────────────
 const FLAG_BADGE: Record<string, { label: string; bg: string; text: string }> = {
-  phantom_trade_detected: { label: 'Phantom Trade', bg: 'bg-red-500/15', text: 'text-red-400' },
-  pnl_anomaly_flagged: { label: 'P&L Anomaly', bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
-  recovery_lock_limit: { label: 'Lock Exceeded', bg: 'bg-red-500/15', text: 'text-red-400' },
-  recovery_lock_active: { label: 'Lock Active', bg: 'bg-zinc-500/15', text: 'text-zinc-400' },
+  phantom_trade_detected: { label: 'Phantom Trade', bg: '', text: 'var(--red)' },
+  pnl_anomaly_flagged: { label: 'P&L Anomaly', bg: '', text: 'var(--amber)' },
+  recovery_lock_limit: { label: 'Lock Exceeded', bg: '', text: 'var(--red)' },
+  recovery_lock_active: { label: 'Lock Active', bg: '', text: 'var(--muted)' },
 };
 
 // ─── Plan label map ─────────────────────────────────────────────────────────
@@ -46,21 +46,28 @@ function fmtDateTime(ms: number): string {
 
 // ─── Row helper ──────────────────────────────────────────────────────────────
 function Row({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
+  const tone =
+    valueClass === 'text-green-400' ? 'var(--green)'
+    : valueClass === 'text-red-400' ? 'var(--red)'
+    : valueClass === 'text-yellow-400' ? 'var(--amber)'
+    : valueClass === 'text-[var(--muted-foreground)]' ? 'var(--muted)'
+    : 'var(--text)';
   return (
-    <div className="flex items-center justify-between text-sm py-1">
-      <span className="text-[var(--muted-foreground)]">{label}</span>
-      <span className={`font-medium ${valueClass ?? 'text-[var(--foreground)]'}`}>{value}</span>
+    <div className="mrow">
+      <span className="ic" />
+      <span className="lb" style={{ marginLeft: 0 }}>{label}</span>
+      <span className="val" style={{ color: tone }}>{value}</span>
     </div>
   );
 }
 
 // ─── Stage badge ─────────────────────────────────────────────────────────────
 function StageBadge({ stage }: { stage: string }) {
-  const color = STAGE_COLORS[stage as Stage]?.accent ?? 'var(--muted-foreground)';
+  const color = STAGE_COLORS[stage as Stage]?.accent ?? 'var(--muted)';
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize"
-      style={{ color, backgroundColor: `${color}20`, border: `1px solid ${color}40` }}
+      className="chip capitalize"
+      style={{ height: 22, padding: '0 10px', fontSize: 10.5, fontWeight: 700, color, borderColor: `${color}55` }}
     >
       {stage}
     </span>
@@ -69,9 +76,10 @@ function StageBadge({ stage }: { stage: string }) {
 
 // ─── Delta indicator ─────────────────────────────────────────────────────────
 function DeltaDisplay({ delta }: { delta: number }) {
-  if (delta > 0) return <span className="inline-flex items-center gap-0.5 text-green-400 text-xs"><ArrowUp size={12} />+{delta.toFixed(1)}</span>;
-  if (delta < 0) return <span className="inline-flex items-center gap-0.5 text-red-400 text-xs"><ArrowDown size={12} />{delta.toFixed(1)}</span>;
-  return <span className="inline-flex items-center gap-0.5 text-[var(--muted-foreground)] text-xs"><Minus size={12} />0</span>;
+  const style: React.CSSProperties = { gap: 3, fontFamily: 'var(--mono)', fontSize: 11.5 };
+  if (delta > 0) return <span className="inline-flex items-center" style={{ ...style, color: 'var(--green)' }}><ArrowUp size={11} />+{delta.toFixed(1)}</span>;
+  if (delta < 0) return <span className="inline-flex items-center" style={{ ...style, color: 'var(--red)' }}><ArrowDown size={11} />{delta.toFixed(1)}</span>;
+  return <span className="inline-flex items-center" style={{ ...style, color: 'var(--muted-2)' }}><Minus size={11} />0</span>;
 }
 
 export default function InspectPage() {
@@ -101,61 +109,74 @@ export default function InspectPage() {
   const isLoading = searchedUserId && brainState === undefined;
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div style={{ maxWidth: 900 }}>
       {/* Header */}
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Microscope size={20} className="text-[var(--accent)]" />
-          <h1 className="text-xl font-bold text-[var(--foreground)]">Brain Inspect</h1>
-        </div>
-        <p className="text-sm text-[var(--muted-foreground)]">
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+          <Microscope size={13} style={{ color: 'var(--amber)' }} />
+          Investigation
+        </p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Brain Inspect</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           Inspect any user&apos;s brain state, score history, and event log for investigation.
         </p>
       </div>
 
       {/* Search */}
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Enter user ID (e.g., user_2abc...)"
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--muted)]/40 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--accent)]"
-          />
+      <form onSubmit={handleSearch} className="field flex items-end" style={{ gap: 10 }}>
+        <div className="flex-1 min-w-0">
+          <label>USER ID</label>
+          <div className="box" style={{ gap: 12 }}>
+            <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Enter user ID (e.g., user_2abc...)"
+              style={{
+                flex: 1, minWidth: 0, height: '100%', border: 0, outline: 'none',
+                background: 'transparent', fontSize: 13, color: 'var(--text)',
+              }}
+            />
+          </div>
         </div>
-        <button
-          type="submit"
-          className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] text-white hover:opacity-90 transition-opacity"
-        >
+        <button type="submit" className="btn-a" style={{ height: 42, flex: 'none' }}>
           Inspect
         </button>
       </form>
 
       {/* Loading */}
       {isLoading && (
-        <div className="space-y-4 animate-pulse">
-          <div className="h-48 bg-[var(--muted)] rounded-xl" />
-          <div className="h-32 bg-[var(--muted)] rounded-xl" />
-          <div className="h-64 bg-[var(--muted)] rounded-xl" />
+        <div className="animate-pulse" style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ height: 192, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+          <div style={{ height: 128, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+          <div style={{ height: 256, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
         </div>
       )}
 
       {/* Empty: no user selected */}
       {!searchedUserId && (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">
-          <Microscope size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Enter a user ID above to inspect their brain state.</p>
-          <p className="text-xs mt-1">You can copy user IDs from the Users or Anti-Gaming Alerts pages.</p>
+        <div className="blank" style={{ marginTop: 24, padding: '52px 28px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+            <Microscope size={22} style={{ color: 'var(--amber)' }} />
+          </div>
+          <h4>No user selected</h4>
+          <p>Enter a user ID above to inspect their brain state. You can copy user IDs from the Users or Anti-Gaming Alerts pages.</p>
         </div>
       )}
 
       {/* Not found */}
       {searchedUserId && brainState === null && (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">
-          <p className="text-sm font-medium">No brain state found for this user.</p>
-          <p className="text-xs mt-1">The user may not have logged any trades yet, or the ID may be incorrect.</p>
+        <div className="blank" style={{ marginTop: 24, padding: '52px 28px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div className="badge" style={{ border: '1px solid rgba(255,77,94,.4)', background: 'var(--panel-2)' }}>
+            <Microscope size={22} style={{ color: 'var(--red)' }} />
+          </div>
+          <h4>No brain state found</h4>
+          <p>The user may not have logged any trades yet, or the ID may be incorrect.</p>
         </div>
       )}
 
@@ -163,20 +184,24 @@ export default function InspectPage() {
       {brainState && brainState !== null && (
         <>
           {/* ── Brain State Summary ──────────────────────────────────── */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-            <p className="text-sm font-semibold text-[var(--foreground)] mb-3">Brain State</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
+          <div className="card" style={{ marginTop: 24 }}>
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+            <h3>Brain State</h3>
+            <p className="sub">Current scoring state on record for this user</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ marginTop: 18, columnGap: 32 }}>
               <Row label="User ID" value={brainState.userId} valueClass="text-xs text-[var(--foreground)]" />
               <Row label="Plan" value={PLAN_LABEL[brainState.planId] ?? brainState.planId} />
               <Row label="Current Score" value={String(brainState.currentScore)} />
-              <div className="flex items-center justify-between text-sm py-1">
-                <span className="text-[var(--muted-foreground)]">Current Stage</span>
-                <StageBadge stage={brainState.currentStage} />
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>Current Stage</span>
+                <span style={{ marginLeft: 'auto' }}><StageBadge stage={brainState.currentStage} /></span>
               </div>
               {brainState.effectiveStage && brainState.effectiveStage !== brainState.currentStage && (
-                <div className="flex items-center justify-between text-sm py-1">
-                  <span className="text-[var(--muted-foreground)]">Effective Stage (capped)</span>
-                  <StageBadge stage={brainState.effectiveStage} />
+                <div className="mrow">
+                  <span className="ic" />
+                  <span className="lb" style={{ marginLeft: 0 }}>Effective Stage (capped)</span>
+                  <span style={{ marginLeft: 'auto' }}><StageBadge stage={brainState.effectiveStage} /></span>
                 </div>
               )}
               <Row label="Streak" value={`${brainState.streakDays} days (${brainState.streakMultiplier}x)`} />
@@ -214,14 +239,14 @@ export default function InspectPage() {
 
             {/* Latest coaching message */}
             {brainState.latestCoachingMessage && (
-              <div className="mt-3 pt-3 border-t border-[var(--border)]">
-                <p className="text-xs text-[var(--muted-foreground)] mb-1">
-                  Latest Coaching
-                  <span className="ml-1.5 px-1.5 py-0.5 rounded bg-[var(--muted)] text-[10px]">
+              <div style={{ marginTop: 20, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+                <div className="flex items-center" style={{ gap: 10, marginBottom: 10 }}>
+                  <p className="lbl" style={{ margin: 0 }}>LATEST COACHING</p>
+                  <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9.5 }}>
                     {brainState.latestCoachingMessage.category}
                   </span>
-                </p>
-                <p className="text-sm text-[var(--foreground)] line-clamp-3">
+                </div>
+                <p className="line-clamp-3" style={{ margin: 0, fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>
                   {brainState.latestCoachingMessage.message}
                 </p>
               </div>
@@ -230,19 +255,21 @@ export default function InspectPage() {
 
           {/* ── Stage History ────────────────────────────────────────── */}
           {brainState.stageHistory && brainState.stageHistory.length > 0 && (
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-              <p className="text-sm font-semibold text-[var(--foreground)] mb-3">Stage History</p>
-              <div className="space-y-2">
+            <div className="card" style={{ marginTop: 24 }}>
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <h3>Stage History</h3>
+              <p className="sub">Every stage this user has occupied</p>
+              <div style={{ marginTop: 18 }}>
                 {brainState.stageHistory.map((entry: { stage: string; reachedAt: number; leftAt?: number }, i: number) => (
-                  <div key={i} className="flex items-center gap-3 text-sm">
+                  <div key={i} className="flex items-center" style={{ gap: 12, padding: '10px 0', borderBottom: '1px solid var(--hair)' }}>
                     <StageBadge stage={entry.stage} />
-                    <span className="text-[var(--muted-foreground)]">
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                       {fmtDate(entry.reachedAt)}
                     </span>
-                    <span className="text-[var(--muted-foreground)]">→</span>
-                    <span className="text-[var(--muted-foreground)]">
+                    <span style={{ color: 'var(--muted-3)' }}>→</span>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                       {entry.leftAt ? fmtDate(entry.leftAt) : (
-                        <span className="text-green-400 text-xs font-medium">Current</span>
+                        <span style={{ fontFamily: 'var(--body)', fontSize: 11, fontWeight: 700, color: 'var(--green)' }}>Current</span>
                       )}
                     </span>
                   </div>
@@ -252,21 +279,30 @@ export default function InspectPage() {
           )}
 
           {/* ── Score Event Timeline ──────────────────────────────────── */}
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-            <p className="text-sm font-semibold text-[var(--foreground)] mb-3">
-              Score Events
-              {scoreEvents && <span className="text-[var(--muted-foreground)] font-normal ml-1.5">({scoreEvents.length})</span>}
-            </p>
+          <div className="card" style={{ marginTop: 24 }}>
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+            <div className="cardhead">
+              <div>
+                <h3>Score Events</h3>
+                <p className="sub">Full scoring audit trail for this user</p>
+              </div>
+              {scoreEvents && (
+                <span className="chip" style={{ marginLeft: 'auto' }}>{scoreEvents.length}</span>
+              )}
+            </div>
 
             {scoreEvents && scoreEvents.length === 0 && (
-              <p className="text-sm text-[var(--muted-foreground)] py-4 text-center">No score events found for this user.</p>
+              <p className="empty-line">No score events found for this user.</p>
             )}
 
             {scoreEvents && scoreEvents.length > 0 && (
-              <div className="overflow-x-auto">
-              <div className="min-w-[500px] space-y-1">
+              <div className="overflow-x-auto" style={{ marginTop: 18 }}>
+              <div className="min-w-[500px]">
                 {/* Header */}
-                <div className="grid grid-cols-[120px_100px_60px_60px_1fr] gap-2 text-[10px] text-[var(--muted-foreground)] font-medium uppercase tracking-wider pb-1 border-b border-[var(--border)]">
+                <div
+                  className="grid grid-cols-[120px_100px_60px_60px_1fr] gap-2"
+                  style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)', paddingBottom: 8, borderBottom: '1px solid var(--line)' }}
+                >
                   <span>Time</span>
                   <span>Event</span>
                   <span className="text-right">Delta</span>
@@ -277,30 +313,35 @@ export default function InspectPage() {
                 {scoreEvents.map((e) => (
                   <div
                     key={e._id}
-                    className="grid grid-cols-[120px_100px_60px_60px_1fr] gap-2 items-start text-xs py-1.5 border-b border-[var(--border)]/50 last:border-0"
+                    className="grid grid-cols-[120px_100px_60px_60px_1fr] gap-2 items-start"
+                    style={{ fontSize: 11.5, padding: '9px 0', borderBottom: '1px solid var(--hair)' }}
                   >
-                    <span className="text-[var(--muted-foreground)] tabular-nums">
+                    <span style={{ fontFamily: 'var(--mono)', color: 'var(--muted-2)' }}>
                       {fmtDateTime(e.timestamp)}
                     </span>
-                    <span className="text-[var(--foreground)]">
+                    <span style={{ color: 'var(--text-2)' }}>
                       {EVENT_TYPE_LABEL[e.eventType] ?? e.eventType}
                     </span>
                     <span className="text-right">
                       <DeltaDisplay delta={e.delta} />
                     </span>
-                    <span className="text-right tabular-nums text-[var(--foreground)]">
+                    <span className="text-right" style={{ fontFamily: 'var(--mono)', color: 'var(--text)' }}>
                       {e.newScore}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[var(--muted-foreground)] truncate" title={e.reason}>
+                      <p className="truncate" title={e.reason} style={{ margin: 0, color: 'var(--muted)' }}>
                         {e.reason}
                       </p>
                       {e.antiGamingFlags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-0.5">
                           {e.antiGamingFlags.map((flag) => {
-                            const badge = FLAG_BADGE[flag] ?? { label: flag, bg: 'bg-[var(--muted)]/40', text: 'text-[var(--muted-foreground)]' };
+                            const badge = FLAG_BADGE[flag] ?? { label: flag, bg: '', text: 'var(--muted)' };
                             return (
-                              <span key={flag} className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium ${badge.bg} ${badge.text}`}>
+                              <span
+                                key={flag}
+                                className="chip"
+                                style={{ height: 20, padding: '0 9px', fontSize: 9.5, fontWeight: 700, color: badge.text }}
+                              >
                                 {badge.label}
                               </span>
                             );
@@ -316,9 +357,9 @@ export default function InspectPage() {
 
             {/* Loading events */}
             {searchedUserId && scoreEvents === undefined && (
-              <div className="animate-pulse space-y-2">
+              <div className="animate-pulse" style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-8 bg-[var(--muted)] rounded" />
+                  <div key={i} style={{ height: 32, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
                 ))}
               </div>
             )}
@@ -326,7 +367,7 @@ export default function InspectPage() {
         </>
       )}
 
-      <p className="text-xs text-[var(--muted-foreground)]">
+      <p className="footnote">
         Brain inspection actions are logged to the admin audit trail. Data loads via Convex real-time subscriptions.
       </p>
     </div>

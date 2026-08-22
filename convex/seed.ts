@@ -72,7 +72,7 @@ export const seedPlans = mutation({
     const plans = [
       {
         planId: "core",
-        name: "Tradia Core",
+        name: "Atlas Core",
         tagline: "For beginner to intermediate solo traders",
         priceMonthly: 29,
         priceYearly: 290,
@@ -96,7 +96,7 @@ export const seedPlans = mutation({
       },
       {
         planId: "pro",
-        name: "Tradia Pro",
+        name: "Atlas Pro",
         tagline: "For serious traders leveling up performance",
         priceMonthly: 39,
         priceYearly: 390,
@@ -122,7 +122,7 @@ export const seedPlans = mutation({
       },
       {
         planId: "elite",
-        name: "Tradia Elite",
+        name: "Atlas Elite",
         tagline: "For mentors, funded traders, and trading communities",
         priceMonthly: 59,
         priceYearly: 590,
@@ -138,11 +138,11 @@ export const seedPlans = mutation({
           "Leaderboards & performance rankings",
           "Audit logs (track member activity)",
           "Aggregated reports (group performance)",
-          "Invite system (build your academy inside Tradia)",
+          "Invite system (build your academy inside Atlas)",
           "Early access to new features",
           "VIP support",
         ],
-        goal: "Build your Tradia Trading Academy ecosystem",
+        goal: "Build your Atlas Trading Academy ecosystem",
         isActive: true,
         isHighlighted: false,
         sortOrder: 3,

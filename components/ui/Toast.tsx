@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
+import { CheckCircle, WarningCircle, Info, X } from '@phosphor-icons/react';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -40,7 +40,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const icons = {
     success: <CheckCircle size={18} className="text-green-400" />,
-    error: <AlertCircle size={18} className="text-red-400" />,
+    error: <WarningCircle size={18} className="text-red-400" />,
     info: <Info size={18} className="text-blue-400" />,
   };
 

@@ -1,6 +1,6 @@
-﻿'use client';
+'use client';
 
-import { Sparkles, Zap, Star } from 'lucide-react';
+import { Sparkle, Lightning, Star } from '@phosphor-icons/react';
 
 export type TierName = 'free' | 'core' | 'pro' | 'elite';
 
@@ -11,38 +11,28 @@ interface Props {
 
 const TIERS: Record<TierName, {
   label: string;
-  gradient: string;
-  text: string;
+  color: string;
   icon: React.ReactNode;
-  shimmer: boolean;
 }> = {
   free: {
     label: 'Free',
-    gradient: 'from-slate-600 to-slate-700',
-    text: 'text-slate-300',
+    color: 'var(--muted-2)',
     icon: null,
-    shimmer: false,
   },
   core: {
     label: 'Core',
-    gradient: 'from-pink-400 to-fuchsia-500',
-    text: 'text-white',
-    icon: <Sparkles size={9} strokeWidth={3} />,
-    shimmer: false,
+    color: 'var(--amber)',
+    icon: <Sparkle size={9} weight="bold" />,
   },
   pro: {
     label: 'Pro',
-    gradient: 'from-pink-500 to-pink-700',
-    text: 'text-white',
-    icon: <Zap size={9} strokeWidth={3} />,
-    shimmer: true,
+    color: 'var(--amber)',
+    icon: <Lightning size={9} weight="bold" />,
   },
   elite: {
     label: 'Elite',
-    gradient: 'from-amber-400 via-orange-500 to-pink-500',
-    text: 'text-white',
-    icon: <Star size={9} strokeWidth={3} />,
-    shimmer: true,
+    color: 'var(--amber)',
+    icon: <Star size={9} weight="bold" />,
   },
 };
 
@@ -52,30 +42,30 @@ export default function TierBadge({ tier, size = 'xs' }: Props) {
   const t = TIERS[tier as TierName];
   if (!t) return null;
 
-  const sizeCls = size === 'xs'
-    ? 'text-[9px] px-1.5 py-0.5 gap-0.5'
-    : 'text-[10px] px-2 py-0.5 gap-1';
+  const isXs = size === 'xs';
 
   return (
     <span
-      className={`relative inline-flex items-center rounded-full font-bold uppercase tracking-wider bg-gradient-to-r ${t.gradient} ${t.text} ${sizeCls} shadow-sm overflow-hidden`}
+      className="chip"
+      style={{
+        height: isXs ? 18 : 20,
+        padding: isXs ? '0 7px' : '0 9px',
+        gap: isXs ? 4 : 5,
+        borderRadius: 2,
+        borderColor: t.color,
+        background: 'var(--panel-2)',
+        color: t.color,
+        fontWeight: 700,
+        fontSize: isXs ? 9 : 10,
+        letterSpacing: '.06em',
+        textTransform: 'uppercase',
+        lineHeight: 1,
+        verticalAlign: 'middle',
+      }}
       title={`${t.label} subscriber`}
     >
-      {t.shimmer && (
-        <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2.5s_ease-in-out_infinite]" />
-      )}
-      <span className="relative flex items-center gap-0.5">
-        {t.icon}
-        {t.label}
-      </span>
-
-      <style jsx>{`
-        @keyframes shimmer {
-          0%   { transform: translateX(-100%); }
-          50%  { transform: translateX(200%); }
-          100% { transform: translateX(200%); }
-        }
-      `}</style>
+      {t.icon}
+      {t.label}
     </span>
   );
 }

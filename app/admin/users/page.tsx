@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useAdminUsers, useAdminUserActions } from '@/hooks/useAdminStore';
 import AdminUserDetail from '@/components/admin/AdminUserDetail';
 
@@ -60,48 +60,56 @@ export default function AdminUsersPage() {
   });
 
   return (
-    <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="text-xl font-bold text-[var(--foreground)]">Users</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">
+    <div style={{ maxWidth: 1180 }}>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Accounts</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Users</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           {users ? `${users.length} registered user${users.length !== 1 ? 's' : ''}` : 'Loading...'}
         </p>
       </div>
 
       {/* Search */}
-      <div className="relative max-w-sm">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-        <input
-          type="text"
-          placeholder="Search by name, email, or user ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40"
-        />
+      <div className="field" style={{ maxWidth: 420 }}>
+        <label>SEARCH</label>
+        <div className="box" style={{ gap: 12 }}>
+          <MagnifyingGlass size={14} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+          <input
+            type="text"
+            placeholder="Search by name, email, or user ID..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1, minWidth: 0, height: '100%', border: 0, outline: 'none',
+              background: 'transparent', fontSize: 13, color: 'var(--text)',
+            }}
+          />
+        </div>
       </div>
 
       {/* Table */}
       {!filtered ? (
-        <div className="space-y-2">
+        <div className="animate-pulse" style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 6 }}>
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 bg-[var(--muted)] rounded-lg animate-pulse" />
+            <div key={i} style={{ height: 44, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-[var(--muted-foreground)] py-8 text-center">No users found.</p>
+        <p className="empty-line">No users found.</p>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <div className="card" style={{ marginTop: 24, padding: '19px 22px 12px' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="overflow-x-auto" style={{ marginTop: 4 }}>
+            <table className="w-full">
               <thead>
-                <tr className="bg-[var(--muted)]">
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Name</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">User ID</th>
-                  <th className="text-center px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Status</th>
-                  <th className="text-right px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Trades</th>
-                  <th className="text-right px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Capital</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Last Active</th>
-                  <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--muted-foreground)]">Signed Up</th>
+                <tr style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>
+                  <th className="text-left" style={{ padding: '0 16px 10px 0' }}>Name</th>
+                  <th className="text-left" style={{ padding: '0 16px 10px 0' }}>User ID</th>
+                  <th className="text-center" style={{ padding: '0 16px 10px' }}>Status</th>
+                  <th className="text-right" style={{ padding: '0 16px 10px' }}>Trades</th>
+                  <th className="text-right" style={{ padding: '0 16px 10px' }}>Capital</th>
+                  <th className="text-left" style={{ padding: '0 16px 10px' }}>Last Active</th>
+                  <th className="text-left" style={{ padding: '0 0 10px 16px' }}>Signed Up</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,40 +120,41 @@ export default function AdminUsersPage() {
                   <tr
                     key={u.userId}
                     onClick={() => setSelectedUserId(u.userId)}
-                    className="border-t border-[var(--border)] hover:bg-[var(--card-hover)] cursor-pointer transition-colors"
+                    className="cursor-pointer"
+                    style={{ borderTop: '1px solid var(--hair)' }}
                   >
-                    <td className="px-4 py-2.5 text-[var(--foreground)]">
+                    <td style={{ padding: '11px 16px 11px 0', color: 'var(--text)' }}>
                       {info ? (
                         <div className="flex flex-col">
-                          <span className="text-xs font-medium">{fullName || '—'}</span>
-                          {info.email && <span className="text-[10px] text-[var(--muted-foreground)]">{info.email}</span>}
+                          <span style={{ fontSize: 12.5, fontWeight: 700 }}>{fullName || '—'}</span>
+                          {info.email && <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>{info.email}</span>}
                         </div>
                       ) : (
-                        <span className="text-xs text-[var(--muted-foreground)]">—</span>
+                        <span style={{ fontSize: 12.5, color: 'var(--muted-3)' }}>—</span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-xs text-[var(--foreground)]">
+                    <td style={{ padding: '11px 16px 11px 0', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--text-2)' }}>
                       {u.userId.slice(0, 16)}...
                     </td>
-                    <td className="px-4 py-2.5 text-center">
+                    <td className="text-center" style={{ padding: '11px 16px' }}>
                       {u.isBanned ? (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-amber-500/10 text-amber-400">
+                        <span className="chip" style={{ height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--red)', borderColor: '#3a1218' }}>
                           Banned
                         </span>
                       ) : (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-[var(--green)]/10 text-[var(--green)]">
+                        <span className="chip" style={{ height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--green)' }}>
                           Active
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-right text-[var(--foreground)]">{u.tradeCount}</td>
-                    <td className="px-4 py-2.5 text-right text-[var(--foreground)]">
+                    <td className="text-right" style={{ padding: '11px 16px', fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--text)' }}>{u.tradeCount}</td>
+                    <td className="text-right" style={{ padding: '11px 16px', fontFamily: 'var(--mono)', fontSize: 12.5, color: 'var(--text)' }}>
                       {u.currency} {u.initialCapital.toLocaleString()}
                     </td>
-                    <td className="px-4 py-2.5 text-[var(--muted-foreground)]">
+                    <td style={{ padding: '11px 16px', fontSize: 12, color: 'var(--muted)' }}>
                       {u.lastActive ? new Date(u.lastActive).toLocaleDateString() : '—'}
                     </td>
-                    <td className="px-4 py-2.5 text-[var(--muted-foreground)]">
+                    <td style={{ padding: '11px 0 11px 16px', fontSize: 12, color: 'var(--muted)' }}>
                       {new Date(u.signedUp).toLocaleDateString()}
                     </td>
                   </tr>

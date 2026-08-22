@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Trophy, Lock } from 'lucide-react';
-import { computeBadges, tierGradient, type BadgeCategory, type EarnedBadge } from '@/lib/badges';
+import { Trophy, Lock } from '@phosphor-icons/react';
+import { computeBadges, type BadgeCategory, type BadgeTier, type EarnedBadge } from '@/lib/badges';
 import type { Trade, DailyReflection } from '@/lib/types';
 
 interface Props {
@@ -15,6 +15,16 @@ const CATEGORY_LABELS: Record<BadgeCategory | 'all', string> = {
   volume: 'Volume',
   discipline: 'Discipline',
   reflection: 'Reflection',
+};
+
+const TIER_TONE: Record<BadgeTier, string> = {
+  // An ordered progression, so these need to stay distinguishable. Rendered
+  // from the surviving palette: dim amber reads as bronze, amber as gold, and
+  // near-white as platinum.
+  bronze: '#8a6a18',
+  silver: '#9fb0c2',
+  gold: '#d99405',
+  platinum: '#edf2f7',
 };
 
 export default function Achievements({ trades, reflections }: Props) {
@@ -31,64 +41,63 @@ export default function Achievements({ trades, reflections }: Props) {
   const pct = total > 0 ? Math.round((earned / total) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <Trophy size={13} style={{ color: 'var(--amber)' }} /> Milestones
+        </p>
+        <h2>Achievements</h2>
+        <p className="sub">Hit milestones in volume, discipline, and reflection.</p>
+      </div>
+
       {/* Header / progress summary */}
-      <div className="glass rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-gradient-to-br from-pink-500/20 to-emerald-500/10 blur-3xl pointer-events-none" />
-
-        <div className="flex items-start justify-between flex-wrap gap-4 relative">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-              <Trophy size={14} className="text-amber-400" /> Achievements
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">
-              {earned} <span className="text-[var(--muted-foreground)] text-2xl">/ {total}</span> badges earned
-            </h2>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              Hit milestones in volume, discipline, and reflection.
-            </p>
+      <div className="grid2">
+        <div className="card" style={{ padding: '30px 28px' }}>
+          <span className="accent" style={{ width: 80, background: 'var(--amber)' }} />
+          <div className="row1" style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <p className="lbl b10">BADGES EARNED</p>
+            <span className="pill">{pct}%</span>
           </div>
+          <p className="bignum">
+            {earned}
+            <span style={{ fontSize: 26, color: 'var(--muted-2)' }}> / {total}</span>
+          </p>
+          <p className="sub" style={{ marginTop: 4 }}>
+            Volume, discipline and reflection milestones tracked from your live journal.
+          </p>
+        </div>
 
-          {/* Circular progress */}
-          <div className="relative w-24 h-24">
-            <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" strokeWidth="8" stroke="var(--border)" fill="none" />
+        {/* Circular progress */}
+        <div className="card score">
+          <div className="scoredial">
+            <svg viewBox="0 0 80 80" width="80" height="80" fill="none">
+              <circle cx="40" cy="40" r="37.5" stroke="#16202c" strokeWidth="5" />
               <circle
-                cx="50"
-                cy="50"
-                r="42"
-                strokeWidth="8"
-                stroke="url(#grad)"
-                fill="none"
+                cx="40"
+                cy="40"
+                r="37.5"
+                stroke="#24c88a"
+                strokeWidth="5"
                 strokeLinecap="round"
-                strokeDasharray={`${(pct / 100) * 264} 264`}
+                strokeDasharray={`${(pct / 100) * 235.6} 235.6`}
+                transform="rotate(-90 40 40)"
                 className="transition-all duration-700"
               />
-              <defs>
-                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#22c55e" />
-                  <stop offset="100%" stopColor="#22c55e" />
-                </linearGradient>
-              </defs>
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-xl font-bold text-[var(--foreground)]">{pct}%</span>
-            </div>
+            <span className="v" style={{ fontSize: 26 }}>{pct}%</span>
           </div>
+          <p className="ttl">Completion</p>
+          <p>Volume + Discipline<br />+ Reflection</p>
         </div>
       </div>
 
       {/* Category filter */}
-      <div className="glass rounded-2xl p-1.5 inline-flex gap-1">
+      <div className="tabs line" style={{ marginTop: 32 }}>
         {(Object.keys(CATEGORY_LABELS) as (BadgeCategory | 'all')[]).map(cat => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              filter === cat
-                ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg shadow-teal-500/30'
-                : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-            }`}
+            className={filter === cat ? 'on' : undefined}
           >
             {CATEGORY_LABELS[cat]}
           </button>
@@ -96,7 +105,7 @@ export default function Achievements({ trades, reflections }: Props) {
       </div>
 
       {/* Badge grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="split-3">
         {filtered.map((b, idx) => (
           <BadgeCard key={b.id} badge={b} idx={idx} />
         ))}
@@ -106,53 +115,51 @@ export default function Achievements({ trades, reflections }: Props) {
 }
 
 function BadgeCard({ badge, idx }: { badge: EarnedBadge; idx: number }) {
+  const tone = TIER_TONE[badge.tier];
   return (
     <div
-      style={{ animationDelay: `${idx * 50}ms` }}
-      className={`glass rounded-2xl p-5 anim-fade-up relative overflow-hidden transition-all ${
-        badge.earned ? 'border-amber-500/30' : ''
-      }`}
+      style={{ animationDelay: `${idx * 50}ms`, opacity: badge.earned ? 1 : 0.72 }}
+      className="reward anim-fade-up"
     >
-      {badge.earned && (
-        <div className={`absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br ${tierGradient(badge.tier)} opacity-20 blur-2xl pointer-events-none`} />
-      )}
+      <span className="accent" style={{ background: badge.earned ? tone : 'var(--line-2)' }} />
 
-      <div className="flex items-start gap-4 relative">
-        <div
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shrink-0 ${
-            badge.earned
-              ? `bg-gradient-to-br ${tierGradient(badge.tier)} shadow-lg`
-              : 'bg-[var(--muted)]/30 grayscale opacity-40'
-          }`}
+      <div className="rtop">
+        <span
+          className="ic"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 20,
+            border: `1px solid ${badge.earned ? tone : 'var(--line-2)'}`,
+            background: 'var(--panel-2)',
+            filter: badge.earned ? undefined : 'grayscale(1)',
+          }}
         >
-          {badge.earned ? badge.icon : <Lock size={20} className="text-[var(--muted-foreground)]" />}
-        </div>
+          {badge.earned ? badge.icon : <Lock size={18} style={{ color: 'var(--muted-2)' }} />}
+        </span>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <h3 className={`font-bold text-base ${badge.earned ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>
-              {badge.name}
-            </h3>
-            <span className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-bold bg-gradient-to-br ${tierGradient(badge.tier)} ${badge.earned ? 'text-white' : 'opacity-30 text-white'}`}>
-              {badge.tier}
-            </span>
-          </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-3 leading-relaxed">{badge.description}</p>
-
-          {/* Progress bar */}
-          <div className="space-y-1">
-            <div className="h-1.5 rounded-full bg-[var(--muted)]/40 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${tierGradient(badge.tier)}`}
-                style={{ width: `${Math.round(badge.progressValue * 100)}%` }}
-              />
-            </div>
-            <div className="text-[10px] text-[var(--muted-foreground)] font-medium">
-              {badge.current} / {badge.target}
-            </div>
-          </div>
-        </div>
+        <h4 style={{ color: badge.earned ? 'var(--text)' : 'var(--text-2)' }}>{badge.name}</h4>
+        <span
+          className="tag"
+          style={{ background: 'var(--panel-2)', border: `1px solid ${tone}`, color: tone }}
+        >
+          {badge.tier.toUpperCase()}
+        </span>
       </div>
+
+      <p>{badge.description}</p>
+
+      {/* Progress bar */}
+      <div className="prog">
+        <i
+          className="transition-all duration-700"
+          style={{ width: `${Math.round(badge.progressValue * 100)}%`, background: tone }}
+        />
+      </div>
+      <p className="st">
+        {badge.current} / {badge.target}
+      </p>
     </div>
   );
 }

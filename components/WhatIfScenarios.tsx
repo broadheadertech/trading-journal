@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Trade, Strategy, EmotionState } from '@/lib/types';
 import { CRYPTO_SUGGESTIONS, EMOTION_OPTIONS } from '@/lib/utils';
-import { Sparkles, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Sparkle as Sparkles, Warning as AlertTriangle, CheckCircle, XCircle } from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -114,58 +114,69 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
   };
 
   const recIcons = {
-    Proceed: <CheckCircle size={20} className="text-[var(--green)]" />,
-    Caution: <AlertTriangle size={20} className="text-[var(--yellow)]" />,
-    Skip: <XCircle size={20} className="text-[var(--red)]" />,
+    Proceed: <CheckCircle size={20} style={{ color: 'var(--green)' }} />,
+    Caution: <AlertTriangle size={20} style={{ color: 'var(--amber)' }} />,
+    Skip: <XCircle size={20} style={{ color: 'var(--red)' }} />,
   };
 
   const recColors = {
-    Proceed: 'border-green-500/30 bg-green-500/10',
-    Caution: 'border-yellow-500/30 bg-yellow-500/10',
-    Skip: 'border-red-500/30 bg-red-500/10',
+    Proceed: 'var(--green)',
+    Caution: 'var(--amber)',
+    Skip: 'var(--red)',
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold">What-If Scenarios</h2>
-        <p className="text-sm text-[var(--muted-foreground)]">AI trade assistant — analyze planned trades before execution</p>
+    <div className="relative">
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <Sparkles size={13} style={{ color: 'var(--amber)' }} /> Pre-trade assistant
+        </p>
+        <h2>What-If Scenarios</h2>
+        <p className="sub">Analyze a planned trade against your live history before you execute it.</p>
       </div>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
           <div>
-            <label className="block text-sm font-medium mb-1">Coin / Pair</label>
-            <input value={coin} onChange={e => setCoin(e.target.value)} placeholder="e.g., BTC/USDT" list="coin-list" />
+            <h3>Trade setup</h3>
+            <p className="sub">Fill in what you&apos;re about to take — everything is scored against your journal.</p>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 16, marginTop: 22 }}>
+          <div className="field">
+            <label>COIN / PAIR</label>
+            <input className="box w-full" value={coin} onChange={e => setCoin(e.target.value)} placeholder="e.g., BTC/USDT" list="coin-list" />
             <datalist id="coin-list">
               {CRYPTO_SUGGESTIONS.map(c => <option key={c} value={c} />)}
             </datalist>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Entry Price</label>
-            <input type="number" step="any" value={entryPrice} onChange={e => setEntryPrice(e.target.value)} placeholder="0.00" />
+          <div className="field">
+            <label>ENTRY PRICE</label>
+            <input className="box w-full" type="number" step="any" value={entryPrice} onChange={e => setEntryPrice(e.target.value)} placeholder="0.00" />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Position Size ($)</label>
-            <input type="number" value={positionSize} onChange={e => setPositionSize(e.target.value)} placeholder="1000" />
+          <div className="field">
+            <label>POSITION SIZE ($)</label>
+            <input className="box w-full" type="number" value={positionSize} onChange={e => setPositionSize(e.target.value)} placeholder="1000" />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Strategy</label>
-            <select value={strategyName} onChange={e => setStrategyName(e.target.value)}>
+          <div className="field">
+            <label>STRATEGY</label>
+            <select className="box w-full" value={strategyName} onChange={e => setStrategyName(e.target.value)}>
               <option value="">Select strategy</option>
               {strategies.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2">Current Emotional State</label>
-          <div className="flex flex-wrap gap-2">
+        <div className="field" style={{ marginTop: 22 }}>
+          <label>CURRENT EMOTIONAL STATE</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {EMOTION_OPTIONS.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => setCurrentEmotion(opt.value as EmotionState)}
-                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${currentEmotion === opt.value ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]' : 'border-[var(--border)] text-[var(--muted-foreground)]'}`}
+                className={currentEmotion === opt.value ? 'chip on' : 'chip'}
               >
                 {opt.emoji} {opt.label}
               </button>
@@ -176,37 +187,60 @@ export default function WhatIfScenarios({ trades, strategies }: Props) {
         <button
           onClick={handleAnalyze}
           disabled={!coin}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 text-white rounded-xl font-medium transition-all disabled:opacity-50"
+          className="btn-a disabled:opacity-50"
+          style={{ width: '100%', marginTop: 24 }}
         >
-          <Sparkles size={18} /> Analyze Trade
+          <Sparkles size={16} /> Analyze Trade
         </button>
       </div>
 
       {/* Analysis Result */}
       {analysis && (
-        <div className={`border rounded-xl p-6 space-y-4 animate-in ${recColors[analysis.recommendation]}`}>
-          <div className="flex items-center gap-3">
+        <div className="card" style={{ marginTop: 20 }}>
+          <span className="accent" style={{ width: 56, background: recColors[analysis.recommendation] }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             {recIcons[analysis.recommendation]}
-            <div>
-              <h3 className="font-bold text-lg">{analysis.recommendation}</h3>
-              <p className="text-xs text-[var(--muted-foreground)]">{analysis.historicalContext}</p>
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ color: recColors[analysis.recommendation] }}>{analysis.recommendation}</h3>
+              <p className="sub">{analysis.historicalContext}</p>
             </div>
-            <div className="ml-auto text-right">
-              <div className="text-xs text-[var(--muted-foreground)]">Risk Score</div>
-              <div className={`text-2xl font-bold ${analysis.riskScore <= 40 ? 'text-[var(--green)]' : analysis.riskScore <= 65 ? 'text-[var(--yellow)]' : 'text-[var(--red)]'}`}>
+            <div className="inset" style={{ marginLeft: 'auto', textAlign: 'right' }}>
+              <p className="lbl">RISK SCORE</p>
+              <div
+                style={{
+                  marginTop: 6,
+                  fontFamily: 'var(--mono)',
+                  fontWeight: 500,
+                  fontSize: 24,
+                  lineHeight: '30px',
+                  color: analysis.riskScore <= 40 ? 'var(--green)' : analysis.riskScore <= 65 ? 'var(--amber)' : 'var(--red)',
+                }}
+              >
                 {analysis.riskScore}/100
               </div>
             </div>
           </div>
 
-          <div className="space-y-2 pt-3 border-t border-[var(--border)]/50">
-            <h4 className="text-sm font-medium">Analysis</h4>
-            {analysis.reasons.map((reason, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm">
-                <span className="text-[var(--muted-foreground)] mt-0.5">&#x2022;</span>
-                <span>{reason}</span>
-              </div>
-            ))}
+          <div style={{ height: 2, marginTop: 18, background: 'var(--rail)', position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0,
+                width: `${Math.min(100, Math.max(0, analysis.riskScore))}%`,
+                background: recColors[analysis.recommendation],
+              }}
+            />
+          </div>
+
+          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+            <p className="lbl b10">ANALYSIS</p>
+            <div style={{ marginTop: 10 }}>
+              {analysis.reasons.map((reason, i) => (
+                <div key={i} className="mrow" style={{ alignItems: 'flex-start' }}>
+                  <span className="ic" style={{ width: 10, color: 'var(--amber)' }}>&#x2022;</span>
+                  <span className="lb" style={{ marginLeft: 12, lineHeight: '19px' }}>{reason}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

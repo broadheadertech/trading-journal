@@ -11,9 +11,9 @@ import {
 } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import {
-  Shield, TrendingDown, TrendingUp, ChevronDown, ChevronRight,
-  Target, AlertTriangle, Sparkles, ArrowRight, Eye, Crosshair,
-} from 'lucide-react';
+  Shield, TrendDown as TrendingDown, TrendUp as TrendingUp, CaretDown as ChevronDown, CaretRight as ChevronRight,
+  Target, Warning as AlertTriangle, Sparkle as Sparkles, ArrowRight, Eye, Crosshair,
+} from '@phosphor-icons/react';
 
 /* ── Sub-tab types ───────────────────────────────────────────────── */
 type SubTab = 'Summary' | 'Diagnostics' | 'Action Plan' | 'Coach Notes';
@@ -394,25 +394,25 @@ export default function Verdicts({ trades }: VerdictsProps) {
   /* ── Effort color helper ───────────────────────────────────────── */
   function effortColor(e: EffortLevel) {
     switch (e) {
-      case 'LOW EFFORT': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'MEDIUM EFFORT': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'HIGH EFFORT': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'LOW EFFORT': return 'text-[var(--green)]';
+      case 'MEDIUM EFFORT': return 'text-[var(--amber)]';
+      case 'HIGH EFFORT': return 'text-[var(--red)]';
     }
   }
 
   function priorityColor(p: Priority) {
     switch (p) {
-      case 'P1 PRIORITY': return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'P2 PRIORITY': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'P3 PRIORITY': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'P1 PRIORITY': return 'text-[var(--red)]';
+      case 'P2 PRIORITY': return 'text-[var(--amber)]';
+      case 'P3 PRIORITY': return 'text-[var(--amber)]';
     }
   }
 
   /* ── Health bar color ──────────────────────────────────────────── */
   function healthColor(score: number) {
-    if (score >= 70) return '#4ade80';
-    if (score >= 40) return '#facc15';
-    return '#f87171';
+    if (score >= 70) return '#24c88a';
+    if (score >= 40) return '#d99405';
+    return '#ff4d5e';
   }
 
   const hc = healthColor(metrics.healthScore);
@@ -420,94 +420,121 @@ export default function Verdicts({ trades }: VerdictsProps) {
   /* ── Empty state ───────────────────────────────────────────────── */
   if (assessed.length === 0) {
     return (
-      <div className="space-y-4">
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <Shield size={48} className="text-[var(--muted-foreground)] mb-4 opacity-40" />
-          <h2 className="text-xl font-semibold mb-2">No Verdicts Yet</h2>
-          <p className="text-[var(--muted-foreground)] text-sm max-w-xs">
-            Close trades to see performance verdicts — an honest analysis of execution quality.
+      <div className="pwrap anim-fade-up">
+        <div className="phead">
+          <p className="eyebrow">
+            <Shield size={13} style={{ color: 'var(--amber)' }} /> Verdict Engine
           </p>
+          <h2>Performance Verdicts</h2>
+          <p className="sub">An honest read on execution quality — leaks, strengths, and the next change worth making.</p>
+        </div>
+        <div className="blank" style={{ padding: '48px 28px', textAlign: 'center' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div
+            className="badge"
+            style={{ margin: '0 auto 24px', border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}
+          >
+            <Shield size={22} style={{ color: 'var(--amber)' }} />
+          </div>
+          <h4>No verdicts yet</h4>
+          <p>Close trades to see performance verdicts — an honest analysis of execution quality.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative space-y-6 anim-fade-up">
-      <div className="hero-glow" />
+    <div className="pwrap anim-fade-up">
+      {/* ── Header ── */}
+      <div className="phead">
+        <p className="eyebrow">
+          <Shield size={13} style={{ color: 'var(--amber)' }} /> Verdict Engine
+        </p>
+        <h2>Performance Verdicts</h2>
+        <p className="sub">
+          Analyzing {assessed.length} trade{assessed.length !== 1 ? 's' : ''} in the selected period.
+          Use the top-bar time range filter to adjust the scope.
+        </p>
+      </div>
 
-      {/* ── Hero + At A Glance ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Hero */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--muted)] text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
-            <Shield size={12} /> Verdict Engine
+      {/* ── Section jump tabs ── */}
+      <div className="tabs line" style={{ marginBottom: 24 }}>
+        {SUB_TABS.map(tab => (
+          <button key={tab} onClick={() => scrollToSection(tab)}>{tab}</button>
+        ))}
+      </div>
+
+      {/* ── At A Glance ── */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>At A Glance</h3>
+            <p className="sub">Realized result versus the conservative recovery model</p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Performance Verdicts</h1>
-          <p className="text-[var(--muted-foreground)] text-sm mb-6">
-            Analyzing {assessed.length} trade{assessed.length !== 1 ? 's' : ''} in the selected period.
-            Use the top-bar time range filter to adjust the scope.
-          </p>
-          {/* Sub-tabs — scroll to section */}
-          <div className="flex gap-2 flex-wrap">
-            {SUB_TABS.map(tab => (
-              <button key={tab} onClick={() => scrollToSection(tab)}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)]/50 hover:text-white"
-              >{tab}</button>
-            ))}
-          </div>
+          <Crosshair size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
-        {/* At A Glance */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">At A Glance</p>
-          <div className="space-y-4">
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">Current Net</p>
-              <p className={`text-xl font-bold ${metrics.currentNet >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {formatCurrency(metrics.currentNet)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">Conservative Recoverable</p>
-              <p className="text-xl font-bold text-green-400">
-                {formatCurrency(metrics.conservativeRecoverable)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">Projected Net After Fixes</p>
-              <p className={`text-xl font-bold ${metrics.projectedNet >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {formatCurrency(metrics.projectedNet)}
-              </p>
-            </div>
+        <div className="nba">
+          <div className="inset">
+            <span className="accent" style={{ background: 'var(--amber)' }} />
+            <p className="lbl">CURRENT NET</p>
+            <em style={{ color: metrics.currentNet >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.currentNet)}</em>
+            <small>Realized result for selected range</small>
+          </div>
+          <div className="inset">
+            <span className="accent" style={{ background: 'var(--green)' }} />
+            <p className="lbl">CONSERVATIVE RECOVERABLE</p>
+            <em style={{ color: 'var(--green)' }}>{formatCurrency(metrics.conservativeRecoverable)}</em>
+            <small>Overlap-adjusted leak recovery estimate</small>
+          </div>
+          <div className="inset">
+            <span className="accent" style={{ background: 'var(--amber)' }} />
+            <p className="lbl">PROJECTED NET AFTER FIXES</p>
+            <em style={{ color: metrics.projectedNet >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.projectedNet)}</em>
+            <small>Current net plus recoverable estimate</small>
           </div>
         </div>
       </div>
 
       {/* ── Health Score Section ── */}
-      <div className="flex flex-col items-center">
-        {/* Health gauge + flanking stats */}
-        <div className="w-full flex items-center justify-between">
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: hc }} />
+        <div className="cardhead">
+          <div>
+            <h3>Execution Health</h3>
+            <p className="sub">Blend of discipline, win consistency, and leak control</p>
+          </div>
+          <span className="chip" style={{ marginLeft: 'auto', color: hc, borderColor: 'var(--line)' }}>
+            <Shield size={12} />
+            {metrics.healthScore >= 70 ? 'Strong' : metrics.healthScore >= 40 ? 'Average' : 'Needs Work'}
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 24, alignItems: 'center', marginTop: 22 }}>
           {/* Areas to improve */}
-          <div className="text-left">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 rounded-lg bg-red-500/10"><TrendingDown size={16} className="text-red-400" /></div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400">Areas to Improve</p>
+          <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+            <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <TrendingDown size={13} style={{ color: 'var(--red)' }} />
+              <p className="lbl" style={{ color: 'var(--red)' }}>AREAS TO IMPROVE</p>
             </div>
-            <p className="text-3xl sm:text-4xl font-bold">{diagnostics.length}</p>
-            <p className="text-sm text-red-400 mt-1">{formatCurrency(-metrics.grossLeakImpact)} <span className="text-[var(--muted-foreground)] text-xs">Total Impact</span></p>
+            <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 8 }}>{diagnostics.length}</p>
+            <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
+              <span style={{ color: 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(-metrics.grossLeakImpact)}</span> total impact
+            </p>
           </div>
 
           {/* SVG Gauge */}
-          <div className="relative w-48 h-48 sm:w-56 sm:h-56">
-            <svg viewBox="0 0 260 260" className="w-full h-full -rotate-[135deg]">
+          <div style={{ position: 'relative', width: 200, height: 200, margin: '0 auto' }}>
+            <svg viewBox="0 0 260 260" width="200" height="200" style={{ transform: 'rotate(-135deg)' }}>
               {/* Background arc */}
               <circle
                 cx="130" cy="130" r={gaugeRadius}
                 fill="none"
-                stroke="var(--muted)"
+                stroke="#141e2a"
                 strokeWidth={gaugeStroke}
                 strokeDasharray={`${gaugeArcLength} ${gaugeCircumference}`}
-                strokeLinecap="round"
               />
               {/* Filled arc */}
               <circle
@@ -516,204 +543,224 @@ export default function Verdicts({ trades }: VerdictsProps) {
                 stroke={hc}
                 strokeWidth={gaugeStroke}
                 strokeDasharray={`${healthFill} ${gaugeCircumference}`}
-                strokeLinecap="round"
                 className="transition-all duration-700"
               />
             </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl sm:text-5xl font-bold">{metrics.healthScore}</span>
-              <span className="text-sm text-[var(--muted-foreground)] -mt-1">%</span>
-              <span className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mt-1">Health Score</span>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 42, lineHeight: '48px', color: 'var(--text)' }}>{metrics.healthScore}</span>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--muted-2)' }}>%</span>
+              <span className="lbl" style={{ marginTop: 8 }}>HEALTH SCORE</span>
             </div>
           </div>
 
           {/* Trades analyzed */}
-          <div className="text-right">
-            <div className="flex items-center justify-end gap-2 mb-2">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)]">Trades Analyzed</p>
-              <div className="p-2 rounded-lg bg-[var(--accent)]/10"><TrendingUp size={16} className="text-[var(--accent)]" /></div>
+          <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+            <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <TrendingUp size={13} style={{ color: 'var(--amber)' }} />
+              <p className="lbl" style={{ color: 'var(--amber)' }}>TRADES ANALYZED</p>
             </div>
-            <p className="text-3xl sm:text-4xl font-bold">{assessed.length}</p>
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">Coverage <span className="text-[var(--accent)] font-semibold">{metrics.coverage}%</span></p>
+            <p className="bignum" style={{ fontSize: 34, lineHeight: '42px', marginTop: 8 }}>{assessed.length}</p>
+            <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
+              Coverage <span style={{ color: 'var(--amber)', fontFamily: 'var(--mono)' }}>{metrics.coverage}%</span>
+            </p>
           </div>
-        </div>
-
-        {/* Rating badge */}
-        <div className="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[var(--muted)] text-sm">
-          <Shield size={14} className="text-[var(--muted-foreground)]" />
-          {metrics.healthScore >= 70 ? 'Strong' : metrics.healthScore >= 40 ? 'Average' : 'Needs Work'}
         </div>
 
         {/* Room to grow / Strengths bar */}
-        <div className="w-full mt-6">
-          <div className="flex justify-between mb-1.5">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-red-400">
-              Room to Grow ({metrics.roomToGrow}%)
-            </span>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-green-400">
-              Strengths Value ({metrics.strengthsValue}%)
-            </span>
+        <div style={{ marginTop: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span className="lbl" style={{ color: 'var(--red)' }}>ROOM TO GROW ({metrics.roomToGrow}%)</span>
+            <span className="lbl" style={{ color: 'var(--green)' }}>STRENGTHS VALUE ({metrics.strengthsValue}%)</span>
           </div>
-          <div className="h-3 rounded-full bg-[var(--muted)] overflow-hidden flex">
-            <div className="h-full bg-red-400 transition-all" style={{ width: `${Math.max(metrics.roomToGrow, 2)}%` }} />
-            <div className="h-full flex-1" />
-            <div className="h-full bg-green-400 transition-all" style={{ width: `${Math.max(metrics.strengthsValue, 2)}%` }} />
+          <div style={{ display: 'flex', height: 3, background: 'var(--rail)' }}>
+            <div style={{ height: 3, background: 'var(--red)', width: `${Math.max(metrics.roomToGrow, 2)}%` }} />
+            <div style={{ height: 3, flex: 1 }} />
+            <div style={{ height: 3, background: 'var(--green)', width: `${Math.max(metrics.strengthsValue, 2)}%` }} />
           </div>
         </div>
       </div>
 
       {/* ══════════════ SUMMARY ══════════════ */}
-      <div ref={summaryRef} className="scroll-mt-4">
+      <div ref={summaryRef} className="scroll-mt-4" style={{ marginTop: 24 }}>
           {/* The Big Picture */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
-            <h3 className="text-xl font-bold text-center mb-6">The Big Picture</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          <div className="card">
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+            <div className="cardhead">
+              <div>
+                <h3>The Big Picture</h3>
+                <p className="sub">Where the range landed, and where it could land after fixes</p>
+              </div>
+              <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12, alignItems: 'stretch', marginTop: 22 }}>
               {/* Current Net P&L */}
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingDown size={16} className="text-[var(--muted-foreground)]" />
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400">Current Net P&L</p>
+              <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                  <TrendingDown size={13} style={{ color: 'var(--muted-3)' }} />
+                  <p className="lbl" style={{ color: 'var(--red)' }}>CURRENT NET P&amp;L</p>
                 </div>
-                <p className={`text-2xl sm:text-3xl font-bold ${metrics.currentNet >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 24, lineHeight: '30px', color: metrics.currentNet >= 0 ? 'var(--green)' : 'var(--red)' }}>
                   {formatCurrency(metrics.currentNet)}
                 </p>
               </div>
 
               {/* Projected Net After Fixes (center, bigger card) */}
-              <div className="bg-[var(--muted)] rounded-xl p-5 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Target size={16} className="text-[var(--muted-foreground)]" />
-                  <p className="text-[10px] font-semibold uppercase tracking-widest">Projected Net After Fixes</p>
+              <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                  <Target size={13} style={{ color: 'var(--muted-3)' }} />
+                  <p className="lbl" style={{ color: 'var(--amber)' }}>PROJECTED NET AFTER FIXES</p>
                 </div>
-                <p className={`text-3xl sm:text-4xl font-bold mb-2 ${metrics.projectedNet >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 28, lineHeight: '34px', color: metrics.projectedNet >= 0 ? 'var(--green)' : 'var(--red)' }}>
                   {formatCurrency(metrics.projectedNet)}
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p style={{ margin: '8px 0 0', fontSize: 11, lineHeight: '17px', color: 'var(--muted-2)' }}>
                   Current net plus conservative recoverable leak estimate
                 </p>
-                <p className="text-[10px] text-[var(--muted-foreground)] mt-1">
+                <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
                   {formatCurrency(metrics.currentNet)} + {formatCurrency(metrics.conservativeRecoverable)} = {formatCurrency(metrics.projectedNet)}
                 </p>
-                <p className="text-[10px] text-[var(--muted-foreground)] mt-2">
+                <p style={{ margin: '6px 0 0', fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>
                   Conservative recoverable is overlap-adjusted for confidence and signal overlap (diagnostics gross potential drag: {formatCurrency(-metrics.grossLeakImpact)}).
                 </p>
               </div>
 
               {/* Conservative Recoverable */}
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingUp size={16} className="text-[var(--muted-foreground)]" />
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Conservative Recoverable</p>
+              <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                  <TrendingUp size={13} style={{ color: 'var(--muted-3)' }} />
+                  <p className="lbl" style={{ color: 'var(--green)' }}>CONSERVATIVE RECOVERABLE</p>
                 </div>
-                <p className="text-2xl sm:text-3xl font-bold text-green-400">
+                <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 24, lineHeight: '30px', color: 'var(--green)' }}>
                   {formatCurrency(metrics.conservativeRecoverable)}
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-[var(--muted-foreground)] text-center mt-6 pt-4 border-t border-[var(--border)]">
+            <p className="footnote" style={{ marginTop: 22, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
               Diagnostics totals are model signal totals and can overlap. Projection always uses the conservative recoverable value shown above.
             </p>
           </div>
 
           {/* How to read this */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3 text-sm">
-            <span className="font-semibold text-blue-400">How to read this: </span>
-            <span className="text-[var(--muted-foreground)]">
-              Current Net P&L is your realized result for this range. Leak Impact is a conservative recoverable estimate from detected behavior patterns. Projected Net After Fixes equals current net plus this estimate.
+          <div className="disclaim" style={{ marginTop: 20 }}>
+            <span>
+              <b>How to read this: </b>
+              Current Net P&amp;L is your realized result for this range. Leak Impact is a conservative recoverable estimate from detected behavior patterns. Projected Net After Fixes equals current net plus this estimate.
             </span>
           </div>
 
           {/* Top Leak / Top Strength / First Action */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="bg-[var(--card)] border border-yellow-500/30 rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-yellow-400 mb-1">Top Leak</p>
-              <p className="text-sm font-bold mb-1">{topLeak?.name ?? 'No leaks detected'}</p>
-              <p className="text-xs text-[var(--muted-foreground)]">
+          <div className="split-3" style={{ marginTop: 20 }}>
+            <div className="card" style={{ padding: '19px 22px 20px' }}>
+              <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+              <p className="lbl" style={{ color: 'var(--amber)' }}>TOP LEAK</p>
+              <p style={{ margin: '9px 0 0', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{topLeak?.name ?? 'No leaks detected'}</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                 {topLeak ? `Impact: ${formatCurrency(topLeak.impact)}` : 'Clean execution this period.'}
               </p>
             </div>
-            <div className="bg-[var(--card)] border border-green-500/30 rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-1">Top Strength</p>
-              <p className="text-sm font-bold mb-1">{topStrength?.name ?? 'No major strength detected'}</p>
-              <p className="text-xs text-[var(--muted-foreground)]">
+            <div className="card" style={{ padding: '19px 22px 20px' }}>
+              <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+              <p className="lbl" style={{ color: 'var(--green)' }}>TOP STRENGTH</p>
+              <p style={{ margin: '9px 0 0', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{topStrength?.name ?? 'No major strength detected'}</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                 {topStrength?.description ?? 'Run a longer period to reveal robust edges.'}
               </p>
             </div>
-            <div className="bg-[var(--card)] border border-red-500/30 rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400 mb-1">First Action Now</p>
-              <p className="text-sm font-bold mb-1">{firstAction?.name ?? 'No action needed'}</p>
-              <p className="text-xs text-[var(--muted-foreground)]">
-                {firstAction ? <><ArrowRight size={10} className="inline mr-1" />{firstAction.nextStep}</> : 'Keep executing your plan.'}
+            <div className="card" style={{ padding: '19px 22px 20px' }}>
+              <span className="accent" style={{ width: 44, background: 'var(--red)' }} />
+              <p className="lbl" style={{ color: 'var(--red)' }}>FIRST ACTION NOW</p>
+              <p style={{ margin: '9px 0 0', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{firstAction?.name ?? 'No action needed'}</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
+                {firstAction ? <><ArrowRight size={10} style={{ display: 'inline', marginRight: 4 }} />{firstAction.nextStep}</> : 'Keep executing your plan.'}
               </p>
             </div>
           </div>
       </div>
 
       {/* ══════════════ DIAGNOSTICS ══════════════ */}
-      <div ref={diagnosticsRef} className="scroll-mt-4">
-          <div className="text-center mb-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Diagnostics</p>
-          </div>
+      <div ref={diagnosticsRef} className="scroll-mt-4" style={{ marginTop: 32 }}>
+          <p className="lbl b10" style={{ marginBottom: 14 }}>
+            DIAGNOSTICS <span style={{ color: 'var(--amber)' }}>· {diagnostics.length}</span>
+          </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="split-2u">
             {/* Left: Signals list */}
-            <div className="lg:col-span-3 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
-                  <h3 className="text-lg font-bold">
-                    {diagnostics.length} Detected Opportunities & Leaks (Gross Diagnostics)
-                  </h3>
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>{diagnostics.length} Detected Opportunities &amp; Leaks</h3>
+                  <p className="sub">Gross diagnostics — signals can overlap</p>
                 </div>
-                <span className="text-red-400 font-bold">{formatCurrency(-metrics.grossLeakImpact)}</span>
+                <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 14, color: 'var(--red)' }}>
+                  {formatCurrency(-metrics.grossLeakImpact)}
+                </span>
               </div>
-              <p className="text-xs text-[var(--muted-foreground)] mb-1">
-                Gross absolute signal impact: {formatCurrency(metrics.grossLeakImpact)}.
-                Overlap-adjusted: {formatCurrency(metrics.grossLeakImpact * 0.48)}.
-                Uniqueness-adjusted: {formatCurrency(metrics.grossLeakImpact * 0.26)}.
+              <p style={{ margin: '16px 0 0', fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)' }}>
+                Gross absolute signal impact: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(metrics.grossLeakImpact)}</span>.
+                {' '}Overlap-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span>.
+                {' '}Uniqueness-adjusted: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(metrics.grossLeakImpact * 0.26)}</span>.
               </p>
-              <p className="text-xs text-[var(--muted-foreground)] mb-5">
-                Directional net signal: {formatCurrency(-metrics.grossLeakImpact)}.
-                Conservative recoverable used in projection above: {formatCurrency(metrics.conservativeRecoverable)}.
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '18px', color: 'var(--muted-2)' }}>
+                Directional net signal: <span style={{ fontFamily: 'var(--mono)', color: 'var(--red)' }}>{formatCurrency(-metrics.grossLeakImpact)}</span>.
+                {' '}Conservative recoverable used in projection above: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{formatCurrency(metrics.conservativeRecoverable)}</span>.
               </p>
 
               {diagnostics.length === 0 ? (
-                <div className="py-12 text-center">
-                  <p className="text-[var(--muted-foreground)] text-sm">No diagnostic signals detected in this period.</p>
-                  <p className="text-[var(--muted-foreground)] text-xs mt-1">Try expanding the time window.</p>
+                <div className="empty-line">
+                  No diagnostic signals detected in this period. Try expanding the time window.
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
                   {diagnostics.map((d, i) => (
                     <button
                       key={d.id}
                       onClick={() => setSelectedDiagnostic(i)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-left ${
-                        selectedDiagnostic === i
-                          ? 'bg-[var(--muted)] border border-[var(--border)]'
-                          : 'hover:bg-[var(--muted)]/50'
-                      }`}
+                      className="inset"
+                      style={{
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '12px 16px',
+                        borderColor: selectedDiagnostic === i ? 'var(--amber)' : 'var(--line)',
+                      }}
                     >
-                      <span className="text-xs text-[var(--muted-foreground)] w-6 shrink-0 tabular-nums">
+                      {selectedDiagnostic === i && (
+                        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: 'var(--amber)' }} />
+                      )}
+                      <span style={{ flex: 'none', width: 22, fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--muted-2)' }}>
                         {String(i + 1).padStart(2, '0')}
                       </span>
-                      <AlertTriangle size={16} className="text-yellow-400 shrink-0" />
-                      <span className="text-sm font-medium flex-1 truncate">{d.name}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${effortColor(d.effort)}`}>
+                      <AlertTriangle size={14} style={{ flex: 'none', color: 'var(--amber)' }} />
+                      <span style={{ flex: 1, minWidth: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {d.name}
+                      </span>
+                      <span className={`chip ${effortColor(d.effort)}`} style={{ flex: 'none', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700 }}>
                         {d.effort}
                       </span>
                       {/* Impact bar */}
-                      <div className="w-20 h-2 rounded-full bg-[var(--muted)] overflow-hidden shrink-0">
-                        <div
-                          className="h-full rounded-full bg-red-400"
-                          style={{ width: `${Math.min(100, (Math.abs(d.impact) / metrics.grossLeakImpact) * 100)}%` }}
+                      <div style={{ flex: 'none', width: 72, height: 3, background: 'var(--rail)' }}>
+                        <i
+                          style={{
+                            display: 'block', height: 3, background: 'var(--red)',
+                            width: `${Math.min(100, (Math.abs(d.impact) / metrics.grossLeakImpact) * 100)}%`,
+                          }}
                         />
                       </div>
-                      <span className="text-xs text-red-400 font-medium w-20 text-right shrink-0 tabular-nums">
+                      <span style={{ flex: 'none', width: 84, textAlign: 'right', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--red)' }}>
                         {formatCurrency(d.impact)}
                       </span>
-                      {selectedDiagnostic === i ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                      {selectedDiagnostic === i
+                        ? <ChevronDown size={14} style={{ flex: 'none', color: 'var(--amber)' }} />
+                        : <ChevronRight size={14} style={{ flex: 'none', color: 'var(--muted-3)' }} />}
                     </button>
                   ))}
                 </div>
@@ -721,122 +768,119 @@ export default function Verdicts({ trades }: VerdictsProps) {
             </div>
 
             {/* Right: Impact details */}
-            <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
               {diagnostics.length > 0 && diagnostics[selectedDiagnostic] ? (() => {
                 const d = diagnostics[selectedDiagnostic];
                 return (
                   <>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold">Impact details</h4>
-                      <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${priorityColor(d.priority)}`}>
+                    <div className="cardhead">
+                      <div>
+                        <h3>Impact details</h3>
+                        <p className="sub">{d.name}</p>
+                      </div>
+                      <span className={`chip ${priorityColor(d.priority)}`} style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700 }}>
                         {d.priority}
                       </span>
                     </div>
-                    <p className="text-sm text-[var(--muted-foreground)] mb-4">{d.name}</p>
 
-                    <div className="grid grid-cols-2 gap-3 mb-5">
-                      <div className="bg-[var(--muted)] rounded-lg p-3">
-                        <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Estimated Impact</p>
-                        <p className="text-lg font-bold">{formatCurrency(d.impact)}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 20 }}>
+                      <div className="inset" style={{ padding: '13px 16px' }}>
+                        <p className="lbl">ESTIMATED IMPACT</p>
+                        <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--red)' }}>{formatCurrency(d.impact)}</p>
                       </div>
-                      <div className="bg-[var(--muted)] rounded-lg p-3">
-                        <p className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Confidence</p>
-                        <p className="text-lg font-bold">{d.confidence}</p>
+                      <div className="inset" style={{ padding: '13px 16px' }}>
+                        <p className="lbl">CONFIDENCE</p>
+                        <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{d.confidence}</p>
                       </div>
                     </div>
 
                     {/* Trade-backed proof */}
-                    <div className="mb-5">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Eye size={14} className="text-[var(--accent)]" />
-                        <p className="text-[10px] font-semibold uppercase tracking-widest">Trade-Backed Proof</p>
+                    <div style={{ marginTop: 22 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
+                        <Eye size={13} style={{ color: 'var(--amber)' }} />
+                        <p className="lbl">TRADE-BACKED PROOF</p>
                       </div>
-                      <div className="bg-[var(--muted)] rounded-lg p-4 text-sm leading-relaxed whitespace-pre-line">
+                      <div className="inset" style={{ padding: '14px 16px', fontSize: 12, lineHeight: '19px', color: 'var(--text-2)', whiteSpace: 'pre-line' }}>
                         {d.proof}
                       </div>
-                      <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                      <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
                         Next step: {d.nextStep}
                       </p>
                     </div>
 
                     {/* Evidence library */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Crosshair size={14} className="text-[var(--accent)]" />
-                        <p className="text-[10px] font-semibold uppercase tracking-widest">Evidence Library</p>
+                    <div style={{ marginTop: 22 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
+                        <Crosshair size={13} style={{ color: 'var(--amber)' }} />
+                        <p className="lbl">EVIDENCE LIBRARY</p>
                       </div>
-                      <p className="text-xs text-[var(--muted-foreground)] mb-3">
+                      <p style={{ margin: '0 0 10px', fontSize: 11.5, color: 'var(--muted-2)' }}>
                         {d.trades.length} trade{d.trades.length !== 1 ? 's' : ''} matched &middot; {d.coverage} clusters &middot; Net {formatCurrency(d.trades.reduce((s, t) => s + (t.actualPnL ?? 0), 0))}
                       </p>
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 260, overflowY: 'auto' }}>
                         {d.trades.slice(0, 5).map(t => (
-                          <div key={t.id} className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2.5">
-                            <div>
-                              <p className="text-sm font-medium">{t.coin} <span className={(t.direction ?? 'long') === 'long' ? 'text-green-400' : 'text-red-400'}>{(t.direction ?? 'long').toUpperCase()}</span></p>
-                              <p className="text-[10px] text-[var(--muted-foreground)]">
-                                {t.exitDate ? format(parseISO(t.exitDate), 'M/d/yyyy, h:mm:ss a') : '—'} &middot; {formatCurrency(t.actualPnL ?? 0)}
-                              </p>
-                            </div>
+                          <div key={t.id} className="inset" style={{ padding: '10px 14px' }}>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>
+                              {t.coin}{' '}
+                              <span style={{ fontWeight: 700, fontSize: 10, letterSpacing: '.04em', color: (t.direction ?? 'long') === 'long' ? 'var(--green)' : 'var(--red)' }}>
+                                {(t.direction ?? 'long').toUpperCase()}
+                              </span>
+                            </p>
+                            <p style={{ margin: '4px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
+                              {t.exitDate ? format(parseISO(t.exitDate), 'M/d/yyyy, h:mm:ss a') : '—'} &middot;{' '}
+                              <span style={{ fontFamily: 'var(--mono)', color: (t.actualPnL ?? 0) >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(t.actualPnL ?? 0)}</span>
+                            </p>
                           </div>
                         ))}
                       </div>
-                      <p className="text-[10px] text-[var(--muted-foreground)] mt-3 flex items-center gap-1">
-                        <Sparkles size={10} className="text-[var(--accent)]" />
+                      <p style={{ margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>
+                        <Sparkles size={10} style={{ color: 'var(--amber)' }} />
                         Evidence derives from trades inside the currently selected date range.
                       </p>
                     </div>
                   </>
                 );
               })() : (
-                <div className="py-12 text-center text-[var(--muted-foreground)] text-sm">
-                  No signals to inspect.
-                </div>
+                <div className="empty-line">No signals to inspect.</div>
               )}
             </div>
           </div>
       </div>
 
       {/* ══════════════ ACTION PLAN ══════════════ */}
-      <div ref={actionPlanRef} className="scroll-mt-4">
+      <div ref={actionPlanRef} className="scroll-mt-4" style={{ marginTop: 32 }}>
           {/* Edge Analysis */}
-          <div className="text-center mb-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Edge Analysis</p>
-          </div>
+          <p className="lbl b10" style={{ marginBottom: 14 }}>
+            EDGE ANALYSIS <span style={{ color: 'var(--green)' }}>· {strengths.length}</span>
+          </p>
 
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-green-500/10">
-                  <Sparkles size={20} className="text-green-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">Top Strengths</h3>
-                  <p className="text-sm text-[var(--muted-foreground)]">
-                    These are your superpowers. The patterns that consistently make you money.
-                  </p>
-                </div>
+          <div className="card">
+            <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+            <div className="cardhead">
+              <div>
+                <h3>Top Strengths</h3>
+                <p className="sub">These are your superpowers. The patterns that consistently make you money.</p>
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Total Edge Value</p>
-                <p className="text-xl font-bold">{formatCurrency(totalEdgeValue)}</p>
+              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                <p className="lbl" style={{ color: 'var(--green)' }}>TOTAL EDGE VALUE</p>
+                <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{formatCurrency(totalEdgeValue)}</p>
               </div>
             </div>
 
             {strengths.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-[var(--muted-foreground)] text-sm">No strengths detected in this period.</p>
-                <p className="text-[var(--muted-foreground)] text-xs mt-1 italic">
-                  Pro tip: Double down on your winning patterns during your best windows for maximum edge.
-                </p>
+              <div className="empty-line">
+                No strengths detected in this period. Double down on your winning patterns during your best windows for maximum edge.
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 12, marginTop: 22 }}>
                 {strengths.map((s, i) => (
-                  <div key={i} className="bg-[var(--card)] border border-green-500/20 rounded-xl p-4">
-                    <p className="text-sm font-bold text-green-400 mb-1">{s.name}</p>
-                    <p className="text-xs text-[var(--muted-foreground)] mb-2">{s.description}</p>
-                    <p className="text-lg font-bold text-green-400">{formatCurrency(s.value)}</p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">{s.trades.length} trades</p>
+                  <div key={i} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                    <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+                    <p className="lbl" style={{ color: 'var(--green)' }}>{s.name.toUpperCase()}</p>
+                    <p style={{ margin: '8px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>{s.description}</p>
+                    <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--green)' }}>{formatCurrency(s.value)}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>{s.trades.length} trades</p>
                   </div>
                 ))}
               </div>
@@ -844,123 +888,136 @@ export default function Verdicts({ trades }: VerdictsProps) {
           </div>
 
           {/* Execution Plan */}
-          <div className="text-center mb-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Action Plan</p>
-          </div>
+          <p className="lbl b10" style={{ margin: '32px 0 14px' }}>
+            ACTION PLAN <span style={{ color: 'var(--amber)' }}>· {actionItems.length}</span>
+          </p>
 
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-xl font-bold">Execution Plan</h3>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Prioritized actions for this exact period. Execute step 1 first, then validate result stability before moving to step 2.
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Estimated Recoverable</p>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--muted)] text-sm mt-1">
-                <Target size={14} className="text-green-400" />
-                <span className="font-bold text-green-400">{formatCurrency(totalRecoverable)}</span>
-                <span className="text-[var(--muted-foreground)]">64d range</span>
+          <div className="card">
+            <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+            <div className="cardhead">
+              <div>
+                <h3>Execution Plan</h3>
+                <p className="sub">
+                  Prioritized actions for this exact period. Execute step 1 first, then validate result stability before moving to step 2.
+                </p>
+              </div>
+              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                <p className="lbl" style={{ color: 'var(--green)' }}>ESTIMATED RECOVERABLE</p>
+                <span className="chip" style={{ marginTop: 8, height: 26, color: 'var(--green)' }}>
+                  <Target size={12} />
+                  <span style={{ fontFamily: 'var(--mono)' }}>{formatCurrency(totalRecoverable)}</span>
+                  <span style={{ color: 'var(--muted-2)' }}>64d range</span>
+                </span>
               </div>
             </div>
-          </div>
 
-          {actionItems.length === 0 ? (
-            <div className="text-center py-12 text-[var(--muted-foreground)] text-sm">
-              No action items — execution looks clean.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {actionItems.map((a, i) => (
-                <div
-                  key={a.id}
-                  className={`bg-[var(--card)] border rounded-xl p-5 ${
-                    i === 0 ? 'border-yellow-500/30' : 'border-[var(--border)]'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      i === 0
-                        ? 'bg-yellow-500/20 text-yellow-400'
-                        : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                    }`}>
-                      {String(a.id).padStart(2, '0')}
-                    </span>
-                    {i === 0 && <Target size={16} className="text-yellow-400" />}
-                    {i === 1 && <Shield size={16} className="text-[var(--muted-foreground)]" />}
-                    {i >= 2 && <TrendingUp size={16} className="text-[var(--muted-foreground)]" />}
+            {actionItems.length === 0 ? (
+              <div className="empty-line">No action items — execution looks clean.</div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 22 }}>
+                {actionItems.map((a, i) => (
+                  <div key={a.id} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                    <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: i === 0 ? 'var(--amber)' : 'var(--line-2)' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span
+                        style={{
+                          width: 24, height: 24, flex: 'none',
+                          border: `1px solid ${i === 0 ? 'var(--amber)' : 'var(--line-2)'}`,
+                          borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--display)', fontWeight: 700, fontSize: 11,
+                          color: i === 0 ? 'var(--amber)' : 'var(--muted-2)',
+                        }}
+                      >
+                        {String(a.id).padStart(2, '0')}
+                      </span>
+                      <span style={{ marginLeft: 'auto', color: i === 0 ? 'var(--amber)' : 'var(--muted-3)' }}>
+                        {i === 0 && <Target size={14} />}
+                        {i === 1 && <Shield size={14} />}
+                        {i >= 2 && <TrendingUp size={14} />}
+                      </span>
+                    </div>
+                    <p style={{ margin: '12px 0 0', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{a.name}</p>
+                    <p style={{ margin: '6px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>{a.description}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--line)', fontSize: 10.5, color: 'var(--muted-2)' }}>
+                      <ArrowRight size={11} style={{ flex: 'none' }} />
+                      <span>Run for 5-7 sessions, then reassess</span>
+                      <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', color: 'var(--green)' }}>
+                        {formatCurrency(a.recoverable)} {a.timeframe}
+                      </span>
+                    </div>
                   </div>
-                  <h4 className="text-sm font-bold mb-2">{a.name}</h4>
-                  <p className="text-xs text-[var(--muted-foreground)] mb-4 leading-relaxed">{a.description}</p>
-                  <div className="border-t border-[var(--border)] pt-3 flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                    <ArrowRight size={12} />
-                    <span>Run for 5-7 sessions, then reassess</span>
-                    <span className="ml-auto text-green-400 font-semibold tabular-nums">
-                      {formatCurrency(a.recoverable)} {a.timeframe}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
       </div>
 
       {/* ══════════════ COACH NOTES ══════════════ */}
-      <div ref={coachNotesRef} className="scroll-mt-4">
-        <div className="flex flex-col items-center">
-          <div className="max-w-2xl w-full bg-gradient-to-b from-[var(--accent)]/5 to-transparent border border-[var(--accent)]/20 rounded-2xl p-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-[var(--accent)]/10 flex items-center justify-center mx-auto mb-4">
-              <Sparkles size={24} className="text-[var(--accent)]" />
-            </div>
-            <h3 className="text-2xl font-bold mb-4">You&apos;re Doing Better Than You Think</h3>
-
-            {diagnostics.length > 0 ? (
-              <div className="space-y-3 text-sm text-[var(--muted-foreground)]">
-                {diagnostics.slice(0, 2).map(d => (
-                  <p key={d.id}>
-                    Apply a concrete guardrail for &apos;{d.name}&apos; and track adherence for 14 days.
-                  </p>
-                ))}
-                <p className="mt-4">
-                  The current leak set represents {metrics.grossLeakImpact > 0 && metrics.totalLoss > 0
-                    ? `${Math.round((metrics.grossLeakImpact / metrics.totalLoss) * 100)}%`
-                    : '0%'} of total detected impact in this range.
-                </p>
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Your execution is clean this period. Keep focusing on process over outcome and the results will compound.
-              </p>
-            )}
-
-            {strengths.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-[var(--border)]">
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  Your edge in <span className="text-[var(--accent)] font-semibold">{strengths[0].name}</span> is real
-                  — {strengths[0].description}. Lean into this strength.
-                </p>
-              </div>
-            )}
+      <div ref={coachNotesRef} className="scroll-mt-4" style={{ marginTop: 32 }}>
+        <p className="lbl b10" style={{ marginBottom: 14 }}>COACH NOTES</p>
+        <div className="card" style={{ padding: '34px 28px 30px', textAlign: 'center' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div
+            style={{
+              width: 52, height: 52, borderRadius: 3, margin: '0 auto 22px',
+              border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <Sparkles size={22} style={{ color: 'var(--amber)' }} />
           </div>
+          <h3 style={{ fontSize: 22, lineHeight: '24px' }}>You&apos;re Doing Better Than You Think</h3>
+
+          {diagnostics.length > 0 ? (
+            <div style={{ maxWidth: 640, margin: '18px auto 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {diagnostics.slice(0, 2).map(d => (
+                <p key={d.id} style={{ margin: 0, fontSize: 12.5, lineHeight: '20px', color: 'var(--muted)' }}>
+                  Apply a concrete guardrail for &apos;{d.name}&apos; and track adherence for 14 days.
+                </p>
+              ))}
+              <p style={{ margin: '8px 0 0', fontSize: 12.5, lineHeight: '20px', color: 'var(--muted)' }}>
+                The current leak set represents{' '}
+                <span style={{ fontFamily: 'var(--mono)', color: 'var(--amber)' }}>
+                  {metrics.grossLeakImpact > 0 && metrics.totalLoss > 0
+                    ? `${Math.round((metrics.grossLeakImpact / metrics.totalLoss) * 100)}%`
+                    : '0%'}
+                </span>{' '}
+                of total detected impact in this range.
+              </p>
+            </div>
+          ) : (
+            <p style={{ maxWidth: 640, margin: '18px auto 0', fontSize: 12.5, lineHeight: '20px', color: 'var(--muted)' }}>
+              Your execution is clean this period. Keep focusing on process over outcome and the results will compound.
+            </p>
+          )}
+
+          {strengths.length > 0 && (
+            <div style={{ maxWidth: 640, margin: '22px auto 0', paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+              <p style={{ margin: 0, fontSize: 12.5, lineHeight: '20px', color: 'var(--muted)' }}>
+                Your edge in <span style={{ color: 'var(--amber)', fontWeight: 700 }}>{strengths[0].name}</span> is real
+                — {strengths[0].description}. Lean into this strength.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* ── Range Summary Footer ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 flex flex-wrap items-center gap-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <Sparkles size={12} className="text-[var(--accent)]" />
-          <span className="font-semibold">Range Summary</span>
-        </div>
-        <span className="text-[var(--muted-foreground)]">
-          Leak diagnostics: {formatCurrency(-metrics.grossLeakImpact)} &middot;
-          Overlap-adjusted diagnostics: {formatCurrency(metrics.grossLeakImpact * 0.48)} &middot;
-          Conservative recoverable: {formatCurrency(metrics.conservativeRecoverable)} &middot;
-          Detected strengths: {formatCurrency(totalEdgeValue)}
+      <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', lineHeight: '18px', flexWrap: 'wrap', gap: 12 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontWeight: 700, color: 'var(--text)' }}>
+          <Sparkles size={12} style={{ color: 'var(--amber)' }} />
+          Range Summary
         </span>
-        <div className="ml-auto flex items-center gap-1.5">
+        <span>
+          Leak diagnostics: <span style={{ color: 'var(--red)', fontFamily: 'var(--mono)' }}>{formatCurrency(-metrics.grossLeakImpact)}</span> &bull;
+          Overlap-adjusted: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(metrics.grossLeakImpact * 0.48)}</span> &bull;
+          Conservative recoverable: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(metrics.conservativeRecoverable)}</span> &bull;
+          Detected strengths: <span style={{ color: 'var(--green)', fontFamily: 'var(--mono)' }}>{formatCurrency(totalEdgeValue)}</span>
+        </span>
+        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
           <Shield size={12} style={{ color: hc }} />
-          <span>Health score: {metrics.healthScore}%</span>
-        </div>
+          <span style={{ color: 'var(--text)' }}>Health score: <span style={{ fontFamily: 'var(--mono)', color: hc }}>{metrics.healthScore}%</span></span>
+        </span>
       </div>
 
     </div>

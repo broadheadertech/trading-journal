@@ -1,9 +1,6 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  List, Brain, Scale, BarChart3, FileText, BookOpen, Map, Target, Sparkles, Trophy,
-} from 'lucide-react';
 import TradesLog from './TradesLog';
 import PsychologyJournal from './PsychologyJournal';
 import Verdicts from './Verdicts';
@@ -16,7 +13,6 @@ import WhatIfSimulation from './WhatIfSimulation';
 import Achievements from './Achievements';
 import UpgradePrompt from './UpgradePrompt';
 import { getRequiredTier } from '@/lib/features';
-import { tabNeonActive } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import type { Trade, Strategy, TabId } from '@/lib/types';
 
@@ -66,17 +62,19 @@ interface Props {
   updateGoal: any;
 }
 
-const SUB_TABS: { id: JournalSubTab; label: string; icon: React.ReactNode; gate?: TabId }[] = [
-  { id: 'trades',      label: 'Trades',         icon: <List size={16} /> },
-  { id: 'psychology',  label: 'Psychology',     icon: <Brain size={16} /> },
-  { id: 'verdicts',    label: 'Verdicts',       icon: <Scale size={16} />,    gate: 'verdicts' },
-  { id: 'performance', label: 'Performance',    icon: <BarChart3 size={16} /> },
-  { id: 'reports',     label: 'Reports',        icon: <FileText size={16} />, gate: 'reports' },
-  { id: 'playbook',    label: 'Playbook',       icon: <BookOpen size={16} /> },
-  { id: 'checklist',   label: 'Market Context', icon: <Map size={16} />,      gate: 'checklist' },
-  { id: 'goals',       label: 'Goals',          icon: <Target size={16} />,   gate: 'goals' },
-  { id: 'whatif',      label: 'What-If',        icon: <Sparkles size={16} />, gate: 'whatif' },
-  { id: 'achievements', label: 'Achievements',  icon: <Trophy size={16} /> },
+// Text-only labels — the ATLAS reference renders this strip as a single row of
+// plain-text tabs; per-tab icons pushed the 10 tabs onto a second line.
+const SUB_TABS: { id: JournalSubTab; label: string; gate?: TabId }[] = [
+  { id: 'trades',       label: 'Trades' },
+  { id: 'psychology',   label: 'Psychology' },
+  { id: 'verdicts',     label: 'Verdicts',       gate: 'verdicts' },
+  { id: 'performance',  label: 'Performance' },
+  { id: 'reports',      label: 'Reports',        gate: 'reports' },
+  { id: 'playbook',     label: 'Playbook' },
+  { id: 'checklist',    label: 'Market Context', gate: 'checklist' },
+  { id: 'goals',        label: 'Goals',          gate: 'goals' },
+  { id: 'whatif',       label: 'What-If',        gate: 'whatif' },
+  { id: 'achievements', label: 'Achievements' },
 ];
 
 export default function JournalTab(props: Props) {
@@ -92,26 +90,24 @@ export default function JournalTab(props: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="glass rounded-2xl p-1.5 inline-flex gap-1 overflow-x-auto max-w-full">
-        {SUB_TABS.map((t, idx) => {
+      <div className="tabs">
+        {SUB_TABS.map((t) => {
           const active = sub === t.id;
           return (
             <button
               key={t.id}
               onClick={() => setSub(t.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                active
-                  ? tabNeonActive(idx)
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40'
-              }`}
+              className={active ? 'on' : undefined}
+              style={{ whiteSpace: 'nowrap' }}
             >
-              {t.icon}
               {t.label}
             </button>
           );
         })}
       </div>
 
+      {/* The "Interactive Trade Journal" hero lives in <TradesLog/> — rendering it here
+          as well stacked two identical cards on top of each other. */}
       {sub === 'trades' && (
         <TradesLog
           trades={props.trades}

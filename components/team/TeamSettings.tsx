@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Settings, Users, ShieldCheck, AlertTriangle, Clock, Eye, Save, Trash2, Check,
-} from 'lucide-react';
+  Gear, Users, ShieldCheck, Warning, Clock, Eye, FloppyDisk, Trash, Check,
+} from '@phosphor-icons/react';
 
 interface WorkspaceMember {
   workspaceId: string;
@@ -33,6 +33,13 @@ interface TeamSettingsProps {
 }
 
 const MAX_SEATS = 5;
+
+// shared ATLAS input chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', height: 42, padding: '0 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
 
 const PERMISSIONS_MATRIX = [
   { permission: 'View Dashboard', owner: true, coach: true, assistant: true, student: true, viewer: true },
@@ -62,91 +69,102 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
   const seatPercent = Math.min((seatUsed / MAX_SEATS) * 100, 100);
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold">Settings</h2>
-        <p className="text-sm text-[var(--muted-foreground)]">Workspace configuration and audit log</p>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Configuration</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Settings</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>Workspace configuration and audit log</p>
       </div>
 
       {/* Workspace section */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-4">
-        <h3 className="font-bold flex items-center gap-2">
-          <Settings size={16} className="text-[var(--muted-foreground)]" />
-          Workspace
-        </h3>
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="flex items-center gap-2">
+          <Gear size={15} style={{ color: 'var(--muted-3)' }} />
+          <h3>Workspace</h3>
+        </div>
+        <p className="sub">Identity and visibility for this workspace</p>
 
-        <div>
-          <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">
-            Workspace Name
-          </label>
+        <div className="field" style={{ marginTop: 20, maxWidth: 420 }}>
+          <label>WORKSPACE NAME</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             disabled={!isOwner}
-            className="w-full max-w-md px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--accent)] disabled:opacity-60"
+            style={{ ...inputBox, opacity: isOwner ? 1 : 0.6 }}
           />
         </div>
 
-        <div className="flex items-center justify-between max-w-md">
+        <div className="flex items-center justify-between gap-4" style={{ marginTop: 18, maxWidth: 420 }}>
           <div>
-            <p className="text-sm font-semibold">Privacy Mode</p>
-            <p className="text-[11px] text-[var(--muted-foreground)]">Hide trader names from other students</p>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 700 }}>Privacy Mode</p>
+            <p style={{ margin: '4px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Hide trader names from other students</p>
           </div>
           <button
             onClick={() => setPrivacyMode(!privacyMode)}
             disabled={!isOwner}
-            className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 ${
-              privacyMode ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'
-            } disabled:opacity-60`}
+            className="flex items-center shrink-0"
+            style={{
+              width: 42, height: 22, padding: 2, borderRadius: 2,
+              border: '1px solid var(--line-2)',
+              background: privacyMode ? 'var(--amber)' : 'var(--panel-2)',
+              opacity: isOwner ? 1 : 0.6,
+            }}
           >
-            <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
-              privacyMode ? 'translate-x-4' : 'translate-x-0'
-            }`} />
+            <span
+              style={{
+                width: 16, height: 16, borderRadius: 1,
+                background: privacyMode ? 'var(--ink)' : 'var(--muted)',
+                transform: privacyMode ? 'translateX(20px)' : 'translateX(0)',
+                transition: 'transform .18s',
+              }}
+            />
           </button>
         </div>
 
         {isOwner && (
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-semibold transition-colors">
-            <Save size={14} />
+          <button className="btn-a" style={{ marginTop: 20 }}>
+            <FloppyDisk size={14} />
             Save Changes
           </button>
         )}
       </div>
 
       {/* Seats + Role Distribution row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="split" style={{ marginTop: 24 }}>
         {/* Seats */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <h3 className="font-bold flex items-center gap-2 mb-4">
-            <Users size={16} className="text-[var(--muted-foreground)]" />
-            Seats
-          </h3>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="text-3xl font-bold">{seatUsed}</span>
-            <span className="text-lg text-[var(--muted-foreground)]">/ {MAX_SEATS}</span>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="flex items-center gap-2">
+            <Users size={15} style={{ color: 'var(--muted-3)' }} />
+            <h3>Seats</h3>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-3">Active seats used</p>
-          <div className="h-2 bg-[var(--muted)] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--accent)] rounded-full transition-all"
-              style={{ width: `${seatPercent}%` }}
-            />
+          <p className="sub">Active seats used in this workspace</p>
+          <div className="flex items-baseline gap-2" style={{ marginTop: 20 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 30, lineHeight: '38px' }}>{seatUsed}</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 16, color: 'var(--muted-2)' }}>/ {MAX_SEATS}</span>
+          </div>
+          <div style={{ height: 8, marginTop: 12, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ height: '100%', background: 'var(--amber)', width: `${seatPercent}%` }} />
           </div>
         </div>
 
         {/* Role Distribution */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <h3 className="font-bold flex items-center gap-2 mb-4">
-            <ShieldCheck size={16} className="text-[var(--muted-foreground)]" />
-            Role Distribution
-          </h3>
-          <div className="space-y-2">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={15} style={{ color: 'var(--muted-3)' }} />
+            <h3>Role Distribution</h3>
+          </div>
+          <p className="sub">How the roster breaks down by role</p>
+          <div style={{ marginTop: 18 }}>
             {Object.entries(roleCounts).map(([role, count]) => (
-              <div key={role} className="flex items-center justify-between py-1">
-                <span className="text-sm capitalize">{role}</span>
-                <span className="text-sm font-semibold">{count}</span>
+              <div key={role} className="mrow">
+                <span className="ic" />
+                <span className="lb capitalize" style={{ marginLeft: 0 }}>{role}</span>
+                <span className="val">{count}</span>
               </div>
             ))}
           </div>
@@ -154,16 +172,18 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
       </div>
 
       {/* Permissions Matrix */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <h3 className="font-bold flex items-center gap-2 mb-4">
-          <ShieldCheck size={16} className="text-[var(--muted-foreground)]" />
-          Permissions Matrix
-        </h3>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={15} style={{ color: 'var(--muted-3)' }} />
+          <h3>Permissions Matrix</h3>
+        </div>
+        <p className="sub">What each role can do in the workspace</p>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" style={{ marginTop: 18 }}>
           <table className="w-full">
             <thead>
-              <tr className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+              <tr style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>
                 <th className="text-left py-2 pr-4 min-w-[160px]">Permission</th>
                 <th className="text-center py-2 px-4">Owner</th>
                 <th className="text-center py-2 px-4">Coach</th>
@@ -174,14 +194,14 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
             </thead>
             <tbody>
               {PERMISSIONS_MATRIX.map((row, i) => (
-                <tr key={i} className="border-t border-[var(--border)]/50">
-                  <td className="py-3 pr-4 text-sm">{row.permission}</td>
+                <tr key={i} style={{ borderTop: '1px solid var(--hair)' }}>
+                  <td className="py-3 pr-4" style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{row.permission}</td>
                   {(['owner', 'coach', 'assistant', 'student', 'viewer'] as const).map(role => (
                     <td key={role} className="text-center py-3 px-4">
                       {row[role] ? (
-                        <Check size={16} className="inline text-green-400" />
+                        <Check size={15} className="inline" style={{ color: 'var(--green)' }} />
                       ) : (
-                        <span className="text-[var(--muted-foreground)]">&mdash;</span>
+                        <span style={{ color: 'var(--muted-3)' }}>&mdash;</span>
                       )}
                     </td>
                   ))}
@@ -194,43 +214,59 @@ export default function TeamSettings({ workspaceId, workspaceName, members, acti
 
       {/* Danger Zone */}
       {isOwner && (
-        <div className="bg-[var(--card)] border border-red-500/30 rounded-xl p-5">
-          <h3 className="font-bold flex items-center gap-2 text-red-400 mb-2">
-            <AlertTriangle size={16} />
-            Danger Zone
-          </h3>
-          <p className="text-sm text-[var(--muted-foreground)] mb-4">
+        <div className="card" style={{ marginTop: 24, borderColor: '#3a1218' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
+          <div className="flex items-center gap-2">
+            <Warning size={15} style={{ color: 'var(--red)' }} />
+            <h3 style={{ color: 'var(--red)' }}>Danger Zone</h3>
+          </div>
+          <p className="sub">
             Deleting a workspace permanently removes all members, cohorts, templates, assignments, notes, and audit logs.
           </p>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl text-sm font-semibold hover:bg-red-500/20 transition-colors">
-            <Trash2 size={14} />
+          <button
+            className="flex items-center gap-2"
+            style={{
+              marginTop: 18, height: 40, padding: '0 20px', borderRadius: 2,
+              border: '1px solid #3a1218', background: '#160a0d',
+              fontWeight: 700, fontSize: 13, color: 'var(--red)',
+            }}
+          >
+            <Trash size={14} />
             Delete Workspace
           </button>
         </div>
       )}
 
       {/* Audit Log */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <h3 className="font-bold flex items-center gap-2 mb-4">
-          <Clock size={16} className="text-[var(--muted-foreground)]" />
-          Audit Log
-        </h3>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="flex items-center gap-2">
+          <Clock size={15} style={{ color: 'var(--muted-3)' }} />
+          <h3>Audit Log</h3>
+        </div>
+        <p className="sub">Every recorded workspace event</p>
         {activityFeed.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-6">No activity recorded yet.</p>
+          <p className="empty-line" style={{ padding: '34px 0 8px' }}>No activity recorded yet.</p>
         ) : (
-          <div className="space-y-2">
+          <div style={{ marginTop: 18 }}>
             {activityFeed.map((event, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
-                <div className="w-7 h-7 rounded-full bg-[var(--accent)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--accent)] shrink-0">
+              <div key={i} className="flex items-center gap-3" style={{ padding: '10px 0', borderBottom: '1px solid var(--hair)' }}>
+                <div
+                  className="flex items-center justify-center shrink-0"
+                  style={{
+                    width: 26, height: 26, borderRadius: 2, background: 'var(--panel-2)',
+                    border: '1px solid var(--line)', fontSize: 10, fontWeight: 700, color: 'var(--amber)',
+                  }}
+                >
                   {event.displayName[0]?.toUpperCase() ?? '?'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm">
-                    <span className="font-semibold">{event.displayName}</span>{' '}
-                    <span className="text-[var(--muted-foreground)]">{event.message}</span>
+                  <p style={{ margin: 0, fontSize: 12.5, lineHeight: '18px', color: 'var(--text-2)' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text)' }}>{event.displayName}</span>{' '}
+                    {event.message}
                   </p>
                 </div>
-                <span className="text-[11px] text-[var(--muted-foreground)] shrink-0">
+                <span className="shrink-0 whitespace-nowrap" style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>
                   {new Date(event.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

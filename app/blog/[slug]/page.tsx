@@ -1,18 +1,26 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from 'lucide-react';
+// This is a Server Component (SSG via generateStaticParams, no 'use client').
+// @phosphor-icons/react's default export uses React Context (IconContext) for
+// shared default props, which breaks during the RSC/server bundle build with
+// "createContext is not a function" — lucide-react never had this problem.
+// The /dist/ssr subpath is Phosphor's dedicated server-component-safe entry.
+import { ArrowLeft, ArrowRight, Tag, Clock, BookOpen } from '@phosphor-icons/react/dist/ssr';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 import { BLOG_ARTICLES } from '@/lib/blog-articles';
 
+// Cover gradients. Kept in the amber family on purpose — the pink / fuchsia /
+// violet / cyan mixes these used to carry were the only place those hues
+// appeared in the product, and the palette is now amber + green + red only.
 const CATEGORY_GRADIENTS: Record<string, string> = {
-  'Psychology':  'from-violet-500 via-fuchsia-500 to-purple-500',
-  'Mistakes':    'from-rose-500 via-orange-500 to-red-500',
-  'Performance': 'from-emerald-500 via-teal-500 to-fuchsia-500',
-  'Tools':       'from-fuchsia-500 via-blue-500 to-indigo-500',
+  'Psychology':  'from-amber-600 via-amber-500 to-yellow-500',
+  'Mistakes':    'from-orange-600 via-amber-500 to-orange-400',
+  'Performance': 'from-amber-500 via-yellow-500 to-amber-400',
+  'Tools':       'from-amber-700 via-amber-500 to-orange-400',
   'Comparison':  'from-amber-500 via-yellow-500 to-orange-500',
-  'Education':   'from-pink-500 via-emerald-500 to-green-500',
-  'default':     'from-pink-500 via-cyan-500 to-emerald-500',
+  'Education':   'from-yellow-600 via-amber-500 to-amber-400',
+  'default':     'from-amber-600 via-amber-500 to-orange-400',
 };
 
 export function generateStaticParams() {
@@ -55,13 +63,13 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
 
       <article className="relative">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-pink-500 opacity-[0.05] rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-amber-500 opacity-[0.05] rounded-full blur-[120px]" />
         </div>
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-16">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-pink-400 transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-amber-400 transition-colors mb-8"
           >
             <ArrowLeft size={12} /> Back to all articles
           </Link>
@@ -99,7 +107,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
           {related.length > 0 && (
             <div className="border-t border-[var(--border)] pt-8 mb-10">
               <div className="flex items-center gap-2 mb-4">
-                <Tag size={12} className="text-pink-400" />
+                <Tag size={12} className="text-amber-400" />
                 <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
                   More on {article.category}
                 </h2>
@@ -109,9 +117,9 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
                   <Link
                     key={r.slug}
                     href={`/blog/${r.slug}`}
-                    className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors group"
+                    className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-amber-500/30 transition-colors group"
                   >
-                    <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-pink-400 transition-colors">{r.title}</div>
+                    <div className="text-sm font-bold text-[var(--foreground)] group-hover:text-amber-400 transition-colors">{r.title}</div>
                     <div className="text-xs text-[var(--muted-foreground)] line-clamp-1 mt-1">{r.excerpt}</div>
                   </Link>
                 ))}
@@ -123,12 +131,12 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             {prev ? (
               <Link
                 href={`/blog/${prev.slug}`}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-amber-500/30 transition-colors"
               >
                 <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-1 mb-1">
                   <ArrowLeft size={10} /> Previous
                 </div>
-                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-pink-400 transition-colors">
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-amber-400 transition-colors">
                   {prev.title}
                 </div>
               </Link>
@@ -136,12 +144,12 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             {next ? (
               <Link
                 href={`/blog/${next.slug}`}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors text-right"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-amber-500/30 transition-colors text-right"
               >
                 <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] flex items-center justify-end gap-1 mb-1">
                   Next <ArrowRight size={10} />
                 </div>
-                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-pink-400 transition-colors">
+                <div className="text-sm font-bold text-[var(--foreground)] line-clamp-2 group-hover:text-amber-400 transition-colors">
                   {next.title}
                 </div>
               </Link>

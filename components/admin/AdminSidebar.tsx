@@ -2,43 +2,61 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, CreditCard, Settings, Brain, ShieldAlert, SlidersHorizontal, Microscope, TrendingUp, GraduationCap, CalendarDays, MessagesSquare, Headphones, BookOpen } from 'lucide-react';
+import { SquaresFour, Users, CreditCard, Gear, Brain, ShieldWarning, SlidersHorizontal, Microscope, TrendUp, GraduationCap, CalendarDots, Chats, Headphones, BookOpen } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import BrainMascot from '@/components/BrainMascot';
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin', label: 'Dashboard', icon: SquaresFour },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/brain', label: 'Brain Monitor', icon: Brain },
-  { href: '/admin/flags', label: 'Anti-Gaming Alerts', icon: ShieldAlert },
+  { href: '/admin/flags', label: 'Anti-Gaming Alerts', icon: ShieldWarning },
   { href: '/admin/thresholds', label: 'Thresholds', icon: SlidersHorizontal },
   { href: '/admin/inspect', label: 'Brain Inspect', icon: Microscope },
-  { href: '/admin/trends', label: 'Score Trends', icon: TrendingUp },
+  { href: '/admin/trends', label: 'Score Trends', icon: TrendUp },
   { href: '/admin/courses', label: 'Courses', icon: GraduationCap },
-  { href: '/admin/events', label: 'Events', icon: CalendarDays },
-  { href: '/admin/community', label: 'Community', icon: MessagesSquare },
+  { href: '/admin/events', label: 'Events', icon: CalendarDots },
+  { href: '/admin/community', label: 'Community', icon: Chats },
   { href: '/admin/coaches',   label: 'Coaches',   icon: Headphones },
   { href: '/admin/articles',  label: 'Articles',  icon: BookOpen },
   { href: '/admin/revenue', label: 'Revenue & Billing', icon: CreditCard },
-  { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/settings', label: 'Settings', icon: Gear },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 shrink-0 border-r border-[var(--border)] bg-[var(--card)] flex flex-col">
-      <div className="p-4 border-b border-[var(--border)]">
-        <div className="flex items-center gap-2">
-          <BrainMascot size={28} />
-          <div>
-            <p className="text-sm font-bold text-[var(--foreground)]">Admin Panel</p>
-            <p className="text-[10px] text-[var(--muted-foreground)]">Tradia</p>
-          </div>
+    <aside
+      className="shrink-0 flex flex-col overflow-y-auto"
+      style={{
+        width: 'var(--side)',
+        background: 'var(--bg)',
+        borderRight: '1px solid var(--line)',
+      }}
+    >
+      <div className="brand">
+        <BrainMascot size={26} />
+        <div>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: 'var(--display)',
+              fontWeight: 700,
+              fontSize: 14,
+              lineHeight: '16px',
+              color: 'var(--text)',
+            }}
+          >
+            Admin Panel
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 9.5, fontWeight: 700, letterSpacing: '.05em', color: 'var(--muted-3)' }}>
+            ATLAS
+          </p>
         </div>
       </div>
 
-      <nav className="flex-1 p-2 space-y-0.5">
+      <nav className="nav flex-1" style={{ paddingBottom: 16 }}>
         {navItems.map((item) => {
           const isActive =
             item.href === '/admin'
@@ -50,15 +68,10 @@ export default function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
-                  : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]'
-              )}
+              className={cn(isActive && 'on')}
             >
-              <Icon size={18} />
-              {item.label}
+              <Icon size={16} className="ic" />
+              <span className="lb">{item.label}</span>
             </Link>
           );
         })}

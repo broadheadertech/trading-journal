@@ -1,6 +1,4 @@
-﻿'use client';
-
-import { Activity, Download, ExternalLink } from 'lucide-react';
+'use client';
 
 const INDICATORS = [
   { name: 'Liquidity Sweep Pro',     platform: 'TradingView', tag: 'Smart Money',    desc: 'Detects stop-hunt liquidity grabs in real time.' },
@@ -11,45 +9,63 @@ const INDICATORS = [
   { name: 'Trend Quality Score',     platform: 'TradingView', tag: 'Trend',          desc: 'Single-number score for current trend strength + cleanliness.' },
 ];
 
+// Presentation-only: accent colour per tag, mirroring the ATLAS reference.
+const TAG_ACCENT: Record<string, string> = {
+  'Smart Money': '#d99405',
+  'Regime': '#d99405',
+  'Levels': '#d99405',
+  'Momentum': '#d99405',
+  'Trend': '#d99405',
+};
+
 export default function Indicators() {
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <Activity size={12} /> TradingView library
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Premium <span className="gradient-text">indicators</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+    <div style={{ position: 'relative' }}>
+      <div className="phead">
+        <p className="eyebrow" style={{ fontWeight: 500 }}>TradingView library</p>
+        <h2>Premium indicators</h2>
+        <p className="sub">
           Custom-built indicators included with your subscription. One click to install.
         </p>
-      </header>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {INDICATORS.map((ind, idx) => (
-          <div key={ind.name} style={{ animationDelay: `${idx * 60}ms` }} className="glass rounded-3xl p-6 card-lift anim-fade-up flex flex-col">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center mb-3">
-              <Activity size={20} className="text-pink-400" />
-            </div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{ind.tag}</span>
-            </div>
-            <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight">{ind.name}</h3>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1 flex-1">{ind.desc}</p>
-            <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between">
-              <span className="text-xs text-[var(--muted-foreground)]">{ind.platform}</span>
-              <button className="flex items-center gap-1.5 text-sm font-medium text-pink-400 hover:gap-2 transition-all">
-                <Download size={14} /> Install <ExternalLink size={11} />
-              </button>
-            </div>
-          </div>
-        ))}
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)] text-center">
+      <div className="split-3">
+        {INDICATORS.map((ind) => {
+          const accent = TAG_ACCENT[ind.tag] ?? '#d99405';
+          return (
+            <div key={ind.name} className="ind">
+              <span className="accent" style={{ background: accent }} />
+              <span
+                className="ic"
+                style={{
+                  border: `1px solid ${accent}8c`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <svg width="23" height="17" viewBox="0 0 23 17" fill="none" aria-hidden="true">
+                  <path d="M0 12 L5 5 L10 9 L15 2 L23 8" stroke={accent} strokeWidth="1.4" />
+                </svg>
+              </span>
+              <p className="kick" style={{ color: accent }}>{ind.tag.toUpperCase()}</p>
+              <h4>{ind.name}</h4>
+              <p>{ind.desc}</p>
+              <div className="foot">
+                {ind.platform}
+                <button className="go" type="button">
+                  Install
+                  <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+                    <path d="M0 8 L8 0M2 0h6v6" stroke="#d99405" strokeWidth="1.2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="footnote">
         Install links go live once we publish to the TradingView store.
       </p>
     </div>

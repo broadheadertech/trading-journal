@@ -98,7 +98,7 @@ export const addCoachingNote = mutation({
       latestCoachingMessage: {
         message: trimmed,
         category: category ?? "support",
-        disclaimer: disclaimer ?? "Note from the Tradia team.",
+        disclaimer: disclaimer ?? "Note from the Atlas team.",
         timestamp: Date.now(),
       },
       updatedAt: Date.now(),

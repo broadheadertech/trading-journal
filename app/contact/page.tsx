@@ -1,195 +1,127 @@
 'use client';
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Mail, Clock, Check, X, ChevronDown } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
+import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 
-const ROUTES = [
-  { label: 'Product & onboarding',     email: 'support@tradia.app' },
-  { label: 'Pricing & plans',          email: 'sales@tradia.app' },
-  { label: 'Integrations & imports',   email: 'ops@tradia.app' },
-  { label: 'Security & privacy',       email: 'security@tradia.app' },
-];
-
-const SCOPE = [
-  'Product and workflow questions',
-  'Import and integration guidance',
-  'Plan and pricing questions',
-  'Security and privacy requests',
-  'Partnership and collaboration inquiries',
-];
-
-const OUT_OF_SCOPE = [
-  'Investment advice',
-  'Trade execution or signals',
-  'Buy/sell recommendations',
-  'Managed trading',
-  'Guaranteed profitability claims',
-];
-
-const FAQ = [
+const FAQ: { q: string; a?: string }[] = [
   {
     q: 'How fast do you respond?',
     a: 'Standard response is typically within one business day. Pro subscribers get priority routing.',
   },
-  {
-    q: 'What are your support hours?',
-    a: 'Monday through Friday within a UTC support window. Outside that window, expect next-business-day responses.',
-  },
-  {
-    q: 'Do you offer phone support?',
-    a: 'Email-only for now. It keeps issues searchable, traceable, and lets us route them to the right specialist.',
-  },
-  {
-    q: 'Can I request a new broker integration?',
-    a: 'Yes — email ops@tradia.app with a sample CSV/XLSX export. We aim to add new broker formats within 48 hours.',
-  },
+  { q: 'What are your support hours?' },
+  { q: 'Do you offer phone support?' },
+  { q: 'Can I request a new broker integration?' },
 ];
 
 export default function ContactPage() {
+  // the reference build opens the first answer-bearing item and toggles on click
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
+
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <div className="atlas-site">
       <LandingNav />
 
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
+      <div className="phero" style={{ '--band': '420px', padding: '132px 0 0' } as CSSProperties}>
+        <div className="panelgrid"></div>
+        <div className="wrap">
+          <h1>Talk to the<em>Atlas team</em></h1>
+          <p className="sub" style={{ marginTop: '32px' }}>Email-routed support so your question lands with the right specialist on the first try.</p>
+          <p style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '52px 0 0', fontSize: '12.5px', color: 'var(--text-3)' }}>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x=".65" y=".65" width="11.7" height="11.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M6.5 4v.5M6.5 6.2v3" stroke="#d99405" strokeWidth="1.3" strokeLinecap="round"/></svg>
+            Monday-Friday, UTC business hours · Priority response for Pro subscribers
+          </p>
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
-          >
-            Talk to the{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">Tradia team</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
-          >
-            Email-routed support so your question lands with the right specialist on the first try.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs text-pink-400"
-          >
-            <Clock size={12} /> Mon–Fri, UTC business hours · Priority response for Pro subscribers
-          </motion.div>
-        </div>
-      </section>
+      </div>
 
-      <section className="py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {ROUTES.map((r, i) => (
-              <motion.a
-                key={r.label}
-                href={`mailto:${r.email}`}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 hover:border-pink-500/30 transition-colors group"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center flex-shrink-0">
-                    <Mail size={16} className="text-pink-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">{r.label}</h3>
-                    <span className="text-xs text-pink-400 group-hover:text-pink-300 transition-colors break-all">{r.email}</span>
-                  </div>
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '72px' }}>
+        <div className="wrap">
+          <div className="channels">
+            <a className="channel" href="mailto:support@atlas.app">
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Product &amp; onboarding</span></div>
+              <p className="mail">support@atlas.app</p>
+              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+            </a>
+            <a className="channel" href="mailto:sales@atlas.app">
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Pricing &amp; plans</span></div>
+              <p className="mail">sales@atlas.app</p>
+              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+            </a>
+            <a className="channel" href="mailto:ops@atlas.app" style={{ marginTop: '32px' }}>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Integrations &amp; imports</span></div>
+              <p className="mail">ops@atlas.app</p>
+              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+            </a>
+            <a className="channel" href="mailto:security@atlas.app" style={{ marginTop: '32px' }}>
+              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Security &amp; privacy</span></div>
+              <p className="mail">security@atlas.app</p>
+              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+            </a>
+          </div>
+
+          <hr className="inset-rule" style={{ marginTop: '55px' }} />
+          <div className="scope">
+            <div>
+              <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>WHAT WE CAN HELP WITH</h4>
+              <ul>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Product and workflow questions</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Import and integration guidance</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Plan and pricing questions</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Security and privacy requests</li>
+                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Partnership and collaboration inquiries</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#5c6b7e" strokeWidth="1.6"/></svg>OUTSIDE OUR SCOPE</h4>
+              <ul>
+                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Investment advice</li>
+                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Trade execution or signals</li>
+                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Buy/sell recommendations</li>
+                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Managed trading</li>
+                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Guaranteed profitability claims</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '48px', paddingTop: '55px' }}>
+        <div className="wrap">
+          <hr className="inset-rule" />
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '35px 0 0' }}>Frequently asked</h2>
+          <div className="faq">
+            {FAQ.map((item, i) => {
+              const open = item.a !== undefined && openIdx === i;
+              return (
+                <div
+                  key={item.q}
+                  className={open ? 'faq-item open' : 'faq-item'}
+                  onClick={() => { if (item.a !== undefined) setOpenIdx(open ? null : i); }}
+                >
+                  <h4>{item.q}</h4>
+                  <svg className="chev" viewBox="0 0 16 8" fill="none">
+                    <path d={open ? 'M0 8 L8 0 L16 8' : 'M0 0 L8 8 L16 0'} stroke={open ? '#d99405' : '#7f8ea3'} strokeWidth="1.6"/>
+                  </svg>
+                  {open && <p>{item.a}</p>}
                 </div>
-              </motion.a>
-            ))}
+              );
+            })}
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="py-14">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Check size={16} className="text-pink-400" />
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">What we can help with</h2>
-            </div>
-            <ul className="space-y-2">
-              {SCOPE.map(s => (
-                <li key={s} className="flex items-start gap-2 text-sm text-[var(--foreground)]">
-                  <Check size={14} className="text-pink-400 mt-0.5 flex-shrink-0" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <X size={16} className="text-[var(--muted-foreground)]" />
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)]">Outside our scope</h2>
-            </div>
-            <ul className="space-y-2">
-              {OUT_OF_SCOPE.map(s => (
-                <li key={s} className="flex items-start gap-2 text-sm text-[var(--muted-foreground)]">
-                  <X size={14} className="text-[var(--muted-foreground)] mt-0.5 flex-shrink-0" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
+      <div className="pcta" style={{ marginTop: '120px' }}>
+        <div className="gridwash"></div><div className="glow"></div>
+        <div className="wrap">
+          <h2>Or just start the trial</h2>
+          <p className="sub">Most product questions get answered faster by the app itself.</p>
+          <div className="row"><Link className="btn btn-amber" href="/pricing">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round"/></svg></Link></div>
         </div>
-      </section>
-
-      <section className="py-14">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center mb-10">Frequently asked</h2>
-          <div className="space-y-3">
-            {FAQ.map((f, i) => <FAQItem key={f.q} q={f.q} a={f.a} idx={i} />)}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Or just start the trial</h2>
-          <p className="mt-3 text-[var(--muted-foreground)]">Most product questions get answered faster by the app itself.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors">
-            Start Free Trial
-          </Link>
-        </div>
-      </section>
+      </div>
 
       <Footer />
     </div>
-  );
-}
-
-function FAQItem({ q, a, idx }: { q: string; a: string; idx: number }) {
-  const [open, setOpen] = useState(idx === 0);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.35, delay: idx * 0.03 }}
-      className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden"
-    >
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-3 p-5 text-left hover:bg-[var(--muted)]/30 transition-colors"
-      >
-        <span className="text-sm font-bold text-[var(--foreground)]">{q}</span>
-        <ChevronDown size={16} className={`text-[var(--muted-foreground)] transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-      {open && <div className="px-5 pb-5 text-xs text-[var(--muted-foreground)] leading-relaxed">{a}</div>}
-    </motion.div>
   );
 }

@@ -1,178 +1,96 @@
-﻿'use client';
+'use client';
 
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 
-const BROKER_GROUPS = [
-  {
-    title: 'Crypto Exchanges',
-    items: [
-      'Binance', 'Bybit', 'OKX', 'Coinbase', 'Kraken', 'KuCoin',
-      'Bitget', 'Gate.io', 'MEXC', 'Bitfinex', 'Crypto.com', 'HTX',
-    ],
-  },
-  {
-    title: 'Forex / CFD',
-    items: [
-      'MetaTrader 4', 'MetaTrader 5', 'cTrader', 'IC Markets', 'Pepperstone',
-      'OANDA', 'Forex.com', 'FXCM', 'IG', 'Saxo Bank', 'XM', 'FxPro',
-    ],
-  },
-  {
-    title: 'Stocks / Futures',
-    items: [
-      'Interactive Brokers', 'TD Ameritrade', 'TradeStation', 'NinjaTrader',
-      'Tradovate', 'Webull', 'eToro', 'Robinhood', 'ThinkorSwim', 'Tastytrade',
-      'AMP Futures', 'Charles Schwab',
-    ],
-  },
-  {
-    title: 'Prop Firms',
-    items: [
-      'FTMO', 'MyForexFunds', 'Apex Trader Funding', 'Topstep', 'Earn2Trade',
-      'The Funded Trader', 'E8 Funding', 'FundedNext', 'OFP', 'TrueForexFunds',
-    ],
-  },
-];
-
-const FEATURES = [
-  {
-    icon: ShieldCheck,
-    title: 'Read-only API keys',
-    body: 'We never request withdrawal permissions. Your funds stay where they are.',
-  },
-  {
-    icon: Zap,
-    title: 'Auto-sync trades',
-    body: 'Trades flow into Tradia within seconds of close. No manual logging.',
-  },
-  {
-    icon: CheckCircle2,
-    title: 'CSV fallback',
-    body: 'No API? Upload a CSV from any broker — Tradia auto-detects the format.',
-  },
-];
+function scrollTo(id: string) {
+  const t = document.getElementById(id);
+  if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 export default function BrokersPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <div className="atlas-site">
       <LandingNav />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-pink-500 opacity-[0.07] rounded-full blur-[120px]" />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-medium text-pink-400 mb-6"
-          >
-            <ShieldCheck size={12} /> 67+ supported brokers & exchanges
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.05 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight"
-          >
-            Connect every broker you{' '}
-            <span className="bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">already trade on</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] max-w-2xl mx-auto"
-          >
-            Crypto, forex, stocks, futures, prop firms — Tradia speaks the language of every major broker. Read-only, secure, and instant.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Trust features */}
-      <section className="py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {FEATURES.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
-              >
-                <div className="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center mb-3">
-                  <f.icon size={16} className="text-pink-400" />
-                </div>
-                <h3 className="text-sm font-bold text-[var(--foreground)] mb-1">{f.title}</h3>
-                <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">{f.body}</p>
-              </motion.div>
-            ))}
+      <div className="phero" style={{ '--band': '430px', padding: '145px 0 0' } as CSSProperties}>
+        <div className="panelgrid" style={{ width: '560px' }}></div>
+        <div className="wrap">
+          <p className="kicker" style={{ paddingLeft: '2px', marginBottom: '14px' }}>67+ supported brokers &amp; exchanges</p>
+          <h1>Connect every broker you<em>already trade on</em></h1>
+          <p className="sub" style={{ marginTop: '32px' }}>Crypto, forex, stocks, futures, prop firms — Atlas speaks the language of every major broker. Read-only, secure, and instant.</p>
+          <div className="dirlist">
+            <p className="hd">DIRECTORY</p>
+            <a role="button" tabIndex={0} onClick={() => scrollTo('crypto')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollTo('crypto'); }}>CRYPTO EXCHANGES</a>
+            <a role="button" tabIndex={0} onClick={() => scrollTo('forex')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollTo('forex'); }}>FOREX / CFD</a>
+            <a role="button" tabIndex={0} onClick={() => scrollTo('stocks')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollTo('stocks'); }}>STOCKS / FUTURES</a>
+            <a role="button" tabIndex={0} onClick={() => scrollTo('prop')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollTo('prop'); }}>PROP FIRMS</a>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Broker groups */}
-      <section className="py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
-          {BROKER_GROUPS.map((group, gi) => (
-            <motion.div
-              key={group.title}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.4, delay: gi * 0.05 }}
-            >
-              <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">
-                {group.title}
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {group.items.map(name => (
-                  <div
-                    key={name}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-sm font-medium text-[var(--foreground)] hover:border-pink-500/30 transition-colors"
-                  >
-                    {name}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '72px' }}>
+        <div className="wrap">
+          <div className="bprin">
+            <div><h4>Read-only API keys</h4><p>We never request withdrawal permissions. Your funds stay where they are.</p></div>
+            <div><h4>Auto-sync trades</h4><p>Trades flow into Atlas within seconds of close. No manual logging.</p></div>
+            <div><h4>CSV fallback</h4><p>No API? Upload a CSV from any broker — Atlas auto-detects the format.</p></div>
+          </div>
 
-      {/* CTA */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Don&apos;t see your broker?
-          </h2>
-          <p className="mt-3 text-[var(--muted-foreground)]">
-            CSV import works with any broker. We add new native integrations every month — request yours.
-          </p>
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/sign-up"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-xl text-sm font-medium transition-colors"
-            >
-              Start Free Trial <ArrowRight size={16} />
-            </Link>
-            <Link
-              href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--border)] text-[var(--foreground)] rounded-xl text-sm font-medium hover:bg-[var(--muted)] transition-colors"
-            >
-              See Demo
-            </Link>
+          <hr className="inset-rule" style={{ marginTop: '132px' }} />
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '48px', lineHeight: '52px', margin: '19px 0 0' }}>Broker directory</h2>
+
+          <div className="brokgroup" id="crypto" style={{ marginTop: '82px' }}>
+            <div className="gh">CRYPTO EXCHANGES<em>12</em></div>
+            <div className="brokgrid">
+              <span className="brok">Binance</span><span className="brok">Bybit</span><span className="brok">OKX</span><span className="brok">Coinbase</span>
+              <span className="brok">Kraken</span><span className="brok">KuCoin</span><span className="brok">Bitget</span><span className="brok">Gate.io</span>
+              <span className="brok">MEXC</span><span className="brok">Bitfinex</span><span className="brok">Crypto.com</span><span className="brok">HTX</span>
+            </div>
+          </div>
+
+          <div className="brokgroup" id="forex" style={{ marginTop: '74px' }}>
+            <div className="gh">FOREX / CFD<em>12</em></div>
+            <div className="brokgrid">
+              <span className="brok">MetaTrader 4</span><span className="brok">MetaTrader 5</span><span className="brok">cTrader</span><span className="brok">IC Markets</span>
+              <span className="brok">Pepperstone</span><span className="brok">OANDA</span><span className="brok">Forex.com</span><span className="brok">FXCM</span>
+              <span className="brok">IG</span><span className="brok">Saxo Bank</span><span className="brok">XM</span><span className="brok">FxPro</span>
+            </div>
+          </div>
+
+          <div className="brokgroup" id="stocks" style={{ marginTop: '74px' }}>
+            <div className="gh">STOCKS / FUTURES<em>12</em></div>
+            <div className="brokgrid">
+              <span className="brok">Interactive Brokers</span><span className="brok">TD Ameritrade</span><span className="brok">TradeStation</span><span className="brok">NinjaTrader</span>
+              <span className="brok">Tradovate</span><span className="brok">Webull</span><span className="brok">eToro</span><span className="brok">Robinhood</span>
+              <span className="brok">ThinkorSwim</span><span className="brok">Tastytrade</span><span className="brok">AMP Futures</span><span className="brok">Charles Schwab</span>
+            </div>
+          </div>
+
+          <div className="brokgroup" id="prop" style={{ marginTop: '74px' }}>
+            <div className="gh">PROP FIRMS<em>10</em></div>
+            <div className="brokgrid">
+              <span className="brok prop">FTMO</span><span className="brok prop">MyForexFunds</span><span className="brok prop">Apex Trader Funding</span><span className="brok prop">Topstep</span>
+              <span className="brok prop">Earn2Trade</span><span className="brok prop">The Funded Trader</span><span className="brok prop">E8 Funding</span><span className="brok prop">FundedNext</span>
+              <span className="brok prop">OFP</span><span className="brok prop">TrueForexFunds</span>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      <div className="pcta" style={{ marginTop: '86px' }}>
+        <div className="gridwash"></div><div className="glow"></div>
+        <div className="wrap">
+          <h2>Don’t see your broker?</h2>
+          <p className="sub">CSV import works with any broker. We add new native integrations every month — request yours.</p>
+          <div className="row">
+            <Link className="btn btn-amber" href="/pricing">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg></Link>
+            <Link className="btn btn-ghost" href="/demo">See Demo</Link>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>

@@ -2,6 +2,19 @@
 
 // Shared reduced-motion toggle — used in both BrainTab and TextOnlyBrainTab (Story 9.2)
 
+/* ── ATLAS raw tokens ────────────────────────────────────────────────────────
+   Rendered inside the position:fixed brain dimension, which may mount outside
+   the `.atlas-dash` scope, so ATLAS values are inlined (same as BrainMiniWidget). */
+const T = {
+  hair: '#101922',
+  line: '#182432',
+  rail: '#141e2a',
+  green: '#24c88a',
+  muted: '#7f8ea3',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+};
+
 interface ReducedMotionToggleProps {
   enabled: boolean;
   onToggle: (v: boolean) => void;
@@ -9,34 +22,52 @@ interface ReducedMotionToggleProps {
 
 export default function ReducedMotionToggle({ enabled, onToggle }: ReducedMotionToggleProps) {
   return (
-    <div className="flex items-center justify-between px-1 py-0.5">
-      <div className="flex flex-col">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-white/25 font-medium">
-          Reduced Motion
-        </span>
-        <span className="text-[10px] text-white/20 mt-0.5">
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        padding: '10px 0',
+        borderBottom: `1px solid ${T.hair}`,
+      }}
+    >
+      <div>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: T.muted2 }}>
+          REDUCED MOTION
+        </p>
+        <p style={{ margin: '5px 0 0', fontSize: 11, color: T.muted3 }}>
           {enabled ? 'Animations disabled' : 'Animations enabled'}
-        </span>
+        </p>
       </div>
       <button
         onClick={() => onToggle(!enabled)}
         aria-pressed={enabled}
         aria-label={enabled ? 'Disable reduced motion' : 'Enable reduced motion'}
-        className={`
-          relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-300 cursor-pointer
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-          ${enabled
-            ? 'bg-emerald-500/40 border border-emerald-400/30'
-            : 'bg-white/8 border border-white/10'
-          }
-        `}
+        style={{
+          position: 'relative',
+          marginLeft: 'auto',
+          flex: 'none',
+          width: 38,
+          height: 20,
+          borderRadius: 2,
+          cursor: 'pointer',
+          transition: 'background .25s, border-color .25s',
+          background: enabled ? 'rgba(36,200,138,.18)' : T.rail,
+          border: `1px solid ${enabled ? T.green : T.line}`,
+        }}
       >
         <span
-          className={`
-            absolute top-0.5 w-4 h-4 rounded-full transition-all duration-300
-            ${enabled ? 'bg-emerald-400 left-[calc(100%-1.125rem)]' : 'bg-white/30 left-[0.125rem]'}
-          `}
           aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 2,
+            left: enabled ? 'calc(100% - 16px)' : 2,
+            width: 14,
+            height: 14,
+            borderRadius: 1,
+            background: enabled ? T.green : T.muted,
+            transition: 'left .25s',
+          }}
         />
       </button>
     </div>

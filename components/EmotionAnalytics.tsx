@@ -7,7 +7,7 @@ import { format, subDays, startOfDay, startOfWeek } from 'date-fns';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-import { Shield, AlertTriangle, Clock, Zap, Brain } from 'lucide-react';
+import { Shield, Warning, Clock, Lightning, Brain } from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -300,66 +300,86 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h3 className="text-lg font-bold flex items-center gap-2">
-          <Shield size={20} className="text-[var(--purple)]" />
-          Emotion-Based Analytics
-        </h3>
-        <p className="text-sm text-[var(--muted-foreground)]">Deep insights into how emotions affect your trading</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* ── Header + Red Flag Metrics ── */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <p className="lbl b10" style={{ color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <Shield size={12} /> EMOTION ANALYTICS
+            </p>
+            <h3>Emotion-Based Analytics</h3>
+            <p className="sub">Deep insights into how emotions affect your trading.</p>
+          </div>
+        </div>
+
+        <div className="stats" style={{ marginTop: 22 }}>
+          <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+            <span className="accent" style={{ background: redFlags.breakersLast7d > 3 ? 'var(--red)' : redFlags.breakersLast7d > 0 ? 'var(--amber)' : 'var(--green)' }} />
+            <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              BREAKERS (7D)
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Warning size={13} /></span>
+            </b>
+            <em style={{ color: redFlags.breakersLast7d > 3 ? 'var(--red)' : redFlags.breakersLast7d > 0 ? 'var(--amber)' : 'var(--green)' }}>
+              {redFlags.breakersLast7d}
+            </em>
+          </div>
+          <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+            <span className="accent" style={{ background: redFlags.overrideRate > 50 ? 'var(--red)' : 'var(--green)' }} />
+            <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              OVERRIDES (30D)
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Shield size={13} /></span>
+            </b>
+            <em style={{ color: redFlags.overrideRate > 50 ? 'var(--red)' : 'var(--text)' }}>
+              {redFlags.overrideCount}/{redFlags.breakersLast30d}
+            </em>
+          </div>
+          <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+            <span className="accent" style={{ background: redFlags.emotionalVolatility > 70 ? 'var(--red)' : redFlags.emotionalVolatility > 40 ? 'var(--amber)' : 'var(--green)' }} />
+            <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              EMOTION VOLATILITY
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Lightning size={13} /></span>
+            </b>
+            <em style={{ color: redFlags.emotionalVolatility > 70 ? 'var(--red)' : redFlags.emotionalVolatility > 40 ? 'var(--amber)' : 'var(--green)' }}>
+              {redFlags.emotionalVolatility}%
+            </em>
+          </div>
+          <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+            <span className="accent" style={{ background: 'var(--amber)' }} />
+            <b style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              BREAKERS (30D)
+              <span style={{ marginLeft: 'auto', color: 'var(--muted-3)' }}><Clock size={13} /></span>
+            </b>
+            <em>{redFlags.breakersLast30d}</em>
+          </div>
+        </div>
       </div>
 
-      {/* Red Flag Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4">
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--muted-foreground)] mb-1">
-            <AlertTriangle size={12} /> Breakers (7d)
-          </div>
-          <div className={`text-base sm:text-lg font-bold ${redFlags.breakersLast7d > 3 ? 'text-[var(--red)]' : redFlags.breakersLast7d > 0 ? 'text-[var(--yellow)]' : 'text-[var(--green)]'}`}>
-            {redFlags.breakersLast7d}
-          </div>
-        </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4">
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--muted-foreground)] mb-1">
-            <Shield size={12} /> Overrides (30d)
-          </div>
-          <div className={`text-base sm:text-lg font-bold ${redFlags.overrideRate > 50 ? 'text-[var(--red)]' : 'text-[var(--foreground)]'}`}>
-            {redFlags.overrideCount}/{redFlags.breakersLast30d}
-          </div>
-        </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4">
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--muted-foreground)] mb-1">
-            <Zap size={12} /> Emotion Volatility
-          </div>
-          <div className={`text-base sm:text-lg font-bold ${redFlags.emotionalVolatility > 70 ? 'text-[var(--red)]' : redFlags.emotionalVolatility > 40 ? 'text-[var(--yellow)]' : 'text-[var(--green)]'}`}>
-            {redFlags.emotionalVolatility}%
-          </div>
-        </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 sm:p-4">
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[var(--muted-foreground)] mb-1">
-            <Clock size={12} /> Breakers (30d)
-          </div>
-          <div className="text-base sm:text-lg font-bold">{redFlags.breakersLast30d}</div>
-        </div>
-      </div>
-
-      {/* Emotion vs Avg P&L Chart */}
+      {/* ── Emotion vs Avg P&L Chart ── */}
       {emotionPnlChart.length > 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
-          <h4 className="font-semibold mb-3 sm:mb-4">Average P&L% by Emotion</h4>
-          <div className="h-[200px] sm:h-[250px]">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Average P&amp;L% by Emotion</h4>
+              <p className="sub sm">Which emotional states actually pay.</p>
+            </div>
+          </div>
+          <div style={{ height: 240, marginTop: 20 }}>
             <ResponsiveContainer>
               <BarChart data={emotionPnlChart}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} width={45} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#182432" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} width={45} />
                 <Tooltip
-                  contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
+                  cursor={{ fill: '#0e1725' }}
+                  contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '11px', color: '#edf2f7' }}
                   formatter={(value) => [`${typeof value === 'number' ? value : 0}%`, 'Avg P&L']}
                 />
-                <Bar dataKey="avgPnl" name="Avg P&L %" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="avgPnl" name="Avg P&L %" radius={[2, 2, 0, 0]}>
                   {emotionPnlChart.map((entry, index) => (
-                    <Cell key={index} fill={entry.avgPnl >= 0 ? '#22c55e' : '#ef4444'} />
+                    <Cell key={index} fill={entry.avgPnl >= 0 ? '#24c88a' : '#ff4d5e'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -368,186 +388,191 @@ export default function EmotionAnalytics({ trades, breakerEvents }: Props) {
         </div>
       )}
 
-      {/* 30-Day Emotional Calendar */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
-        <h4 className="font-semibold mb-3">30-Day Emotional Calendar</h4>
-        <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5 sm:gap-2">
+      {/* ── 30-Day Emotional Calendar ── */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h4>30-Day Emotional Calendar</h4>
+            <p className="sub sm">Dominant emotion and result per trading day.</p>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(44px,1fr))', gap: 6, marginTop: 20 }}>
           {calendarData.map(day => (
             <div
               key={day.date}
-              className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] sm:text-xs border ${
-                day.trades > 0
-                  ? day.pnl >= 0
-                    ? 'border-green-500/30 bg-green-500/10'
-                    : 'border-red-500/30 bg-red-500/10'
-                  : 'border-[var(--border)] bg-[var(--muted)]/30'
-              }`}
+              style={{
+                aspectRatio: '1 / 1',
+                minHeight: 44,
+                borderRadius: 2,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                border: '1px solid',
+                borderColor: day.trades > 0 ? (day.pnl >= 0 ? 'rgba(36,200,138,.4)' : 'rgba(255,77,94,.4)') : 'var(--line)',
+                background: day.trades > 0 ? (day.pnl >= 0 ? 'rgba(36,200,138,.08)' : 'rgba(255,77,94,.08)') : 'var(--panel-2)',
+              }}
               title={day.trades > 0 ? `${day.dateLabel}: ${day.emotion} (${day.trades} trades, ${day.pnl > 0 ? '+' : ''}${day.pnl}%)` : day.dateLabel}
             >
-              {day.trades > 0 ? (
-                <>
-                  <span className="text-sm sm:text-base">{day.emoji}</span>
-                  <span className="text-[8px] sm:text-[10px] text-[var(--muted-foreground)]">{format(new Date(day.date), 'dd')}</span>
-                </>
-              ) : (
-                <span className="text-[var(--muted-foreground)]">{format(new Date(day.date), 'dd')}</span>
-              )}
+              {day.trades > 0 && <span style={{ fontSize: 14, lineHeight: '17px' }}>{day.emoji}</span>}
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: 'var(--muted-2)', marginTop: day.trades > 0 ? 2 : 0 }}>
+                {format(new Date(day.date), 'dd')}
+              </span>
             </div>
           ))}
         </div>
-        <div className="flex flex-wrap gap-3 mt-3 text-[10px] sm:text-xs text-[var(--muted-foreground)]">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-500/20 border border-green-500/30" /> Profitable day</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-500/20 border border-red-500/30" /> Losing day</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-[var(--muted)]/30 border border-[var(--border)]" /> No trades</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 16, fontSize: 10.5, color: 'var(--muted-2)' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width: 9, height: 9, borderRadius: 1, background: 'rgba(36,200,138,.2)', border: '1px solid rgba(36,200,138,.4)' }} /> Profitable day
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width: 9, height: 9, borderRadius: 1, background: 'rgba(255,77,94,.2)', border: '1px solid rgba(255,77,94,.4)' }} /> Losing day
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width: 9, height: 9, borderRadius: 1, background: 'var(--panel-2)', border: '1px solid var(--line)' }} /> No trades
+          </span>
         </div>
       </div>
 
-      {/* Emotion Breakdown Table */}
+      {/* ── Emotion Breakdown ── */}
       {emotionOutcomeData.length > 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
-          <h4 className="font-semibold mb-3">Emotion Breakdown</h4>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs sm:text-sm">
-              <thead>
-                <tr className="text-left text-[var(--muted-foreground)] border-b border-[var(--border)]">
-                  <th className="pb-2 font-medium">Emotion</th>
-                  <th className="pb-2 font-medium text-center">Trades</th>
-                  <th className="pb-2 font-medium text-center">Win Rate</th>
-                  <th className="pb-2 font-medium text-right">Avg P&L</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]">
-                {emotionOutcomeData.map(d => (
-                  <tr key={d.emotion} className="hover:bg-[var(--card-hover)]">
-                    <td className="py-2.5">
-                      <span className="flex items-center gap-2">
-                        <span>{d.emoji}</span>
-                        <span>{d.emotion}</span>
-                      </span>
-                    </td>
-                    <td className="py-2.5 text-center">{d.trades}</td>
-                    <td className="py-2.5 text-center">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        d.winRate >= 55 ? 'bg-green-500/15 text-[var(--green)]' :
-                        d.winRate < 40 ? 'bg-red-500/15 text-[var(--red)]' :
-                        'bg-yellow-500/15 text-[var(--yellow)]'
-                      }`}>
-                        {d.winRate}%
-                      </span>
-                    </td>
-                    <td className={`py-2.5 text-right font-medium ${d.avgPnl >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
-                      {d.avgPnl > 0 ? '+' : ''}{d.avgPnl}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Emotion Breakdown</h4>
+              <p className="sub sm">Sample size, win rate, and average result per emotion.</p>
+            </div>
+          </div>
+          <div style={{ marginTop: 18 }}>
+            {emotionOutcomeData.map(d => (
+              <div key={d.emotion} className="mrow">
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, color: 'var(--text)' }}>
+                  <span>{d.emoji}</span>
+                  <span>{d.emotion}</span>
+                </span>
+                <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>{d.trades} trades</span>
+                  <span
+                    className="chip"
+                    style={{
+                      height: 20, padding: '0 9px', fontSize: 9.5, fontWeight: 700,
+                      color: d.winRate >= 55 ? 'var(--green)' : d.winRate < 40 ? 'var(--red)' : 'var(--amber)',
+                    }}
+                  >
+                    {d.winRate}%
+                  </span>
+                  <span className="val" style={{ marginLeft: 0, width: 72, textAlign: 'right', color: d.avgPnl >= 0 ? 'var(--green)' : 'var(--red)' }}>
+                    {d.avgPnl > 0 ? '+' : ''}{d.avgPnl}%
+                  </span>
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* ── Confidence Calibration ── */}
       {confidenceCalibration.data.length >= 3 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5">
-          <h4 className="font-semibold mb-0.5">Confidence Calibration</h4>
-          <p className="text-[10px] text-[var(--muted-foreground)] mb-3">
-            Win rate at each confidence level you logged
-            {confidenceCalibration.bestLevel && (
-              <> — best results at confidence <strong>{confidenceCalibration.bestLevel.level}</strong> ({confidenceCalibration.bestLevel.winRate}% win rate)</>
-            )}
-          </p>
-          <div className="h-[160px]">
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Confidence Calibration</h4>
+              <p className="sub sm">
+                Win rate at each confidence level you logged
+                {confidenceCalibration.bestLevel && (
+                  <> — best results at confidence <strong style={{ color: 'var(--text)' }}>{confidenceCalibration.bestLevel.level}</strong> ({confidenceCalibration.bestLevel.winRate}% win rate)</>
+                )}
+              </p>
+            </div>
+          </div>
+          <div style={{ height: 180, marginTop: 20 }}>
             <ResponsiveContainer>
               <BarChart data={confidenceCalibration.data} barSize={22}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="level" tick={{ fontSize: 10 }} label={{ value: 'Confidence', position: 'insideBottom', offset: -2, fontSize: 10 }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} width={32} tickFormatter={v => `${v}%`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#182432" vertical={false} />
+                <XAxis dataKey="level" tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} label={{ value: 'Confidence', position: 'insideBottom', offset: -2, fontSize: 9, fill: '#5c6b7e' }} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 9, fill: '#7f8ea3' }} tickLine={false} axisLine={false} width={32} tickFormatter={v => `${v}%`} />
                 <Tooltip
-                  contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px' }}
+                  cursor={{ fill: '#0e1725' }}
+                  contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '11px', color: '#edf2f7' }}
                   formatter={(v) => [`${typeof v === 'number' ? v : 0}%`, 'Win Rate']}
                 />
-                <Bar dataKey="winRate" name="Win Rate" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="winRate" name="Win Rate" radius={[2, 2, 0, 0]}>
                   {confidenceCalibration.data.map((d, i) => (
-                    <Cell key={i} fill={d.winRate >= 50 ? '#22c55e' : '#ef4444'} />
+                    <Cell key={i} fill={d.winRate >= 50 ? '#24c88a' : '#ff4d5e'} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
           {confidenceCalibration.highWr !== null && confidenceCalibration.lowWr !== null && (
-            <p className="text-xs text-[var(--muted-foreground)] mt-2">
-              High confidence (7+):{' '}
-              <span className={confidenceCalibration.highWr >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]'}>
-                {confidenceCalibration.highWr}% win rate
+            <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', lineHeight: '19px' }}>
+              <span>
+                High confidence (7+):{' '}
+                <span style={{ fontFamily: 'var(--mono)', color: confidenceCalibration.highWr >= 50 ? 'var(--green)' : 'var(--red)' }}>
+                  {confidenceCalibration.highWr}%
+                </span>
+                {' • '}
+                Low confidence (≤4):{' '}
+                <span style={{ fontFamily: 'var(--mono)', color: confidenceCalibration.lowWr >= 50 ? 'var(--green)' : 'var(--red)' }}>
+                  {confidenceCalibration.lowWr}%
+                </span>
+                {confidenceCalibration.highWr > confidenceCalibration.lowWr
+                  ? ' — your confidence is well-calibrated.'
+                  : ' — you perform better at lower confidence, watch for overconfidence.'}
               </span>
-              {' · '}
-              Low confidence (≤4):{' '}
-              <span className={confidenceCalibration.lowWr >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]'}>
-                {confidenceCalibration.lowWr}% win rate
-              </span>
-              {confidenceCalibration.highWr > confidenceCalibration.lowWr
-                ? ' — your confidence is well-calibrated.'
-                : ' — you perform better at lower confidence, watch for overconfidence.'}
-            </p>
+            </div>
           )}
         </div>
       )}
 
-      {/* Trigger Analysis */}
+      {/* ── Trigger Analysis ── */}
       {triggerAnalysis.length > 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3">
-          <h4 className="font-semibold">Trigger Analysis</h4>
-          {triggerAnalysis.map((t, i) => (
-            <div
-              key={i}
-              className={`p-3 rounded-xl border text-sm ${
-                t.severity === 'danger' ? 'bg-red-500/10 border-red-500/20' :
-                t.severity === 'warning' ? 'bg-yellow-500/10 border-yellow-500/20' :
-                'bg-blue-500/10 border-blue-500/20'
-              }`}
-            >
-              <div className={`font-medium mb-1 ${
-                t.severity === 'danger' ? 'text-[var(--red)]' :
-                t.severity === 'warning' ? 'text-[var(--yellow)]' :
-                'text-blue-400'
-              }`}>
-                {t.pattern}
-              </div>
-              <p className="text-[var(--foreground)]">{t.detail}</p>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--red)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Trigger Analysis</h4>
+              <p className="sub sm">Behavioural conditions that shift your win rate.</p>
             </div>
-          ))}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
+            {triggerAnalysis.map((t, i) => {
+              const tone = t.severity === 'danger' ? 'var(--red)' : t.severity === 'warning' ? 'var(--amber)' : 'var(--green)';
+              return (
+                <div key={i} className="inset" style={{ position: 'relative', padding: '14px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: tone }} />
+                  <p className="lbl" style={{ color: tone }}>{t.pattern.toUpperCase()}</p>
+                  <p style={{ margin: '8px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{t.detail}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* ── Cognitive Bias Detector ── */}
       {cognitiveBiases.length > 0 && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 sm:p-5 space-y-3">
-          <div>
-            <h4 className="font-semibold flex items-center gap-2">
-              <Brain size={16} className="text-amber-400" />
-              Cognitive Bias Detector
-            </h4>
-            <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">Patterns detected from your trade history</p>
-          </div>
-          {cognitiveBiases.map((b, i) => (
-            <div
-              key={i}
-              className={`p-3 rounded-xl border text-sm ${
-                b.severity === 'danger' ? 'bg-red-500/10 border-red-500/20' :
-                b.severity === 'warning' ? 'bg-amber-500/10 border-amber-500/20' :
-                'bg-blue-500/10 border-blue-500/20'
-              }`}
-            >
-              <div className={`font-medium mb-1 text-xs uppercase tracking-wide ${
-                b.severity === 'danger' ? 'text-red-400' :
-                b.severity === 'warning' ? 'text-amber-400' :
-                'text-blue-400'
-              }`}>
-                {b.name}
-              </div>
-              <p className="text-[var(--foreground)]">{b.finding}</p>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h4>Cognitive Bias Detector</h4>
+              <p className="sub sm">Patterns detected from your trade history.</p>
             </div>
-          ))}
+            <Brain size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
+            {cognitiveBiases.map((b, i) => {
+              const tone = b.severity === 'danger' ? 'var(--red)' : b.severity === 'warning' ? 'var(--amber)' : 'var(--green)';
+              return (
+                <div key={i} className="inset" style={{ position: 'relative', padding: '14px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: tone }} />
+                  <p className="lbl" style={{ color: tone }}>{b.name.toUpperCase()}</p>
+                  <p style={{ margin: '8px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--text-2)' }}>{b.finding}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

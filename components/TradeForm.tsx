@@ -5,7 +5,7 @@ import { Trade, EmotionState, TradeTag, Strategy, Direction, MarketType, RuleCom
 import { CRYPTO_SUGGESTIONS, FOREX_SUGGESTIONS, METALS_SUGGESTIONS, OIL_SUGGESTIONS, STOCK_SUGGESTIONS, EMOTION_OPTIONS, TAG_OPTIONS } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { defaultPipSize, defaultLotSize, pipsBetween, notionalAmount, realizedPnL } from '@/lib/pip-math';
-import { TrendingUp, TrendingDown, AlertTriangle, X } from 'lucide-react';
+import { TrendUp as TrendingUp, TrendDown as TrendingDown, Warning as AlertTriangle, X } from '@phosphor-icons/react';
 import { format, parseISO } from 'date-fns';
 
 // ─── Constants ───────────────────────────────────────────────────────
@@ -337,31 +337,33 @@ export default function TradeForm({
 
   // ── Render ──
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit}>
       {/* Live counter strip */}
-      <div className="flex flex-wrap items-center gap-3 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-black/20">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] font-bold">Today</div>
-        <span className="text-sm font-bold tabular-nums text-[var(--foreground)]">{counters.tradesToday}</span>
-        <span className="text-[11px] text-[var(--muted-foreground)]">trades · this will be #{counters.tradesToday + 1}</span>
-        <span className="mx-2 text-[var(--muted-foreground)]/40">·</span>
-        <div className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] font-bold">Month wins</div>
-        <span className="text-sm font-bold tabular-nums text-emerald-300">{formatCurrency(counters.monthWin)}</span>
+      <div className="inset" style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, padding: '13px 16px' }}>
+        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 3, background: 'var(--amber)' }} />
+        <p className="lbl">TODAY</p>
+        <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--text)' }}>{counters.tradesToday}</span>
+        <span style={{ fontSize: '11px', color: 'var(--muted-2)' }}>trades · this will be #{counters.tradesToday + 1}</span>
+        <span style={{ width: 1, height: 14, background: 'var(--line)' }} />
+        <p className="lbl">MONTH WINS</p>
+        <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--green)' }}>{formatCurrency(counters.monthWin)}</span>
       </div>
 
       {/* Section 1 — Identity */}
       <Section title="Identity">
         <Grid cols={2}>
           <Field label="Date">
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <input type="date" className="box w-full" value={date} onChange={e => setDate(e.target.value)} />
           </Field>
           <Field label="Time">
-            <input type="time" value={time} onChange={e => setTime(e.target.value)} />
+            <input type="time" className="box w-full" value={time} onChange={e => setTime(e.target.value)} />
           </Field>
         </Grid>
         <Grid cols={2}>
           <Field label="Pair">
             <input
               type="text"
+              className="box w-full"
               value={pair}
               onChange={e => {
                 const v = e.target.value.toUpperCase();
@@ -377,7 +379,7 @@ export default function TradeForm({
             </datalist>
           </Field>
           <Field label="Market (for pip math)">
-            <select value={market} onChange={e => setMarket(e.target.value as MarketType)}>
+            <select className="box w-full" style={{ appearance: 'none' }} value={market} onChange={e => setMarket(e.target.value as MarketType)}>
               {MARKET_OPTIONS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
             </select>
           </Field>
@@ -391,7 +393,7 @@ export default function TradeForm({
         </Field>
         <Grid cols={2}>
           <Field label="Strategy">
-            <select value={strategy} onChange={e => setStrategy(e.target.value)}>
+            <select className="box w-full" style={{ appearance: 'none' }} value={strategy} onChange={e => setStrategy(e.target.value)}>
               <option value="">— pick a strategy —</option>
               {strategies.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
@@ -399,6 +401,7 @@ export default function TradeForm({
           <Field label="Source">
             <input
               type="text"
+              className="box w-full"
               value={source}
               onChange={e => setSource(e.target.value)}
               placeholder="Own analysis, signal, TradingView…"
@@ -415,12 +418,12 @@ export default function TradeForm({
       <Section title="Setup">
         <Grid cols={2}>
           <Field label="Time Frame Analysis">
-            <select value={tfAnalysis} onChange={e => setTfAnalysis(e.target.value)}>
+            <select className="box w-full" style={{ appearance: 'none' }} value={tfAnalysis} onChange={e => setTfAnalysis(e.target.value)}>
               {TIMEFRAMES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </Field>
           <Field label="Time Frame Entry">
-            <select value={tfEntry} onChange={e => setTfEntry(e.target.value)}>
+            <select className="box w-full" style={{ appearance: 'none' }} value={tfEntry} onChange={e => setTfEntry(e.target.value)}>
               {TIMEFRAMES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </Field>
@@ -430,26 +433,30 @@ export default function TradeForm({
         </Field>
         <Grid cols={2}>
           <Field label="Buy / Sell">
-            <div className="grid grid-cols-2 gap-2">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <button
                 type="button"
                 onClick={() => setDirection('long')}
-                className={`inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-bold transition-colors border ${
-                  direction === 'long'
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
+                className="chip"
+                style={{
+                  height: 42, justifyContent: 'center', fontWeight: 700, fontSize: 12.5,
+                  color: direction === 'long' ? 'var(--green)' : 'var(--muted-2)',
+                  borderColor: direction === 'long' ? 'var(--green)' : 'var(--line)',
+                  background: direction === 'long' ? 'var(--panel)' : 'var(--panel-2)',
+                }}
               >
                 <TrendingUp size={14} /> Buy
               </button>
               <button
                 type="button"
                 onClick={() => setDirection('short')}
-                className={`inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-bold transition-colors border ${
-                  direction === 'short'
-                    ? 'bg-red-500/20 text-red-300 border-red-500/40'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
+                className="chip"
+                style={{
+                  height: 42, justifyContent: 'center', fontWeight: 700, fontSize: 12.5,
+                  color: direction === 'short' ? 'var(--red)' : 'var(--muted-2)',
+                  borderColor: direction === 'short' ? 'var(--red)' : 'var(--line)',
+                  background: direction === 'short' ? 'var(--panel)' : 'var(--panel-2)',
+                }}
               >
                 <TrendingDown size={14} /> Sell
               </button>
@@ -465,13 +472,13 @@ export default function TradeForm({
       <Section title="Levels">
         <Grid cols={3}>
           <Field label="Entry Price">
-            <input type="number" step="any" value={entryPrice} onChange={e => setEntryPrice(e.target.value)} placeholder="1.0850" />
+            <input type="number" step="any" className="box w-full" style={MONO_BOX} value={entryPrice} onChange={e => setEntryPrice(e.target.value)} placeholder="1.0850" />
           </Field>
           <Field label="Stop Loss">
-            <input type="number" step="any" value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="1.0820" />
+            <input type="number" step="any" className="box w-full" style={MONO_BOX} value={stopLoss} onChange={e => setStopLoss(e.target.value)} placeholder="1.0820" />
           </Field>
           <Field label="Take Profit">
-            <input type="number" step="any" value={takeProfit} onChange={e => setTakeProfit(e.target.value)} placeholder="1.0920" />
+            <input type="number" step="any" className="box w-full" style={MONO_BOX} value={takeProfit} onChange={e => setTakeProfit(e.target.value)} placeholder="1.0920" />
           </Field>
         </Grid>
       </Section>
@@ -483,45 +490,47 @@ export default function TradeForm({
             type="number"
             step="0.01"
             min="0.01"
+            className="box w-full"
+            style={MONO_BOX}
             value={lotSize}
             onChange={e => setLotSize(e.target.value)}
             placeholder="0.01"
           />
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-1 tabular-nums leading-snug">
+          <p style={{ margin: '9px 0 0', fontSize: '10.5px', lineHeight: '16px', color: 'var(--muted-2)' }}>
             1 pip ≈ {formatCurrency(
               defaultPipSize(market, pair) * defaultLotSize(market, pair) * (Number.isFinite(lotNum) ? lotNum : 0.01),
             )} at this lot
             {targetPipsDisplay > 0 && (
               <>
-                {' · '}Target: <span className="text-emerald-300 font-bold">{targetPipsDisplay.toFixed(0)} pips</span> from Entry → TP
+                {' · '}Target: <span style={{ fontFamily: 'var(--mono)', color: 'var(--green)' }}>{targetPipsDisplay.toFixed(0)} pips</span> from Entry → TP
               </>
             )}
-          </div>
+          </p>
         </Field>
       </Section>
 
       {/* Section 5 — Result (record the outcome first, reflect afterwards) */}
       <Section title="Result">
-        <label className="inline-flex items-center gap-2 text-sm cursor-pointer">
+        <label className="inset" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '10px 16px' }}>
           <input
             type="checkbox"
             checked={isOpen}
             onChange={e => setIsOpen(e.target.checked)}
-            className="w-4 h-4 accent-pink-500"
+            style={{ width: 14, height: 14, accentColor: 'var(--amber)' }}
           />
-          <span className="text-[var(--foreground)]">Trade is still open</span>
+          <span style={{ fontSize: '12.5px', color: 'var(--text)' }}>Trade is still open</span>
         </label>
         {!isOpen && (
           <>
             <Grid cols={3}>
               <Field label="Exit Price">
-                <input type="number" step="any" value={exitPrice} onChange={e => setExitPrice(e.target.value)} placeholder="1.0920" />
+                <input type="number" step="any" className="box w-full" style={MONO_BOX} value={exitPrice} onChange={e => setExitPrice(e.target.value)} placeholder="1.0920" />
               </Field>
               <Field label="Exit Date">
-                <input type="date" value={exitDate} onChange={e => setExitDate(e.target.value)} />
+                <input type="date" className="box w-full" value={exitDate} onChange={e => setExitDate(e.target.value)} />
               </Field>
               <Field label="Exit Time">
-                <input type="time" value={exitTime} onChange={e => setExitTime(e.target.value)} />
+                <input type="time" className="box w-full" value={exitTime} onChange={e => setExitTime(e.target.value)} />
               </Field>
             </Grid>
             {/* Amount — the realized $ outcome of the trade. Auto-suggested from
@@ -531,6 +540,8 @@ export default function TradeForm({
               <input
                 type="number"
                 step="any"
+                className="box w-full"
+                style={MONO_BOX}
                 value={amountTouched ? amount : (autoAmount !== null ? autoAmount.toFixed(2) : '')}
                 onChange={e => { setAmount(e.target.value); setAmountTouched(true); }}
                 placeholder="0.00"
@@ -539,25 +550,25 @@ export default function TradeForm({
                 <button
                   type="button"
                   onClick={() => { setAmountTouched(false); setAmount(''); }}
-                  className="text-[10px] text-pink-400 hover:text-pink-300 mt-1"
+                  style={{ marginTop: 9, fontSize: '10.5px', fontWeight: 700, color: 'var(--amber)', borderBottom: '1px solid var(--amber)', lineHeight: '14px' }}
                 >
                   Reset to auto ({autoAmount !== null ? formatCurrency(autoAmount) : '—'})
                 </button>
               ) : (
-                <div className="text-[10px] text-[var(--muted-foreground)] mt-1 leading-snug">
+                <p style={{ margin: '9px 0 0', fontSize: '10.5px', lineHeight: '16px', color: 'var(--muted-2)' }}>
                   {autoAmount !== null
                     ? <>Auto-computed from lot × pip × pip-value. Type a custom figure if your broker reported differently (fees, swaps, slippage).</>
                     : 'Fill in Entry Price, Exit Price, and Lot Size to auto-compute.'}
-                </div>
+                </p>
               )}
             </Field>
 
             {winLossLabel && (
-              <div className="grid grid-cols-2 gap-2">
-                <Stat label="Win / Loss" valueClass={winLossLabel === 'WIN' ? 'text-emerald-300' : winLossLabel === 'LOSS' ? 'text-red-300' : 'text-[var(--muted-foreground)]'}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <Stat label="Win / Loss" tone={winLossLabel === 'WIN' ? 'var(--green)' : winLossLabel === 'LOSS' ? 'var(--red)' : 'var(--muted)'}>
                   {winLossLabel}
                 </Stat>
-                <Stat label="Pip Gain / Loss" valueClass={(pipGain ?? 0) >= 0 ? 'text-emerald-300' : 'text-red-300'}>
+                <Stat label="Pip Gain / Loss" tone={(pipGain ?? 0) >= 0 ? 'var(--green)' : 'var(--red)'}>
                   {pipGain !== null ? `${pipGain >= 0 ? '+' : ''}${pipGain.toFixed(1)} pips` : '—'}
                 </Stat>
               </div>
@@ -569,17 +580,14 @@ export default function TradeForm({
       {/* Section 6 — Psychology & Reflection (pre-trade + post-trade together) */}
       <Section title="Psychology & Reflection">
         <Field label="How did you feel entering?">
-          <div className="flex flex-wrap gap-1.5">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {EMOTION_OPTIONS.map(opt => (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => setEmotion(opt.value as EmotionState)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
-                  emotion === opt.value
-                    ? 'bg-pink-500/20 text-pink-300 border-pink-500/40'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
+                className={`chip${emotion === opt.value ? ' on' : ''}`}
+                style={{ height: 30 }}
               >
                 <span aria-hidden>{opt.emoji}</span> {opt.label}
               </button>
@@ -600,7 +608,7 @@ export default function TradeForm({
               // Fill % matches thumb position: (value - min) / (max - min) × 100
               style={{ '--fill': `${((setupConfidence - 1) / 9) * 100}%` } as React.CSSProperties}
             />
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">How confident were you in the setup itself?</div>
+            <p style={{ margin: '8px 0 0', fontSize: '10.5px', color: 'var(--muted-2)' }}>How confident were you in the setup itself?</p>
           </Field>
           <Field label={`Execution Confidence — ${executionConfidence}/10`}>
             <input
@@ -613,12 +621,12 @@ export default function TradeForm({
               className="confidence-slider"
               style={{ '--fill': `${((executionConfidence - 1) / 9) * 100}%` } as React.CSSProperties}
             />
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">How well did you execute the entry?</div>
+            <p style={{ margin: '8px 0 0', fontSize: '10.5px', color: 'var(--muted-2)' }}>How well did you execute the entry?</p>
           </Field>
         </Grid>
 
         <Field label="Tags">
-          <div className="flex flex-wrap gap-1.5">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {TAG_OPTIONS.map(opt => {
               const active = tags.includes(opt.value as TradeTag);
               return (
@@ -626,11 +634,8 @@ export default function TradeForm({
                   key={opt.value}
                   type="button"
                   onClick={() => toggleTag(opt.value as TradeTag)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
-                    active
-                      ? 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/40'
-                      : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                  }`}
+                  className={`chip${active ? ' on' : ''}`}
+                  style={{ height: 30 }}
                 >
                   {opt.label}
                 </button>
@@ -642,28 +647,21 @@ export default function TradeForm({
         {/* Rule checklist — only shows when the selected strategy has rules to check against. */}
         {strategyRules.length > 0 && (
           <Field label={`Rule Compliance · ${selectedStrategy?.name}`}>
-            <div className="space-y-1.5">
+            <div style={{ display: 'grid', gap: 8 }}>
               {strategyRules.map(rule => {
                 const value = ruleCompliances[rule] ?? 'yes';
                 return (
-                  <div key={rule} className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-black/20 px-3 py-2">
-                    <span className="flex-1 text-xs text-[var(--foreground)]">{rule}</span>
-                    <div className="flex items-center gap-1">
+                  <div key={rule} className="inset" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '10px 14px' }}>
+                    <span style={{ flex: 1, minWidth: 160, fontSize: '12px', color: 'var(--text)' }}>{rule}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       {(['yes', 'partial', 'no'] as RuleCompliance[]).map(opt => (
-                        <button
+                        <ComplianceBtn
                           key={opt}
-                          type="button"
-                          onClick={() => setRuleCompliance(rule, opt)}
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider transition-colors ${
-                            value === opt
-                              ? opt === 'yes'    ? 'bg-emerald-500/20 text-emerald-300'
-                                : opt === 'partial' ? 'bg-amber-500/20 text-amber-300'
-                                                    : 'bg-red-500/20 text-red-300'
-                              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                          }`}
-                        >
-                          {opt}
-                        </button>
+                          rule={rule}
+                          option={opt}
+                          active={value === opt}
+                          onSelect={setRuleCompliance}
+                        />
                       ))}
                     </div>
                   </div>
@@ -675,30 +673,31 @@ export default function TradeForm({
 
         <Field label="Reasoning — why this trade?">
           <textarea
+            className="box w-full"
+            style={TEXTAREA_BOX}
             value={reasoning}
             onChange={e => setReasoning(e.target.value)}
             rows={3}
             maxLength={500}
             placeholder="Setup, catalyst, why you sized in. Future you will thank current you."
           />
-          <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{reasoning.length}/500</div>
+          <p style={{ margin: '8px 0 0', textAlign: 'right', fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--muted-2)' }}>{reasoning.length}/500</p>
         </Field>
 
         {/* ── Post-trade reflection — only renders once the trade is closed. ── */}
         {!isOpen && (
           <>
             <Field label="How did you feel exiting?">
-              <div className="flex flex-wrap gap-1.5">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {EMOTION_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
                     type="button"
                     onClick={() => setExitEmotion(exitEmotion === opt.value ? null : opt.value as EmotionState)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
-                      exitEmotion === opt.value
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                    }`}
+                    className="chip"
+                    style={exitEmotion === opt.value
+                      ? { height: 30, borderColor: 'var(--amber)', color: 'var(--amber)', fontWeight: 700 }
+                      : { height: 30 }}
                   >
                     <span aria-hidden>{opt.emoji}</span> {opt.label}
                   </button>
@@ -707,19 +706,23 @@ export default function TradeForm({
             </Field>
 
             <Field label="Self Verdict — what's your honest take?">
-              <div className="grid grid-cols-3 gap-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 8 }}>
                 {([
-                  { value: 'Well Executed',              label: 'Well Executed',     cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                  { value: 'Poorly Executed',            label: 'Poorly Executed',   cls: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                  { value: 'Good Discipline, Bad Luck', label: 'Good Disc., Bad Luck', cls: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
-                ] as { value: Verdict; label: string; cls: string }[]).map(v => (
+                  { value: 'Well Executed',             label: 'Well Executed',        tone: 'var(--green)' },
+                  { value: 'Poorly Executed',           label: 'Poorly Executed',      tone: 'var(--red)' },
+                  { value: 'Good Discipline, Bad Luck', label: 'Good Disc., Bad Luck', tone: 'var(--amber)' },
+                ] as { value: Verdict; label: string; tone: string }[]).map(v => (
                   <button
                     key={v.value}
                     type="button"
                     onClick={() => setSelfVerdict(selfVerdict === v.value ? null : v.value)}
-                    className={`px-3 py-2 rounded-lg text-xs font-semibold transition-colors border ${
-                      selfVerdict === v.value ? v.cls : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                    }`}
+                    className="chip"
+                    style={{
+                      height: 38, justifyContent: 'center', fontWeight: 700, fontSize: '11.5px',
+                      color: selfVerdict === v.value ? v.tone : 'var(--muted-2)',
+                      borderColor: selfVerdict === v.value ? v.tone : 'var(--line)',
+                      background: selfVerdict === v.value ? 'var(--panel)' : 'var(--panel-2)',
+                    }}
                   >
                     {v.label}
                   </button>
@@ -729,13 +732,15 @@ export default function TradeForm({
 
             <Field label="Lesson — what did you learn?">
               <textarea
+                className="box w-full"
+                style={TEXTAREA_BOX}
                 value={lessonNotes}
                 onChange={e => setLessonNotes(e.target.value)}
                 rows={3}
                 maxLength={500}
                 placeholder="One concrete behavior change you'd make on the next similar trade."
               />
-              <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{lessonNotes.length}/500</div>
+              <p style={{ margin: '8px 0 0', textAlign: 'right', fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--muted-2)' }}>{lessonNotes.length}/500</p>
             </Field>
 
             {/* Loss-hypothesis input only when the trade actually lost money. */}
@@ -743,6 +748,7 @@ export default function TradeForm({
               <Field label="Loss Hypothesis — why did this lose?">
                 <input
                   type="text"
+                  className="box w-full"
                   value={lossHypothesis}
                   onChange={e => setLossHypothesis(e.target.value)}
                   placeholder="Bad setup, bad execution, bad luck, or wrong context?"
@@ -756,28 +762,20 @@ export default function TradeForm({
 
       {/* Validation banner */}
       {errors.length > 0 && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-start gap-2">
-          <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />
-          <ul className="text-xs text-amber-300 space-y-0.5">
+        <div className="warn" style={{ marginTop: 4, marginBottom: 22 }}>
+          <AlertTriangle size={16} style={{ color: 'var(--amber)', flex: 'none', marginTop: 2 }} />
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
             {errors.map(err => <li key={err}>{err}</li>)}
           </ul>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-4 py-2 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-        >
-          <X size={14} className="inline mr-1" /> Cancel
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, marginTop: 26, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
+        <button type="button" onClick={onCancel} className="btn-g" style={{ height: 40 }}>
+          <X size={14} /> Cancel
         </button>
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all disabled:opacity-40"
-        >
+        <button type="submit" disabled={!canSubmit} className={canSubmit ? 'btn-a' : 'btn-d'} style={{ height: 40 }}>
           {editTrade ? 'Save Trade' : 'Log Trade'}
         </button>
       </div>
@@ -787,27 +785,77 @@ export default function TradeForm({
 
 // ─── Small layout primitives ─────────────────────────────────────────
 
+/** Shared inline styles — module-level so they don't re-create on every render. */
+const MONO_BOX: React.CSSProperties = { fontFamily: 'var(--mono)', fontWeight: 500 };
+const TEXTAREA_BOX: React.CSSProperties = {
+  height: 'auto', minHeight: 84, display: 'block', padding: '12px 16px',
+  lineHeight: '19px', resize: 'vertical',
+};
+
+const COMPLIANCE_TONE: Record<RuleCompliance, string> = {
+  yes: 'var(--green)',
+  partial: 'var(--amber)',
+  no: 'var(--red)',
+};
+
+/** Kept at module level on purpose — re-creating it inside TradeForm would remount
+ *  every compliance chip on each keystroke. */
+function ComplianceBtn({
+  rule, option, active, onSelect,
+}: {
+  rule: string;
+  option: RuleCompliance;
+  active: boolean;
+  onSelect: (rule: string, value: RuleCompliance) => void;
+}) {
+  const tone = COMPLIANCE_TONE[option];
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(rule, option)}
+      className="chip"
+      style={{
+        height: 24, padding: '0 10px', fontWeight: 700, fontSize: '9.5px',
+        letterSpacing: '.06em', textTransform: 'uppercase',
+        color: active ? tone : 'var(--muted-2)',
+        borderColor: active ? tone : 'var(--line)',
+        background: active ? 'var(--panel)' : 'var(--panel-2)',
+      }}
+    >
+      {option}
+    </button>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-3">
-      <legend className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] px-1">{title}</legend>
-      {children}
+    <fieldset style={{ border: 0, margin: '22px 0 0', padding: 0, minWidth: 0 }}>
+      <legend style={{ padding: 0, width: '100%' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', paddingBottom: 11, borderBottom: '1px solid var(--line)' }}>
+          <span style={{ width: 18, height: 2, background: 'var(--amber)', flex: 'none' }} />
+          <span className="lbl b10" style={{ letterSpacing: '.08em', textTransform: 'uppercase' }}>{title}</span>
+        </span>
+      </legend>
+      <div style={{ display: 'grid', gap: 16, marginTop: 18 }}>{children}</div>
     </fieldset>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">{label}</div>
+    <div className="field">
+      <label style={{ textTransform: 'uppercase' }}>{label}</label>
       {children}
-    </label>
+    </div>
   );
 }
 
 function Grid({ cols, children }: { cols: 2 | 3; children: React.ReactNode }) {
   return (
-    <div className={`grid gap-3 ${cols === 3 ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`}>
+    <div style={{
+      display: 'grid', gap: 14,
+      gridTemplateColumns: cols === 3 ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(auto-fit,minmax(200px,1fr))',
+    }}>
       {children}
     </div>
   );
@@ -821,18 +869,15 @@ function Segmented<T extends string>({
   options: { value: T; label: string; hint?: string }[];
 }) {
   return (
-    <div className="inline-flex flex-wrap items-center gap-1.5 p-1 rounded-xl border border-[var(--border)] bg-black/20 w-full">
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
       {options.map(o => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           title={o.hint}
-          className={`flex-1 min-w-[80px] px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            value === o.value
-              ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40'
-              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-          }`}
+          className={`chip${value === o.value ? ' on' : ''}`}
+          style={{ height: 32 }}
         >
           {o.label}
         </button>
@@ -841,13 +886,13 @@ function Segmented<T extends string>({
   );
 }
 
-function Stat({ label, valueClass, children }: { label: string; valueClass?: string; children: React.ReactNode }) {
+function Stat({ label, tone, children }: { label: string; tone?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-black/20 px-3 py-2">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">{label}</div>
-      <div className={`text-sm font-bold tabular-nums mt-0.5 ${valueClass ?? 'text-[var(--foreground)]'}`}>
+    <div className="inset" style={{ padding: '11px 16px' }}>
+      <p className="lbl" style={{ textTransform: 'uppercase' }}>{label}</p>
+      <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 15, color: tone ?? 'var(--text)' }}>
         {children}
-      </div>
+      </p>
     </div>
   );
 }

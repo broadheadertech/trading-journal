@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useBrainState } from '@/hooks/useBrainState';
 import { useProfile } from '@/hooks/useStore';
 import { STAGE_ORDER, STAGE_THRESHOLDS, STAGE_COLORS, STAGE_PATTERNS } from '@/lib/stage-config';
@@ -27,6 +27,38 @@ import { useReducedMotionContext } from './ReducedMotionProvider';
 
 const LazyBrainScene = lazy(() => import('./BrainScene'));
 
+// ─── ATLAS raw tokens ────────────────────────────────────────────────
+// The brain dimension is a position:fixed surface that may mount outside the
+// `.atlas-dash` scope, so ATLAS values are inlined (same as BrainMiniWidget).
+const T = {
+  panel: '#0a0f17',
+  panel2: '#0c1119',
+  line: '#182432',
+  line2: '#24344a',
+  rail: '#141e2a',
+  amber: '#d99405',
+  green: '#24c88a',
+  red: '#ff4d5e',
+  text: '#edf2f7',
+  text2: '#9fb0c2',
+  muted: '#7f8ea3',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+  display: "'Archivo',system-ui,sans-serif",
+  mono: "'Geist Mono',ui-monospace,monospace",
+};
+
+/** Stage accent still honours any theme-provided --accent, falling back to ATLAS amber. */
+const ACCENT = `var(--accent, ${T.amber})`;
+
+const LBL: React.CSSProperties = {
+  margin: 0,
+  fontWeight: 700,
+  fontSize: 9.5,
+  letterSpacing: '.04em',
+  color: T.muted2,
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function stageLabel(s: Stage): string {
@@ -43,14 +75,24 @@ function BackButton({ onBack }: { onBack: () => void }) {
   return (
     <button
       onClick={onBack}
-      className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-2
-                 rounded-xl bg-white/5 backdrop-blur-md border border-white/10
-                 text-white/80 hover:text-white hover:bg-white/10
-                 transition-all duration-200 group cursor-pointer"
+      className="absolute top-4 left-4 z-10 group cursor-pointer"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 9,
+        height: 32,
+        padding: '0 16px',
+        borderRadius: 2,
+        border: `1px solid ${T.line2}`,
+        background: T.panel,
+        color: T.text,
+        fontWeight: 700,
+        fontSize: 12,
+      }}
       aria-label="Return to dashboard"
     >
-      <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
-      <span className="text-sm font-medium hidden sm:inline">Back</span>
+      <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+      <span className="hidden sm:inline">Back</span>
     </button>
   );
 }
@@ -84,7 +126,7 @@ function StaticBrain({ stage }: { stage: Stage }) {
 function BrainLoadingPlaceholder() {
   return (
     <div className="flex items-center justify-center h-full">
-      <div className="w-32 h-32 rounded-full bg-white/5 animate-pulse" />
+      <div className="animate-pulse" style={{ width: 128, height: 128, borderRadius: 2, background: T.rail, border: `1px solid ${T.line}` }} />
     </div>
   );
 }
@@ -101,23 +143,36 @@ function HudScore({ score, previousScore, streakDays, multiplier }: {
   const deltaSign = delta >= 0 ? '+' : '';
 
   return (
-    <section className="absolute top-16 sm:top-16 left-4 sm:left-6 z-10" aria-label="Neuro Score">
-      <div className="text-[10px] uppercase tracking-widest text-white/30 mb-1 font-medium" aria-hidden="true">
-        Neuro Score
-      </div>
-      <div className="flex items-baseline gap-2.5">
-        <span className="text-5xl sm:text-6xl font-bold text-white tabular-nums"
-          style={{ textShadow: '0 0 40px rgba(255,255,255,0.15)' }}
-        >
+    <section
+      className="absolute top-16 sm:top-16 left-4 sm:left-6 z-10"
+      aria-label="Neuro Score"
+      style={{
+        position: 'absolute',
+        border: `1px solid ${T.line}`,
+        borderRadius: 2,
+        background: T.panel,
+        padding: '13px 20px 15px',
+      }}
+    >
+      <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 2.5, background: ACCENT }} />
+      <p style={LBL} aria-hidden="true">NEURO SCORE</p>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 4 }}>
+        <span style={{ fontFamily: T.mono, fontWeight: 500, fontSize: 38, lineHeight: '46px', color: T.text }}>
           {Math.round(score)}
         </span>
-        <span className={`text-sm font-semibold ${delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+        <span style={{ fontFamily: T.mono, fontWeight: 500, fontSize: 12.5, color: delta >= 0 ? T.green : T.red }}>
           {deltaSign}{delta.toFixed(1)}
         </span>
       </div>
-      <div className="mt-2 flex gap-4 text-[10px] text-white/30">
-        <span>Streak <strong className="text-white/60">{streakDays}d</strong></span>
-        <span>Multi <strong className="text-white/60">{multiplier.toFixed(2)}x</strong></span>
+      <div style={{ display: 'flex', gap: 18, marginTop: 6, fontSize: 10.5, color: T.muted2 }}>
+        <span>
+          STREAK{' '}
+          <strong style={{ fontFamily: T.mono, fontWeight: 500, color: T.text2 }}>{streakDays}d</strong>
+        </span>
+        <span>
+          MULTI{' '}
+          <strong style={{ fontFamily: T.mono, fontWeight: 500, color: T.text2 }}>{multiplier.toFixed(2)}x</strong>
+        </span>
       </div>
     </section>
   );
@@ -129,13 +184,28 @@ function HudStage({ stage, score }: { stage: Stage; score: number }) {
   const currentIdx = STAGE_ORDER.indexOf(stage);
 
   return (
-    <section className="absolute top-16 sm:top-16 right-4 sm:right-6 z-10 text-right" aria-label="Brain stage">
-      <div className="text-[10px] uppercase tracking-widest text-white/30 mb-1 font-medium" aria-hidden="true">
-        Stage
-      </div>
+    <section
+      className="absolute top-16 sm:top-16 right-4 sm:right-6 z-10 text-right"
+      aria-label="Brain stage"
+      style={{
+        position: 'absolute',
+        border: `1px solid ${T.line}`,
+        borderRadius: 2,
+        background: T.panel,
+        padding: '13px 20px 15px',
+      }}
+    >
+      <span style={{ position: 'absolute', right: 0, top: -1, width: 44, height: 2.5, background: ACCENT }} />
+      <p style={LBL} aria-hidden="true">STAGE</p>
       <div
-        className="text-3xl sm:text-4xl font-bold"
-        style={{ color: STAGE_COLORS[stage].accent, textShadow: `0 0 30px ${STAGE_COLORS[stage].accentGlow}` }}
+        style={{
+          fontFamily: T.display,
+          fontWeight: 700,
+          fontSize: 26,
+          lineHeight: '32px',
+          marginTop: 6,
+          color: STAGE_COLORS[stage].accent,
+        }}
       >
         {stageLabel(stage)}
       </div>
@@ -151,7 +221,7 @@ function HudStage({ stage, score }: { stage: Stage; score: number }) {
               viewBox="0 0 8 8"
               className={`w-2 h-2 ${isCurrent ? 'stage-dot-beat' : ''}`}
               style={{
-                color: active ? STAGE_COLORS[s].accent : 'rgba(255,255,255,0.1)',
+                color: active ? STAGE_COLORS[s].accent : T.rail,
                 filter: isCurrent ? `drop-shadow(0 0 4px ${STAGE_COLORS[s].accent})` : 'none',
               }}
             >
@@ -165,8 +235,17 @@ function HudStage({ stage, score }: { stage: Stage; score: number }) {
       </div>
 
       {/* Progress to next */}
-      <div className="mt-1.5 text-[9px] text-white/25">
+      <div style={{ marginTop: 8, fontFamily: T.mono, fontWeight: 500, fontSize: 10.5, color: T.muted3 }}>
         {score} / 1000
+      </div>
+      <div style={{ height: 2, marginTop: 6, background: T.rail, position: 'relative' }} aria-hidden="true">
+        <div
+          style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0,
+            width: `${Math.min(100, Math.max(0, (score / 1000) * 100))}%`,
+            background: ACCENT,
+          }}
+        />
       </div>
     </section>
   );
@@ -186,33 +265,38 @@ function HudTimeline({ data }: { data: { timestamp: number; newScore: number }[]
   if (chartData.length === 0) return null;
 
   return (
-    <div role="img" aria-label="Neuro Score timeline chart">
+    <div
+      role="img"
+      aria-label="Neuro Score timeline chart"
+      style={{ border: `1px solid ${T.line}`, borderRadius: 2, background: T.panel2, padding: '10px 12px 4px' }}
+    >
+    <p style={{ ...LBL, marginBottom: 6 }} aria-hidden="true">SCORE TIMELINE</p>
     <ResponsiveContainer width="100%" height={70}>
       <AreaChart data={chartData}>
         <defs>
           <linearGradient id="hudScoreGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+            <stop offset="5%" stopColor={ACCENT} stopOpacity={0.15} />
+            <stop offset="95%" stopColor={ACCENT} stopOpacity={0} />
           </linearGradient>
         </defs>
         <XAxis dataKey="date" hide />
         <YAxis hide />
         <Tooltip
           contentStyle={{
-            background: 'rgba(5,5,16,0.85)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '8px',
-            backdropFilter: 'blur(8px)',
-            color: '#fff',
+            background: T.panel,
+            border: `1px solid ${T.line2}`,
+            borderRadius: '2px',
+            color: T.text,
+            fontFamily: T.mono,
             fontSize: '12px',
           }}
-          labelStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px' }}
-          itemStyle={{ color: 'var(--accent)' }}
+          labelStyle={{ color: T.muted2, fontSize: '10px' }}
+          itemStyle={{ color: ACCENT }}
         />
         <Area
           type="monotone"
           dataKey="score"
-          stroke="var(--accent)"
+          stroke={ACCENT}
           strokeWidth={1.5}
           fill="url(#hudScoreGrad)"
         />
@@ -228,8 +312,8 @@ function SkeletonState({ onBack }: { onBack?: () => void }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center brain-dimension-bg" role="status" aria-label="Loading brain data">
       {onBack && <BackButton onBack={onBack} />}
-      <div className="w-48 h-48 rounded-full bg-white/5 animate-pulse mb-8" aria-hidden="true" />
-      <div className="w-32 h-4 rounded bg-white/5 animate-pulse" aria-hidden="true" />
+      <div className="animate-pulse mb-8" style={{ width: 192, height: 192, borderRadius: 2, background: T.rail, border: `1px solid ${T.line}` }} aria-hidden="true" />
+      <div className="animate-pulse" style={{ width: 128, height: 14, borderRadius: 2, background: T.rail }} aria-hidden="true" />
     </div>
   );
 }
@@ -240,11 +324,37 @@ function EmptyState({ onBack }: { onBack?: () => void }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center px-4 brain-dimension-bg" role="region" aria-label="Brain empty state">
       {onBack && <BackButton onBack={onBack} />}
-      <BrainMascot size={80} className="mb-4 opacity-60" aria-hidden="true" />
-      <h2 className="text-lg font-semibold text-white/90 mb-2">Your Brain is Waiting</h2>
-      <p className="text-sm text-white/50 max-w-sm text-center">
-        Start logging trades to grow your brain! Each trade, reflection, and disciplined decision shapes your neural score.
-      </p>
+      <div
+        style={{
+          position: 'relative',
+          maxWidth: 460,
+          width: '100%',
+          border: `1px solid ${T.line2}`,
+          borderRadius: 2,
+          background: '#070c13',
+          padding: '52px 28px 56px',
+          textAlign: 'center',
+        }}
+      >
+        {/* ATLAS blank-state corner ticks */}
+        <span style={{ position: 'absolute', left: -1, top: -1, width: 14, height: 14, border: `1px solid ${T.line2}`, borderRight: 0, borderBottom: 0 }} />
+        <span style={{ position: 'absolute', right: -1, bottom: -1, width: 14, height: 14, border: `1px solid ${T.line2}`, borderLeft: 0, borderTop: 0 }} />
+        <div
+          style={{
+            width: 52, height: 52, margin: '0 auto 26px', borderRadius: 3,
+            border: `1px solid ${T.line2}`, background: T.panel2,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <BrainMascot size={30} aria-hidden="true" />
+        </div>
+        <h2 style={{ margin: 0, fontFamily: T.display, fontWeight: 700, fontSize: 22, lineHeight: '24px', color: T.text }}>
+          Your Brain is Waiting
+        </h2>
+        <p style={{ margin: '14px 0 0', fontSize: 13.5, lineHeight: '20px', color: T.muted }}>
+          Start logging trades to grow your brain! Each trade, reflection, and disciplined decision shapes your neural score.
+        </p>
+      </div>
     </div>
   );
 }
@@ -339,7 +449,11 @@ export default function BrainTab({ onBack }: BrainTabProps) {
       </div>
 
       {/* Bottom panel — coaching + timeline, never overlaps the brain */}
-      <section className="flex-shrink-0 px-4 sm:px-8 pt-2 pb-3 space-y-2" aria-label="Brain controls and coaching">
+      <section
+        className="flex-shrink-0 px-4 sm:px-8 pt-2 pb-3"
+        aria-label="Brain controls and coaching"
+        style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 576, width: '100%', margin: '0 auto' }}
+      >
         {/* Story 7.2 — soft ceiling banner for free-tier users near cap (FR35) */}
         <SoftCeilingBanner
           currentScore={currentScore}
@@ -354,10 +468,12 @@ export default function BrainTab({ onBack }: BrainTabProps) {
           onUpgradeClick={() => setPricingOpen(true)}
         />
         <BrainCoachingCard coaching={brainState.latestCoachingMessage} />
-        <VacationModeToggle />
-        <TextOnlyModeToggle enabled={textOnlyBrain} onToggle={setTextOnlyBrain} />
-        <ReducedMotionToggle enabled={appReducedMotion} onToggle={setReducedMotion} />
-        <BrainDeleteButton onBack={onBack} />
+        <div style={{ border: `1px solid ${T.line}`, borderRadius: 2, background: T.panel, padding: '4px 18px 6px' }}>
+          <VacationModeToggle />
+          <TextOnlyModeToggle enabled={textOnlyBrain} onToggle={setTextOnlyBrain} />
+          <ReducedMotionToggle enabled={appReducedMotion} onToggle={setReducedMotion} />
+          <BrainDeleteButton onBack={onBack} />
+        </div>
         {scoreTimeline && scoreTimeline.length > 0 && (
           <HudTimeline data={scoreTimeline} />
         )}

@@ -12,10 +12,11 @@ import {
   getDrawdownStats,
 } from '@/lib/utils';
 import {
-  TrendingUp, TrendingDown, BarChart3, Target,
-  Flame, AlertCircle, ArrowRight, Clock, Calendar,
-  Zap, Shield, CircleDot, ChevronRight, Activity,
-} from 'lucide-react';
+  TrendUp, TrendDown, ChartBar, Target,
+  Fire, WarningCircle, ArrowRight, Clock, Calendar,
+  Lightning, Shield, CaretRight,
+} from '@phosphor-icons/react';
+import { RadioButton as CircleDot, Pulse as Activity } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -278,7 +279,10 @@ export default function Dashboard({
   const fmtPnl = (v: number) => formatCurrency(v);
   const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]';
   const isPositive = metrics.totalPnL >= 0;
-  const scoreColor = metrics.execScore >= 7 ? '#22c55e' : metrics.execScore >= 4 ? '#eab308' : '#ef4444';
+  // ATLAS tokens, not the old Tailwind hexes. The empty state scores 0, so the
+  // pre-rebrand #ef4444 painted the whole Execution Score card alarm-red on a
+  // brand-new account.
+  const scoreColor = metrics.execScore >= 7 ? '#24c88a' : metrics.execScore >= 4 ? '#d99405' : '#ff4d5e';
   const circumference = 2 * Math.PI * 54;
   const strokeDashoffset = circumference - (metrics.execScore / 10) * circumference;
 
@@ -290,581 +294,597 @@ export default function Dashboard({
   };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
+  const GREEN = '#24c88a';
+  const RED = '#ff4d5e';
+  const c = (v: number) => (v > 0 ? GREEN : v < 0 ? RED : 'var(--muted)');
+  // Money figures are always green when non-negative and red when negative —
+  // never amber. Unlike c(), zero counts as positive here, because these
+  // amounts render with a leading "+" and so read as positive at $0.00.
+  const amt = (v: number) => (v < 0 ? RED : GREEN);
+
   return (
-    <div className="relative space-y-4 anim-fade-up">
-      <div className="hero-glow" />
-      {/* ── Hero Card + Execution Score ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-4">
-        <div className={`rounded-2xl p-5 sm:p-6 ${isPositive
-          ? 'bg-gradient-to-br from-emerald-900/60 via-emerald-800/40 to-pink-900/30 border border-emerald-700/30'
-          : 'bg-gradient-to-br from-red-900/60 via-rose-800/40 to-red-900/30 border border-red-700/30'
-        }`}>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-[var(--foreground)]/60 uppercase tracking-wider">
-              Net P&L
-            </span>
-            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-md ${isPositive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}>
+    <div className="pwrap">
+      <div className="grid2">
+        {/* net P&L hero */}
+        <div className="card hero" style={{ height: 'auto' }}>
+          <span className="accent" style={{ width: 80, background: isPositive ? 'var(--green)' : 'var(--red)' }} />
+          <div className="row1">
+            <p className="lbl b10">NET P&L</p>
+            <span
+              className="pill"
+              style={isPositive ? undefined : { background: '#20100f', color: 'var(--red)' }}
+            >
               {metrics.pnlPercent >= 0 ? '+' : ''}{metrics.pnlPercent.toFixed(1)}%
             </span>
+            {metrics.leaks.length > 0 && (
+              <button
+                className="viewall"
+                onClick={() => {
+                  document.getElementById('next-best-actions')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Fix biggest leak
+                <svg width="9" height="10" viewBox="0 0 9 10" fill="none">
+                  <path d="M4 0 L9 5 L4 10 M9 5 H0" stroke="#d99405" strokeWidth="1.5" />
+                </svg>
+              </button>
+            )}
           </div>
-          <div className={`text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight ${isPositive ? 'text-emerald-100' : 'text-red-100'}`}>
+          <p className="bignum" style={{ color: isPositive ? 'var(--text)' : 'var(--red)' }}>
             {fmtPnl(metrics.totalPnL)}
+          </p>
+          <div className="wl">
+            <span style={{ color: 'var(--green)' }}>
+              <svg width="17" height="10" viewBox="0 0 17 10" fill="none"><path d="M0 10 L6 4 L10 8 L17 0" stroke="#24c88a" strokeWidth="1.6" /></svg>
+              {metrics.wins} wins
+            </span>
+            <span className="l" style={{ color: 'var(--red)' }}>
+              <svg width="17" height="10" viewBox="0 0 17 10" fill="none"><path d="M0 0 L6 6 L10 2 L17 10" stroke="#ff4d5e" strokeWidth="1.6" /></svg>
+              {metrics.losses} losses
+            </span>
           </div>
-          <div className="flex items-center gap-4 mt-3 text-sm">
-            <span className="flex items-center gap-1 text-emerald-400"><TrendingUp size={14} /> {metrics.wins} wins</span>
-            <span className="flex items-center gap-1 text-red-400"><TrendingDown size={14} /> {metrics.losses} losses</span>
-          </div>
-          <div className="grid grid-cols-3 gap-3 mt-4">
-            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Best Day</div>
+          <div className="tri">
+            <div className="inset">
+              <p className="lbl">BEST DAY</p>
               {metrics.bestDay ? (
-                <>
-                  <div className={`text-sm font-semibold ${metrics.bestDay[1] >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {fmtPnl(metrics.bestDay[1])}
-                  </div>
-                  <div className="text-[10px] text-[var(--foreground)]/30">{format(new Date(metrics.bestDay[0]), 'dd/MM/yyyy')}</div>
-                </>
-              ) : <div className="text-sm text-[var(--foreground)]/30">-</div>}
+                <em className="g" style={{ color: c(metrics.bestDay[1]) }}>
+                  {fmtPnl(metrics.bestDay[1])}
+                  <span style={{ marginLeft: 8, fontFamily: 'var(--body)', fontSize: 10, color: 'var(--muted-2)' }}>
+                    {format(new Date(metrics.bestDay[0]), 'dd/MM/yyyy')}
+                  </span>
+                </em>
+              ) : <em>–</em>}
             </div>
-            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Worst Day</div>
+            <div className="inset">
+              <p className="lbl">WORST DAY</p>
               {metrics.worstDay ? (
-                <>
-                  <div className={`text-sm font-semibold ${metrics.worstDay[1] >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {fmtPnl(metrics.worstDay[1])}
-                  </div>
-                  <div className="text-[10px] text-[var(--foreground)]/30">{format(new Date(metrics.worstDay[0]), 'dd/MM/yyyy')}</div>
-                </>
-              ) : <div className="text-sm text-[var(--foreground)]/30">Need 2+ days</div>}
+                <em className="g" style={{ color: c(metrics.worstDay[1]) }}>
+                  {fmtPnl(metrics.worstDay[1])}
+                  <span style={{ marginLeft: 8, fontFamily: 'var(--body)', fontSize: 10, color: 'var(--muted-2)' }}>
+                    {format(new Date(metrics.worstDay[0]), 'dd/MM/yyyy')}
+                  </span>
+                </em>
+              ) : <em>Need 2+ days</em>}
             </div>
-            <div className="bg-[var(--foreground)]/5 rounded-xl px-3 py-2.5">
-              <div className="text-[10px] text-[var(--foreground)]/40 uppercase tracking-wider mb-0.5">Avg Trade</div>
-              <div className={`text-sm font-semibold ${metrics.avgTrade >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                {fmtPnl(metrics.avgTrade)}
-              </div>
+            <div className="inset">
+              <p className="lbl">AVG TRADE</p>
+              <em className="g" style={{ color: c(metrics.avgTrade) }}>{fmtPnl(metrics.avgTrade)}</em>
             </div>
           </div>
-
-          {/* Fix Biggest Leak CTA */}
-          {metrics.leaks.length > 0 && (
-            <button
-              onClick={() => {
-                document.getElementById('next-best-actions')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="mt-4 flex items-center gap-2 px-4 py-2 bg-[var(--foreground)]/10 hover:bg-[var(--foreground)]/15 rounded-xl text-sm text-[var(--foreground)]/80 transition-colors"
-            >
-              <Flame size={16} className="text-amber-400" />
-              Fix biggest leak
-              <ArrowRight size={14} />
-            </button>
-          )}
         </div>
 
-        {/* Execution Score Gauge */}
-        <div className="hidden lg:flex flex-col items-center justify-center bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
-          <div className="relative w-[130px] h-[130px]">
-            <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="54" fill="none" stroke="var(--border)" strokeWidth="8" />
+        {/* execution score */}
+        <div className="card score" style={{ alignSelf: 'stretch' }}>
+          <div className="scoredial">
+            <svg viewBox="0 0 120 120" width="80" height="80" fill="none">
+              <circle cx="60" cy="60" r="54" stroke="#16202c" strokeWidth="7.5" />
               <circle
-                cx="60" cy="60" r="54" fill="none"
-                stroke={scoreColor} strokeWidth="8" strokeLinecap="round"
+                cx="60" cy="60" r="54"
+                stroke={scoreColor} strokeWidth="7.5" strokeLinecap="round"
                 strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-700"
+                transform="rotate(-90 60 60)"
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-3xl font-bold text-[var(--foreground)]">{metrics.execScore}</span>
-            </div>
+            <span className="v">{metrics.execScore}</span>
           </div>
-          <div className="mt-2 text-center">
-            <div className="text-sm font-semibold" style={{ color: scoreColor }}>Execution Score</div>
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5 leading-tight">Win Rate + Profit Factor + Net Outcome</div>
-          </div>
+          {/* Label stays amber per .score .ttl — the ring stroke already carries
+              the score colour. Tinting both made the whole card read as an alarm. */}
+          <p className="ttl">Execution Score</p>
+          <p>Win Rate + Profit Factor<br />+ Net Outcome</p>
         </div>
       </div>
 
-      {/* ── Summary Stat Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[
-          { label: 'Net P&L', icon: <TrendingUp size={18} />, value: fmtPnl(metrics.totalPnL), color: pnlColor(metrics.totalPnL), borderColor: 'border-t-red-500' },
-          { label: 'Total Trades', icon: <Activity size={18} />, value: String(metrics.closed.length), color: 'text-[var(--foreground)]', borderColor: 'border-t-blue-500' },
-          { label: 'Win Rate', icon: <Target size={18} />, value: `${metrics.winRate.toFixed(1)}%`, color: metrics.winRate >= 50 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-emerald-500' },
-          { label: 'Profit Factor', icon: <Zap size={18} />, value: metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2), color: metrics.profitFactor >= 1 ? 'text-emerald-400' : 'text-red-400', borderColor: 'border-t-cyan-500' },
-        ].map(card => (
-          <div key={card.label} className={`bg-[var(--card)] border border-[var(--border)] border-t-2 ${card.borderColor} rounded-xl p-4`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider">{card.label}</span>
-              <span className="text-[var(--muted-foreground)]">{card.icon}</span>
-            </div>
-            <div className={`text-xl sm:text-2xl font-bold ${card.color}`}>{card.value}</div>
-          </div>
-        ))}
+      {/* stat strip */}
+      <div className="stats">
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <b>NET P&L</b>
+          <em style={{ color: c(metrics.totalPnL) }}>{fmtPnl(metrics.totalPnL)}</em>
+        </div>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>TOTAL TRADES</b>
+          <em>{metrics.closed.length}</em>
+        </div>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>WIN RATE</b>
+          <em style={{ color: metrics.winRate >= 50 ? GREEN : RED }}>{metrics.winRate.toFixed(1)}%</em>
+        </div>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>PROFIT FACTOR</b>
+          <em style={{ color: metrics.profitFactor >= 1 ? GREEN : RED }}>
+            {metrics.profitFactor === Infinity ? '∞' : metrics.profitFactor.toFixed(2)}
+          </em>
+        </div>
       </div>
 
-      {/* ── Main Content: Left (Charts) + Right (Sidebar Cards) ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
-        {/* Left column */}
-        <div className="space-y-4">
-          {/* Equity Curve */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-base font-semibold text-[var(--foreground)]">Equity Curve</h3>
-                <p className="text-xs text-[var(--muted-foreground)]">Account balance growth over time</p>
-              </div>
-              <div className="flex gap-1 bg-[var(--muted)] rounded-lg p-0.5">
-                {(['equity', 'drawdown'] as const).map(mode => (
-                  <button
-                    key={mode}
-                    onClick={() => setEquityMode(mode)}
-                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors capitalize ${
-                      equityMode === mode ? 'bg-[var(--card)] text-[var(--foreground)] shadow-sm' : 'text-[var(--muted-foreground)]'
-                    }`}
-                  >
-                    {mode}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {equityData.length > 1 ? (
-              <div className="h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={equityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                    <defs>
-                      <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={equityMode === 'drawdown' ? '#ef4444' : '#2dd4bf'} stopOpacity={0.3} />
-                        <stop offset="95%" stopColor={equityMode === 'drawdown' ? '#ef4444' : '#2dd4bf'} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                    <Tooltip
-                      contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '12px', color: 'var(--foreground)' }}
-                      formatter={(val: unknown) => [formatCurrency(val as number), equityMode === 'drawdown' ? 'Drawdown' : 'Equity']}
-                    />
-                    <Area
-                      type="monotone" dataKey="pnl"
-                      stroke={equityMode === 'drawdown' ? '#ef4444' : '#2dd4bf'}
-                      strokeWidth={2} fill="url(#equityGrad)" dot={false} isAnimationActive={false}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <div className="h-[220px] flex items-center justify-center text-sm text-[var(--muted-foreground)]">
-                Need at least 2 closed trades to show chart
-              </div>
-            )}
-          </div>
-
-          {/* Activity Map (Heatmap) */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <h3 className="text-base font-semibold text-[var(--foreground)] mb-1">Activity Map</h3>
-            <p className="text-xs text-[var(--muted-foreground)] mb-4">Net P&L by weekday and session (local time)</p>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr>
-                    <th className="text-left text-[var(--muted-foreground)] font-medium pb-2 pr-3">Sessions</th>
-                    {metrics.sessions.map(s => (
-                      <th key={s.label} className="text-center text-[var(--muted-foreground)] font-medium pb-2 px-1 whitespace-nowrap">
-                        {s.label.split(' ')[0]}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {metrics.weekdays.map((day, dayIdx) => (
-                    <tr key={day}>
-                      <td className="text-[var(--muted-foreground)] pr-3 py-0.5 font-medium">{day}</td>
-                      {metrics.sessions.map((_, sessIdx) => {
-                        const cell = metrics.heatmap.find(c => c.day === dayIdx && c.session === sessIdx);
-                        const pnl = cell?.pnl ?? 0;
-                        const count = cell?.count ?? 0;
-                        const intensity = count > 0 ? Math.min(Math.abs(pnl) / metrics.heatmapMax, 1) : 0;
-                        const alpha = count === 0 ? 0.05 : 0.18 + intensity * 0.62;
-                        const bg = count === 0
-                          ? 'rgba(100,116,139,0.08)'
-                          : pnl >= 0
-                            ? `rgba(34,197,94,${alpha})`
-                            : `rgba(239,68,68,${alpha})`;
-                        const pnlTextColor = pnl > 0 ? 'text-emerald-300' : pnl < 0 ? 'text-red-300' : 'text-[var(--muted-foreground)]';
-                        return (
-                          <td key={sessIdx} className="px-0.5 py-0.5">
-                            <div
-                              className="w-full h-12 rounded flex flex-col items-center justify-center px-1"
-                              style={{ backgroundColor: bg }}
-                              title={count > 0 ? `${fmtPnl(pnl)} across ${count} trade${count === 1 ? '' : 's'}` : 'No trades'}
-                            >
-                              {count > 0 ? (
-                                <>
-                                  <span className={`text-[11px] font-bold tabular-nums leading-tight ${pnlTextColor}`}>
-                                    {fmtPnl(pnl)}
-                                  </span>
-                                  <span className="text-[9px] text-[var(--muted-foreground)] leading-tight">
-                                    {count} trade{count === 1 ? '' : 's'}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="text-[9px] text-[var(--muted-foreground)]/40">—</span>
-                              )}
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-[10px] text-[var(--muted-foreground)] mt-2">Each cell shows total $ P&L and trade count for that weekday × session bucket.</p>
-
-            {/* Gross losses ◀ ▶ gross wins — total $ on each side of the ledger. */}
-            {(metrics.grossProfit > 0 || metrics.grossLoss > 0) && (
-              <div className="mt-3">
-                <div className="h-3 rounded-full bg-[var(--muted)] overflow-hidden flex">
-                  {(() => {
-                    const total = metrics.grossProfit + metrics.grossLoss;
-                    const lossPct = total > 0 ? (metrics.grossLoss / total) * 100 : 0;
-                    const winPct = total > 0 ? (metrics.grossProfit / total) * 100 : 0;
-                    return (
-                      <>
-                        {metrics.grossLoss > 0 && <div className="h-full bg-red-500" style={{ width: `${lossPct}%` }} />}
-                        {metrics.grossProfit > 0 && <div className="h-full bg-emerald-500" style={{ width: `${winPct}%` }} />}
-                      </>
-                    );
-                  })()}
-                </div>
-                <div className="flex justify-between text-[10px] tabular-nums mt-1">
-                  <span className="text-red-400">{fmtPnl(-metrics.grossLoss)}</span>
-                  <span className="text-emerald-400">{fmtPnl(metrics.grossProfit)}</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Recent Trades */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-base font-semibold text-[var(--foreground)]">Recent Trades</h3>
-                <p className="text-xs text-[var(--muted-foreground)]">Last activity in the selected period</p>
-              </div>
-              <button
-                onClick={() => onNavigate('journal')}
-                className="flex items-center gap-1 text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium transition-colors"
-              >
-                View all <ArrowRight size={14} />
-              </button>
-            </div>
-            {recentTrades.length > 0 ? (
-              <div className="space-y-2">
-                {recentTrades.map(t => {
-                  const dir = (t.direction ?? 'long')[0].toUpperCase();
-                  const dirColor = (t.direction ?? 'long') === 'long' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400';
-                  const elapsed = t.exitDate
-                    ? Math.round((Date.now() - new Date(t.exitDate).getTime()) / 3600000)
-                    : null;
-                  const timeLabel = elapsed !== null
-                    ? elapsed < 24 ? `${elapsed}h` : `${Math.round(elapsed / 24)}d`
-                    : '';
-                  return (
-                    <div key={t.id} className="flex items-center gap-3 py-2 border-b border-[var(--border)] last:border-0">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${dirColor}`}>
-                        {dir}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm text-[var(--foreground)]">{t.coin}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-[var(--muted-foreground)]">
-                          <Clock size={10} /> {timeLabel} ago
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0 text-xs text-[var(--muted-foreground)]">
-                        <div>
-                          <span className="uppercase text-[10px]">Entry</span> {formatCurrency(t.entryPrice)}
-                        </div>
-                        {t.exitPrice && (
-                          <div>
-                            <span className="uppercase text-[10px]">Exit</span> {formatCurrency(t.exitPrice)}
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className={`text-sm font-semibold ${pnlColor(t.actualPnL ?? 0)}`}>
-                          {fmtPnl(t.actualPnL ?? 0)}
-                        </div>
-                        {t.exitDate && (
-                          <div className="text-[10px] text-[var(--muted-foreground)]">
-                            {format(new Date(t.exitDate), 'dd/MM/yyyy, HH:mm')}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-6 text-sm text-[var(--muted-foreground)]">No closed trades in this period</div>
-            )}
-          </div>
-
-          {/* Next Best Actions */}
-          <div id="next-best-actions" className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-base font-semibold text-[var(--foreground)]">Next Best Actions</h3>
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-            </div>
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">Execute these top fixes first for the active period.</p>
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-4">Run active rule set for 5-7 sessions before switching.</p>
-
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-[var(--muted)]/50 border border-[var(--border)] rounded-xl px-3 py-2.5">
-                <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Total Leak Burden</div>
-                <div className="text-base font-bold text-red-400">{formatCurrency(metrics.totalLeakBurden)}</div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">gross drag detected</div>
-              </div>
-              <div className="bg-[var(--muted)]/50 border border-[var(--border)] rounded-xl px-3 py-2.5">
-                <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Realistic Recoverable</div>
-                <div className="text-base font-bold text-emerald-400">{formatCurrency(metrics.realisticRecoverable)}</div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">realistic in period</div>
-              </div>
-              <div className="bg-[var(--muted)]/50 border border-[var(--border)] rounded-xl px-3 py-2.5">
-                <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">Conservative (Top-3)</div>
-                <div className="text-base font-bold text-amber-400">{formatCurrency(metrics.conservativeRecoverable)}</div>
-                <div className="text-[10px] text-[var(--muted-foreground)]">focus-first amount</div>
-              </div>
-            </div>
-
-            {metrics.leaks.length > 0 ? (
-              <div className="space-y-3">
-                {metrics.leaks.map((leak, i) => (
-                  <div key={i} className="flex items-start gap-3 pl-1">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-                      leak.severity === 'high' ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                        : leak.severity === 'medium' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                        : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    }`}>
-                      {i + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-[var(--foreground)]">{leak.title}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                          leak.severity === 'high' ? 'bg-red-500/10 text-red-400'
-                            : leak.severity === 'medium' ? 'bg-amber-500/10 text-amber-400'
-                            : 'bg-blue-500/10 text-blue-400'
-                        }`}>{leak.severity}</span>
-                      </div>
-                      <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{leak.description}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-sm font-semibold text-emerald-400">{formatCurrency(leak.amount)}</div>
-                      <div className="text-[10px] text-[var(--muted-foreground)]">in range</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--muted-foreground)] text-center py-4">No significant leaks detected. Keep it up!</p>
-            )}
-
-            <div className="mt-4 text-xs text-[var(--muted-foreground)] bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">
-              Track this weekly: realized drag should move toward the conservative recoverable level.
-            </div>
-
-            <button
-              onClick={() => onNavigate('journal:verdicts')}
-              className="mt-4 w-full py-2.5 bg-[var(--muted)] hover:bg-[var(--muted-foreground)]/10 border border-[var(--border)] rounded-xl text-sm font-medium text-[var(--foreground)] transition-colors flex items-center justify-center gap-2"
-            >
-              Open Verdicts <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-
-        {/* ── Right Sidebar Cards ── */}
-        <div className="space-y-4">
-          {/* Top vs Worst Symbols */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Top vs Worst Symbols</h3>
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-3">Compare your strongest and weakest pairs</p>
-
-            <div className="mb-3">
-              <div className="text-xs font-semibold text-emerald-400 mb-2 uppercase tracking-wider">Top Performers</div>
-              {metrics.topPerformers.length > 0 ? metrics.topPerformers.map((c, i) => (
-                <div key={c.coin} className="flex items-center justify-between py-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--muted-foreground)] w-4">#{i + 1}</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">{c.coin}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-xs font-semibold ${pnlColor(c.pnl)}`}>{fmtPnl(c.pnl)}</span>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">{c.total} trades</div>
-                  </div>
-                </div>
-              )) : <p className="text-[10px] text-[var(--muted-foreground)]">No profitable symbols yet</p>}
-            </div>
-
+      {/* Equity Curve/Activity Map (left) and their sidebar cards (right) used to
+          live in two separate .grid2 rows, each row's height forced by its own
+          tallest column. The left cards are short (chart w/ empty state, a
+          compact heatmap) while the right sidebar stacks are naturally tall,
+          so each row left a dead gap under the short left card before the
+          next row began. Merged into one .grid2 with two independently
+          flowing columns (masonry-style) so there's no forced row pairing. */}
+      <div className="grid2" style={{ marginTop: 32 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        {/* equity curve */}
+        <div className="card">
+          <div className="cardhead">
             <div>
-              <div className="text-xs font-semibold text-red-400 mb-2 uppercase tracking-wider">Biggest Leaks</div>
-              {metrics.biggestLeaks.length > 0 ? metrics.biggestLeaks.map((c, i) => (
-                <div key={c.coin} className="flex items-center justify-between py-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-[var(--muted-foreground)] w-4">#{i + 1}</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">{c.coin}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-xs font-semibold ${pnlColor(c.pnl)}`}>{fmtPnl(c.pnl)}</span>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">{c.total} trades</div>
-                  </div>
-                </div>
-              )) : <p className="text-[10px] text-[var(--muted-foreground)]">No losing symbols</p>}
+              <h3>Equity Curve</h3>
+              <p className="sub">Account balance growth over time</p>
+            </div>
+            <div className="seg">
+              {(['equity', 'drawdown'] as const).map(mode => (
+                <button
+                  key={mode}
+                  className={equityMode === mode ? 'on' : undefined}
+                  onClick={() => setEquityMode(mode)}
+                  style={{ textTransform: 'capitalize' }}
+                >
+                  {mode}
+                </button>
+              ))}
             </div>
           </div>
-
-          {/* Execution Rhythm */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Execution Rhythm</h3>
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-3">How consistent and active your trading cadence is</p>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Calendar size={14} /> Avg trades / day
-                </div>
-                <span className="text-sm font-semibold text-[var(--foreground)]">{metrics.avgTradesPerDay.toFixed(1)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <AlertCircle size={14} /> Longest idle gap
-                </div>
-                <span className="text-sm font-semibold text-[var(--foreground)]">
-                  {metrics.longestIdle > 0 ? `${metrics.longestIdle}d` : '-'}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Flame size={14} /> Best active streak
-                </div>
-                <span className="text-sm font-semibold text-[var(--foreground)]">
-                  {metrics.bestActiveStreak > 0 ? `${metrics.bestActiveStreak} days` : '-'}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Flame size={14} /> Best day
-                </div>
-                <span className="text-sm font-semibold text-[var(--foreground)]">
-                  {metrics.bestDay ? (
-                    <span>
-                      <span className="text-[10px] text-[var(--muted-foreground)] mr-1">{metrics.bestDayLabel}</span>
-                      <span className={`${pnlColor(metrics.bestDay[1])}`}>{fmtPnl(metrics.bestDay[1])}</span>
-                    </span>
-                  ) : '-'}
-                </span>
-              </div>
-              {metrics.bounceBackRate !== null && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                    <CircleDot size={14} /> Bounce-back rate
-                  </div>
-                  <span className="text-sm font-semibold text-[var(--foreground)]">
-                    {metrics.bounceBackRate}%
-                  </span>
-                </div>
-              )}
-              {metrics.edgeConcentration !== null && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                    <Shield size={14} /> Edge concentration
-                  </div>
-                  <span className="text-sm font-semibold text-[var(--foreground)]">
-                    {metrics.edgeConcentration}%
-                  </span>
-                </div>
-              )}
-            </div>
+          <div className="plot">
+            {equityData.length > 1 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={equityData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'} stopOpacity={0.3} />
+                      <stop offset="95%" stopColor={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#5c6b7e' }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#5c6b7e' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <Tooltip
+                    contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7' }}
+                    formatter={(val: unknown) => [formatCurrency(val as number), equityMode === 'drawdown' ? 'Drawdown' : 'Equity']}
+                  />
+                  <Area
+                    type="monotone" dataKey="pnl"
+                    stroke={equityMode === 'drawdown' ? '#ff4d5e' : '#24c88a'}
+                    strokeWidth={2} fill="url(#equityGrad)" dot={false} isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <span className="empty">Need at least 2 closed trades to show chart</span>
+            )}
           </div>
+        </div>
 
-          {/* Focus & Discipline */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Focus & Discipline</h3>
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-3">See where attention and execution drift</p>
-            <div className="space-y-3">
-              {metrics.topCoin && (
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                      <CircleDot size={14} className="text-emerald-400" /> Focus on {metrics.topCoin.coin}
-                    </span>
-                    <span className="font-semibold text-[var(--foreground)]">{metrics.focusPercent}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
-                    <div className="h-full rounded-full bg-fuchsia-400" style={{ width: `${metrics.focusPercent}%` }} />
-                  </div>
-                </div>
-              )}
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                    <CircleDot size={14} /> Consistency (profitable days)
-                  </span>
-                  <span className="font-semibold text-[var(--foreground)]">{metrics.consistencyPercent}%</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
-                  <div className="h-full rounded-full bg-emerald-400" style={{ width: `${metrics.consistencyPercent}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                    <TrendingUp size={14} /> Long bias
-                  </span>
-                  <span className="font-semibold text-[var(--foreground)]">{metrics.longBias}%</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
-                  <div className="h-full rounded-full bg-blue-400" style={{ width: `${metrics.longBias}%` }} />
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                  <Clock size={14} /> Avg hold time
-                </span>
-                <span className="font-semibold text-[var(--foreground)]">{metrics.avgHoldMinutes}m</span>
-              </div>
+        {/* activity map */}
+        <div className="card">
+          <h3>Activity Map</h3>
+          <p className="sub">Net P&L by weekday and session (local time)</p>
+          <div className="amap">
+            <div className="amaphead">
+              <b>Sessions</b>
+              {metrics.sessions.map(s => <span key={s.label}>{s.label.split(' ')[0]}</span>)}
             </div>
-          </div>
-
-          {/* Risk Exposure */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Risk Exposure</h3>
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-3">How much damage each mistake can do</p>
-            <div className="space-y-2.5">
-              {[
-                { icon: <TrendingUp size={14} />, label: 'Avg win', value: fmtPnl(metrics.avgWin), color: 'text-emerald-400' },
-                { icon: <TrendingDown size={14} />, label: 'Avg loss', value: fmtPnl(-metrics.avgLoss), color: 'text-red-400' },
-                { icon: <AlertCircle size={14} />, label: 'Biggest loss', value: fmtPnl(metrics.biggestLoss), color: 'text-red-400' },
-                { icon: <Shield size={14} />, label: 'Risk ratio (avg win / avg loss)', value: metrics.riskRatio > 0 ? metrics.riskRatio.toFixed(2) : '-' },
-                { icon: <BarChart3 size={14} />, label: 'P&L volatility (std dev)', value: metrics.pnlStdDev > 0 ? formatCurrency(metrics.pnlStdDev) : '-' },
-                { icon: <Target size={14} />, label: 'Breakeven win rate', value: metrics.breakEvenWR > 0 ? `${metrics.breakEvenWR.toFixed(1)}%` : '-' },
-                { icon: <Zap size={14} />, label: 'Edge buffer', value: metrics.edgeBuffer !== 0 ? `${metrics.edgeBuffer > 0 ? '+' : ''}${metrics.edgeBuffer.toFixed(1)}%` : '-', color: metrics.edgeBuffer > 0 ? 'text-emerald-400' : metrics.edgeBuffer < 0 ? 'text-red-400' : undefined },
-                { icon: <Activity size={14} />, label: 'Avg wins to recover biggest loss', value: metrics.winsToRecoverBiggest > 0 ? String(metrics.winsToRecoverBiggest) : '-' },
-              ].map(row => (
-                <div key={row.label} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                    {row.icon} {row.label}
-                  </div>
-                  <span className={`text-sm font-semibold ${row.color ?? 'text-[var(--foreground)]'}`}>
-                    {row.value}
-                  </span>
+            <div>
+              {metrics.weekdays.map((day, dayIdx) => (
+                <div className="amaprow" key={day}>
+                  <b>{day}</b>
+                  {metrics.sessions.map((_, sessIdx) => {
+                    const cell = metrics.heatmap.find(h => h.day === dayIdx && h.session === sessIdx);
+                    const pnl = cell?.pnl ?? 0;
+                    const count = cell?.count ?? 0;
+                    const intensity = count > 0 ? Math.min(Math.abs(pnl) / metrics.heatmapMax, 1) : 0;
+                    const alpha = count === 0 ? 0.05 : 0.18 + intensity * 0.62;
+                    const bg = count === 0
+                      ? undefined
+                      : pnl >= 0
+                        ? `rgba(36,200,138,${alpha})`
+                        : `rgba(255,77,94,${alpha})`;
+                    return (
+                      <span
+                        key={sessIdx}
+                        className="cell"
+                        style={bg ? { background: bg, color: 'var(--text)' } : undefined}
+                        title={count > 0 ? `${fmtPnl(pnl)} across ${count} trade${count === 1 ? '' : 's'}` : 'No trades'}
+                      >
+                        {count > 0 ? (
+                          <>
+                            <span style={{ fontFamily: 'var(--mono)', color: c(pnl) }}>{fmtPnl(pnl)}</span>
+                            <small style={{ marginLeft: 6, fontSize: 10, color: 'var(--muted-2)' }}>{count}</small>
+                          </>
+                        ) : '–'}
+                      </span>
+                    );
+                  })}
                 </div>
               ))}
             </div>
           </div>
+          <p className="amapnote">Each cell shows total $ P&L and trade count for that weekday × session bucket.</p>
+
+          {/* gross losses ◀ ▶ gross wins — total $ on each side of the ledger. */}
+          {(metrics.grossProfit > 0 || metrics.grossLoss > 0) && (
+            <div style={{ marginTop: 14 }}>
+              <div style={{ display: 'flex', height: 6, background: 'var(--rail)', borderRadius: 2, overflow: 'hidden' }}>
+                {(() => {
+                  const total = metrics.grossProfit + metrics.grossLoss;
+                  const lossPct = total > 0 ? (metrics.grossLoss / total) * 100 : 0;
+                  const winPct = total > 0 ? (metrics.grossProfit / total) * 100 : 0;
+                  return (
+                    <>
+                      {metrics.grossLoss > 0 && <div style={{ height: '100%', width: `${lossPct}%`, background: 'var(--red)' }} />}
+                      {metrics.grossProfit > 0 && <div style={{ height: '100%', width: `${winPct}%`, background: 'var(--green)' }} />}
+                    </>
+                  );
+                })()}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontFamily: 'var(--mono)', fontSize: 11 }}>
+                <span style={{ color: 'var(--red)' }}>{fmtPnl(-metrics.grossLoss)}</span>
+                <span style={{ color: 'var(--green)' }}>{fmtPnl(metrics.grossProfit)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* recent trades — lives in the left column now (not a separate
+            full-width block after the grid) so it flows directly under
+            Activity Map instead of waiting for the taller right sidebar
+            column to finish, which was leaving a dead gap here. */}
+        <div className="card">
+          <div className="cardhead">
+            <div>
+              <h3>Recent Trades</h3>
+              <p className="sub">Last activity in the selected period</p>
+            </div>
+            <button className="viewall" onClick={() => onNavigate('journal')}>
+              View all
+              <svg width="9" height="10" viewBox="0 0 9 10" fill="none"><path d="M4 0 L9 5 L4 10 M9 5 H0" stroke="#d99405" strokeWidth="1.5" /></svg>
+            </button>
+          </div>
+          {recentTrades.length > 0 ? (
+            <div style={{ marginTop: 18 }}>
+              {recentTrades.map(t => {
+                const dir = (t.direction ?? 'long')[0].toUpperCase();
+                const dirColor = (t.direction ?? 'long') === 'long' ? GREEN : RED;
+                const elapsed = t.exitDate
+                  ? Math.round((Date.now() - new Date(t.exitDate).getTime()) / 3600000)
+                  : null;
+                const timeLabel = elapsed !== null
+                  ? elapsed < 24 ? `${elapsed}h` : `${Math.round(elapsed / 24)}d`
+                  : '';
+                return (
+                  <div className="mrow" key={t.id}>
+                    <span className="ic" style={{ color: dirColor, fontWeight: 700 }}>{dir}</span>
+                    <span className="lb" style={{ color: 'var(--text)', fontWeight: 700 }}>{t.coin}</span>
+                    <span style={{ marginLeft: 12, fontSize: 11, color: 'var(--muted-2)' }}>{timeLabel} ago</span>
+                    <span style={{
+                      marginLeft: 'auto', minWidth: 0, fontSize: 11, color: 'var(--muted-2)', fontFamily: 'var(--mono)',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      ENTRY {formatCurrency(t.entryPrice)}
+                      {t.exitPrice ? ` · EXIT ${formatCurrency(t.exitPrice)}` : ''}
+                      {t.exitDate ? ` · ${format(new Date(t.exitDate), 'dd/MM/yyyy, HH:mm')}` : ''}
+                    </span>
+                    <span className="val" style={{ flex: 'none', marginLeft: 20, color: c(t.actualPnL ?? 0) }}>{fmtPnl(t.actualPnL ?? 0)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="empty-line" style={{ padding: '36px 0 0' }}>No closed trades in this period</p>
+          )}
+        </div>
+
+        {/* next best actions */}
+        <div id="next-best-actions" className="card" style={{ padding: '23px 28px' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <h3>Next Best Actions</h3>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--amber)' }} />
+          </div>
+          <p className="sub">Execute these top fixes first for the active period.</p>
+          <p className="sub sm" style={{ marginTop: 6, color: 'var(--muted-2)' }}>Run active rule set for 5-7 sessions before switching.</p>
+          <div className="nba">
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              <p className="lbl">TOTAL LEAK BURDEN</p>
+              <em style={{ color: amt(metrics.totalLeakBurden) }}>{formatCurrency(metrics.totalLeakBurden)}</em>
+              <small>gross drag detected</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--green)' }} />
+              <p className="lbl">REALISTIC RECOVERABLE</p>
+              <em style={{ color: amt(metrics.realisticRecoverable) }}>{formatCurrency(metrics.realisticRecoverable)}</em>
+              <small>realistic in period</small>
+            </div>
+            <div className="inset">
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              <p className="lbl">CONSERVATIVE (TOP-3)</p>
+              <em style={{ color: amt(metrics.conservativeRecoverable) }}>{formatCurrency(metrics.conservativeRecoverable)}</em>
+              <small>focus-first amount</small>
+            </div>
+          </div>
+
+          {metrics.leaks.length > 0 ? (
+            <div style={{ marginTop: 26 }}>
+              {metrics.leaks.map((leak, i) => {
+                const sev = leak.severity === 'high' ? 'var(--red)' : leak.severity === 'medium' ? 'var(--amber)' : 'var(--green)';
+                return (
+                  <div key={i} className="mrow" style={{ alignItems: 'flex-start', padding: '14px 0' }}>
+                    <span className="ic" style={{ color: sev, fontWeight: 700, fontFamily: 'var(--display)' }}>{i + 1}</span>
+                    <span className="lb" style={{ flex: 1 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <b style={{ color: 'var(--text)', fontWeight: 700, fontSize: 13 }}>{leak.title}</b>
+                        <span style={{
+                          height: 18, padding: '0 8px', border: '1px solid currentColor', borderRadius: 2,
+                          display: 'inline-flex', alignItems: 'center', fontWeight: 700, fontSize: 9, color: sev,
+                        }}>{leak.severity}</span>
+                      </span>
+                      <span style={{ display: 'block', marginTop: 6, fontSize: 12, color: 'var(--muted-2)' }}>{leak.description}</span>
+                    </span>
+                    <span className="val" style={{ color: 'var(--green)' }}>
+                      {formatCurrency(leak.amount)}
+                      <small style={{ display: 'block', fontFamily: 'var(--body)', fontWeight: 400, fontSize: 10, color: 'var(--muted-2)', textAlign: 'right' }}>in range</small>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="empty-line" style={{ padding: '18px 0 0' }}>No significant leaks detected. Keep it up!</p>
+          )}
+
+          <div className="note">Track this weekly: realized drag should move toward the conservative recoverable level.</div>
+          <button className="ghostbtn" onClick={() => onNavigate('journal:verdicts')}>
+            Open Verdicts
+            <svg width="5" height="10" viewBox="0 0 5 10" fill="none"><path d="M0 0 L5 5 L0 10" stroke="#edf2f7" strokeWidth="1.5" /></svg>
+          </button>
+        </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* top vs worst symbols */}
+          <div className="card" style={{ padding: '19px 22px 8px' }}>
+            <h4>Top vs Worst Symbols</h4>
+            <p className="sub sm">Compare your strongest and weakest pairs</p>
+            <p style={{ margin: '22px 0 0', fontWeight: 600, fontSize: 10, color: 'var(--green)', letterSpacing: '.04em' }}>TOP PERFORMERS</p>
+            {metrics.topPerformers.length > 0 ? (
+              <div style={{ marginTop: 6 }}>
+                {metrics.topPerformers.map((s, i) => (
+                  <div className="mrow" key={s.coin}>
+                    <span className="ic">#{i + 1}</span>
+                    <span className="lb">{s.coin}</span>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: 'var(--muted-2)' }}>{s.total} trades</span>
+                    <span className="val" style={{ color: c(s.pnl) }}>{fmtPnl(s.pnl)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--muted)' }}>No profitable symbols yet</p>
+            )}
+            <p style={{ margin: '16px 0 0', fontWeight: 600, fontSize: 10, color: 'var(--red)', letterSpacing: '.04em' }}>BIGGEST LEAKS</p>
+            {metrics.biggestLeaks.length > 0 ? (
+              <div style={{ marginTop: 6 }}>
+                {metrics.biggestLeaks.map((s, i) => (
+                  <div className="mrow" key={s.coin}>
+                    <span className="ic">#{i + 1}</span>
+                    <span className="lb">{s.coin}</span>
+                    <span style={{ marginLeft: 10, fontSize: 11, color: 'var(--muted-2)' }}>{s.total} trades</span>
+                    <span className="val" style={{ color: c(s.pnl) }}>{fmtPnl(s.pnl)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--muted)' }}>No losing symbols</p>
+            )}
+          </div>
+
+          {/* execution rhythm */}
+          <div className="card" style={{ padding: '19px 22px 8px' }}>
+            <h4>Execution Rhythm</h4>
+            <p className="sub sm" style={{ lineHeight: '18px' }}>How consistent and active your trading cadence is</p>
+            <div style={{ marginTop: 24 }}>
+              <div className="mrow">
+                <IcCalendar />
+                <span className="lb">Avg trades / day</span>
+                <span className="val">{metrics.avgTradesPerDay.toFixed(1)}</span>
+              </div>
+              <div className="mrow">
+                <IcBox />
+                <span className="lb">Longest idle gap</span>
+                {metrics.longestIdle > 0
+                  ? <span className="val">{metrics.longestIdle}d</span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <IcPulse />
+                <span className="lb">Best active streak</span>
+                {metrics.bestActiveStreak > 0
+                  ? <span className="val">{metrics.bestActiveStreak} days</span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <IcTrend />
+                <span className="lb">Best day</span>
+                {metrics.bestDay ? (
+                  <span className="val" style={{ color: c(metrics.bestDay[1]) }}>
+                    <span style={{ marginRight: 8, fontFamily: 'var(--body)', fontSize: 10, color: 'var(--muted-2)' }}>{metrics.bestDayLabel}</span>
+                    {fmtPnl(metrics.bestDay[1])}
+                  </span>
+                ) : <span className="val dash">–</span>}
+              </div>
+              {metrics.bounceBackRate !== null && (
+                <div className="mrow">
+                  <span className="ic" />
+                  <span className="lb">Bounce-back rate</span>
+                  <span className="val">{metrics.bounceBackRate}%</span>
+                </div>
+              )}
+              {metrics.edgeConcentration !== null && (
+                <div className="mrow">
+                  <span className="ic" />
+                  <span className="lb">Edge concentration</span>
+                  <span className="val">{metrics.edgeConcentration}%</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* focus & discipline */}
+          <div className="card" style={{ padding: '19px 22px 8px' }}>
+            <h4>Focus &amp; Discipline</h4>
+            <p className="sub sm">See where attention and execution drift</p>
+            <div style={{ marginTop: 16 }}>
+              {metrics.topCoin && (
+                <div className="mrow">
+                  <IcPulse />
+                  <span className="lb">Focus on {metrics.topCoin.coin}</span>
+                  <span className="val">{metrics.focusPercent}%</span>
+                </div>
+              )}
+              <div className="mrow">
+                <IcCalendar />
+                <span className="lb">Consistency (profitable days)</span>
+                <span className="val">{metrics.consistencyPercent}%</span>
+              </div>
+              <div className="mrow">
+                <IcTrend />
+                <span className="lb">Long bias</span>
+                <span className="val">{metrics.longBias}%</span>
+              </div>
+              <div className="mrow">
+                <IcBox />
+                <span className="lb">Avg hold time</span>
+                <span className="val">{metrics.avgHoldMinutes}m</span>
+              </div>
+            </div>
+          </div>
+
+          {/* risk exposure */}
+          <div className="card" style={{ padding: '19px 22px 8px' }}>
+            <h4>Risk Exposure</h4>
+            <p className="sub sm">How much damage each mistake can do</p>
+            <div style={{ marginTop: 22 }}>
+              <div className="mrow">
+                <IcTrend />
+                <span className="lb">Avg win</span>
+                <span className="val" style={{ color: GREEN }}>{fmtPnl(metrics.avgWin)}</span>
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb">Avg loss</span>
+                <span className="val" style={{ color: c(-metrics.avgLoss) }}>{fmtPnl(-metrics.avgLoss)}</span>
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb">Biggest loss</span>
+                <span className="val" style={{ color: c(metrics.biggestLoss) }}>{fmtPnl(metrics.biggestLoss)}</span>
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>Risk ratio (avg win / avg loss)</span>
+                {metrics.riskRatio > 0
+                  ? <span className="val">{metrics.riskRatio.toFixed(2)}</span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>P&L volatility (std dev)</span>
+                {metrics.pnlStdDev > 0
+                  ? <span className="val">{formatCurrency(metrics.pnlStdDev)}</span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>Breakeven win rate</span>
+                {metrics.breakEvenWR > 0
+                  ? <span className="val">{metrics.breakEvenWR.toFixed(1)}%</span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>Edge buffer</span>
+                {metrics.edgeBuffer !== 0
+                  ? <span className="val" style={{ color: metrics.edgeBuffer > 0 ? GREEN : RED }}>
+                      {metrics.edgeBuffer > 0 ? '+' : ''}{metrics.edgeBuffer.toFixed(1)}%
+                    </span>
+                  : <span className="val dash">–</span>}
+              </div>
+              <div className="mrow">
+                <span className="ic" />
+                <span className="lb" style={{ marginLeft: 0 }}>Avg wins to recover biggest loss</span>
+                {metrics.winsToRecoverBiggest > 0
+                  ? <span className="val">{metrics.winsToRecoverBiggest}</span>
+                  : <span className="val dash">–</span>}
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
+
     </div>
+  );
+}
+
+// ─── Presentational icons (markup only — mirror the ATLAS reference SVGs) ──────
+function IcCalendar() {
+  return (
+    <svg className="ic" viewBox="0 0 16 12" fill="none">
+      <rect x=".65" y=".65" width="14.7" height="10.7" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M0 4h16M5 -2v4M11 -2v4" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+function IcBox() {
+  return (
+    <svg className="ic" viewBox="0 0 16 12" fill="none">
+      <rect x=".65" y=".65" width="14.7" height="10.7" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M0 4h16" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="4" y="6.5" width="3" height="3" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IcPulse() {
+  return (
+    <svg className="ic" viewBox="0 0 16 11" fill="none">
+      <path d="M0 6 L3 6 L5 0 L8 11 L11 4 L13 6 L16 6" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+function IcTrend() {
+  return (
+    <svg className="ic" viewBox="0 0 16 11" fill="none">
+      <path d="M0 11 L5 5 L9 8 L15 0M11 0h4v4" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
   );
 }

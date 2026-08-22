@@ -7,9 +7,9 @@ import {
   format, subDays, subMonths, startOfWeek, endOfWeek, isAfter, isBefore, isWithinInterval,
 } from 'date-fns';
 import {
-  FileText, Download, BarChart3, Clock, Coins, Image,
-  TrendingUp, RefreshCw, Search, ChevronDown, Sparkles, Copy, Check,
-} from 'lucide-react';
+  FileText, DownloadSimple, ChartBar, Clock, Coins, Image,
+  TrendUp, ArrowsClockwise, MagnifyingGlass, CaretDown, Sparkle, Copy, Check,
+} from '@phosphor-icons/react';
 
 interface Props {
   trades: Trade[];
@@ -263,43 +263,52 @@ export default function Reports({ trades, strategies }: Props) {
   };
 
   return (
-    <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 py-6 space-y-6 anim-fade-up">
-      <div className="hero-glow" />
-
-      {/* ── Title ── */}
-      <div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-1">Reports <span className="gradient-text">& Exports</span></h1>
-        <p className="text-sm text-[var(--muted-foreground)]">
-          Generate PDF reports, export trade data, and download performance cards.
+    <div className="pwrap">
+      {/* ── Page head ── */}
+      <div className="phead">
+        <p className="eyebrow">
+          <FileText size={13} style={{ color: 'var(--amber)' }} /> Reporting Desk
         </p>
+        <h2>Reports &amp; Exports</h2>
+        <p className="sub">Generate PDF reports, export trade data, and download performance cards.</p>
       </div>
 
       {/* ── Generate PDF Report ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6 space-y-5">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-            <FileText size={16} className="text-[var(--muted-foreground)]" />
+      <div className="card" style={{ padding: '25px 28px 30px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Generate PDF Report</h3>
+            <p className="sub">Pick a cadence, then build the report for the matching window.</p>
           </div>
-          <p className="font-semibold">Generate PDF Report</p>
+          <FileText size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
 
         {/* Report type cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))',
+            gap: 12,
+            marginTop: 24,
+          }}
+        >
           {REPORT_TYPES.map(rt => (
             <button
               key={rt.id}
               onClick={() => setSelectedType(rt.id)}
-              className={`text-left rounded-xl p-4 border transition-colors ${
-                selectedType === rt.id
-                  ? 'border-[var(--accent)] bg-[var(--accent)]/5'
-                  : 'border-[var(--border)] hover:border-[var(--accent)]/40'
-              }`}
+              className="inset"
+              style={{
+                textAlign: 'left',
+                padding: '14px 16px',
+                borderColor: selectedType === rt.id ? 'var(--amber)' : 'var(--line)',
+              }}
             >
-              <p className={`font-semibold text-sm mb-0.5 ${selectedType === rt.id ? 'text-[var(--accent)]' : ''}`}>
-                {rt.label}
+              <p className="lbl b10" style={{ color: selectedType === rt.id ? 'var(--amber)' : 'var(--text)' }}>
+                {rt.label.toUpperCase()}
               </p>
-              <p className="text-xs text-[var(--muted-foreground)] mb-2">{rt.description}</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+              <p style={{ margin: '9px 0 0', fontSize: 12, color: 'var(--muted)' }}>{rt.description}</p>
+              <p style={{ margin: '10px 0 0', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--muted-2)' }}>
                 {rt.days} DAYS
               </p>
             </button>
@@ -307,29 +316,31 @@ export default function Reports({ trades, strategies }: Props) {
         </div>
 
         {/* Period + Batch + Generate */}
-        <div className="flex flex-wrap items-center gap-4">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 24, marginTop: 26 }}>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Period</p>
-            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-sm font-medium">
+            <p className="lbl" style={{ marginBottom: 9 }}>PERIOD</p>
+            <span className="chip" style={{ height: 36, fontFamily: 'var(--mono)' }}>
               <span>{format(periodStart, 'dd/MM/yyyy')}</span>
-              <span className="text-[var(--muted-foreground)]">-&gt;</span>
+              <span style={{ color: 'var(--muted-2)' }}>-&gt;</span>
               <span>{format(periodEnd, 'dd/MM/yyyy')}</span>
-              <span className="text-xs text-[var(--muted-foreground)]">({selectedConfig.days}d)</span>
-            </div>
+              <span style={{ color: 'var(--muted-2)', fontSize: 11 }}>({selectedConfig.days}d)</span>
+            </span>
           </div>
 
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">Batch</p>
-            <div className="flex items-center gap-1">
+            <p className="lbl" style={{ marginBottom: 9 }}>BATCH</p>
+            <div className="seg" style={{ marginLeft: 0, gap: 6 }}>
               {BATCH_OPTIONS.map(b => (
                 <button
                   key={b}
                   onClick={() => setBatch(b)}
-                  className={`w-9 h-9 text-sm rounded-lg border font-medium transition-colors ${
-                    batch === b
-                      ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
-                      : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/40'
-                  }`}
+                  className={batch === b ? 'on' : undefined}
+                  style={{
+                    height: 36,
+                    minWidth: 38,
+                    border: `1px solid ${batch === b ? 'var(--amber)' : 'var(--line)'}`,
+                    fontFamily: 'var(--mono)',
+                  }}
                 >
                   {b}
                 </button>
@@ -337,147 +348,129 @@ export default function Reports({ trades, strategies }: Props) {
             </div>
           </div>
 
-          <div className="flex-1 flex justify-end">
-            <button
-              onClick={handleGenerateReport}
-              className="flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-full font-semibold transition-colors"
-            >
-              <Sparkles size={16} /> Generate Report
-            </button>
-          </div>
+          <button onClick={handleGenerateReport} className="btn-a" style={{ marginLeft: 'auto', height: 44 }}>
+            <Sparkle size={16} /> Generate Report
+          </button>
         </div>
       </div>
 
       {/* ── Data Exports ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6 space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-            <Download size={16} className="text-[var(--muted-foreground)]" />
+      <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Data Exports</h3>
+            <p className="sub">Raw CSV extracts of every closed trade and its aggregates.</p>
           </div>
-          <p className="font-semibold">Data Exports</p>
+          <DownloadSimple size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 12, marginTop: 24 }}>
           {/* Trade History CSV */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-                <FileText size={18} className="text-[var(--muted-foreground)]" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">Trade History (CSV)</p>
-                <p className="text-xs text-[var(--muted-foreground)]">All closed trades with PnL, fees, duration, and sizing.</p>
-              </div>
+          <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+            <FileText size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Trade History (CSV)</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>All closed trades with PnL, fees, duration, and sizing.</p>
             </div>
             <button
               onClick={() => downloadCSV(generateTradeCSV(trades), `trade-history-${format(new Date(), 'yyyy-MM-dd')}.csv`)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 hover:text-[var(--foreground)] text-[var(--muted-foreground)] transition-colors font-medium shrink-0"
+              className="btn-g"
+              style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
           {/* Daily Analytics CSV */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-                <BarChart3 size={18} className="text-[var(--muted-foreground)]" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">Daily Analytics (CSV)</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Daily net PnL, fees, win/loss counts, and hold times.</p>
-              </div>
+          <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+            <ChartBar size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Daily Analytics (CSV)</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Daily net PnL, fees, win/loss counts, and hold times.</p>
             </div>
             <button
               onClick={() => downloadCSV(generateDailyCSV(trades), `daily-analytics-${format(new Date(), 'yyyy-MM-dd')}.csv`)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 hover:text-[var(--foreground)] text-[var(--muted-foreground)] transition-colors font-medium shrink-0"
+              className="btn-g"
+              style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
           {/* Hourly Analytics CSV */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-                <Clock size={18} className="text-[var(--muted-foreground)]" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">Hourly Analytics (CSV)</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Performance breakdown by UTC hour across all trades.</p>
-              </div>
+          <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+            <Clock size={18} style={{ color: 'var(--green)', flex: 'none' }} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Hourly Analytics (CSV)</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Performance breakdown by UTC hour across all trades.</p>
             </div>
             <button
               onClick={() => downloadCSV(generateHourlyCSV(trades), `hourly-analytics-${format(new Date(), 'yyyy-MM-dd')}.csv`)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 hover:text-[var(--foreground)] text-[var(--muted-foreground)] transition-colors font-medium shrink-0"
+              className="btn-g"
+              style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
           {/* Symbol Analytics CSV */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-                <Coins size={18} className="text-[var(--muted-foreground)]" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">Symbol Analytics (CSV)</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Per-symbol PnL, win rate, trade counts, and fees.</p>
-              </div>
+          <div className="inset" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+            <Coins size={18} style={{ color: 'var(--amber)', flex: 'none' }} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Symbol Analytics (CSV)</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Per-symbol PnL, win rate, trade counts, and fees.</p>
             </div>
             <button
               onClick={() => downloadCSV(generateSymbolCSV(trades), `symbol-analytics-${format(new Date(), 'yyyy-MM-dd')}.csv`)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 hover:text-[var(--foreground)] text-[var(--muted-foreground)] transition-colors font-medium shrink-0"
+              className="btn-g"
+              style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
 
           {/* Performance Card PNG — full width */}
-          <div className="sm:col-span-2 flex items-center justify-between p-4 rounded-xl border border-[var(--border)]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-                <Image size={18} className="text-[var(--muted-foreground)]" />
-              </div>
-              <div>
-                <p className="font-medium text-sm">Performance Card (PNG)</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Shareable 1200x630 image with key metrics and score.</p>
-              </div>
+          <div className="inset" style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <Image size={18} style={{ color: 'var(--muted-3)', flex: 'none' }} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Performance Card (PNG)</p>
+              <p style={{ margin: '6px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>Shareable 1200x630 image with key metrics and score.</p>
             </div>
             <button
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] opacity-50 cursor-not-allowed font-medium shrink-0"
+              className="btn-d"
+              style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12, gap: 8, flex: 'none' }}
               disabled
               title="Coming soon"
             >
-              <Download size={14} /> Download
+              <DownloadSimple size={14} /> Download
             </button>
           </div>
         </div>
       </div>
 
       {/* ── Period-over-Period Audit ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-              <TrendingUp size={16} className="text-[var(--accent)]" />
-            </div>
-            <p className="font-semibold">Period-over-Period Audit</p>
+      <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Period-over-Period Audit</h3>
+            <p className="sub">Current window measured against the immediately preceding one.</p>
           </div>
-          <button className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-[var(--accent)]/40 transition-colors font-medium">
-            <BarChart3 size={14} /> Refresh Audit
+          <button className="btn-g" style={{ marginLeft: 'auto', height: 32, padding: '0 14px', fontSize: 12 }}>
+            <ChartBar size={14} /> Refresh Audit
           </button>
         </div>
 
-        <div className="border border-[var(--border)] rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div style={{ marginTop: 24, overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: 520, borderCollapse: 'collapse', fontSize: 12.5 }}>
             <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Metric</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Current</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Previous</th>
-                <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Change</th>
+              <tr style={{ borderBottom: '1px solid var(--line)' }}>
+                <th className="lbl" style={{ textAlign: 'left', padding: '10px 14px' }}>METRIC</th>
+                <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>CURRENT</th>
+                <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>PREVIOUS</th>
+                <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>CHANGE</th>
               </tr>
             </thead>
             <tbody>
@@ -491,15 +484,21 @@ export default function Reports({ trades, strategies }: Props) {
                 const delta = row.current - row.previous;
                 const isMonetary = row.label === 'Net PnL' || row.label === 'Fees';
                 return (
-                  <tr key={row.label} className="border-b border-[var(--border)] last:border-b-0">
-                    <td className="px-5 py-3 font-medium">{row.label}</td>
-                    <td className="px-5 py-3 text-right">{row.fmt(row.current)}</td>
-                    <td className="px-5 py-3 text-right text-[var(--muted-foreground)]">{row.fmt(row.previous)}</td>
-                    <td className={`px-5 py-3 text-right font-medium ${
-                      delta === 0 ? 'text-[var(--muted-foreground)]'
-                        : (row.label === 'Losses' || row.label === 'Fees') ? (delta < 0 ? 'text-green-400' : 'text-red-400')
-                        : delta > 0 ? 'text-green-400' : 'text-red-400'
-                    }`}>
+                  <tr key={row.label} style={{ borderBottom: '1px solid var(--hair)' }}>
+                    <td style={{ padding: '11px 14px', color: 'var(--text-2)' }}>{row.label}</td>
+                    <td style={{ padding: '11px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: 'var(--text)' }}>{row.fmt(row.current)}</td>
+                    <td style={{ padding: '11px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{row.fmt(row.previous)}</td>
+                    <td
+                      style={{
+                        padding: '11px 14px',
+                        textAlign: 'right',
+                        fontFamily: 'var(--mono)',
+                        color:
+                          delta === 0 ? 'var(--muted)'
+                            : (row.label === 'Losses' || row.label === 'Fees') ? (delta < 0 ? 'var(--green)' : 'var(--red)')
+                            : delta > 0 ? 'var(--green)' : 'var(--red)',
+                      }}
+                    >
                       {delta === 0 ? (isMonetary ? row.fmt(0) : '--') : `${delta > 0 ? '+' : ''}${row.fmt(delta)}`}
                     </td>
                   </tr>
@@ -509,99 +508,110 @@ export default function Reports({ trades, strategies }: Props) {
           </table>
         </div>
 
-        <p className="text-xs text-[var(--muted-foreground)] mt-3">
+        <div className="note" style={{ fontFamily: 'var(--mono)', fontSize: 11.5 }}>
           Current: {format(periodStart, 'dd/MM/yyyy')} -&gt; {format(periodEnd, 'dd/MM/yyyy')}
           {' '} Previous: {format(previousPeriodStart, 'dd/MM/yyyy')} -&gt; {format(periodStart, 'dd/MM/yyyy')}
-        </p>
+        </div>
       </div>
 
       {/* ── Report Library ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-[var(--muted)] flex items-center justify-center">
-            <FileText size={16} className="text-[var(--muted-foreground)]" />
+      <div className="card" style={{ marginTop: 24, padding: '25px 28px 30px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Report Library</h3>
+            <p className="sub">{reports.length} item{reports.length !== 1 ? 's' : ''} generated in this session.</p>
           </div>
-          <p className="font-semibold">Report Library</p>
+          <FileText size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] mb-4">{reports.length} item{reports.length !== 1 ? 's' : ''}</p>
 
         {/* Search + Filter */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 220px' }}>
+            <MagnifyingGlass size={14} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)' }} />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search reports..."
-              className="w-full pl-9 pr-3 py-2.5 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg"
+              style={{
+                width: '100%', height: 38, paddingLeft: 36, paddingRight: 14,
+                border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)',
+                color: 'var(--text)', fontSize: 12.5, outline: 'none',
+              }}
             />
           </div>
-          <div className="relative">
+          <div style={{ position: 'relative' }}>
             <select
               value={filterType}
               onChange={e => setFilterType(e.target.value as ReportType | 'all')}
-              className="appearance-none pl-3 pr-8 py-2.5 text-sm bg-[var(--muted)] border border-[var(--border)] rounded-lg font-medium"
+              style={{
+                appearance: 'none', height: 38, paddingLeft: 14, paddingRight: 32,
+                border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)',
+                color: 'var(--text)', fontSize: 12.5, fontWeight: 700, outline: 'none',
+              }}
             >
               <option value="all">All types</option>
               {REPORT_TYPES.map(rt => (
                 <option key={rt.id} value={rt.id}>{rt.label}</option>
               ))}
             </select>
-            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none" />
+            <CaretDown size={14} style={{ position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-2)', pointerEvents: 'none' }} />
           </div>
         </div>
 
         {/* Report table */}
         {filteredReports.length > 0 ? (
-          <div className="border border-[var(--border)] rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
+          <div style={{ marginTop: 20, overflowX: 'auto' }}>
+            <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', fontSize: 12.5 }}>
               <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Status</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Type</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Period</th>
-                  <th className="text-center px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Grade</th>
-                  <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Net PnL</th>
-                  <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Trades</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Created</th>
-                  <th className="text-right px-5 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Actions</th>
+                <tr style={{ borderBottom: '1px solid var(--line)' }}>
+                  <th className="lbl" style={{ textAlign: 'left', padding: '10px 14px' }}>STATUS</th>
+                  <th className="lbl" style={{ textAlign: 'left', padding: '10px 14px' }}>TYPE</th>
+                  <th className="lbl" style={{ textAlign: 'left', padding: '10px 14px' }}>PERIOD</th>
+                  <th className="lbl" style={{ textAlign: 'center', padding: '10px 14px' }}>GRADE</th>
+                  <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>NET PNL</th>
+                  <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>TRADES</th>
+                  <th className="lbl" style={{ textAlign: 'left', padding: '10px 14px' }}>CREATED</th>
+                  <th className="lbl" style={{ textAlign: 'right', padding: '10px 14px' }}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredReports.map(report => {
                   const typeLabel = REPORT_TYPES.find(r => r.id === report.type)?.label ?? report.type;
                   return (
-                    <tr key={report.id} className="border-b border-[var(--border)] last:border-b-0 hover:bg-[var(--muted)]/30">
-                      <td className="px-5 py-3">
-                        <span className="inline-flex items-center gap-1.5 text-green-400 text-xs font-medium">
-                          <span className="w-2 h-2 rounded-full bg-green-400" /> Success
+                    <tr key={report.id} style={{ borderBottom: '1px solid var(--hair)' }}>
+                      <td style={{ padding: '11px 14px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: 'var(--green)', fontWeight: 700, fontSize: 11 }}>
+                          <i style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)' }} /> Success
                         </span>
                       </td>
-                      <td className="px-5 py-3 font-semibold">{typeLabel}</td>
-                      <td className="px-5 py-3 text-[var(--muted-foreground)]">{report.periodStart} -&gt; {report.periodEnd}</td>
-                      <td className="px-5 py-3 text-center">
-                        <span className="text-[var(--muted-foreground)]">
-                          {report.grade} <span className="text-xs">({report.gradeScore})</span>
+                      <td style={{ padding: '11px 14px', fontWeight: 700, color: 'var(--text)' }}>{typeLabel}</td>
+                      <td style={{ padding: '11px 14px', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{report.periodStart} -&gt; {report.periodEnd}</td>
+                      <td style={{ padding: '11px 14px', textAlign: 'center' }}>
+                        <span className="chip" style={{ height: 24, padding: '0 10px', fontFamily: 'var(--mono)' }}>
+                          {report.grade} <span style={{ color: 'var(--muted-2)' }}>({report.gradeScore})</span>
                         </span>
                       </td>
-                      <td className={`px-5 py-3 text-right font-medium ${report.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <td style={{ padding: '11px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: report.netPnL >= 0 ? 'var(--green)' : 'var(--red)' }}>
                         {formatCurrency(report.netPnL)}
                       </td>
-                      <td className="px-5 py-3 text-right text-[var(--muted-foreground)]">{report.tradeCount}</td>
-                      <td className="px-5 py-3 text-[var(--muted-foreground)]">{report.createdAt}</td>
-                      <td className="px-5 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td style={{ padding: '11px 14px', textAlign: 'right', fontFamily: 'var(--mono)', color: 'var(--muted)' }}>{report.tradeCount}</td>
+                      <td style={{ padding: '11px 14px', color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{report.createdAt}</td>
+                      <td style={{ padding: '11px 14px', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
                           <button
                             onClick={() => handleDownloadReport(report)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors font-medium"
+                            className="btn-g"
+                            style={{ height: 28, padding: '0 12px', fontSize: 11.5, gap: 6 }}
                           >
-                            <Download size={12} /> PDF
+                            <DownloadSimple size={12} /> PDF
                           </button>
                           <button
                             onClick={() => handleCopyReport(report)}
-                            className="p-1.5 rounded-lg border border-[var(--border)] hover:border-[var(--accent)]/40 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                            className="btn-g"
+                            style={{ height: 28, width: 28, padding: 0 }}
                           >
-                            {copiedId === report.id ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                            {copiedId === report.id ? <Check size={14} style={{ color: 'var(--green)' }} /> : <Copy size={14} />}
                           </button>
                         </div>
                       </td>
@@ -612,11 +622,11 @@ export default function Reports({ trades, strategies }: Props) {
             </table>
           </div>
         ) : (
-          <div className="text-center py-12 text-sm text-[var(--muted-foreground)]">
+          <p className="empty-line">
             {reports.length === 0
               ? 'No reports generated yet. Use the section above to create one.'
               : 'No reports match your search.'}
-          </div>
+          </p>
         )}
       </div>
     </div>

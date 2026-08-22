@@ -5,15 +5,34 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  GraduationCap, ArrowLeft, ArrowRight, Lock, Check, Plus, Edit2, Trash2,
-  ExternalLink, PlayCircle, FileText, Link as LinkIcon, Settings, Upload, Loader2,
-} from 'lucide-react';
+  GraduationCap, ArrowLeft, ArrowRight, Lock, Check, Plus, PencilSimple as Edit2, Trash as Trash2,
+  ArrowSquareOut as ExternalLink, PlayCircle, FileText, Link as LinkIcon, Gear as Settings, UploadSimple as Upload, CircleNotch as Loader2,
+} from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
 import BrainMascot from '@/components/BrainMascot';
 
 type View = 'catalog' | 'detail' | 'admin';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+// ATLAS form-control chrome (matches .field .box in app/atlas-dashboard.css)
+const atlasInput: React.CSSProperties = {
+  width: '100%',
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  color: 'var(--text)',
+  padding: '10px 14px',
+  fontSize: 13,
+};
+const atlasLabel: React.CSSProperties = {
+  display: 'block',
+  fontWeight: 700,
+  fontSize: 9.5,
+  color: 'var(--muted-2)',
+  letterSpacing: '.04em',
+  marginBottom: 9,
+};
 
 export default function Courses() {
   const { showToast } = useToast();
@@ -59,101 +78,77 @@ export default function Courses() {
   }
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      {/* Hero header */}
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
+    <div className="pwrap">
+      <div className="phead">
+        <p className="eyebrow">
+          <span style={{ width: 7, height: 7, borderRadius: 1, background: 'var(--green)', flex: 'none' }} />
           New courses every month
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Level up your <span className="gradient-text">trading edge</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+        </p>
+        <h2>Level up your trading edge</h2>
+        <p className="sub">
           Buy individual courses to unlock lifetime access. Learn at your pace, from your dashboard.
         </p>
-      </header>
+      </div>
 
       {courses.length === 0 ? (
-        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center">
-            <GraduationCap size={28} className="text-pink-400" />
-          </div>
-          <p className="text-[var(--foreground)] font-medium">No courses yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — new content drops monthly.</p>
+        <div className="blank">
+          <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid var(--amber)', color: 'var(--amber)' }}>
+            <GraduationCap size={24} />
+          </span>
+          <h4>No courses yet</h4>
+          <p>Check back soon — new content drops monthly.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((c: any, idx: number) => {
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+          {courses.map((c: any) => {
             const owned = purchasedIds.has(c.id);
             return (
               <article
                 key={c.id}
-                style={{ animationDelay: `${idx * 60}ms` }}
-                className="group relative flex flex-col overflow-hidden rounded-3xl glass card-lift anim-fade-up cursor-pointer"
+                className="course"
+                style={{ cursor: 'pointer' }}
                 onClick={() => { setSelectedCourseId(c.id); setView('detail'); }}
               >
-                {/* Cover */}
-                <div className="relative h-44 overflow-hidden">
+                <span className="accent" />
+                <div className="art">
                   {c.coverImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={c.coverImage}
                       alt={c.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-teal-600/20 to-emerald-500/10 flex items-center justify-center">
-                      <GraduationCap size={56} className="text-[var(--foreground)]/40" />
-                    </div>
+                    <GraduationCap size={56} style={{ color: 'var(--amber)', opacity: 0.7 }} />
                   )}
-                  {/* Gradient overlay for legibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
 
-                  {/* Owned badge */}
                   {owned && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur text-[var(--foreground)] text-[10px] font-semibold uppercase tracking-wide shadow-lg">
-                      <Check size={11} strokeWidth={3} /> Owned
-                    </div>
+                    <span className="pill" style={{ position: 'absolute', right: 16, top: 16 }}>
+                      <Check size={10} weight="bold" style={{ marginRight: 6 }} /> OWNED
+                    </span>
                   )}
 
-                  {/* Floating price chip */}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[var(--foreground)]/10 text-[var(--foreground)] text-xs font-semibold">
-                    <span>${c.priceUsd}</span>
-                    <span className="text-[var(--foreground)]/60">·</span>
-                    <span className="text-[var(--foreground)]/80">₱{c.pricePhp}</span>
-                  </div>
+                  <span className="price">${c.priceUsd} · ₱{c.pricePhp}</span>
                 </div>
 
-                {/* Body */}
-                <div className="flex-1 flex flex-col p-5 gap-2">
-                  <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight leading-snug line-clamp-2">
-                    {c.title}
-                  </h3>
-                  <p className="text-sm text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
+                <div className="body">
+                  <h4 className="line-clamp-2">{c.title}</h4>
+                  <p className="line-clamp-2" style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '19px', color: 'var(--muted)' }}>
                     {c.description}
                   </p>
 
-                  {/* CTA row */}
-                  <div className="mt-auto pt-4 flex items-center justify-between">
-                    <div className="text-xs text-[var(--muted-foreground)] flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-pink-400" />
-                      Lifetime access
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
+                  <div className="foot">
+                    <span className="life">Lifetime access</span>
+                    <span className="go">
                       {owned ? 'Continue' : 'View course'}
-                      <ArrowRight size={14} />
-                    </div>
+                      <ArrowRight size={12} />
+                    </span>
                   </div>
                 </div>
-
-                {/* Hover sheen */}
-                <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-tr from-pink-500/0 via-teal-500/0 to-emerald-500/0 group-hover:from-pink-500/[0.05] group-hover:via-teal-500/[0.03] group-hover:to-emerald-500/[0.05] transition-all duration-500" />
               </article>
             );
           })}
@@ -202,53 +197,43 @@ function CourseDetail({
 
   if (!purchased) {
     return (
-      <div className="space-y-6">
-        <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-          <ArrowLeft size={16} /> Back to Courses
+      <div className="pwrap">
+        <button onClick={onBack} className="doclink" style={{ marginTop: 0, marginBottom: 22 }}>
+          <ArrowLeft size={14} /> Back to Courses
         </button>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           {course.coverImage && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={course.coverImage} alt={course.title} className="w-full h-64 object-cover" />
+            <img src={course.coverImage} alt={course.title} style={{ width: '100%', height: 256, objectFit: 'cover', display: 'block' }} />
           )}
-          <div className="p-6 space-y-4">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{course.title}</h1>
-            <p className="text-[var(--muted-foreground)] whitespace-pre-wrap">{course.description}</p>
+          <div style={{ padding: '25px 28px 34px' }}>
+            <h3 style={{ fontSize: 26, lineHeight: '28px' }}>{course.title}</h3>
+            <p className="sub" style={{ maxWidth: 680, fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>{course.description}</p>
 
             {course.gallery && course.gallery.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 10, marginTop: 22 }}>
                 {course.gallery.map((url: string, i: number) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={url} alt="" className="w-full h-32 object-cover rounded-lg border border-[var(--border)]" />
+                  <img key={i} src={url} alt="" style={{ width: '100%', height: 128, objectFit: 'cover', border: '1px solid var(--line)', borderRadius: 2 }} />
                 ))}
               </div>
             )}
 
-            <div className="border-t border-[var(--border)] pt-4 space-y-3">
-              <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
-                <Lock size={14} /> Buy this course to unlock {modules.length} modules / {structure.lessons.length} lessons
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => onBuy('stripe')}
-                  className="px-5 py-2.5 bg-[var(--accent)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90"
-                >
+            <div style={{ marginTop: 26, paddingTop: 22, borderTop: '1px solid var(--line)' }}>
+              <span className="chip">
+                <Lock size={12} /> Buy this course to unlock {modules.length} modules / {structure.lessons.length} lessons
+              </span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 20 }}>
+                <button onClick={() => onBuy('stripe')} className="btn-a">
                   Pay ${course.priceUsd} with Card (Stripe)
                 </button>
-                <button
-                  onClick={() => onBuy('paymongo')}
-                  className="px-5 py-2.5 border border-[var(--border)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--muted)]"
-                >
+                <button onClick={() => onBuy('paymongo')} className="btn-g">
                   Pay ₱{course.pricePhp} with GCash/Card (PayMongo)
                 </button>
               </div>
               {course.externalUrl && (
-                <a
-                  href={course.externalUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:underline"
-                >
+                <a href={course.externalUrl} target="_blank" rel="noreferrer" className="doclink">
                   Preview course externally <ExternalLink size={12} />
                 </a>
               )}
@@ -261,24 +246,24 @@ function CourseDetail({
 
   // Purchased — show learning view
   return (
-    <div className="space-y-4">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to Courses
+    <div className="pwrap">
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back to Courses
       </button>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">{course.title}</h1>
+      <div className="phead" style={{ marginTop: 18, marginBottom: 24 }}>
+        <h2>{course.title}</h2>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,280px) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
         {/* Sidebar: modules + lessons */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-3 space-y-3 max-h-[70vh] overflow-y-auto">
+        <div className="card" style={{ padding: '19px 16px 20px', maxHeight: '70vh', overflowY: 'auto' }}>
           {modules.length === 0 ? (
-            <p className="text-sm text-[var(--muted-foreground)] p-2">No modules yet.</p>
+            <p className="sub">No modules yet.</p>
           ) : modules.map((m: any) => (
-            <div key={m.id}>
-              <div className="text-xs font-semibold uppercase text-[var(--muted-foreground)] px-2 mb-1">
-                {m.title}
-              </div>
-              <div className="space-y-0.5">
+            <div key={m.id} style={{ marginBottom: 18 }}>
+              <p className="lbl b10" style={{ marginBottom: 10, textTransform: 'uppercase' }}>{m.title}</p>
+              <div>
                 {lessonsByModule(m.id).map((l: any) => {
                   const done = completedSet.has(l.id);
                   const active = activeLessonId === l.id;
@@ -286,14 +271,13 @@ function CourseDetail({
                     <button
                       key={l.id}
                       onClick={() => setActiveLessonId(l.id)}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-left ${
-                        active ? 'bg-[var(--accent)]/15 text-[var(--foreground)]' : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-                      }`}
+                      className={active ? 'chip on' : 'chip'}
+                      style={{ display: 'flex', width: '100%', justifyContent: 'flex-start', marginBottom: 6, height: 32 }}
                     >
-                      {done ? <Check size={14} className="text-emerald-500" /> :
-                        l.contentType === 'video' ? <PlayCircle size={14} /> :
-                        l.contentType === 'link' ? <LinkIcon size={14} /> : <FileText size={14} />}
-                      <span className="flex-1 truncate">{l.title}</span>
+                      {done ? <Check size={12} style={{ color: active ? 'var(--ink)' : 'var(--green)' }} /> :
+                        l.contentType === 'video' ? <PlayCircle size={12} /> :
+                        l.contentType === 'link' ? <LinkIcon size={12} /> : <FileText size={12} />}
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{l.title}</span>
                     </button>
                   );
                 })}
@@ -303,24 +287,25 @@ function CourseDetail({
         </div>
 
         {/* Lesson content */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 min-h-[400px]">
+        <div className="card" style={{ padding: '25px 28px 34px', minHeight: 400 }}>
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
           {!activeLesson ? (
-            <p className="text-[var(--muted-foreground)] text-sm">Select a lesson to begin.</p>
+            <p className="sub">Select a lesson to begin.</p>
           ) : (
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-[var(--foreground)]">{activeLesson.title}</h2>
+            <>
+              <h3 style={{ fontSize: 22, lineHeight: '24px' }}>{activeLesson.title}</h3>
 
               {activeLesson.contentType === 'video' && activeLesson.videoUrl && (
-                <div className="aspect-video bg-black rounded-xl overflow-hidden">
+                <div style={{ aspectRatio: '16 / 9', background: '#070c13', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', marginTop: 20 }}>
                   {/youtube\.com|youtu\.be|vimeo\.com/.test(activeLesson.videoUrl) ? (
                     <iframe
                       src={activeLesson.videoUrl}
-                      className="w-full h-full"
+                      style={{ width: '100%', height: '100%', border: 0 }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
                   ) : (
-                    <video src={activeLesson.videoUrl} controls className="w-full h-full" />
+                    <video src={activeLesson.videoUrl} controls style={{ width: '100%', height: '100%' }} />
                   )}
                 </div>
               )}
@@ -330,36 +315,39 @@ function CourseDetail({
                   href={activeLesson.externalUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl"
+                  className="btn-a"
+                  style={{ marginTop: 20 }}
                 >
                   Open external resource <ExternalLink size={14} />
                 </a>
               )}
 
               {activeLesson.body && (
-                <div className="prose prose-sm max-w-none text-[var(--foreground)] whitespace-pre-wrap">
+                <p style={{ maxWidth: 680, margin: '20px 0 0', fontSize: 13.5, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'pre-wrap' }}>
                   {activeLesson.body}
-                </div>
+                </p>
               )}
 
-              <div className="pt-4 border-t border-[var(--border)]">
+              <div style={{ marginTop: 26, paddingTop: 22, borderTop: '1px solid var(--line)' }}>
                 {completedSet.has(activeLesson.id) ? (
                   <button
                     onClick={() => unmarkComplete({ lessonId: activeLesson.id })}
-                    className="px-4 py-2 border border-[var(--border)] rounded-xl text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                    className="btn-g"
+                    style={{ height: 36, fontSize: 12.5 }}
                   >
                     Mark as incomplete
                   </button>
                 ) : (
                   <button
                     onClick={() => markComplete({ lessonId: activeLesson.id, courseId })}
-                    className="px-4 py-2 bg-emerald-500 text-[var(--foreground)] rounded-xl text-sm font-medium"
+                    className="btn-a"
+                    style={{ height: 36, fontSize: 12.5 }}
                   >
-                    Mark as complete
+                    <Check size={12} /> Mark as complete
                   </button>
                 )}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
@@ -390,39 +378,35 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         {onBack ? (
-          <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-            <ArrowLeft size={16} /> Back to Catalog
+          <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+            <ArrowLeft size={14} /> Back to Catalog
           </button>
         ) : <span />}
-        <button
-          onClick={() => setShowNew(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
-        >
-          <Plus size={16} /> New Course
+        <button onClick={() => setShowNew(true)} className="btn-a">
+          <Plus size={14} /> New Course
         </button>
       </div>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">Manage Courses</h1>
+      <div className="phead" style={{ marginBottom: 0 }}>
+        <h2>Manage Courses</h2>
+      </div>
 
       <div className="space-y-2">
         {courses.map((c: any) => (
-          <div key={c.id} className="flex items-center gap-3 bg-[var(--card)] border border-[var(--border)] rounded-xl p-3">
+          <div key={c.id} className="inset flex items-center gap-3">
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[var(--foreground)] truncate">{c.title}</div>
-              <div className="text-xs text-[var(--muted-foreground)]">
+              <div className="truncate" style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>{c.title}</div>
+              <div style={{ fontSize: 11.5, color: 'var(--muted-2)', fontFamily: 'var(--mono)' }}>
                 ${c.priceUsd} · ₱{c.pricePhp} · {c.isPublished ? 'Published' : 'Draft'}
               </div>
             </div>
             <button
               onClick={() => updateCourse({ id: c.id, isPublished: !c.isPublished })}
-              className="text-xs px-3 py-1 rounded-lg border border-[var(--border)]"
+              className="chip"
             >
               {c.isPublished ? 'Unpublish' : 'Publish'}
             </button>
-            <button
-              onClick={() => setEditingId(c.id)}
-              className="p-2 rounded-lg hover:bg-[var(--muted)]"
-            >
+            <button onClick={() => setEditingId(c.id)} className="p-2">
               <Edit2 size={14} />
             </button>
             <button
@@ -431,15 +415,14 @@ export function AdminCourses({ onBack }: { onBack?: () => void }) {
                 await deleteCourse({ id: c.id });
                 showToast('Course deleted', 'success');
               }}
-              className="p-2 rounded-lg hover:bg-[var(--red)]/10 text-[var(--red)]"
+              className="p-2"
+              style={{ color: 'var(--red)' }}
             >
               <Trash2 size={14} />
             </button>
           </div>
         ))}
-        {courses.length === 0 && (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No courses yet.</p>
-        )}
+        {courses.length === 0 && <p className="empty-line">No courses yet.</p>}
       </div>
 
       {showNew && (
@@ -477,26 +460,42 @@ function NewCourseModal({
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">New Course</h2>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(3,6,10,.78)' }}
+      onClick={onClose}
+    >
+      <div
+        className="modal w-full max-w-lg"
+        style={{ padding: 0, textAlign: 'left' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="accent" style={{ width: 90 }} />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
 
-        <Field label="Title" value={title} onChange={setTitle} />
-        <Field label="Slug" value={slug} onChange={setSlug} placeholder="my-course-slug" />
-        <Field label="Description" value={description} onChange={setDescription} multiline />
-        <FileUpload label="Cover image" value={coverImage} onChange={setCoverImage} accept="image/*" />
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Price USD" value={priceUsd} onChange={setPriceUsd} type="number" />
-          <Field label="Price PHP" value={pricePhp} onChange={setPricePhp} type="number" />
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--line)' }}>
+          <h2 style={{ fontSize: 20, lineHeight: '22px' }}>New Course</h2>
         </div>
-        <Field label="External URL (optional)" value={externalUrl} onChange={setExternalUrl} />
-        <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
-          <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} />
-          Publish immediately
-        </label>
 
-        <div className="flex gap-2 pt-2">
-          <button onClick={onClose} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
+        <div style={{ padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '70vh', overflowY: 'auto' }}>
+          <Field label="Title" value={title} onChange={setTitle} />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="my-course-slug" />
+          <Field label="Description" value={description} onChange={setDescription} multiline />
+          <FileUpload label="Cover image" value={coverImage} onChange={setCoverImage} accept="image/*" />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Price USD" value={priceUsd} onChange={setPriceUsd} type="number" />
+            <Field label="Price PHP" value={pricePhp} onChange={setPricePhp} type="number" />
+          </div>
+          <Field label="External URL (optional)" value={externalUrl} onChange={setExternalUrl} />
+          <label className="flex items-center gap-2" style={{ fontSize: 13, color: 'var(--text)' }}>
+            <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} />
+            Publish immediately
+          </label>
+        </div>
+
+        <div className="flex gap-2" style={{ padding: '18px 24px', borderTop: '1px solid var(--line)' }}>
+          <button onClick={onClose} className="btn-g flex-1">Cancel</button>
           <button
             disabled={busy || !title || !slug}
             onClick={async () => {
@@ -514,7 +513,7 @@ function NewCourseModal({
                 setBusy(false);
               }
             }}
-            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium disabled:opacity-50"
+            className="btn-a flex-1 disabled:opacity-50"
           >
             {busy ? 'Creating…' : 'Create'}
           </button>
@@ -565,15 +564,16 @@ function FileUpload({
   };
 
   return (
-    <div>
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label style={atlasLabel}>{label}</label>
       <div className="flex gap-2">
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Paste URL or upload"
-          className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          className="flex-1"
+          style={atlasInput}
         />
         <input
           ref={inputRef}
@@ -590,7 +590,7 @@ function FileUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm flex items-center gap-1.5 hover:bg-[var(--muted)] disabled:opacity-50"
+          className="btn-g disabled:opacity-50"
         >
           {busy ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           Upload
@@ -598,7 +598,7 @@ function FileUpload({
       </div>
       {value && accept.startsWith('image') && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={value} alt="" className="mt-2 h-24 rounded-lg object-cover border border-[var(--border)]" />
+        <img src={value} alt="" className="mt-2 h-24 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
       )}
     </div>
   );
@@ -647,17 +647,18 @@ function MultiImageUpload({
   };
 
   return (
-    <div>
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <div className="field">
+      <label style={atlasLabel}>{label}</label>
       <div className="flex flex-wrap gap-2">
         {value.map((url, i) => (
           <div key={i} className="relative group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt="" className="h-20 w-20 rounded-lg object-cover border border-[var(--border)]" />
+            <img src={url} alt="" className="h-20 w-20 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
             <button
               type="button"
               onClick={() => onChange(value.filter((_, j) => j !== i))}
-              className="absolute -top-1 -right-1 bg-[var(--red)] text-[var(--foreground)] rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              className="absolute -top-1 -right-1 rounded-full p-0.5 opacity-0 group-hover:opacity-100"
+              style={{ background: 'var(--red)', color: 'var(--ink)' }}
             >
               <Trash2 size={10} />
             </button>
@@ -667,7 +668,8 @@ function MultiImageUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="h-20 w-20 flex flex-col items-center justify-center gap-1 border border-dashed border-[var(--border)] rounded-lg text-xs text-[var(--muted-foreground)] hover:bg-[var(--muted)] disabled:opacity-50"
+          className="h-20 w-20 flex flex-col items-center justify-center gap-1 disabled:opacity-50"
+          style={{ border: '1px dashed var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', fontSize: 11.5, color: 'var(--muted-2)' }}
         >
           {busy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
           {busy ? 'Uploading' : 'Add'}
@@ -695,15 +697,15 @@ function Field({
   type?: string; multiline?: boolean; placeholder?: string;
 }) {
   return (
-    <label className="block">
-      <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">{label}</div>
+    <label className="field block">
+      <span style={atlasLabel}>{label}</span>
       {multiline ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={3}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          style={atlasInput}
         />
       ) : (
         <input
@@ -711,7 +713,7 @@ function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm text-[var(--foreground)]"
+          style={atlasInput}
         />
       )}
     </label>
@@ -748,14 +750,17 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to Manage
+      <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
+        <ArrowLeft size={14} /> Back to Manage
       </button>
 
-      <h1 className="text-2xl font-bold text-[var(--foreground)]">Edit: {course.title}</h1>
+      <div className="phead" style={{ marginBottom: 0 }}>
+        <h2>Edit: {course.title}</h2>
+      </div>
 
       {/* Course meta */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 space-y-3">
+      <div className="card space-y-4">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <Field label="Title" value={title} onChange={setTitle} />
         <Field label="Description" value={description} onChange={setDescription} multiline />
         <FileUpload label="Cover image" value={coverImage} onChange={setCoverImage} accept="image/*" />
@@ -775,7 +780,7 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
             });
             showToast('Course updated', 'success');
           }}
-          className="px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
+          className="btn-a"
         >
           Save course details
         </button>
@@ -783,14 +788,15 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
 
       {/* Modules */}
       <div className="space-y-3">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">Modules</h2>
+        <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>Modules</h3>
 
         <div className="flex gap-2">
           <input
             value={newModuleTitle}
             onChange={(e) => setNewModuleTitle(e.target.value)}
             placeholder="New module title"
-            className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            className="flex-1"
+            style={atlasInput}
           />
           <button
             disabled={!newModuleTitle}
@@ -803,42 +809,44 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
               });
               setNewModuleTitle('');
             }}
-            className="px-4 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-lg text-sm font-medium disabled:opacity-50"
+            className="btn-a disabled:opacity-50"
           >
-            Add Module
+            <Plus size={14} /> Add Module
           </button>
         </div>
 
         {modules.map((m: any) => {
           const moduleLessons = lessons.filter((l: any) => l.moduleId === m.id);
           return (
-            <div key={m.id} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-2">
+            <div key={m.id} className="card space-y-2">
               <div className="flex items-center gap-2">
                 <input
                   defaultValue={m.title}
                   onBlur={(e) => {
                     if (e.target.value !== m.title) updateModule({ id: m.id, title: e.target.value });
                   }}
-                  className="flex-1 bg-transparent font-semibold text-[var(--foreground)] focus:outline-none"
+                  className="flex-1 bg-transparent focus:outline-none"
+                  style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, color: 'var(--text)' }}
                 />
                 <button
                   onClick={async () => {
                     if (!confirm(`Delete module "${m.title}" and its lessons?`)) return;
                     await deleteModule({ id: m.id });
                   }}
-                  className="p-2 rounded-lg text-[var(--red)] hover:bg-[var(--red)]/10"
+                  className="p-2"
+                  style={{ color: 'var(--red)' }}
                 >
                   <Trash2 size={14} />
                 </button>
               </div>
 
-              <div className="space-y-1 pl-4">
+              <div className="pl-4">
                 {moduleLessons.map((l: any) => (
-                  <div key={l.id} className="flex items-center gap-2 text-sm">
-                    <FileText size={12} className="text-[var(--muted-foreground)]" />
-                    <span className="flex-1 text-[var(--foreground)]">{l.title}</span>
-                    <button onClick={() => setEditingLessonId(l.id)} className="p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"><Edit2 size={12} /></button>
-                    <button onClick={() => deleteLesson({ id: l.id })} className="p-1 text-[var(--red)]"><Trash2 size={12} /></button>
+                  <div key={l.id} className="mrow">
+                    <FileText size={12} className="ic" />
+                    <span className="lb flex-1" style={{ color: 'var(--text)' }}>{l.title}</span>
+                    <button onClick={() => setEditingLessonId(l.id)} className="p-1" style={{ color: 'var(--muted-2)' }}><Edit2 size={12} /></button>
+                    <button onClick={() => deleteLesson({ id: l.id })} className="p-1" style={{ color: 'var(--red)' }}><Trash2 size={12} /></button>
                   </div>
                 ))}
                 <button
@@ -855,7 +863,8 @@ function AdminCourseEditor({ course, onBack }: { course: any; onBack: () => void
                     });
                     setEditingLessonId(id);
                   }}
-                  className="text-xs text-[var(--accent)] hover:underline flex items-center gap-1"
+                  className="flex items-center gap-2"
+                  style={{ marginTop: 12, fontWeight: 700, fontSize: 12, color: 'var(--amber)' }}
                 >
                   <Plus size={12} /> Add lesson
                 </button>
@@ -897,37 +906,54 @@ function LessonEditorModal({
   const [externalUrl, setExternalUrl] = useState(lesson.externalUrl ?? '');
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">Edit Lesson</h2>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(3,6,10,.78)' }}
+      onClick={onClose}
+    >
+      <div
+        className="modal w-full max-w-2xl"
+        style={{ padding: 0, textAlign: 'left' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="accent" style={{ width: 90 }} />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
 
-        <Field label="Title" value={title} onChange={setTitle} />
-
-        <div>
-          <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Content type</div>
-          <div className="flex gap-2">
-            {(['text', 'video', 'link'] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setContentType(t)}
-                className={`px-3 py-1.5 rounded-lg text-sm ${contentType === t ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'border border-[var(--border)] text-[var(--muted-foreground)]'}`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--line)' }}>
+          <h2 style={{ fontSize: 20, lineHeight: '22px' }}>Edit Lesson</h2>
         </div>
 
-        {contentType === 'video' && <FileUpload label="Video file (or paste embed URL)" value={videoUrl} onChange={setVideoUrl} accept="video/*" />}
-        {contentType === 'link' && <Field label="External URL" value={externalUrl} onChange={setExternalUrl} />}
+        <div style={{ padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '70vh', overflowY: 'auto' }}>
+          <Field label="Title" value={title} onChange={setTitle} />
 
-        <Field label="Body / notes" value={body} onChange={setBody} multiline />
+          <div className="field">
+            <label style={atlasLabel}>Content type</label>
+            <div className="flex gap-2">
+              {(['text', 'video', 'link'] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setContentType(t)}
+                  className={`chip${contentType === t ? ' on' : ''}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <div className="flex gap-2 pt-2">
-          <button onClick={onClose} className="flex-1 py-2 border border-[var(--border)] rounded-xl text-sm">Cancel</button>
+          {contentType === 'video' && <FileUpload label="Video file (or paste embed URL)" value={videoUrl} onChange={setVideoUrl} accept="video/*" />}
+          {contentType === 'link' && <Field label="External URL" value={externalUrl} onChange={setExternalUrl} />}
+
+          <Field label="Body / notes" value={body} onChange={setBody} multiline />
+        </div>
+
+        <div className="flex gap-2" style={{ padding: '18px 24px', borderTop: '1px solid var(--line)' }}>
+          <button onClick={onClose} className="btn-g flex-1">Cancel</button>
           <button
             onClick={() => onSave({ title, contentType, body, videoUrl: videoUrl || undefined, externalUrl: externalUrl || undefined })}
-            className="flex-1 py-2 bg-[var(--accent)] text-[var(--foreground)] rounded-xl text-sm font-medium"
+            className="btn-a flex-1"
           >
             Save
           </button>

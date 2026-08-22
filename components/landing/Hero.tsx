@@ -1,116 +1,116 @@
-﻿'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
-import HeroGlobe from './HeroGlobe';
+
+/* ---------- hero world map (graticule + routes + exchange nodes) ----------
+   Ported from the inline <script> in uiux/atlass.html. The generation is
+   fully deterministic, so it is evaluated during render instead of in an
+   effect — no client boundary needed. */
+
+const LAND: [number, number, number, number][] = [
+  [30, 60, 120, 55], [50, 120, 90, 70], [105, 255, 60, 110], [255, 75, 60, 45], [240, 125, 120, 120],
+  [300, 60, 120, 50], [350, 120, 120, 90], [240, 255, 80, 110], [400, 95, 120, 110], [430, 60, 150, 60],
+  [470, 180, 110, 90], [520, 250, 70, 60], [560, 300, 60, 50], [195, 40, 60, 30],
+];
+
+const ROUTES_ARC: [string, string][] = [
+  ['M192.6 71.6 C232.8 19.6 277.6 8 327 36.8', '#3fd0c9'],
+  ['M327 85.9 C332.8 83.4 338.1 84.9 343 90.4', '#d6459c'],
+  ['M342.9 91.6 C379 99.6 407.2 126.4 427.6 171.9', '#3fd0c9'],
+  ['M427.6 171.8 C464.5 178 493.9 203.7 515.8 248.9', '#3fd0c9'],
+  ['M515.8 248.9 C513.7 221 520 198.5 534.7 181.2', '#d6459c'],
+  ['M534.7 181.2 C544.4 152.8 559.9 138.4 581.1 138', '#3fd0c9'],
+  ['M516.2 248.9 C532.8 307.5 561.5 345.3 602.3 362.4', '#3fd0c9'],
+  ['M192.6 121.9 C185.4 203.9 202 272.9 242.5 328.9', '#d6459c'],
+  ['M192.6 121.9 C319.6 259.8 449.1 265.2 581 138', '#3fd0c9'],
+];
+
+const NODES: [number, number, string, string, 'start' | 'end'][] = [
+  [187.7, 114.5, 'NYSE', '40.7N', 'start'], [322, 79.7, 'LSE', '51.5N', 'start'], [338, 84.2, 'FWB', '50.1N', 'start'],
+  [576.1, 130.6, 'TSE', '35.7N', 'end'], [529.8, 173.8, 'HKEX', '22.3N', 'end'], [510.8, 241.5, 'SGX', '1.3N', 'end'],
+  [597, 355, 'ASX', '33.9S', 'end'], [422.7, 164.4, 'DFM', '25.2N', 'start'], [237.5, 321.5, 'B3', '23.5S', 'start'],
+];
+
+function landDots() {
+  const dots: { x: number; y: number }[] = [];
+  for (let b = 0; b < LAND.length; b++) {
+    const r = LAND[b];
+    for (let x = r[0]; x < r[0] + r[2]; x += 6) {
+      for (let y = r[1]; y < r[1] + r[3]; y += 6) {
+        let n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+        n = n - Math.floor(n);
+        if (n < 0.55) continue;
+        dots.push({ x, y });
+      }
+    }
+  }
+  return dots;
+}
+
+function HeroMapSvg() {
+  const meridians = Array.from({ length: 11 }, (_, i) => i * 65.42);
+  const parallels = Array.from({ length: 7 }, (_, i) => 1.6 + i * 72.2);
+  const dots = landDots();
+
+  return (
+    <svg viewBox="0 0 655 418" id="heromap" fill="none" aria-hidden="true">
+      {/* graticule — 11 meridians / 7 parallels, exactly as spaced in Figma */}
+      {meridians.map((x, i) => (
+        <line key={`m${i}`} x1={x} y1={1.6} x2={x} y2={416.8} stroke="#111823" strokeWidth={0.49} />
+      ))}
+      {parallels.map((y, i) => (
+        <line key={`p${i}`} x1={0} y1={y} x2={654.2} y2={y} stroke="#111823" strokeWidth={0.49} />
+      ))}
+
+      {/* landmass dot field (procedural — the Figma landmass is a 57KB dot-matrix path) */}
+      <g fill="#869aac" opacity=".6">
+        {dots.map((d, i) => (
+          <rect key={`d${i}`} x={d.x} y={d.y} width={1.6} height={1.6} />
+        ))}
+      </g>
+
+      {/* great-circle routes (exact curves from Figma, translated into map space) */}
+      {ROUTES_ARC.map((r, i) => (
+        <path key={`r${i}`} d={r[0]} stroke={r[1]} strokeWidth={0.54} opacity={0.5} fill="none" />
+      ))}
+
+      {/* exchange nodes — exact positions, tickers and latitudes from Figma */}
+      {NODES.map((n, i) => {
+        const px = n[0];
+        const py = n[1];
+        const anchor = n[4];
+        const tx = anchor === 'start' ? px + 10.4 : px - 11.5;
+        return (
+          <g key={`n${i}`}>
+            <rect x={px} y={py} width={9.8} height={14.8} rx={1.5} fill="none" stroke="#d99405" strokeWidth={0.49} opacity={0.28} />
+            <rect x={px + 3.6} y={py + 5.3} width={2.7} height={4.1} fill="#d99405" opacity={0.49} />
+            <text x={tx} y={py + 3} textAnchor={anchor} fill="#e9edf3" fontFamily="'IBM Plex Mono',monospace" fontSize="4.93">{n[2]}</text>
+            <text x={tx} y={py + 13.7} textAnchor={anchor} fill="#5b6675" fontFamily="'IBM Plex Mono',monospace" fontSize="4.44">{n[3]}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none bg-cover bg-center opacity-[0.45]"
-        style={{
-          backgroundImage: "url('/tradia-background.png')",
-          filter: 'blur(8px) saturate(1.1) brightness(1.05)',
-          transform: 'scale(1.06)',
-        }}
-      />
-      {/* Dark overlay so copy stays readable */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/70 to-[var(--background)]" />
-      {/* Northern Lights aurora ambient pattern */}
-      <div className="aurora-bg" />
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-pink-500 opacity-[0.06] rounded-full blur-[140px]" />
-        <div className="absolute top-1/4 right-1/3 w-[420px] h-[360px] bg-cyan-400 opacity-[0.05] rounded-full blur-[130px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[350px] bg-emerald-400 opacity-[0.04] rounded-full blur-[120px]" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-12 sm:pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
-          {/* LEFT — Copy column */}
-          <div className="text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 mb-4"
-            >
-              <span className="neon-eyebrow text-[10px] font-bold tracking-[0.2em] uppercase">
-                A Global Trading Community
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight"
-            >
-              <span className="text-[var(--foreground)]">The Complete Trading </span>
-              <span className="aurora-text">ECOSYSTEM</span>
-              <span className="text-[var(--foreground)]"> for Modern Traders</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="mt-4 text-sm sm:text-base text-[var(--muted-foreground)] max-w-xl leading-relaxed"
-            >
-              Tradia is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3"
-            >
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
-              >
-                Join Tradia Now
-              </Link>
-              <Link
-                href="/demo"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors"
-              >
-                Watch Free Training
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
-              className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2 max-w-md"
-            >
-              {[
-                'Daily Live Market Analysis',
-                'Trade Journal & Analytics',
-                'Funded Trader Roadmap',
-                'Global Trading Community',
-              ].map((f) => (
-                <span key={f} className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="text-emerald-400 shrink-0" /> {f}
-                </span>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* RIGHT — chrome-less 3D globe; sits on top of the atmospheric bg, no card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, x: 16 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
-          >
-            <HeroGlobe />
-          </motion.div>
+    <div className="hero">
+      <div className="wrap">
+        <p className="hero-eyebrow">A GLOBAL TRADING COMMUNITY</p>
+        <h1>The Complete Trading<em>ECOSYSTEM</em>for Modern Traders</h1>
+        <p className="hero-copy">Atlas is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.</p>
+        <div className="hero-actions">
+          <Link className="btn btn-amber" href="/pricing">Join Atlas Now</Link>
+          <Link className="btn btn-ghost" href="/demo">Watch Free Training</Link>
         </div>
+        <div className="hero-checks">
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Daily Live Market Analysis</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Trade Journal &amp; Analytics</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Funded Trader Roadmap</div>
+          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Global Trading Community</div>
+        </div>
+        <div className="hero-badge"><b>128,326+</b><span>TRADERS WORLDWIDE</span></div>
+        <div className="hero-map"><HeroMapSvg /></div>
       </div>
-    </section>
+    </div>
   );
 }

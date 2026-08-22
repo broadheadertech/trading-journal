@@ -1,6 +1,6 @@
 'use client';
 
-import { Brain, Wrench } from 'lucide-react';
+import { Brain, Wrench } from '@phosphor-icons/react';
 import { useAdminBrainDistribution, useAdminMigrateBrainStages } from '@/hooks/useAdminStore';
 import type { Stage } from '@/lib/types';
 import { STAGE_COLORS } from '@/lib/stage-config';
@@ -22,14 +22,17 @@ const STAGES_ABOVE_CAP: Stage[] = ['professional', 'advance-professional', 'guru
 
 function PctBar({ pct, accent }: { pct: number; accent: string }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-[var(--muted)] rounded-full overflow-hidden">
+    <div className="flex items-center gap-3">
+      <div className="flex-1" style={{ height: 2, background: 'var(--rail)', position: 'relative' }}>
         <div
-          className="h-full rounded-full transition-all"
-          style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: accent }}
+          className="transition-all duration-500"
+          style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${Math.min(pct, 100)}%`, background: accent }}
         />
       </div>
-      <span className="text-xs text-[var(--muted-foreground)] w-10 text-right tabular-nums">
+      <span
+        className="text-right"
+        style={{ width: 46, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 11.5, color: 'var(--muted-2)' }}
+      >
         {pct.toFixed(1)}%
       </span>
     </div>
@@ -55,10 +58,10 @@ export default function BrainMonitorPage() {
 
   if (data === undefined) {
     return (
-      <div className="space-y-4 max-w-4xl animate-pulse">
-        <div className="h-8 w-48 bg-[var(--muted)] rounded" />
-        <div className="h-4 w-72 bg-[var(--muted)] rounded" />
-        <div className="h-64 bg-[var(--muted)] rounded-xl" />
+      <div className="max-w-4xl animate-pulse space-y-4">
+        <div style={{ height: 32, width: 192, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 14, width: 288, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 256, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
       </div>
     );
   }
@@ -66,22 +69,24 @@ export default function BrainMonitorPage() {
   // L1 fix: empty state when no brain states exist yet
   if (data.total === 0) {
     return (
-      <div className="space-y-6 max-w-4xl">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Brain size={20} className="text-[var(--accent)]" />
-            <h1 className="text-xl font-bold text-[var(--foreground)]">Brain Monitor</h1>
-          </div>
-          <p className="text-sm text-[var(--muted-foreground)]">
+      <div className="max-w-4xl">
+        <div className="phead" style={{ marginBottom: 24 }}>
+          <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+            <Brain size={13} style={{ color: 'var(--amber)' }} /> Neuro Score
+          </p>
+          <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Brain Monitor</h2>
+          <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
             Neuro Score stage distribution across all users
           </p>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-12 text-center">
-          <Brain size={32} className="mx-auto mb-3 text-[var(--muted-foreground)]" />
-          <p className="text-sm font-medium text-[var(--foreground)]">No active brain states yet</p>
-          <p className="text-xs text-[var(--muted-foreground)] mt-1">
-            Users will appear here once they initialize their brain state.
-          </p>
+        <div className="blank">
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+            <Brain size={22} style={{ color: 'var(--amber)' }} />
+          </div>
+          <h4>No active brain states yet</h4>
+          <p>Users will appear here once they initialize their brain state.</p>
         </div>
       </div>
     );
@@ -93,28 +98,30 @@ export default function BrainMonitorPage() {
     .reduce((sum, row) => sum + Math.max(0, row.currentCount - row.effectiveCount), 0);
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Brain size={20} className="text-[var(--accent)]" />
-          <h1 className="text-xl font-bold text-[var(--foreground)]">Brain Monitor</h1>
-        </div>
-        <p className="text-sm text-[var(--muted-foreground)]">
+    <div className="max-w-4xl">
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+          <Brain size={13} style={{ color: 'var(--amber)' }} /> Neuro Score
+        </p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Brain Monitor</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
           Neuro Score stage distribution across all users
         </p>
       </div>
 
       {/* Summary stats */}
-      <div className="flex items-center gap-6">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-          <p className="text-xs text-[var(--muted-foreground)]">Users with active brains</p>
-          <p className="text-2xl font-bold text-[var(--foreground)]">{data.total}</p>
+      <div className="stats" style={{ marginTop: 0, gridTemplateColumns: cappedUsers > 0 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)' }}>
+        <div className="stat">
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>USERS WITH ACTIVE BRAINS</b>
+          <em>{data.total}</em>
         </div>
         {cappedUsers > 0 && (
-          <div className="rounded-xl border border-[var(--yellow)]/30 bg-[var(--yellow)]/5 px-5 py-4">
-            <p className="text-xs text-[var(--yellow)]">Free-tier capped users</p>
-            <p className="text-2xl font-bold text-[var(--yellow)]">{cappedUsers}</p>
-            <p className="text-[11px] text-[var(--muted-foreground)] mt-0.5">
+          <div className="stat" style={{ height: 'auto', paddingBottom: 18 }}>
+            <span className="accent" style={{ background: 'var(--amber)' }} />
+            <b style={{ color: 'var(--amber)' }}>FREE-TIER CAPPED USERS</b>
+            <em style={{ color: 'var(--amber)' }}>{cappedUsers}</em>
+            <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>
               Earned stage above &quot;{FREE_TIER_CAP}&quot; but capped
             </p>
           </div>
@@ -122,21 +129,23 @@ export default function BrainMonitorPage() {
       </div>
 
       {/* Distribution table */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
-        <div className="px-5 py-4 border-b border-[var(--border)]">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">Stage Distribution</h2>
-          <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-            <span className="font-medium">Earned</span> = true stage from Neuro Score &nbsp;·&nbsp;
-            <span className="font-medium">Visible</span> = stage user sees (may be capped for free tier)
-          </p>
-        </div>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Stage Distribution</h3>
+        <p className="sub">
+          <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>Earned</span> = true stage from Neuro Score &nbsp;·&nbsp;
+          <span style={{ fontWeight: 700, color: 'var(--text-2)' }}>Visible</span> = stage user sees (may be capped for free tier)
+        </p>
 
-        <div className="divide-y divide-[var(--border)]">
+        <div style={{ marginTop: 18 }}>
           {/* Header row */}
-          <div className="grid grid-cols-[120px_1fr_1fr] gap-4 px-5 py-2 bg-[var(--muted)]/40">
-            <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Stage</span>
-            <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Earned (current)</span>
-            <span className="text-[11px] font-medium text-[var(--muted-foreground)] uppercase tracking-wide">Visible (effective)</span>
+          <div
+            className="grid grid-cols-[120px_1fr_1fr] gap-4"
+            style={{ padding: '0 0 10px', borderBottom: '1px solid var(--line-2)' }}
+          >
+            <span className="lbl">STAGE</span>
+            <span className="lbl">EARNED (CURRENT)</span>
+            <span className="lbl">VISIBLE (EFFECTIVE)</span>
           </div>
 
           {data.distribution.map((row) => {
@@ -150,39 +159,40 @@ export default function BrainMonitorPage() {
             return (
               <div
                 key={row.stage}
-                className="grid grid-cols-[120px_1fr_1fr] gap-4 px-5 py-3 hover:bg-[var(--muted)]/30 transition-colors"
+                className="grid grid-cols-[120px_1fr_1fr] gap-4 items-center"
+                style={{ padding: '12px 0', borderBottom: '1px solid var(--hair)' }}
               >
                 {/* Stage label */}
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: accent }} />
-                  <span className="text-sm font-medium text-[var(--foreground)]">
+                  <span className="shrink-0" style={{ width: 7, height: 7, borderRadius: 1, background: accent }} />
+                  <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>
                     {STAGE_LABELS[stageKey]}
                   </span>
                   {isCapped && (
-                    <span className="text-[10px] text-[var(--yellow)] font-medium">cap</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: 'var(--amber)' }}>CAP</span>
                   )}
                 </div>
 
                 {/* Earned (currentStage) */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-[var(--foreground)] tabular-nums w-8">
+                <div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--text)' }}>
                       {row.currentCount}
                     </span>
-                    <span className="text-xs text-[var(--muted-foreground)]">users</span>
+                    <span style={{ fontSize: 11, color: 'var(--muted-2)' }}>users</span>
                   </div>
-                  <PctBar pct={row.currentPct} accent={accent} />
+                  <div style={{ marginTop: 8 }}><PctBar pct={row.currentPct} accent={accent} /></div>
                 </div>
 
                 {/* Visible (effectiveStage) */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-semibold text-[var(--foreground)] tabular-nums w-8">
+                <div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--text)' }}>
                       {row.effectiveCount}
                     </span>
-                    <span className="text-xs text-[var(--muted-foreground)]">users</span>
+                    <span style={{ fontSize: 11, color: 'var(--muted-2)' }}>users</span>
                   </div>
-                  <PctBar pct={row.effectivePct} accent={isCapped ? capAccent : accent} />
+                  <div style={{ marginTop: 8 }}><PctBar pct={row.effectivePct} accent={isCapped ? capAccent : accent} /></div>
                 </div>
               </div>
             );
@@ -190,30 +200,32 @@ export default function BrainMonitorPage() {
         </div>
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)]">
+      <p className="footnote" style={{ marginTop: 20, textAlign: 'left' }}>
         Data updates in real-time via Convex subscriptions. Free-tier users are capped at &quot;{FREE_TIER_CAP}&quot; for visible stage.
       </p>
 
       {/* Stage migration tool */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Wrench size={14} className="text-amber-400" />
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Stage Migration Tool</h3>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="flex items-center gap-2">
+          <Wrench size={15} style={{ color: 'var(--muted-3)' }} />
+          <h3>Stage Migration Tool</h3>
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] mb-3">
+        <p className="sub">
           Remaps legacy stage names (baby → beginner, toddler → intern, etc.) in all brain state documents.
           Run once after upgrading from the old stage system. Safe to run multiple times.
         </p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4 flex-wrap" style={{ marginTop: 18 }}>
           <button
             onClick={handleMigrate}
             disabled={migrating}
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg font-medium disabled:opacity-50 transition-colors"
+            className="btn-g disabled:opacity-50"
+            style={{ color: 'var(--amber)', borderColor: 'rgba(217,148,5,.4)' }}
           >
             <Wrench size={14} /> {migrating ? 'Running…' : 'Fix Legacy Stages'}
           </button>
           {migrateResult && (
-            <span className="text-sm text-[var(--muted-foreground)]">
+            <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>
               Done — {migrateResult.migrated} of {migrateResult.total} documents updated.
             </span>
           )}

@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Headphones, User, Calendar, MessageSquare, DollarSign, ArrowLeft } from 'lucide-react';
+import { Headphones, User, Calendar, ChatText as MessageSquare, CurrencyDollar as DollarSign, ArrowLeft } from '@phosphor-icons/react';
 import BrainMascot from '@/components/BrainMascot';
 
 const NAV = [
@@ -23,46 +23,51 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
 
   if (!isLoaded || profile === undefined) {
     return (
-      <div className="h-dvh flex items-center justify-center bg-[var(--background)]">
+      <div
+        className="atlas-dash"
+        style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}
+      >
         <BrainMascot size={48} glow beat />
       </div>
     );
   }
 
   return (
-    <div className="h-dvh flex bg-[var(--background)]">
-      <aside className="w-56 shrink-0 border-r border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl flex flex-col">
-        <div className="p-4 border-b border-[var(--border)]">
-          <p className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
-            <Headphones size={18} className="text-pink-400" /> Coach Hub
-          </p>
+    <div className="atlas-dash" style={{ minHeight: '100dvh', display: 'flex', background: 'var(--bg)' }}>
+      <aside
+        className="side"
+        style={{ position: 'sticky', top: 0, height: '100dvh', flex: 'none', alignSelf: 'flex-start' }}
+      >
+        <div className="brand">
+          <Headphones size={16} style={{ color: 'var(--amber)' }} />
+          <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, letterSpacing: '.02em' }}>
+            COACH HUB
+          </span>
         </div>
-        <nav className="flex-1 p-2 space-y-1">
+
+        <nav className="nav">
+          <h5>WORKSPACE</h5>
           {NAV.map((item) => {
             const active = item.href === '/coach' ? pathname === '/coach' : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-                  active
-                    ? 'bg-gradient-to-br from-pink-500/20 to-pink-600/10 text-[var(--foreground)]'
-                    : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
-                }`}
-              >
-                <Icon size={16} /> {item.label}
+              <Link key={item.href} href={item.href} className={active ? 'on' : undefined}>
+                <Icon size={16} className="ic" />
+                <span className="lb">{item.label}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="p-3 border-t border-[var(--border)]">
-          <Link href="/app" className="flex items-center gap-2 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-            <ArrowLeft size={12} /> Back to app
+
+        <div className="foot" style={{ marginTop: 'auto' }}>
+          <Link href="/app">
+            <ArrowLeft size={16} className="ic" />
+            <span className="lb">Back to app</span>
           </Link>
         </div>
       </aside>
-      <main className="flex-1 overflow-y-auto p-8">
+
+      <main style={{ flex: 1, minWidth: 0, height: '100dvh', overflowY: 'auto', padding: '32px 40px 64px' }}>
         {children}
       </main>
     </div>

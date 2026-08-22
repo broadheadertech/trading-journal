@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Trade } from '@/lib/types';
 import { useCurrency } from '@/hooks/useCurrency';
-import { TrendingUp, Shield, Clock, Flame, BarChart3, Brain, DollarSign, ChevronDown } from 'lucide-react';
+import { TrendUp, Shield, Clock, Fire, ChartBar, Brain, CurrencyDollar, CaretDown } from '@phosphor-icons/react';
 
 interface PerformanceMetricsProps {
   trades: Trade[];
@@ -44,28 +44,69 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function MetricCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 sm:p-4">
-      <p className="text-[10px] uppercase tracking-wider text-[var(--foreground)]/40 mb-1">{label}</p>
-      <p className={`text-lg sm:text-xl font-bold ${color || 'text-[var(--foreground)]/90'}`}>{value}</p>
-      {sub && <p className="text-[10px] text-[var(--foreground)]/30 mt-0.5">{sub}</p>}
+    <div className="inset" style={{ padding: '13px 16px', minHeight: 74 }}>
+      <p className="lbl">{label.toUpperCase()}</p>
+      <p
+        style={{
+          margin: '9px 0 0',
+          fontFamily: 'var(--mono)',
+          fontWeight: 500,
+          fontSize: 18,
+          lineHeight: '23px',
+          color: color || 'var(--text)',
+        }}
+      >
+        {value}
+      </p>
+      {sub && <p style={{ margin: '6px 0 0', fontSize: 10, color: 'var(--muted-2)' }}>{sub}</p>}
     </div>
   );
 }
 
 function MiniTable({ headers, rows }: { headers: string[]; rows: (string | number)[][] }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-xs">
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
         <thead>
-          <tr className="border-b border-[var(--foreground)]/10">
-            {headers.map(h => <th key={h} className="text-left text-[var(--foreground)]/40 px-2 py-1 font-medium">{h}</th>)}
+          <tr>
+            {headers.map(h => (
+              <th
+                key={h}
+                style={{
+                  textAlign: 'left',
+                  padding: '0 10px 8px 0',
+                  borderBottom: '1px solid var(--line-2)',
+                  fontWeight: 700,
+                  fontSize: 9,
+                  letterSpacing: '.04em',
+                  color: 'var(--muted-2)',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {h}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} className="border-b border-white/[0.04]">
+            <tr key={i}>
               {row.map((cell, j) => (
-                <td key={j} className="px-2 py-1 text-[var(--foreground)]/70">{cell}</td>
+                <td
+                  key={j}
+                  style={{
+                    padding: '9px 10px 9px 0',
+                    borderBottom: '1px solid var(--hair)',
+                    fontFamily: j === 0 ? 'var(--body)' : 'var(--mono)',
+                    fontWeight: j === 0 ? 400 : 500,
+                    fontSize: 12.5,
+                    color: j === 0 ? 'var(--text-2)' : 'var(--text)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -77,22 +118,49 @@ function MiniTable({ headers, rows }: { headers: string[]; rows: (string | numbe
 
 function Section({ title, icon: Icon, children, defaultOpen = true }: {
   title: string;
-  icon: typeof TrendingUp;
+  icon: typeof TrendUp;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-hidden">
+    <div className="card" style={{ padding: 0, marginBottom: 12 }}>
+      <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.02] transition-colors"
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '17px 24px',
+          textAlign: 'left',
+        }}
       >
-        <Icon size={16} className="text-[var(--foreground)]/50" />
-        <span className="text-sm font-medium text-[var(--foreground)]/80 flex-1">{title}</span>
-        <ChevronDown size={14} className={`text-[var(--foreground)]/30 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <Icon size={15} style={{ color: 'var(--amber)', flex: 'none' }} />
+        <span
+          style={{
+            flex: 1,
+            fontFamily: 'var(--display)',
+            fontWeight: 700,
+            fontSize: 15,
+            lineHeight: '16px',
+            color: 'var(--text)',
+          }}
+        >
+          {title}
+        </span>
+        <CaretDown
+          size={14}
+          style={{
+            color: 'var(--muted-2)',
+            flex: 'none',
+            transition: 'transform .15s',
+            transform: open ? 'rotate(180deg)' : 'none',
+          }}
+        />
       </button>
-      {open && <div className="px-4 pb-4">{children}</div>}
+      {open && <div style={{ padding: '0 24px 24px' }}>{children}</div>}
     </div>
   );
 }
@@ -342,44 +410,52 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
 
   if (!m) {
     return (
-      <div className="text-center py-12 text-[var(--foreground)]/40">
-        <BarChart3 size={32} className="mx-auto mb-3 opacity-50" />
-        <p className="text-sm">No closed trades yet. Log some trades to see 50+ performance metrics.</p>
+      <div className="blank" style={{ padding: '52px 28px' }}>
+        <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+        <div
+          className="badge"
+          style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}
+        >
+          <ChartBar size={22} style={{ color: 'var(--amber)' }} />
+        </div>
+        <h4>No closed trades yet</h4>
+        <p>Log some trades to unlock 50+ performance metrics.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <Section title="Overview" icon={TrendingUp} defaultOpen>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+    <div>
+      <Section title="Overview" icon={TrendUp} defaultOpen>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
           <MetricCard label="Total Trades" value={String(m.totalTrades)} />
-          <MetricCard label="Win Rate" value={fmtPct(m.winRate)} color={m.winRate >= 50 ? 'text-emerald-400' : 'text-red-400'} />
-          <MetricCard label="Total P&L" value={fmtDollar(m.totalPnL)} color={m.totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400'} />
-          <MetricCard label="Avg P&L / Trade" value={fmtDollar(m.avgPnL)} color={m.avgPnL >= 0 ? 'text-emerald-400' : 'text-red-400'} />
+          <MetricCard label="Win Rate" value={fmtPct(m.winRate)} color={m.winRate >= 50 ? 'var(--green)' : 'var(--red)'} />
+          <MetricCard label="Total P&L" value={fmtDollar(m.totalPnL)} color={m.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'} />
+          <MetricCard label="Avg P&L / Trade" value={fmtDollar(m.avgPnL)} color={m.avgPnL >= 0 ? 'var(--green)' : 'var(--red)'} />
           <MetricCard label="Expectancy" value={fmtDollar(m.expectancy)} sub="avg $ return per trade" />
           <MetricCard label="Break-Even Rate" value={fmtPct(m.breakEvenRate)} sub="trades within ±0.5%" />
         </div>
       </Section>
 
-      <Section title="Profitability" icon={DollarSign}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <MetricCard label="Gross Profit" value={fmtDollar(m.grossProfit)} color="text-emerald-400" />
-          <MetricCard label="Gross Loss" value={fmtDollar(-m.grossLoss)} color="text-red-400" />
-          <MetricCard label="Profit Factor" value={fmt(m.profitFactor)} sub="> 1.5 = good" color={m.profitFactor >= 1.5 ? 'text-emerald-400' : m.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
+      <Section title="Profitability" icon={CurrencyDollar}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>
+          <MetricCard label="Gross Profit" value={fmtDollar(m.grossProfit)} color="var(--green)" />
+          <MetricCard label="Gross Loss" value={fmtDollar(-m.grossLoss)} color="var(--red)" />
+          <MetricCard label="Profit Factor" value={fmt(m.profitFactor)} sub="> 1.5 = good" color={m.profitFactor >= 1.5 ? 'var(--green)' : m.profitFactor >= 1 ? 'var(--amber)' : 'var(--red)'} />
           <MetricCard label="Payoff Ratio" value={fmt(m.payoffRatio)} sub="avg win / avg loss" />
-          <MetricCard label="Average Win" value={fmtDollar(m.avgWin)} color="text-emerald-400" />
-          <MetricCard label="Average Loss" value={fmtDollar(-m.avgLoss)} color="text-red-400" />
-          <MetricCard label="Largest Win" value={fmtDollar(m.largestWin)} color="text-emerald-400" />
-          <MetricCard label="Largest Loss" value={fmtDollar(m.largestLoss)} color="text-red-400" />
+          <MetricCard label="Average Win" value={fmtDollar(m.avgWin)} color="var(--green)" />
+          <MetricCard label="Average Loss" value={fmtDollar(-m.avgLoss)} color="var(--red)" />
+          <MetricCard label="Largest Win" value={fmtDollar(m.largestWin)} color="var(--green)" />
+          <MetricCard label="Largest Loss" value={fmtDollar(m.largestLoss)} color="var(--red)" />
         </div>
       </Section>
 
       <Section title="Risk Metrics" icon={Shield}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <MetricCard label="Max Drawdown %" value={fmtPct(m.maxDDPct)} color="text-red-400" />
-          <MetricCard label="Max Drawdown $" value={fmtDollar(m.maxDD)} color="text-red-400" />
-          <MetricCard label="Sharpe Ratio" value={closed.length >= 5 ? fmt(m.sharpe) : 'N/A'} sub="annualized" color={m.sharpe >= 1 ? 'text-emerald-400' : 'text-[var(--foreground)]/70'} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>
+          <MetricCard label="Max Drawdown %" value={fmtPct(m.maxDDPct)} color="var(--red)" />
+          <MetricCard label="Max Drawdown $" value={fmtDollar(m.maxDD)} color="var(--red)" />
+          <MetricCard label="Sharpe Ratio" value={closed.length >= 5 ? fmt(m.sharpe) : 'N/A'} sub="annualized" color={m.sharpe >= 1 ? 'var(--green)' : 'var(--text)'} />
           <MetricCard label="Sortino Ratio" value={closed.length >= 5 ? fmt(m.sortino) : 'N/A'} sub="downside only" />
           <MetricCard label="Calmar Ratio" value={fmt(m.calmar)} sub="return / drawdown" />
           <MetricCard label="Avg R-Multiple" value={m.avgR !== null ? fmt(m.avgR) : 'N/A'} sub="need stop loss data" />
@@ -389,7 +465,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
       </Section>
 
       <Section title="Timing" icon={Clock}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
           <MetricCard label="Avg Holding Time" value={formatDur(m.avgDuration)} />
           <MetricCard label="Shortest Trade" value={formatDur(m.minDuration)} />
           <MetricCard label="Longest Trade" value={formatDur(m.maxDuration)} />
@@ -399,22 +475,22 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
         </div>
       </Section>
 
-      <Section title="Streaks" icon={Flame}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          <MetricCard label="Current Win Streak" value={String(m.curWinStreak)} color={m.curWinStreak >= 3 ? 'text-emerald-400' : 'text-[var(--foreground)]/70'} />
-          <MetricCard label="Current Loss Streak" value={String(m.curLossStreak)} color={m.curLossStreak >= 3 ? 'text-red-400' : 'text-[var(--foreground)]/70'} />
-          <MetricCard label="Max Win Streak" value={String(m.maxWinStreak)} color="text-emerald-400" />
-          <MetricCard label="Max Loss Streak" value={String(m.maxLossStreak)} color="text-red-400" />
+      <Section title="Streaks" icon={Fire}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
+          <MetricCard label="Current Win Streak" value={String(m.curWinStreak)} color={m.curWinStreak >= 3 ? 'var(--green)' : 'var(--text)'} />
+          <MetricCard label="Current Loss Streak" value={String(m.curLossStreak)} color={m.curLossStreak >= 3 ? 'var(--red)' : 'var(--text)'} />
+          <MetricCard label="Max Win Streak" value={String(m.maxWinStreak)} color="var(--green)" />
+          <MetricCard label="Max Loss Streak" value={String(m.maxLossStreak)} color="var(--red)" />
           <MetricCard label="Avg Win Streak" value={fmt(m.avgWinStreak, 1)} />
           <MetricCard label="Avg Loss Streak" value={fmt(m.avgLossStreak, 1)} />
         </div>
       </Section>
 
-      <Section title="Breakdown Analysis" icon={BarChart3}>
-        <div className="space-y-4">
+      <Section title="Breakdown Analysis" icon={ChartBar}>
+        <div style={{ display: 'grid', gap: 28 }}>
           {/* Strategy */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Strategy</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Strategy</p>
             <MiniTable
               headers={['Strategy', 'Win Rate', 'Trades', 'P&L']}
               rows={Object.entries(m.byStrategy)
@@ -424,7 +500,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           </div>
           {/* Emotion */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Emotion</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Emotion</p>
             <MiniTable
               headers={['Emotion', 'Win Rate', 'Trades']}
               rows={Object.entries(m.byEmotion)
@@ -434,7 +510,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           </div>
           {/* Direction */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Direction</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Direction</p>
             <MiniTable
               headers={['Direction', 'Win Rate', 'Trades']}
               rows={Object.entries(m.byDir).map(([d, v]) => [d.charAt(0).toUpperCase() + d.slice(1), fmtPct((v.wins / v.total) * 100), v.total])}
@@ -443,7 +519,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           {/* Tags */}
           {Object.keys(m.byTag).length > 0 && (
             <div>
-              <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Tag</p>
+              <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Tag</p>
               <MiniTable
                 headers={['Tag', 'Win Rate', 'Trades']}
                 rows={Object.entries(m.byTag).sort((a, b) => b[1].total - a[1].total).map(([t, v]) => [t, fmtPct((v.wins / v.total) * 100), v.total])}
@@ -452,7 +528,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           )}
           {/* Day of Week */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Day of Week</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Day of Week</p>
             <MiniTable
               headers={['Day', 'Win Rate', 'Trades']}
               rows={Object.entries(m.byDay).sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(([d, v]) => [DAYS[parseInt(d)], fmtPct((v.wins / v.total) * 100), v.total])}
@@ -461,7 +537,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           {/* Market Type */}
           {Object.keys(m.byMarket).length > 1 && (
             <div>
-              <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Win Rate by Market Type</p>
+              <p className="lbl b10" style={{ marginBottom: 12 }}>Win Rate by Market Type</p>
               <MiniTable
                 headers={['Market', 'Win Rate', 'Trades']}
                 rows={Object.entries(m.byMarket).map(([mt, v]) => [mt, fmtPct((v.wins / v.total) * 100), v.total])}
@@ -470,7 +546,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           )}
           {/* Monthly PnL */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">P&L by Month</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>P&L by Month</p>
             <MiniTable
               headers={['Month', 'P&L']}
               rows={Object.entries(m.byMonth).sort().map(([mo, pnl]) => [mo, fmtDollar(pnl)])}
@@ -478,7 +554,7 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
           </div>
           {/* Confidence Calibration */}
           <div>
-            <p className="text-xs text-[var(--foreground)]/50 mb-2 font-medium">Confidence Calibration</p>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>Confidence Calibration</p>
             <MiniTable
               headers={['Confidence', 'Actual Win Rate', 'Trades']}
               rows={Object.entries(m.confBuckets).sort().map(([b, v]) => [b, fmtPct((v.wins / v.total) * 100), v.total])}
@@ -488,23 +564,23 @@ export default function PerformanceMetrics({ trades, initialCapital = 0 }: Perfo
       </Section>
 
       <Section title="Discipline" icon={Brain}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          <MetricCard label="Discipline Score" value={m.disciplineScore !== null ? fmtPct(m.disciplineScore) : 'N/A'} color={m.disciplineScore !== null && m.disciplineScore >= 80 ? 'text-emerald-400' : 'text-yellow-400'} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12 }}>
+          <MetricCard label="Discipline Score" value={m.disciplineScore !== null ? fmtPct(m.disciplineScore) : 'N/A'} color={m.disciplineScore !== null && m.disciplineScore >= 80 ? 'var(--green)' : 'var(--amber)'} />
           <MetricCard label="Rule Compliance" value={m.ruleComplianceRate !== null ? fmtPct(m.ruleComplianceRate) : 'N/A'} />
-          <MetricCard label="All Rules Followed" value={m.allFollowedPct !== null ? fmtPct(m.allFollowedPct) : 'N/A'} color="text-emerald-400" />
-          <MetricCard label="Any Rule Broken" value={m.anyBrokenPct !== null ? fmtPct(m.anyBrokenPct) : 'N/A'} color="text-red-400" />
-          <MetricCard label="Disciplined WR" value={m.discWR !== null ? fmtPct(m.discWR) : 'N/A'} sub="vs undisciplined" color="text-emerald-400" />
-          <MetricCard label="Undisciplined WR" value={m.undiscWR !== null ? fmtPct(m.undiscWR) : 'N/A'} color="text-red-400" />
-          <MetricCard label="FOMO Trade %" value={fmtPct(m.fomoPct)} color={m.fomoPct > 15 ? 'text-red-400' : 'text-[var(--foreground)]/70'} />
+          <MetricCard label="All Rules Followed" value={m.allFollowedPct !== null ? fmtPct(m.allFollowedPct) : 'N/A'} color="var(--green)" />
+          <MetricCard label="Any Rule Broken" value={m.anyBrokenPct !== null ? fmtPct(m.anyBrokenPct) : 'N/A'} color="var(--red)" />
+          <MetricCard label="Disciplined WR" value={m.discWR !== null ? fmtPct(m.discWR) : 'N/A'} sub="vs undisciplined" color="var(--green)" />
+          <MetricCard label="Undisciplined WR" value={m.undiscWR !== null ? fmtPct(m.undiscWR) : 'N/A'} color="var(--red)" />
+          <MetricCard label="FOMO Trade %" value={fmtPct(m.fomoPct)} color={m.fomoPct > 15 ? 'var(--red)' : 'var(--text)'} />
         </div>
       </Section>
 
-      <Section title="Position Sizing" icon={DollarSign}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <Section title="Position Sizing" icon={CurrencyDollar}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12 }}>
           <MetricCard label="Avg Position Size" value={fmtDollar(m.avgCap)} />
           <MetricCard label="Position Std Dev" value={fmtDollar(m.capStdDev)} />
           <MetricCard label="Largest Position" value={fmtDollar(m.largestPos)} />
-          <MetricCard label="Consistency" value={m.capConsistency} color={m.capConsistency === 'Consistent' ? 'text-emerald-400' : m.capConsistency === 'Variable' ? 'text-yellow-400' : 'text-red-400'} />
+          <MetricCard label="Consistency" value={m.capConsistency} color={m.capConsistency === 'Consistent' ? 'var(--green)' : m.capConsistency === 'Variable' ? 'var(--amber)' : 'var(--red)'} />
         </div>
       </Section>
     </div>

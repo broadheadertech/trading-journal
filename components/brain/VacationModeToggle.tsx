@@ -12,6 +12,17 @@ function formatSince(ts: number): string {
   return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+/* ── ATLAS raw tokens (see ReducedMotionToggle for rationale) ───────────────── */
+const T = {
+  hair: '#101922',
+  line: '#182432',
+  rail: '#141e2a',
+  amber: '#d99405',
+  muted: '#7f8ea3',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+};
+
 // ─── VacationModeToggle ───────────────────────────────────────────────────────
 
 export default function VacationModeToggle() {
@@ -36,7 +47,15 @@ export default function VacationModeToggle() {
   };
 
   return (
-    <div className="flex items-center justify-between px-1 py-0.5">
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        padding: '10px 0',
+        borderBottom: `1px solid ${T.hair}`,
+      }}
+    >
       {/* Left: status label */}
       <AnimatePresence mode="wait">
         {isVacationMode ? (
@@ -46,15 +65,14 @@ export default function VacationModeToggle() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col"
           >
-            <span className="text-[10px] uppercase tracking-[0.3em] text-amber-400/70 font-medium">
-              Vacation Mode
-            </span>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: T.amber }}>
+              VACATION MODE
+            </p>
             {vacationStartedAt && (
-              <span className="text-[10px] text-amber-400/40 mt-0.5">
+              <p style={{ margin: '5px 0 0', fontSize: 11, color: T.muted2 }}>
                 Paused since {formatSince(vacationStartedAt)}
-              </span>
+              </p>
             )}
           </motion.div>
         ) : (
@@ -64,14 +82,13 @@ export default function VacationModeToggle() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col"
           >
-            <span className="text-[10px] uppercase tracking-[0.3em] text-white/25 font-medium">
-              Vacation Mode
-            </span>
-            <span className="text-[10px] text-white/20 mt-0.5">
+            <p style={{ margin: 0, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: T.muted2 }}>
+              VACATION MODE
+            </p>
+            <p style={{ margin: '5px 0 0', fontSize: 11, color: T.muted3 }}>
               Freeze your score while away
-            </span>
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -82,25 +99,33 @@ export default function VacationModeToggle() {
         disabled={isPending}
         aria-pressed={isVacationMode}
         aria-label={isVacationMode ? 'Deactivate vacation mode' : 'Activate vacation mode'}
-        className={`
-          relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-300 cursor-pointer
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-          disabled:opacity-50 disabled:cursor-not-allowed
-          ${isVacationMode
-            ? 'bg-amber-500/40 border border-amber-400/30'
-            : 'bg-white/8 border border-white/10'
-          }
-        `}
+        style={{
+          position: 'relative',
+          marginLeft: 'auto',
+          flex: 'none',
+          width: 38,
+          height: 20,
+          borderRadius: 2,
+          cursor: isPending ? 'not-allowed' : 'pointer',
+          opacity: isPending ? 0.5 : 1,
+          transition: 'background .25s, border-color .25s',
+          background: isVacationMode ? 'rgba(217,148,5,.18)' : T.rail,
+          border: `1px solid ${isVacationMode ? T.amber : T.line}`,
+        }}
       >
         <motion.span
           layout
           transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-          className={`
-            absolute top-0.5 w-4 h-4 rounded-full
-            ${isVacationMode ? 'bg-amber-400' : 'bg-white/30'}
-          `}
-          style={{ left: isVacationMode ? 'calc(100% - 1.125rem)' : '0.125rem' }}
           aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 2,
+            left: isVacationMode ? 'calc(100% - 16px)' : 2,
+            width: 14,
+            height: 14,
+            borderRadius: 1,
+            background: isVacationMode ? T.amber : T.muted,
+          }}
         />
       </button>
     </div>

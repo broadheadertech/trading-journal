@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { MonthlyGoal, Trade } from '@/lib/types';
 import { format, getDaysInMonth, getDate, parseISO } from 'date-fns';
-import { Target, Flag, Edit2, CheckCircle, XCircle } from 'lucide-react';
+import { Target, Flag, PencilSimple, CheckCircle, XCircle } from '@phosphor-icons/react';
 import Modal from './ui/Modal';
 import { useToast } from './ui/Toast';
 
@@ -101,56 +101,61 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
   };
 
   return (
-    <div className="relative space-y-6 anim-fade-up">
-      <div className="hero-glow" />
+    <div className="relative anim-fade-up">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-            Goals <span className="gradient-text">& Progress</span>
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] mt-2">Set monthly targets and track your performance</p>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <Target size={13} style={{ color: 'var(--amber)' }} /> {currentMonthLabel}
+        </p>
+        <h2>Goals &amp; Progress</h2>
+        <p className="sub">Set monthly targets and track your performance against live journal data.</p>
+        <div className="actions">
+          <button onClick={openForm} className="btn-a">
+            {currentGoal ? <PencilSimple size={14} /> : <Flag size={14} />}
+            {currentGoal ? 'Edit Goals' : 'Set Goals'}
+          </button>
         </div>
-        <button
-          onClick={openForm}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          {currentGoal ? <Edit2 size={14} /> : <Flag size={14} />}
-          {currentGoal ? 'Edit Goals' : 'Set Goals'}
-        </button>
       </div>
 
       {/* Current Month Card */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="font-semibold text-base">{currentMonthLabel}</h3>
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>{currentMonthLabel}</h3>
+            <p className="sub">
+              {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining · {monthProgress}% through the month
+            </p>
+          </div>
           {currentStats.tradeCount > 0 && (
-            <span className="text-xs text-[var(--muted-foreground)] bg-[var(--muted)] px-2.5 py-1 rounded-full">
+            <span className="chip" style={{ marginLeft: 'auto' }}>
               {currentStats.tradeCount} trade{currentStats.tradeCount !== 1 ? 's' : ''}
             </span>
           )}
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] mb-4">
-          {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining · {monthProgress}% through the month
-        </p>
 
         {!currentGoal ? (
-          <div className="text-center py-8">
-            <div className="w-12 h-12 rounded-full bg-[var(--accent)]/10 flex items-center justify-center mx-auto mb-3">
-              <Flag size={22} className="text-[var(--accent)]" />
-            </div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">
-              No goals set for {currentMonthLabel}
-            </p>
-            <button
-              onClick={openForm}
-              className="text-sm text-[var(--accent)] hover:underline font-medium"
+          <div className="blank" style={{ marginTop: 22, padding: '44px 28px', textAlign: 'center' }}>
+            <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+            <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+            <div
+              className="badge"
+              style={{
+                margin: '0 auto 24px',
+                border: '1px solid rgba(217,148,5,.4)',
+                background: 'var(--panel-2)',
+              }}
             >
-              Set your goals →
+              <Flag size={22} style={{ color: 'var(--amber)' }} />
+            </div>
+            <h4>No goals set for {currentMonthLabel}</h4>
+            <p>Define P&amp;L, win rate, loss limit and trade count targets to start tracking.</p>
+            <button onClick={openForm} className="btn-a" style={{ marginTop: 24 }}>
+              Set your goals
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 22 }}>
             {/* P&L Target */}
             {currentGoal.pnlTarget !== null && (() => {
               const pct = (currentStats.pnl / currentGoal.pnlTarget!) * 100;
@@ -234,19 +239,19 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
 
       {/* Past Months */}
       {history.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-[var(--muted-foreground)] uppercase tracking-wide">
-            Past Months
-          </h3>
+        <div style={{ marginTop: 32 }}>
+          <p className="lbl b10" style={{ marginBottom: 14 }}>
+            PAST MONTHS <span style={{ color: 'var(--amber)' }}>· {history.length}</span>
+          </p>
           {history.map(m => (
-            <div key={m.month} className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-sm">{m.label}</h4>
-                <span className="text-xs text-[var(--muted-foreground)]">
+            <div key={m.month} className="card" style={{ marginBottom: 12 }}>
+              <div className="cardhead">
+                <div><h4>{m.label}</h4></div>
+                <span className="chip" style={{ marginLeft: 'auto' }}>
                   {m.tradeCount} trade{m.tradeCount !== 1 ? 's' : ''}
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 12, marginTop: 16 }}>
                 <HistoryStat
                   label="P&L"
                   value={`${m.pnl >= 0 ? '+' : ''}$${Math.abs(Math.round(m.pnl)).toLocaleString()}`}
@@ -285,60 +290,58 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
         size="md"
       >
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Monthly P&L Target ($)</label>
+          <div className="field">
+            <label>MONTHLY P&amp;L TARGET ($)</label>
             <input
               type="number"
+              className="box w-full"
               value={formPnL}
               onChange={e => setFormPnL(e.target.value)}
               placeholder="e.g. 2000"
             />
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">How much profit do you want to make this month?</p>
+            <p className="footnote" style={{ textAlign: 'left', marginTop: 8 }}>How much profit do you want to make this month?</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Win Rate Target (%)</label>
+          <div className="field">
+            <label>WIN RATE TARGET (%)</label>
             <input
               type="number"
               min="1"
               max="100"
+              className="box w-full"
               value={formWinRate}
               onChange={e => setFormWinRate(e.target.value)}
               placeholder="e.g. 60"
             />
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">What % of your trades do you want to win?</p>
+            <p className="footnote" style={{ textAlign: 'left', marginTop: 8 }}>What % of your trades do you want to win?</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Max Monthly Loss ($)</label>
+          <div className="field">
+            <label>MAX MONTHLY LOSS ($)</label>
             <input
               type="number"
+              className="box w-full"
               value={formMaxLoss}
               onChange={e => setFormMaxLoss(e.target.value)}
               placeholder="e.g. 500"
             />
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">Stop trading if you lose more than this amount this month.</p>
+            <p className="footnote" style={{ textAlign: 'left', marginTop: 8 }}>Stop trading if you lose more than this amount this month.</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Trade Count Target</label>
+          <div className="field">
+            <label>TRADE COUNT TARGET</label>
             <input
               type="number"
+              className="box w-full"
               value={formTradeCount}
               onChange={e => setFormTradeCount(e.target.value)}
               placeholder="e.g. 15"
             />
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">How many quality trades do you plan to take?</p>
+            <p className="footnote" style={{ textAlign: 'left', marginTop: 8 }}>How many quality trades do you plan to take?</p>
           </div>
-          <p className="text-xs text-[var(--muted-foreground)]">You can set any combination — leave fields blank to skip that metric.</p>
-          <div className="flex justify-end gap-3 pt-2 border-t border-[var(--border)]">
-            <button
-              onClick={() => setIsFormOpen(false)}
-              className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]"
-            >
+          <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px' }}>You can set any combination — leave fields blank to skip that metric.</div>
+          <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={() => setIsFormOpen(false)} className="btn-g">
               Cancel
             </button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg font-medium"
-            >
+            <button onClick={handleSave} className="btn-a">
               {currentGoal ? 'Update Goals' : 'Save Goals'}
             </button>
           </div>
@@ -353,11 +356,11 @@ export default function Goals({ goals, trades, onAdd, onUpdate }: Props) {
 type GoalStatus = 'achieved' | 'on-track' | 'behind' | 'at-risk' | 'pending';
 
 const STATUS_CONFIG: Record<GoalStatus, { label: string; color: string; bar: string }> = {
-  achieved:  { label: 'Achieved!',  color: 'text-[var(--green)]',              bar: 'bg-[var(--green)]' },
-  'on-track':{ label: 'On Track',   color: 'text-[var(--green)]',              bar: 'bg-[var(--green)]' },
-  behind:    { label: 'Behind',     color: 'text-amber-400',                    bar: 'bg-amber-400' },
-  'at-risk': { label: 'At Risk',    color: 'text-[var(--red)]',                 bar: 'bg-[var(--red)]' },
-  pending:   { label: 'Pending',    color: 'text-[var(--muted-foreground)]',    bar: 'bg-[var(--muted-foreground)]' },
+  achieved:  { label: 'Achieved!',  color: 'var(--green)',   bar: 'var(--green)' },
+  'on-track':{ label: 'On Track',   color: 'var(--green)',   bar: 'var(--green)' },
+  behind:    { label: 'Behind',     color: 'var(--amber)',   bar: 'var(--amber)' },
+  'at-risk': { label: 'At Risk',    color: 'var(--red)',     bar: 'var(--red)' },
+  pending:   { label: 'Pending',    color: 'var(--muted-2)', bar: 'var(--muted-3)' },
 };
 
 function GoalCard({
@@ -375,24 +378,37 @@ function GoalCard({
   const clamped = Math.min(100, Math.max(0, progress));
 
   return (
-    <div className="bg-[var(--muted)]/50 rounded-xl p-3.5 space-y-2.5">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-[var(--muted-foreground)] font-medium">{label}</span>
-        <span className={`text-[10px] font-bold uppercase tracking-wide ${cfg.color}`}>
+    <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+      <span
+        className="accent"
+        style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: cfg.bar }}
+      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <p className="lbl">{label.toUpperCase()}</p>
+        <span
+          style={{
+            marginLeft: 'auto',
+            fontWeight: 700,
+            fontSize: 9.5,
+            letterSpacing: '.04em',
+            textTransform: 'uppercase',
+            color: cfg.color,
+          }}
+        >
           {statusLabel ?? cfg.label}
         </span>
       </div>
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-sm font-bold">{current}</span>
-        <span className="text-[10px] text-[var(--muted-foreground)]">/ {target}</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
+        <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{current}</span>
+        <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>/ {target}</span>
       </div>
-      <div className="h-1.5 bg-[var(--border)] rounded-full overflow-hidden">
+      <div style={{ height: 2, marginTop: 14, background: 'var(--rail)', position: 'relative' }}>
         <div
-          className={`h-full rounded-full transition-all duration-500 ${cfg.bar}`}
-          style={{ width: `${clamped}%` }}
+          className="transition-all duration-500"
+          style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${clamped}%`, background: cfg.bar }}
         />
       </div>
-      {note && <p className="text-[10px] text-[var(--muted-foreground)]">{note}</p>}
+      {note && <p style={{ margin: '10px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>{note}</p>}
     </div>
   );
 }
@@ -406,19 +422,27 @@ function HistoryStat({
   hit: boolean | null;
 }) {
   return (
-    <div className="text-center">
-      <div className="text-[10px] text-[var(--muted-foreground)] mb-0.5">{label}</div>
-      <div className={`text-xs font-semibold ${positive ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
+    <div className="inset" style={{ padding: '13px 16px' }}>
+      <p className="lbl">{label.toUpperCase()}</p>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          marginTop: 8,
+          fontFamily: 'var(--mono)',
+          fontWeight: 500,
+          fontSize: 15,
+          color: positive ? 'var(--green)' : 'var(--red)',
+        }}
+      >
         {value}
+        {hit !== null && (
+          hit
+            ? <CheckCircle size={12} style={{ color: 'var(--green)', flex: 'none' }} />
+            : <XCircle size={12} style={{ color: 'var(--red)', flex: 'none' }} />
+        )}
       </div>
-      {hit !== null && (
-        <div className="mt-0.5 flex justify-center">
-          {hit
-            ? <CheckCircle size={11} className="text-[var(--green)]" />
-            : <XCircle size={11} className="text-[var(--red)]" />
-          }
-        </div>
-      )}
     </div>
   );
 }

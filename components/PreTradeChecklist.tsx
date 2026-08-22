@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { PreTradeChecklist as ChecklistType, Strategy, Trade } from '@/lib/types';
-import { Globe, TrendingUp, Activity, Zap, Clock, BarChart3, Calendar, ArrowUpRight, ChevronRight, RefreshCw } from 'lucide-react';
+import { Globe, TrendUp, Lightning, Clock, ChartBar, Calendar, ArrowUpRight, CaretRight, ArrowsClockwise } from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -255,108 +256,132 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
     };
   }, [windowedTrades, checklists, selectedRegime, formatCurrency]);
 
-  const pnlColor = (v: number) => v > 0 ? 'text-emerald-400' : v < 0 ? 'text-red-400' : 'text-[var(--foreground)]';
+  const pnlColor = (v: number) => v > 0 ? 'var(--green)' : v < 0 ? 'var(--red)' : 'var(--text)';
   // formatCurrency already signs the number — no need to manually prepend '+'.
   const fmtPnl = (v: number) => formatCurrency(v);
   const corrLabel = (v: number) => Math.abs(v) > 0.7 ? 'Strong' : Math.abs(v) > 0.3 ? 'Moderate' : 'Weak';
 
   return (
-    <div className="relative space-y-5 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto anim-fade-up">
-      <div className="hero-glow" />
+    <div className="relative anim-fade-up">
       {/* ── Hero ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 rounded-full bg-fuchsia-500/10 text-fuchsia-400 text-xs font-semibold flex items-center gap-1.5">
-              <Globe size={14} /> MARKET CONTEXT COMMAND
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] mb-3">
-            Trade Your Process To The Right Conditions
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] mb-5 max-w-xl">
-            This page maps where your strategy performs, where it leaks, and which market states need tighter risk controls.
-          </p>
-          <div className="flex items-center flex-wrap gap-2">
-            <span className="px-3 py-1 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] text-xs">
-              {m.uniqueDays} days &bull; {m.closed.length} trades
-            </span>
-          </div>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <Globe size={13} style={{ color: 'var(--amber)' }} /> Market context command
+        </p>
+        <h2>Trade Your Process To The Right Conditions</h2>
+        <p className="sub">
+          This page maps where your strategy performs, where it leaks, and which market states need tighter risk controls.
+        </p>
+        <div className="actions">
+          <span className="chip">{m.uniqueDays} days &bull; {m.closed.length} trades</span>
         </div>
+      </div>
 
-        {/* Active Context */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold mb-3">Active Context</div>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-semibold">{m.currentRegime}</span>
-            <span className="text-xs text-[var(--muted-foreground)]">{m.regimeStability}% stable in last 10 sessions</span>
+      {/* Active Context */}
+      <div className="card">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Active Context</h3>
+            <p className="sub">Current market read derived from your latest checklists and closed trades.</p>
           </div>
-          <div className="text-sm text-[var(--foreground)] mb-1">
-            Best regime: <span className="font-semibold text-fuchsia-400">{m.bestRegime[0]}</span>
-          </div>
-          <div className="text-xs text-[var(--muted-foreground)] mb-4">
-            Best session: <span className="font-semibold text-[var(--foreground)]">{m.bestSession?.label}</span> &bull;
-            Worst session: <span className="font-semibold text-[var(--foreground)]">{m.worstSession?.label}</span>
-          </div>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--muted)]/50 border border-[var(--border)] text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            <RefreshCw size={14} /> Refresh context
+          <button className="btn-g" style={{ marginLeft: 'auto', height: 34 }}>
+            <ArrowsClockwise size={13} /> Refresh context
           </button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, marginTop: 20 }}>
+          <div className="inset">
+            <p className="lbl">CURRENT REGIME</p>
+            <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, marginTop: 8, color: 'var(--amber)' }}>
+              {m.currentRegime}
+            </em>
+            <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
+              {m.regimeStability}% stable in last 10 sessions
+            </small>
+          </div>
+          <div className="inset">
+            <p className="lbl">BEST REGIME</p>
+            <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, marginTop: 8, color: 'var(--amber)' }}>
+              {m.bestRegime[0]}
+            </em>
+            <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
+              highest net P&amp;L bucket
+            </small>
+          </div>
+          <div className="inset">
+            <p className="lbl">SESSION EDGE</p>
+            <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, marginTop: 8, color: 'var(--text)' }}>
+              {m.bestSession?.label}
+            </em>
+            <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>
+              worst: {m.worstSession?.label}
+            </small>
+          </div>
         </div>
       </div>
 
       {/* ── 4 Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Current Regime</span>
-            <Globe size={16} className="text-[var(--muted-foreground)]" />
-          </div>
-          <div className="text-xl font-bold text-fuchsia-400">{m.currentRegime}</div>
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-1">100% confidence</div>
+      <div className="stats">
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>CURRENT REGIME</b>
+          <em style={{ fontSize: 19, color: 'var(--amber)' }}>{m.currentRegime}</em>
+          <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
+            <Globe size={10} style={{ display: 'inline', marginRight: 5 }} />{m.regimeStability}% confidence
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Active Win Rate</span>
-            <TrendingUp size={16} className="text-[var(--muted-foreground)]" />
-          </div>
-          <div className={`text-xl font-bold ${m.activeWinRate >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>{m.activeWinRate}%</div>
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-1">{fmtPnl(m.activeRegimePnl)} in regime</div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <b>ACTIVE WIN RATE</b>
+          <em style={{ color: m.activeWinRate >= 50 ? 'var(--green)' : 'var(--red)' }}>{m.activeWinRate}%</em>
+          <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
+            <TrendUp size={10} style={{ display: 'inline', marginRight: 5 }} />{fmtPnl(m.activeRegimePnl)} in regime
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Volatility State</span>
-            <Zap size={16} className="text-[var(--muted-foreground)]" />
-          </div>
-          <div className="text-xl font-bold text-[var(--foreground)]">{m.volState}</div>
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-1">7d {m.vol7d.toFixed(1)} vs 30d {m.vol30d.toFixed(1)}</div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>VOLATILITY STATE</b>
+          <em style={{ fontSize: 22 }}>{m.volState}</em>
+          <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
+            <Lightning size={10} style={{ display: 'inline', marginRight: 5 }} />7d {m.vol7d.toFixed(1)} vs 30d {m.vol30d.toFixed(1)}
+          </small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider font-semibold">Vol Correlation</span>
-            <Activity size={16} className="text-[var(--muted-foreground)]" />
-          </div>
-          <div className={`text-xl font-bold ${pnlColor(m.volCorrelation)}`}>{m.volCorrelation >= 0 ? '+' : ''}{m.volCorrelation.toFixed(2)}</div>
-          <div className="text-[10px] text-[var(--muted-foreground)] mt-1">{corrLabel(m.volCorrelation)}</div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>VOL CORRELATION</b>
+          <em style={{ color: pnlColor(m.volCorrelation) }}>{m.volCorrelation >= 0 ? '+' : ''}{m.volCorrelation.toFixed(2)}</em>
+          <small style={{ display: 'block', fontSize: 10, color: 'var(--muted-2)', marginTop: 4 }}>
+            <Activity size={10} style={{ display: 'inline', marginRight: 5 }} />{corrLabel(m.volCorrelation)}
+          </small>
         </div>
       </div>
 
       {/* ── Regime Navigator ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-1">Regime Navigator</h2>
-        <p className="text-xs text-[var(--muted-foreground)] mb-4">Click a regime to inspect isolated performance and context fit.</p>
+      <div className="card" style={{ marginTop: 32 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Regime Navigator</h3>
+        <p className="sub">Click a regime to inspect isolated performance and context fit.</p>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px,280px) 1fr', gap: 20, marginTop: 22 }} className="max-xl:!grid-cols-1">
           {/* Regime list */}
-          <div className="space-y-2">
+          <div>
             <button
               onClick={() => setSelectedRegime('Overview')}
-              className={`w-full text-left rounded-xl border p-3 transition-colors ${selectedRegime === 'Overview' ? 'border-[var(--accent)] bg-[var(--accent)]/5' : 'border-[var(--border)] hover:border-[var(--muted-foreground)]/30'}`}
+              className="inset"
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                marginBottom: 8,
+                padding: '13px 16px',
+                borderColor: selectedRegime === 'Overview' ? 'var(--amber)' : 'var(--line)',
+              }}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-[var(--foreground)]">Overview</span>
-                <ChevronRight size={14} className="text-[var(--muted-foreground)]" />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>Overview</span>
+                <CaretRight size={14} style={{ marginLeft: 'auto', color: 'var(--muted-2)' }} />
               </div>
-              <div className="text-[10px] text-[var(--muted-foreground)]">Full-period trajectory and regime transitions</div>
+              <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 5 }}>Full-period trajectory and regime transitions</div>
             </button>
             {(['Trending Up', 'Trending Down', 'Ranging'] as Regime[]).map(regime => {
               const data = m.regimeCounts[regime];
@@ -366,16 +391,32 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                 <button
                   key={regime}
                   onClick={() => setSelectedRegime(regime)}
-                  className={`w-full text-left rounded-xl border p-3 transition-colors ${selectedRegime === regime ? 'border-[var(--accent)] bg-[var(--accent)]/5' : 'border-[var(--border)] hover:border-[var(--muted-foreground)]/30'}`}
+                  className="inset"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    marginBottom: 8,
+                    padding: '13px 16px',
+                    borderColor: selectedRegime === regime ? 'var(--amber)' : 'var(--line)',
+                  }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${regime === 'Trending Up' ? 'bg-emerald-400' : regime === 'Trending Down' ? 'bg-red-400' : 'bg-fuchsia-400'}`} />
-                      <span className="text-sm font-medium text-[var(--foreground)]">{regime}</span>
-                    </div>
-                    <span className={`text-sm font-semibold ${pnlColor(data.pnl)}`}>{fmtPnl(data.pnl)}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <i
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: 1,
+                        flex: 'none',
+                        background: regime === 'Trending Up' ? 'var(--green)' : regime === 'Trending Down' ? 'var(--red)' : 'var(--amber)',
+                      }}
+                    />
+                    <span style={{ fontSize: 12.5, color: 'var(--text)' }}>{regime}</span>
+                    <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5, color: pnlColor(data.pnl) }}>
+                      {fmtPnl(data.pnl)}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3 mt-1 text-[10px] text-[var(--muted-foreground)]">
+                  <div style={{ display: 'flex', gap: 14, marginTop: 6, fontSize: 10.5, color: 'var(--muted-2)' }}>
                     <span>{regimeWR}% win</span>
                     <span>{data.trades.length} trades</span>
                     <span>{Math.round((data.trades.length / totalTrades) * 100)}% time</span>
@@ -393,47 +434,49 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
                   <AreaChart data={m.regimeEquity} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                     <defs>
                       <linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#24c88a" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#24c88a" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                    <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                    <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#regGrad)" dot={{ fill: '#22c55e', r: 3 }} isAnimationActive={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--grid)" />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                    <Tooltip contentStyle={{ background: 'var(--panel-2)', border: '1px solid var(--line-2)', borderRadius: '2px', fontSize: '11px', color: 'var(--text)' }} />
+                    <Area type="monotone" dataKey="pnl" stroke="#24c88a" strokeWidth={2} fill="url(#regGrad)" dot={{ fill: '#24c88a', r: 3 }} isAnimationActive={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-[260px] flex items-center justify-center text-sm text-[var(--muted-foreground)]">No trades in this regime</div>
+              <div className="h-[260px] flex items-center justify-center">
+                <span className="empty-line" style={{ padding: 0 }}>No trades in this regime</span>
+              </div>
             )}
 
             {/* Regime color bar */}
-            <div className="h-2 rounded-full overflow-hidden flex mt-3 mb-3">
+            <div className="flex" style={{ height: 3, background: 'var(--rail)', margin: '14px 0' }}>
               {m.closed.length > 0 && (['Trending Up', 'Trending Down', 'Ranging'] as Regime[]).map(r => {
                 const pct = (m.regimeCounts[r].trades.length / m.closed.length) * 100;
                 if (pct === 0) return null;
-                return <div key={r} className="h-full" style={{ width: `${pct}%`, backgroundColor: r === 'Trending Up' ? '#22c55e' : r === 'Trending Down' ? '#ef4444' : '#22d3ee' }} />;
+                return <div key={r} className="h-full" style={{ width: `${pct}%`, backgroundColor: r === 'Trending Up' ? '#24c88a' : r === 'Trending Down' ? '#ff4d5e' : '#d99405' }} />;
               })}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
-                <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Win Rate</div>
-                <div className="text-sm font-bold text-[var(--foreground)]">{m.regimeWR}%</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="inset" style={{ padding: '11px 14px' }}>
+                <p className="lbl">WIN RATE</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, marginTop: 6, color: 'var(--text)' }}>{m.regimeWR}%</em>
               </div>
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
-                <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Trades</div>
-                <div className="text-sm font-bold text-[var(--foreground)]">{m.regimeFilter.length}</div>
+              <div className="inset" style={{ padding: '11px 14px' }}>
+                <p className="lbl">TRADES</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, marginTop: 6, color: 'var(--text)' }}>{m.regimeFilter.length}</em>
               </div>
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
-                <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Avg Hold</div>
-                <div className="text-sm font-bold text-[var(--foreground)]">{m.holdDays}d {m.holdHours}h</div>
+              <div className="inset" style={{ padding: '11px 14px' }}>
+                <p className="lbl">AVG HOLD</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, marginTop: 6, color: 'var(--text)' }}>{m.holdDays}d {m.holdHours}h</em>
               </div>
-              <div className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg p-2.5">
-                <div className="text-[9px] text-[var(--muted-foreground)] uppercase">Vs Overall</div>
-                <div className={`text-sm font-bold ${pnlColor(m.vsOverall)}`}>{m.vsOverall >= 0 ? '+' : ''}{m.vsOverall.toFixed(1)}pp</div>
+              <div className="inset" style={{ padding: '11px 14px' }}>
+                <p className="lbl">VS OVERALL</p>
+                <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, marginTop: 6, color: pnlColor(m.vsOverall) }}>{m.vsOverall >= 0 ? '+' : ''}{m.vsOverall.toFixed(1)}pp</em>
               </div>
             </div>
           </div>
@@ -441,177 +484,220 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
       </div>
 
       {/* ── Session Compatibility + Volatility Pressure ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Session Compatibility</h2>
-            <Clock size={18} className="text-[var(--muted-foreground)]" />
+      <div className="split" style={{ marginTop: 32 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--green)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Session Compatibility</h3>
+              <p className="sub">Where your strategy aligns best with market flow.</p>
+            </div>
+            <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Where your strategy aligns best with market flow.</p>
-          <div className="space-y-3">
+          <div style={{ marginTop: 20 }}>
             {m.sessionData.map(sess => {
               const maxAbs = Math.max(...m.sessionData.map(s => Math.abs(s.pnl)), 1);
               return (
-                <div key={sess.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3.5">
-                  <div className="flex items-center justify-between mb-1">
+                <div key={sess.label} className="inset" style={{ padding: '13px 16px', marginBottom: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                     <div>
-                      <div className="text-sm font-semibold text-[var(--foreground)]">{sess.label}</div>
-                      <div className="text-[10px] text-[var(--muted-foreground)]">{sess.time}</div>
+                      <p className="lbl b95">{sess.label.toUpperCase()}</p>
+                      <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 5 }}>{sess.time}</div>
                     </div>
-                    <div className="text-right">
-                      <div className={`text-sm font-bold ${pnlColor(sess.pnl)}`}>{fmtPnl(sess.pnl)}</div>
-                      <div className="text-[10px] text-[var(--muted-foreground)]">{sess.winRate}% &bull; {sess.trades} trades</div>
+                    <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                      <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: pnlColor(sess.pnl) }}>{fmtPnl(sess.pnl)}</div>
+                      <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 4 }}>{sess.winRate}% &bull; {sess.trades} trades</div>
                     </div>
                   </div>
-                  <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden mt-2">
-                    <div className={`h-full rounded-full ${sess.pnl >= 0 ? 'bg-emerald-500' : 'bg-red-500'}`}
-                      style={{ width: `${Math.min((Math.abs(sess.pnl) / maxAbs) * 100, 100)}%` }} />
+                  <div style={{ height: 2, background: 'var(--rail)', position: 'relative', marginTop: 12 }}>
+                    <div
+                      style={{
+                        position: 'absolute', left: 0, top: 0, bottom: 0,
+                        width: `${Math.min((Math.abs(sess.pnl) / maxAbs) * 100, 100)}%`,
+                        background: sess.pnl >= 0 ? 'var(--green)' : 'var(--red)',
+                      }}
+                    />
                   </div>
-                  <div className="text-[10px] text-[var(--muted-foreground)] mt-1">Expectancy: <span className={pnlColor(sess.expectancy)}>{fmtPnl(sess.expectancy)}</span></div>
+                  <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 10 }}>
+                    Expectancy: <span style={{ color: pnlColor(sess.expectancy), fontFamily: 'var(--mono)' }}>{fmtPnl(sess.expectancy)}</span>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Volatility Pressure</h2>
-            <Zap size={18} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Volatility Pressure</h3>
+              <p className="sub">PnL response during changing volatility.</p>
+            </div>
+            <Lightning size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">PnL response during changing volatility.</p>
+          <div style={{ height: 16 }} />
           {m.equityData.length > 0 ? (
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={m.equityData} margin={{ top: 5, right: 40, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                  <YAxis yAxisId="vol" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                  <Line yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} dot={{ fill: '#22c55e', r: 3 }} name="PnL" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--grid)" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <YAxis yAxisId="vol" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={{ background: 'var(--panel-2)', border: '1px solid var(--line-2)', borderRadius: '2px', fontSize: '11px', color: 'var(--text)' }} />
+                  <Line yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#24c88a" strokeWidth={2} dot={{ fill: '#24c88a', r: 3 }} name="PnL" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-[280px] flex items-center justify-center text-sm text-[var(--muted-foreground)]">Need more trades for volatility analysis</div>
+            <div className="h-[280px] flex items-center justify-center">
+              <span className="empty-line" style={{ padding: 0 }}>Need more trades for volatility analysis</span>
+            </div>
           )}
         </div>
       </div>
 
       {/* ── Context Correlations + Action Blueprint ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Context Correlations</h2>
-            <BarChart3 size={18} className="text-[var(--muted-foreground)]" />
+      <div className="split" style={{ marginTop: 32 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Context Correlations</h3>
+              <p className="sub">How strongly each market factor aligns with your PnL.</p>
+            </div>
+            <ChartBar size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">How strongly each market factor aligns with your PnL.</p>
-          <div className="space-y-3">
+          <div style={{ marginTop: 20 }}>
             {m.correlations.map(c => (
-              <div key={c.label} className="bg-[var(--muted)]/30 border border-[var(--border)] rounded-xl p-3.5">
-                <div className="flex items-center justify-between mb-1">
+              <div key={c.label} className="inset" style={{ padding: '13px 16px', marginBottom: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                   <div>
-                    <div className="text-sm font-medium text-[var(--foreground)]">{c.label}</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">{corrLabel(c.value)}</div>
+                    <p className="lbl b95">{c.label.toUpperCase()}</p>
+                    <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 5 }}>{corrLabel(c.value)}</div>
                   </div>
-                  <div className="text-right">
-                    <div className={`text-sm font-bold ${pnlColor(c.value)}`}>{c.value >= 0 ? '+' : ''}{c.value.toFixed(2)}</div>
-                    <div className="text-[10px] text-[var(--muted-foreground)]">Positive alignment</div>
+                  <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                    <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: pnlColor(c.value) }}>
+                      {c.value >= 0 ? '+' : ''}{c.value.toFixed(2)}
+                    </div>
+                    <div style={{ fontSize: 10.5, color: 'var(--muted-2)', marginTop: 4 }}>Positive alignment</div>
                   </div>
                 </div>
-                <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden mt-2">
-                  <div className="h-full rounded-full bg-fuchsia-500 transition-all" style={{ width: `${Math.abs(c.value) * 100}%` }} />
+                <div style={{ height: 2, background: 'var(--rail)', position: 'relative', marginTop: 12 }}>
+                  <div
+                    className="transition-all"
+                    style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${Math.abs(c.value) * 100}%`, background: 'var(--amber)' }}
+                  />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Action Blueprint</h2>
-            <ArrowUpRight size={18} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Action Blueprint</h3>
+              <p className="sub">Context adjustments to deploy next.</p>
+            </div>
+            <ArrowUpRight size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Context adjustments to deploy next.</p>
-          <div className="space-y-3">
+          <div className="steps">
             {m.actions.map((a, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: a.color }} />
+              <div key={i} className="step">
+                <span className="n" style={{ borderColor: a.color, color: a.color }}>{i + 1}</span>
                 <div>
-                  <div className="text-sm font-semibold text-[var(--foreground)]">{a.title}</div>
-                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{a.desc}</p>
+                  <h5>{a.title}</h5>
+                  <p>{a.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-[var(--muted)]/30 border border-[var(--border)] rounded-lg px-3 py-2.5 text-xs text-[var(--muted-foreground)]">
+          <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px' }}>
             Execution rule: apply one context adjustment for 5-7 sessions before evaluating impact.
           </div>
         </div>
       </div>
 
       {/* ── Weekday Bias Map + High-Impact Days ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Weekday Bias Map</h2>
-            <Activity size={18} className="text-[var(--muted-foreground)]" />
+      <div className="split" style={{ marginTop: 32 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Weekday Bias Map</h3>
+              <p className="sub">Net performance concentration by weekday.</p>
+            </div>
+            <Activity size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Net performance concentration by weekday.</p>
+          <div style={{ height: 16 }} />
           {m.weekdayData.some(d => d.trades > 0) ? (
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={m.weekdayData} margin={{ top: 5, right: 40, left: 10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="wdGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#24c88a" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#24c88a" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="day" tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
-                  <YAxis yAxisId="wr" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} />
-                  <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '11px', color: 'var(--foreground)' }} />
-                  <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={2} fill="url(#wdGrad)" name="PnL" />
-                  <Line yAxisId="wr" type="monotone" dataKey="winRate" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Win Rate %" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--grid)" />
+                  <XAxis dataKey="day" tick={{ fontSize: 11, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="pnl" tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <YAxis yAxisId="wr" orientation="right" domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-2)' }} tickLine={false} axisLine={false} tickFormatter={v => `${v}%`} />
+                  <Tooltip contentStyle={{ background: 'var(--panel-2)', border: '1px solid var(--line-2)', borderRadius: '2px', fontSize: '11px', color: 'var(--text)' }} />
+                  <Area yAxisId="pnl" type="monotone" dataKey="pnl" stroke="#24c88a" strokeWidth={2} fill="url(#wdGrad)" name="PnL" />
+                  <Line yAxisId="wr" type="monotone" dataKey="winRate" stroke="#24c88a" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Win Rate %" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-[240px] flex items-center justify-center text-sm text-[var(--muted-foreground)]">Need trades for weekday analysis</div>
+            <div className="h-[240px] flex items-center justify-center">
+              <span className="empty-line" style={{ padding: 0 }}>Need trades for weekday analysis</span>
+            </div>
           )}
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-1">
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">High-Impact Days</h2>
-            <Calendar size={18} className="text-[var(--muted-foreground)]" />
+        <div className="card">
+          <span className="accent" style={{ width: 48, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>High-Impact Days</h3>
+              <p className="sub">Largest market-context outcomes in selected range.</p>
+            </div>
+            <Calendar size={16} style={{ marginLeft: 'auto', color: 'var(--muted-3)' }} />
           </div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-4">Largest market-context outcomes in selected range.</p>
           {m.highImpactDays.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div style={{ overflowX: 'auto', marginTop: 18 }}>
+              <table className="w-full" style={{ fontSize: 12.5, borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">
-                    <th className="text-left py-2 font-medium">Date</th>
-                    <th className="text-left py-2 font-medium">Regime</th>
-                    <th className="text-right py-2 font-medium">PnL</th>
-                    <th className="text-center py-2 font-medium">Trades</th>
-                    <th className="text-right py-2 font-medium">Verdict</th>
+                  <tr style={{ borderBottom: '1px solid var(--line-2)' }}>
+                    <th className="text-left" style={{ padding: '0 0 10px', fontWeight: 700, fontSize: 9, color: 'var(--muted-2)', letterSpacing: '.04em' }}>DATE</th>
+                    <th className="text-left" style={{ padding: '0 0 10px', fontWeight: 700, fontSize: 9, color: 'var(--muted-2)', letterSpacing: '.04em' }}>REGIME</th>
+                    <th className="text-right" style={{ padding: '0 0 10px', fontWeight: 700, fontSize: 9, color: 'var(--muted-2)', letterSpacing: '.04em' }}>PNL</th>
+                    <th className="text-center" style={{ padding: '0 0 10px', fontWeight: 700, fontSize: 9, color: 'var(--muted-2)', letterSpacing: '.04em' }}>TRADES</th>
+                    <th className="text-right" style={{ padding: '0 0 10px', fontWeight: 700, fontSize: 9, color: 'var(--muted-2)', letterSpacing: '.04em' }}>VERDICT</th>
                   </tr>
                 </thead>
                 <tbody>
                   {m.highImpactDays.map(d => (
-                    <tr key={d.date} className="border-t border-[var(--border)]">
-                      <td className="py-2.5 text-[var(--foreground)]">{d.date}</td>
-                      <td className="py-2.5 text-[var(--muted-foreground)]">{d.regime}</td>
-                      <td className={`py-2.5 text-right font-semibold ${pnlColor(d.pnl)}`}>{fmtPnl(d.pnl)}</td>
-                      <td className="py-2.5 text-center text-[var(--foreground)]">{d.trades}</td>
-                      <td className="py-2.5 text-right">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${d.verdict === 'Edge' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-pink-500/15 text-pink-400'}`}>
-                          {d.verdict}
+                    <tr key={d.date} style={{ borderBottom: '1px solid var(--hair)' }}>
+                      <td style={{ padding: '10px 0', color: 'var(--text-2)' }}>{d.date}</td>
+                      <td style={{ padding: '10px 0', color: 'var(--muted-2)' }}>{d.regime}</td>
+                      <td className="text-right" style={{ padding: '10px 0', fontFamily: 'var(--mono)', fontWeight: 500, color: pnlColor(d.pnl) }}>{fmtPnl(d.pnl)}</td>
+                      <td className="text-center" style={{ padding: '10px 0', fontFamily: 'var(--mono)', color: 'var(--text)' }}>{d.trades}</td>
+                      <td className="text-right" style={{ padding: '10px 0' }}>
+                        <span
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', height: 20, padding: '0 10px', borderRadius: 2,
+                            fontWeight: 700, fontSize: 9.5, letterSpacing: '.03em',
+                            border: `1px solid ${d.verdict === 'Edge' ? 'var(--green)' : 'var(--red)'}`,
+                            color: d.verdict === 'Edge' ? 'var(--green)' : 'var(--red)',
+                          }}
+                        >
+                          {d.verdict.toUpperCase()}
                         </span>
                       </td>
                     </tr>
@@ -620,7 +706,7 @@ export default function PreTradeChecklist({ checklists, strategies, trades, onAd
               </table>
             </div>
           ) : (
-            <p className="text-sm text-[var(--muted-foreground)]">No high-impact days in this range.</p>
+            <p className="empty-line">No high-impact days in this range.</p>
           )}
         </div>
       </div>

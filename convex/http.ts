@@ -5,7 +5,7 @@ import { api, internal } from "./_generated/api";
 const http = httpRouter();
 
 // ─── MT4/MT5 Expert Advisor sync webhook ────────────────────────────
-// The tradia-sync EA POSTs every closed deal here. Auth is via the
+// The atlas-sync EA POSTs every closed deal here. Auth is via the
 // per-user sync token, sent as `X-Sync-Token` header (or `token` field
 // in the JSON body for MQL5 simplicity).
 http.route({
