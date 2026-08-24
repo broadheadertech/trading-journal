@@ -1,0 +1,218 @@
+/* ------------------------------------------------------------------
+   ATLAS hero world map — procedural dot-matrix globe on a tilted plane.
+   Everything is generated from coordinates; there are no image assets.
+   ------------------------------------------------------------------ */
+
+.frame {
+  --void: #05070c;
+  --border: #182333;
+  --text: #edf2f7;
+  --muted: #4a5867;
+  --cyan: #33edc8;
+  --inset: 24px;
+
+  /* No ratio of its own — the map fills whatever box it is given, in both
+     axes. The parent decides the height. */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The map layer proper. It owns the void background and is masked so the
+   panel itself — not merely its contents — dissolves at the edges; there is
+   no hard rectangle against whatever sits behind it. The readout chrome is a
+   sibling of this element, so it stays crisp and fully opaque. */
+.canvas {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, #000 22%, #000 88%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%);
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 22%, #000 88%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* the tilted table-top the whole map lies on */
+.stage {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(30deg) scale(1.35) translateY(-2%);
+  transform-origin: 50% 50%;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- rotation loop ---------- */
+
+.scroll {
+  animation: atlasScroll 44s linear infinite;
+  will-change: transform;
+}
+
+@keyframes atlasScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-1600px); }
+}
+
+/* ---------- exchange node pulse ---------- */
+
+.pulse {
+  r: 4px;
+  opacity: 0.35;
+  animation: atlasPulse 4s ease-out infinite;
+}
+
+@keyframes atlasPulse {
+  from { r: 4px;  opacity: 0.9; }
+  to   { r: 19px; opacity: 0; }
+}
+
+/* ---------- route draw cycle ----------
+   Base styles are the resting end-state, so with prefers-reduced-motion
+   (which strips the animation) every route stays fully drawn. */
+
+.routeLine {
+  stroke-dashoffset: 0;
+  opacity: 0.7;
+  animation: atlasRouteLine 7s ease-in-out infinite;
+}
+
+.routeGlow {
+  stroke-dashoffset: 0;
+  opacity: 0.2;
+  animation: atlasRouteGlow 7s ease-in-out infinite;
+}
+
+.routeShadow {
+  stroke-dashoffset: 0;
+  opacity: 0.4;
+  animation: atlasRouteShadow 7s ease-in-out infinite;
+}
+
+@keyframes atlasRouteLine {
+  0%   { stroke-dashoffset: 1;    opacity: 0; }
+  28%  { stroke-dashoffset: 0.55; opacity: 0.85; }
+  66%  { stroke-dashoffset: 0;    opacity: 0.7; }
+  100% { stroke-dashoffset: 0;    opacity: 0; }
+}
+
+@keyframes atlasRouteGlow {
+  0%   { stroke-dashoffset: 1;    opacity: 0; }
+  28%  { stroke-dashoffset: 0.55; opacity: 0.34; }
+  66%  { stroke-dashoffset: 0;    opacity: 0.24; }
+  100% { stroke-dashoffset: 0;    opacity: 0; }
+}
+
+@keyframes atlasRouteShadow {
+  0%   { stroke-dashoffset: 1;    opacity: 0; }
+  28%  { stroke-dashoffset: 0.55; opacity: 0.5; }
+  66%  { stroke-dashoffset: 0;    opacity: 0.4; }
+  100% { stroke-dashoffset: 0;    opacity: 0; }
+}
+
+/* ---------- meridian shimmer ---------- */
+
+.meridian {
+  opacity: 0;
+  animation: atlasMeridian 9s ease-in-out infinite;
+}
+
+@keyframes atlasMeridian {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.09; }
+}
+
+/* ---------- flat overlays (outside the tilted plane) ---------- */
+
+.depthWash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 62% at 50% 88%, rgba(51, 237, 200, 0.055) 0%, rgba(51, 237, 200, 0) 62%),
+    linear-gradient(
+      180deg,
+      var(--void) 0%,
+      rgba(5, 7, 12, 0) 26%,
+      rgba(5, 7, 12, 0) 55%,
+      rgba(5, 7, 12, 0.92) 100%
+    );
+}
+
+/* Asymmetric horizontal vignette. The left edge butts against live headline
+   copy, so it holds solid background much further in — the map reads as
+   emerging from behind the text rather than crashing into it. The right
+   edge only has to hide the wrap seam. */
+.edgeFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--void) 0%,
+    rgba(5, 7, 12, 0) 22%,
+    rgba(5, 7, 12, 0) 88%,
+    var(--void) 100%
+  );
+}
+
+/* ---------- readout chrome ---------- */
+
+.chrome {
+  position: absolute;
+  font-family: var(--micro), "IBM Plex Mono", ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.stat {
+  right: var(--inset);
+  bottom: var(--inset);
+  padding: 10px 16px 11px;
+  text-align: right;
+  background: rgba(5, 7, 12, 0.82);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.statValue {
+  display: block;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.statLabel {
+  display: block;
+  margin-top: 5px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 720px) {
+  .frame {
+    --inset: 16px;
+  }
+
+  .stage {
+    transform: rotateX(24deg) scale(1.3) translateY(-2%);
+  }
+}

@@ -142,7 +142,20 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   background:linear-gradient(135deg,#001b3f 0%,#00090f 73%)}
 .hero-badge b{font-family:var(--mono);font-weight:400;font-size:22px;color:var(--text);text-shadow:0 1px 1px rgba(0,0,0,.25)}
 .hero-badge span{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--atlas-muted)}
-.hero-map{position:absolute;right:33px;top:138px;width:655px;height:418px;pointer-events:none}
+/* The map fills the hero's right side edge to edge. It bleeds up by the
+   navbar's 88px so it reaches the very top of the page — the nav is opaque
+   and sits at z-index 60, so the overlap never shows. Height comes from the
+   hero, not from the map's own ratio. */
+.hero-map{position:absolute;top:-88px;bottom:0;right:0;width:58%;
+  overflow:hidden;pointer-events:none}
+/* the world map carries its own TRADERS WORLDWIDE stat block, so the
+   standalone badge only shows at the widths where the map is hidden */
+@media(min-width:1181px){
+  /* nav (88px) + hero = exactly one viewport, so the map spans navbar top to
+     hero bottom; min-height keeps the copy from overflowing on short screens */
+  .hero{height:calc(100vh - 88px)}
+  .hero-badge{display:none}
+}
 @media(max-width:1180px){
   .hero-map{display:none}
   .hero-badge{position:static;margin-top:34px}
