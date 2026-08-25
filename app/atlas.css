@@ -411,3 +411,59 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* router */
 .route{display:none}
 .route.on{display:block}
+
+/* ================= entrance animations (play once on scroll-in) =================
+   Additive only: nothing here changes layout, colour, spacing or type — the
+   animated properties are transform, opacity and clip-path.
+
+   Each animation is declared up front but `paused`, so animation-fill-mode:both
+   paints the 0% keyframe from the very first frame (no flash of final state).
+   ScrollReveal adds `is-in` once the element is 15% visible, which simply
+   unpauses it. Iteration count is the default 1, so each plays once and holds.
+   The global prefers-reduced-motion rule strips these entirely, leaving every
+   element in its natural, fully visible state. */
+
+/* ---- A1: leak rows stagger-rise, each bar fills after its row lands ----
+   .leakrow and .leakbar are alternating sibling divs inside .leakcard, so
+   div nth-of-type 2n-1 is row n and 2n is that row's bar. */
+.leakcard .leakrow,
+.leakcard .leakbar{animation:leakRise .65s cubic-bezier(.22,1,.36,1) both paused}
+.leakcard .leakbar i{transform-origin:left;animation:leakFill .55s ease-out both paused}
+.leakcard.is-in .leakrow,
+.leakcard.is-in .leakbar,
+.leakcard.is-in .leakbar i{animation-play-state:running}
+
+@keyframes leakRise{
+  from{opacity:0;transform:translateY(48px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes leakFill{
+  from{transform:scaleX(0)}
+  to{transform:scaleX(1)}
+}
+
+/* row delay = .05s + index x .14s; bar fill starts .3s after its own row */
+.leakcard>div:nth-of-type(1),.leakcard>div:nth-of-type(2){animation-delay:.05s}
+.leakcard>div:nth-of-type(3),.leakcard>div:nth-of-type(4){animation-delay:.19s}
+.leakcard>div:nth-of-type(5),.leakcard>div:nth-of-type(6){animation-delay:.33s}
+.leakcard>div:nth-of-type(7),.leakcard>div:nth-of-type(8){animation-delay:.47s}
+.leakcard>div:nth-of-type(9),.leakcard>div:nth-of-type(10){animation-delay:.61s}
+.leakcard>div:nth-of-type(2) i{animation-delay:.35s}
+.leakcard>div:nth-of-type(4) i{animation-delay:.49s}
+.leakcard>div:nth-of-type(6) i{animation-delay:.63s}
+.leakcard>div:nth-of-type(8) i{animation-delay:.77s}
+.leakcard>div:nth-of-type(10) i{animation-delay:.91s}
+
+/* ---- B3: chart frame wipes open left to right ----
+   Scoped to .chartcard alone; it already clips its own contents and nothing
+   sits outside it, so the clip-path cannot cut off neighbouring content. */
+/* The observer watches .sec02, not .chartcard: a clipped element reports an
+   empty intersection rectangle, so a card wiped to zero width can never reach
+   its own 0.15 threshold and would stay hidden forever. */
+.chartcard{animation:chartWipe .95s cubic-bezier(.77,0,.18,1) .08s both paused}
+.sec02.is-in .chartcard{animation-play-state:running}
+
+@keyframes chartWipe{
+  from{clip-path:inset(0 100% 0 0)}
+  to{clip-path:inset(0 0 0 0)}
+}
