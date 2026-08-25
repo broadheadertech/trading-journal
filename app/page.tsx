@@ -12,6 +12,7 @@ import WhyTradersFail from '@/components/landing/WhyTradersFail';
 import Pricing from '@/components/landing/Pricing';
 import Testimonials from '@/components/landing/Testimonials';
 import Footer from '@/components/landing/Footer';
+import ScrollReveal from '@/components/landing/ScrollReveal';
 
 export default function LandingPage() {
   return (
@@ -20,6 +21,9 @@ export default function LandingPage() {
       <Hero />
       <DashboardPreview />
       <EfficiencySection />
+      {/* entrance-animation triggers — render nothing, add no markup */}
+      <ScrollReveal selector=".leakcard" />
+      <ScrollReveal selector=".sec02" />
       <AtlasMethod />
       <HowItWorks />
       <PlatformStats />
