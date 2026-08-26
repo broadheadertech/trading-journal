@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
+import DashboardScene from '@/components/landing/DashboardScene';
+import FeatureScene from '@/components/landing/FeatureScene';
 
 /* Activity heatmap cells — verbatim from the reference build's inline script.
    Suffix 'g' = green at parseInt(v)/100 opacity, 'r' = red at .4, bare = idle. */
@@ -50,6 +52,7 @@ export default function DemoPage() {
             <h3>Dashboard</h3>
             <p>Your main command center - portfolio equity curve, net P&amp;L, win rate, profit factor, activity heatmap, and trade history at a glance. All metrics update automatically as you import trades.</p>
           </div>
+          <DashboardScene>
           <div className="win" style={{ height: '520px' }}>
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
@@ -84,10 +87,22 @@ export default function DemoPage() {
             </div>
             <span className="sample">SAMPLE DATA</span>
           </div>
+          </DashboardScene>
         </div>
 
         {/* row 02 · leak detection */}
         <div className="drow flip" style={{ marginTop: '110px' }}>
+          <FeatureScene
+            flip
+            sway={9}
+            status={{ label: 'Analyzing · 78 trades', dot: 'red' }}
+            cards={[
+              { tag: 'BIGGEST LEAK', value: '−$1,420', tone: 'red', place: 'tl',
+                sub: ['Revenge Trading', '14 consecutive triggers'], pill: '⚠ Fix priority #1' },
+              { tag: 'IF ALL FIXED', value: '+$3,270', tone: 'green', place: 'br',
+                sub: ['Est. monthly recovery', 'based on 30D history'], pill: '↑ Recoverable' },
+            ]}
+          >
           <div className="win" style={{ height: '460px' }}>
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
@@ -107,6 +122,7 @@ export default function DemoPage() {
             </div>
             <span className="sample">SAMPLE DATA</span>
           </div>
+          </FeatureScene>
           <div className="copy">
             <div className="rule"></div>
             <h3>Leak Detection</h3>
@@ -121,6 +137,16 @@ export default function DemoPage() {
             <h3>Behavior Analysis</h3>
             <p>Behavior analysis tracks your discipline score over time, monitors emotional pressure across sessions, and shows whether your fixes are actually sticking week over week.</p>
           </div>
+          <FeatureScene
+            sway={10}
+            status={{ label: 'Score updated today', dot: 'green' }}
+            cards={[
+              { tag: 'DISCIPLINE SCORE', value: '78/100', tone: 'amber', place: 'tr',
+                sub: ['+14 pts this month', 'Above 90-day average'], pill: '↑ Trending up' },
+              { tag: 'CURRENT STREAK', value: '12 days', tone: 'green', place: 'bl',
+                sub: ['No rule violations', 'Personal best: 18 days'] },
+            ]}
+          >
           <div className="win" style={{ height: '400px' }}>
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
@@ -167,10 +193,22 @@ export default function DemoPage() {
             </div>
             <span className="sample">SAMPLE DATA</span>
           </div>
+          </FeatureScene>
         </div>
 
         {/* row 04 · performance */}
         <div className="drow flip" style={{ marginTop: '110px' }}>
+          <FeatureScene
+            flip
+            sway={11}
+            status={{ label: '30D window · 12 symbols' }}
+            cards={[
+              { tag: 'BEST PERFORMING', value: 'SOL/USDT', tone: 'green', place: 'tl',
+                sub: ['+$1,240 · 14 trades', 'Win rate: 71%'], pill: '↑ Your edge' },
+              { tag: 'PEAK TRADING HOUR', value: '13:00', tone: 'amber', place: 'br',
+                sub: ['3× avg P&L vs off-peak', 'New York open overlap'] },
+            ]}
+          >
           <div className="win" style={{ height: '470px' }}>
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
@@ -201,6 +239,7 @@ export default function DemoPage() {
             </div>
             <span className="sample">SAMPLE DATA</span>
           </div>
+          </FeatureScene>
           <div className="copy">
             <div className="rule"></div>
             <h3>Performance Analytics</h3>
@@ -215,6 +254,16 @@ export default function DemoPage() {
             <h3>Playbook</h3>
             <p>Define your trading rules once — max trades per session, risk limits, session hours — and track compliance automatically on every trade you import. No self-grading, no bias.</p>
           </div>
+          <FeatureScene
+            sway={9.5}
+            status={{ label: 'Auto-graded · 78 trades', dot: 'green' }}
+            cards={[
+              { tag: 'COMPLIANCE SCORE', value: '86%', tone: 'green', place: 'tr',
+                sub: ['5 of 6 rules passed', 'Up from 64% last month'], pill: '↑ +22pts this month' },
+              { tag: 'NEEDS ATTENTION', value: 'Rule 5', tone: 'red', place: 'bl',
+                sub: ['No revenge after -2R', 'Triggered 8× this month'], pill: '⚠ Fix this first' },
+            ]}
+          >
           <div className="win" style={{ height: '450px' }}>
             <span className="corner c1"></span><span className="corner c2"></span><span className="corner c3"></span><span className="corner c4"></span>
             <div className="bar"><i></i><i></i><i></i><span>atlas.app/app</span></div>
@@ -239,6 +288,7 @@ export default function DemoPage() {
             </div>
             <span className="sample">SAMPLE DATA</span>
           </div>
+          </FeatureScene>
         </div>
       </div>
 
