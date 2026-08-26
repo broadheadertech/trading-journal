@@ -137,11 +137,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 658px is the badge's y in the Figma frame, but it resolves against .wrap,
    which already sits below .hero's 109px padding-top — so it landed at 767px
    and its 52px pill crossed the hairline into .sec01. Subtract the padding. */
-.hero-badge{position:absolute;right:34px;top:549px;display:flex;align-items:center;gap:10px;
-  width:261px;height:52px;padding:0 25px;border-radius:2px;
-  background:linear-gradient(135deg,#001b3f 0%,#00090f 73%)}
-.hero-badge b{font-family:var(--mono);font-weight:400;font-size:22px;color:var(--text);text-shadow:0 1px 1px rgba(0,0,0,.25)}
-.hero-badge span{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--atlas-muted)}
+/* same chip design as the chart's JOURNALED panel and the world map's stat */
+.hero-badge{position:absolute;right:34px;top:549px;
+  width:269px;height:43px;border-radius:2px;
+  background:linear-gradient(135deg,#10396e 0%,#00090f 58%)}
+.hero-badge b{position:absolute;left:25px;top:20px;font-family:var(--mono);font-weight:400;font-size:15px;letter-spacing:.02em;color:var(--text)}
+.hero-badge span{position:absolute;left:25px;top:6px;font-weight:500;font-size:9px;letter-spacing:.02em;color:#8598b1}
 /* The map fills the hero's right side edge to edge. It bleeds up by the
    navbar's 88px so it reaches the very top of the page — the nav is opaque
    and sits at z-index 60, so the overlap never shows. Height comes from the
@@ -725,3 +726,69 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .method .step:nth-child(5) p{animation-delay:1.02s}
 
 
+
+/* ============ sec02 3D candlestick chart ============
+   Replaces the static chart image inside .chartcard. The section wrapper,
+   headline, copy and stat row are untouched; .chartcard keeps its existing
+   height and margin (and the section's clip-path wipe still applies to it). */
+
+.chart3d{
+  border:1px solid #131E2C;
+  background:linear-gradient(180deg,#070B12 0%,#05070C 100%);
+  perspective:1400px;
+  perspective-origin:50% 40%;
+  overflow:hidden;
+}
+
+.chart3d-plane{
+  position:absolute;inset:0;
+  transform:rotateX(26deg) rotateZ(-1deg) scale(1.06);
+  transform-style:preserve-3d;
+}
+
+.chart3d-canvas{display:block;width:100%;height:100%}
+
+/* depth wash — sits above the plane, never interactive */
+.chart3d-wash{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+    radial-gradient(60% 60% at 50% 95%, rgba(217,148,5,.07) 0%, rgba(217,148,5,0) 60%),
+    linear-gradient(180deg,
+      #05070C 0%,
+      rgba(5,7,12,0) 18%,
+      rgba(5,7,12,0) 72%,
+      rgba(5,7,12,.85) 100%),
+    linear-gradient(90deg,
+      #05070C 0%,
+      rgba(5,7,12,0) 7%,
+      rgba(5,7,12,0) 93%,
+      #05070C 100%);
+}
+
+/* HUD — flat, never tilted. The JOURNALED chip keeps its original .chip
+   styling untouched; it only needs lifting above the depth wash. */
+.chart3d-eyebrow{
+  position:absolute;left:22px;top:18px;z-index:5;
+  margin:0;font-family:var(--micro),ui-monospace,monospace;
+  font-size:8.5px;letter-spacing:.14em;color:var(--muted-2);
+}
+
+.chart3d .chip{z-index:5}
+
+/* right-edge price tracker — slides rather than jumping */
+.chart3d-price{
+  position:absolute;right:16px;z-index:5;transform:translateY(-50%);
+  padding:4px 9px;border-radius:2px;
+  font-family:var(--micro),ui-monospace,monospace;font-size:11px;letter-spacing:.04em;
+  color:#24C88A;background:rgba(36,200,138,.12);border:1px solid rgba(36,200,138,.34);
+  transition:top .4s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+.chart3d-price.is-down{
+  color:#F0485E;background:rgba(240,72,94,.12);border-color:rgba(240,72,94,.34);
+}
+
+/* reduced motion: chart freezes as a static snapshot, tracker steps aside */
+@media (prefers-reduced-motion:reduce){
+  .chart3d-price{display:none}
+}

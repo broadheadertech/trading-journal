@@ -178,31 +178,39 @@
   white-space: nowrap;
 }
 
+/* Matches the chart section's JOURNALED chip exactly: label on top, mono
+   value beneath, in a 269x43 blue-gradient panel. The markup order is left
+   alone — both lines are placed absolutely, so the value can sit under the
+   label without reordering the JSX. */
 .stat {
   right: var(--inset);
   bottom: var(--inset);
-  padding: 10px 16px 11px;
-  text-align: right;
-  background: rgba(5, 7, 12, 0.82);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  width: 269px;
+  height: 43px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #10396e 0%, #00090f 58%);
 }
 
 .statValue {
-  display: block;
-  font-size: 22px;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
+  position: absolute;
+  left: 25px;
+  top: 20px;
+  font-family: var(--mono), ui-monospace, monospace;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.02em;
   color: var(--text);
 }
 
 .statLabel {
-  display: block;
-  margin-top: 5px;
+  position: absolute;
+  left: 25px;
+  top: 6px;
+  font-family: var(--body), system-ui, sans-serif;
+  font-weight: 500;
   font-size: 9px;
-  letter-spacing: 0.16em;
-  color: var(--muted);
+  letter-spacing: 0.02em;
+  color: #8598b1;
 }
 
 /* ---------- responsive ---------- */
