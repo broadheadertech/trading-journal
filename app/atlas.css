@@ -467,3 +467,261 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   from{clip-path:inset(0 100% 0 0)}
   to{clip-path:inset(0 0 0 0)}
 }
+
+/* ================= testimonial carousel (3D flip) =================
+   Additive only — .quote, .byline, .avatar, .dots and .pager keep their
+   existing rules untouched; these classes only stack and flip them.
+
+   Both decks are grids with every slide in the same cell (grid-area 1/1).
+   That stacks the five slides without absolute positioning, and sizes each
+   deck to its tallest slide, so the height is fixed for good and nothing
+   below it can shift mid-flip. */
+
+.quote-deck,
+.byline-deck{display:grid;perspective:900px}
+.quote-deck>*,
+.byline-deck>*{grid-area:1/1}
+
+/* the byline slide reproduces the row .byline used to lay out directly */
+.byline-slide{display:flex;align-items:center;gap:13px}
+
+/* Resting states are plain declarations, not animation end-states, so that
+   with prefers-reduced-motion (which strips animation) the active slide is
+   simply visible and the swap becomes instant. */
+.quote-slide,
+.byline-slide{
+  opacity:0;pointer-events:none;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;          /* no mirrored text mid-rotation */
+  -webkit-backface-visibility:hidden;
+}
+.quote-slide.is-active,
+.byline-slide.is-active{opacity:1;pointer-events:auto}
+
+.quote-slide.is-leaving,
+.byline-slide.is-leaving{animation:flipOut .5s cubic-bezier(.4,0,.2,1) both}
+.quote-slide.is-active,
+.byline-slide.is-active{animation:flipIn .6s cubic-bezier(.22,1,.36,1) .15s both}
+
+@keyframes flipOut{
+  from{transform:rotateX(0) translateY(0);opacity:1}
+  to{transform:rotateX(-35deg) translateY(-10px);opacity:0}
+}
+@keyframes flipIn{
+  from{transform:rotateX(35deg) translateY(10px);opacity:0}
+  to{transform:rotateX(0) translateY(0);opacity:1}
+}
+
+/* affordance only — the dots keep their existing size, shape and colour */
+.dots i[role="button"]{cursor:pointer}
+
+/* ============ "Why Most Traders Fail" entrance (plays once) ============
+   Additive only: nothing here changes layout, spacing, type or icons. The
+   animated properties are opacity, transform and colour.
+
+   Every animation is declared up front but `paused`, so animation-fill-mode:
+   both paints the 0% keyframe from the first frame and there is no flash of
+   the final state. ScrollReveal adds `is-in` to .sec07 once the section is
+   20% visible, which simply unpauses them. The global prefers-reduced-motion
+   rule strips the animations entirely, leaving every element at full opacity
+   in its resting state. */
+
+/* left column — eyebrow, headline and body move as one unit */
+.failgrid>div:first-child{animation:leftup .5s ease-out .05s both paused}
+
+/* rows: the sweep is clipped to the row, and sits under the text and icon */
+.faillist .failrow{position:relative;overflow:hidden;
+  animation:fadein .3s ease both paused}
+.faillist .failrow::before{content:"";position:absolute;inset:0;z-index:0;
+  background:rgba(224,57,74,.12);transform:translateX(-100%);
+  animation:sweep .55s cubic-bezier(.4,0,.2,1) both paused}
+.faillist .failrow .bullet,
+.faillist .failrow h4{position:relative;z-index:1}
+/* flash on the label only — the icon squares are never touched.
+   Held at var(--text-2), the row's existing colour, so the resting
+   value after the animation is byte-identical to before it. */
+.faillist .failrow h4{animation:flash .55s ease both paused}
+
+.sec07.is-in .failgrid>div:first-child,
+.sec07.is-in .faillist .failrow,
+.sec07.is-in .faillist .failrow::before,
+.sec07.is-in .faillist .failrow h4{animation-play-state:running}
+
+@keyframes leftup{
+  0%{opacity:0;transform:translateY(10px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+@keyframes fadein{
+  0%{opacity:0}
+  100%{opacity:1}
+}
+@keyframes sweep{
+  0%{transform:translateX(-100%)}
+  45%{transform:translateX(0)}
+  100%{transform:translateX(100%)}
+}
+@keyframes flash{
+  0%,20%{color:var(--text-2)}
+  40%{color:#e0394a}
+  100%{color:var(--text-2)}
+}
+
+/* stagger — first row at .15s, then index x .13s */
+.faillist .failrow:nth-child(1),
+.faillist .failrow:nth-child(1)::before,
+.faillist .failrow:nth-child(1) h4{animation-delay:.15s}
+.faillist .failrow:nth-child(2),
+.faillist .failrow:nth-child(2)::before,
+.faillist .failrow:nth-child(2) h4{animation-delay:.28s}
+.faillist .failrow:nth-child(3),
+.faillist .failrow:nth-child(3)::before,
+.faillist .failrow:nth-child(3) h4{animation-delay:.41s}
+.faillist .failrow:nth-child(4),
+.faillist .failrow:nth-child(4)::before,
+.faillist .failrow:nth-child(4) h4{animation-delay:.54s}
+.faillist .failrow:nth-child(5),
+.faillist .failrow:nth-child(5)::before,
+.faillist .failrow:nth-child(5) h4{animation-delay:.67s}
+
+/* ============ CTA hover shimmer ============
+   Additive only: size, colour, padding, font, border, background and layout
+   are untouched. Scoped to the two hero CTAs and the navbar CTA — .btn-amber
+   and .btn-ghost elsewhere on the site are deliberately not included.
+
+   position/overflow go on the buttons themselves so the slash clips at their
+   own edges, and the pseudo-element is absolutely positioned so it can never
+   affect layout. */
+
+.hero-actions .btn-amber,
+.hero-actions .btn-ghost,
+.nav-cta{position:relative;overflow:hidden}
+
+.hero-actions .btn-amber::before,
+.hero-actions .btn-ghost::before,
+.nav-cta::before{
+  content:"";position:absolute;top:0;left:-100%;width:72%;height:100%;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.5) 50%,transparent 100%);
+  transform:skewX(-18deg);
+  pointer-events:none;
+  opacity:0;
+}
+
+/* the outline button has no fill behind it, so the slash needs more weight */
+.hero-actions .btn-ghost::before{
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.62) 50%,transparent 100%);
+}
+
+.hero-actions .btn-amber.is-shimmer::before,
+.hero-actions .btn-ghost.is-shimmer::before,
+.nav-cta.is-shimmer::before{
+  animation:shimmerSweep 1.5s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+@keyframes shimmerSweep{
+  0%{left:-100%;opacity:1}
+  100%{left:130%;opacity:1}
+}
+
+
+/* ============ "The Atlas Method" entrance (plays once) ============
+   Additive only: no layout, spacing or type changes. Animated properties are
+   opacity, transform and width.
+
+   Declared paused up front so animation-fill-mode:both paints the 0% keyframe
+   from the first frame; ScrollReveal adds `is-in` to .sec03 at 20% visibility,
+   which unpauses everything. The global prefers-reduced-motion rule strips the
+   animations, leaving every element visible at rest — and the ripple, whose
+   resting opacity is 0, never emits. */
+
+/* --- phase 5: heading group. The eyebrow, h2 and lede are siblings with no
+   wrapper, so they share one identical timeline instead of being staggered —
+   the group moves as a single unit without restructuring the markup. --- */
+.sec03>.wrap>.eyebrow,
+.sec03>.wrap>.h2,
+.sec03>.wrap>.lede-lg{animation:methodHead .55s ease-out .05s both paused}
+
+/* --- phase 1: the track line draws left to right.
+   The line is .method's own border-top. Animating .method's width would
+   squash the grid inside it and reflow all five columns for 0.9s, so the
+   border is handed to a ::before of identical colour and thickness that can
+   grow on its own. The 1px border box is kept (colour transparent) so the
+   layout is byte-identical to before. --- */
+.method{border-top-color:transparent}
+.method::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:100%;
+  background:var(--rule-soft);
+  animation:methodLine .9s ease .1s both paused}
+
+/* --- phase 2: nodes pop in with spring overshoot --- */
+.method .step .dot{animation:methodNode .35s cubic-bezier(.34,1.56,.64,1) both paused;
+  transform-origin:center}
+
+/* --- phase 3: one ripple ring per node.
+   .dot is already position:absolute, which is a containing block, and has no
+   overflow set — so the ring expands past the node without clipping and the
+   node's own box is left completely alone. Centred with a static translate so
+   only width/height/opacity animate. --- */
+.method .step .dot::after{content:"";position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:8px;height:8px;border-radius:50%;border:1.5px solid #d99405;
+  opacity:0;pointer-events:none;
+  animation:methodRipple .85s ease-out forwards paused}
+
+/* --- phase 4: titles then descriptions fade up --- */
+.method .step h4,
+.method .step p{animation:methodText .4s ease-out both paused}
+
+.sec03.is-in>.wrap>.eyebrow,
+.sec03.is-in>.wrap>.h2,
+.sec03.is-in>.wrap>.lede-lg,
+.sec03.is-in .method::before,
+.sec03.is-in .method .step .dot,
+.sec03.is-in .method .step .dot::after,
+.sec03.is-in .method .step h4,
+.sec03.is-in .method .step p{animation-play-state:running}
+
+@keyframes methodHead{
+  0%{opacity:0;transform:translateY(12px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+@keyframes methodLine{
+  0%{width:0}
+  100%{width:100%}
+}
+@keyframes methodNode{
+  0%{opacity:0;transform:scale(0)}
+  100%{opacity:1;transform:scale(1)}
+}
+@keyframes methodRipple{
+  0%{width:8px;height:8px;opacity:.8}
+  100%{width:30px;height:30px;opacity:0}
+}
+@keyframes methodText{
+  0%{opacity:0;transform:translateY(8px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+/* stagger — node + its ripple share a delay; title then description follow */
+.method .step:nth-child(1) .dot,
+.method .step:nth-child(1) .dot::after{animation-delay:.22s}
+.method .step:nth-child(2) .dot,
+.method .step:nth-child(2) .dot::after{animation-delay:.38s}
+.method .step:nth-child(3) .dot,
+.method .step:nth-child(3) .dot::after{animation-delay:.54s}
+.method .step:nth-child(4) .dot,
+.method .step:nth-child(4) .dot::after{animation-delay:.7s}
+.method .step:nth-child(5) .dot,
+.method .step:nth-child(5) .dot::after{animation-delay:.86s}
+
+.method .step:nth-child(1) h4{animation-delay:.3s}
+.method .step:nth-child(2) h4{animation-delay:.46s}
+.method .step:nth-child(3) h4{animation-delay:.62s}
+.method .step:nth-child(4) h4{animation-delay:.78s}
+.method .step:nth-child(5) h4{animation-delay:.94s}
+
+.method .step:nth-child(1) p{animation-delay:.38s}
+.method .step:nth-child(2) p{animation-delay:.54s}
+.method .step:nth-child(3) p{animation-delay:.7s}
+.method .step:nth-child(4) p{animation-delay:.86s}
+.method .step:nth-child(5) p{animation-delay:1.02s}
+
+
