@@ -376,6 +376,63 @@
   .scope li svg { flex: none; margin-top: 5px; }
   .scope li.no { color: var(--muted-2); }
 
+  /* ── scope panel animation — additive, plays once with the contact
+     section's entrance sequence (see ContactAnimated.tsx, which adds
+     .armed to .scope at the same moment it arms the email cards). Column 1
+     is "can help with" (green ticks), column 2 is "outside our scope"
+     (grey X) — the two are interleaved can/out/can/out per row so both
+     columns fill in parallel rather than one after the other. */
+  .scope li {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  .scope.armed li {
+    animation: itemIn .35s ease forwards;
+  }
+  .can-tick {
+    fill: none;
+    stroke: #24C88A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 12;
+    stroke-dashoffset: 12;
+  }
+  .out-x {
+    fill: none;
+    stroke: #4A5867;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 8;
+    stroke-dashoffset: 8;
+  }
+  .scope.armed > div:nth-child(1) li:nth-child(1) { animation-delay: .9s; }
+  .scope.armed > div:nth-child(1) li:nth-child(2) { animation-delay: 1.03s; }
+  .scope.armed > div:nth-child(1) li:nth-child(3) { animation-delay: 1.16s; }
+  .scope.armed > div:nth-child(1) li:nth-child(4) { animation-delay: 1.29s; }
+  .scope.armed > div:nth-child(1) li:nth-child(5) { animation-delay: 1.42s; }
+  .scope.armed > div:nth-child(2) li:nth-child(1) { animation-delay: .95s; }
+  .scope.armed > div:nth-child(2) li:nth-child(2) { animation-delay: 1.08s; }
+  .scope.armed > div:nth-child(2) li:nth-child(3) { animation-delay: 1.21s; }
+  .scope.armed > div:nth-child(2) li:nth-child(4) { animation-delay: 1.34s; }
+  .scope.armed > div:nth-child(2) li:nth-child(5) { animation-delay: 1.47s; }
+
+  .scope.armed > div:nth-child(1) li:nth-child(1) .can-tick { animation: tickDraw .4s ease .9s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(2) .can-tick { animation: tickDraw .4s ease 1.03s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(3) .can-tick { animation: tickDraw .4s ease 1.16s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(4) .can-tick { animation: tickDraw .4s ease 1.29s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(5) .can-tick { animation: tickDraw .4s ease 1.42s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(1) .out-x { animation: xDraw .3s ease .95s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(2) .out-x { animation: xDraw .3s ease 1.08s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(3) .out-x { animation: xDraw .3s ease 1.21s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(4) .out-x { animation: xDraw .3s ease 1.34s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(5) .out-x { animation: xDraw .3s ease 1.47s forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scope li { opacity: 1; transform: none; }
+    .can-tick, .out-x { stroke-dashoffset: 0; }
+  }
+
   /* ── numbered principle lists (/about) ──────────────────────────────── */
   .numbered {
     display: grid;
@@ -549,4 +606,13 @@
 }
 @keyframes riseIn {
   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes itemIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes tickDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes xDraw {
+  to { stroke-dashoffset: 0; }
 }

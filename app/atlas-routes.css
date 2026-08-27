@@ -633,14 +633,172 @@
     color: var(--amber);
     margin: 22px 0 0;
   }
-  /* the trailing arrow glyph, parked bottom-right */
-  .channel > svg {
+
+  /* ── contact section animation — entrance sequence, plays once ───────
+     Additive on top of the .channels/.channel/.scope rules above: new
+     classes and SVG elements layered on, none of the existing declarations
+     removed. The base (unarmed) state of every one-shot element is its own
+     hidden/initial appearance; `.armed` (added by ContactAnimated.tsx)
+     unpauses each element's own animation via its own animation-delay, so
+     one class addition fires the whole sequence in the right order — the
+     per-card and per-row stagger lives entirely in :nth-child selectors
+     below, not in JS. */
+
+  /* 1. connector web — sits behind the cards, coordinates are computed in
+     JS since they depend on real layout, not a fixed viewBox */
+  .channels { position: relative; }
+  .channel { z-index: 1; }
+  .web-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .web-line {
+    stroke: #182333;
+    stroke-width: 1;
+    stroke-dasharray: 4 6;
+    opacity: 0;
+  }
+  .channels.armed .web-line {
+    animation: webLineIn 1.2s ease .3s forwards;
+  }
+
+  /* 2. card entrance */
+  .channel {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: border-color .3s ease, transform .3s ease;
+  }
+  .channels.armed .channel {
+    animation: cardIn .55s cubic-bezier(.22, 1, .36, 1) forwards;
+  }
+  .channels.armed .channel:nth-child(2) { animation-delay: .05s; }
+  .channels.armed .channel:nth-child(3) { animation-delay: .18s; }
+  .channels.armed .channel:nth-child(4) { animation-delay: .31s; }
+  .channels.armed .channel:nth-child(5) { animation-delay: .44s; }
+
+  /* new amber hover border + lift, layered on top of the existing grey
+     border-color/background hover above (border-color is simply the last
+     declaration to win; background is untouched) */
+  .channel:hover {
+    border-color: rgba(217, 148, 5, .45);
+    transform: translateY(-2px);
+  }
+  /* amber sheen sweep */
+  .channel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(217, 148, 5, .08), transparent);
+    transition: left .6s cubic-bezier(.4, 0, .2, 1);
+    pointer-events: none;
+  }
+  .channel:hover::before { left: 100%; }
+
+  /* 3 + 4. envelope seal + signal ping — same 15px gap role in .top as the
+     icon it replaces; the outer box is 22x15 rather than the old 30x21
+     glyph's bounding box, a deliberate size the spec gives explicitly. */
+  .env {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 22px;
+    height: 15px;
+    border: 1.5px solid #D99405;
+    border-radius: 1px;
+  }
+  .env-seal-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .env-seal {
+    fill: none;
+    stroke: #D99405;
+    stroke-width: 1.5;
+    stroke-dasharray: 34;
+    stroke-dashoffset: 34;
+  }
+  .channels.armed .channel:nth-child(2) .env-seal { animation: sealDraw .8s ease .85s forwards; }
+  .channels.armed .channel:nth-child(3) .env-seal { animation: sealDraw .8s ease .98s forwards; }
+  .channels.armed .channel:nth-child(4) .env-seal { animation: sealDraw .8s ease 1.11s forwards; }
+  .channels.armed .channel:nth-child(5) .env-seal { animation: sealDraw .8s ease 1.24s forwards; }
+
+  .env-ping {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid #D99405;
+    border-radius: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .channels.armed .channel:nth-child(2) .env-ping { animation: envPing 1.4s ease .85s forwards; }
+  .channels.armed .channel:nth-child(3) .env-ping { animation: envPing 1.4s ease .98s forwards; }
+  .channels.armed .channel:nth-child(4) .env-ping { animation: envPing 1.4s ease 1.11s forwards; }
+  .channels.armed .channel:nth-child(5) .env-ping { animation: envPing 1.4s ease 1.24s forwards; }
+
+  /* seal retracts on hover — gated on .entered (added 1.5s after trigger)
+     so it can never collide with the entrance draw above */
+  .channels.entered .channel:hover .env-seal {
+    animation: sealOpen .5s ease forwards;
+  }
+
+  /* 5. caret on the email address, once every card has finished entering */
+  .channels.typed .channel .mail::after {
+    content: "";
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #D99405;
+    vertical-align: middle;
+    margin-left: 3px;
+    animation: caret 1s step-end infinite;
+  }
+  .channel:hover .mail::after { opacity: 0; }
+
+  /* 6. send arrow slide + paper-plane trail */
+  .arrow-wrap {
     position: absolute;
     right: 28px;
     bottom: 30px;
     opacity: .55;
   }
-  .channel:hover > svg { opacity: 1; }
+  .channel:hover .arrow-wrap { opacity: 1; }
+  .arrow-wrap .go {
+    display: block;
+    transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+  }
+  .channel:hover .arrow-wrap .go { transform: translateX(6px); }
+  .arrow-wrap::before,
+  .arrow-wrap::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    height: 1.5px;
+    background: #D99405;
+    border-radius: 1px;
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  .arrow-wrap::before { width: 3px; left: -6px; transition: all .3s ease .05s; }
+  .arrow-wrap::after  { width: 3px; left: -14px; transition: all .3s ease; }
+  .channel:hover .arrow-wrap::before { opacity: .8; left: -10px; }
+  .channel:hover .arrow-wrap::after  { opacity: .4; left: -20px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .channel { opacity: 1; transform: none; }
+    .web-line { opacity: .55; }
+    .env-seal { stroke-dashoffset: 0; }
+    .channel::before { content: none; }
+  }
+
+  @media (max-width: 768px) {
+    .channel:hover { transform: none; }
+    .arrow-wrap::before,
+    .arrow-wrap::after { display: none; }
+  }
 
   /* ══════════════════════════════════════════════════════════════════════
      RESPONSIVE
@@ -692,4 +850,26 @@
   @media (max-width: 560px) {
     .brokgrid   { grid-template-columns: minmax(0, 1fr); }
   }
+}
+
+/* contact section animation keyframes — top level, since @keyframes may not
+   sit inside the nested .atlas-site rule above */
+@keyframes webLineIn {
+  to { opacity: .55; }
+}
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sealDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes envPing {
+  0% { opacity: .7; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.3); }
+}
+@keyframes sealOpen {
+  to { stroke-dashoffset: 34; opacity: .4; }
+}
+@keyframes caret {
+  50% { opacity: 0; }
 }

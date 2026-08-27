@@ -5,6 +5,50 @@ import { useState } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
+import ContactAnimated from '@/components/landing/ContactAnimated';
+
+/* Stroke-animatable envelope, replacing the old single flat-fill SVG icon.
+   Same role in the .top flex row (flex: none, 15px gap to the label) — see
+   the "Envelope SVG dimensions" note in the CSS for the one deliberate
+   size deviation. */
+function EnvelopeIcon() {
+  return (
+    <span className="env" aria-hidden="true">
+      <svg className="env-seal-svg" viewBox="0 0 22 15" fill="none">
+        <path className="env-seal" d="M0 0 L11 8 L22 0" />
+      </svg>
+      <span className="env-ping" />
+    </span>
+  );
+}
+
+/* Wraps the existing send arrow so the hover trail dashes (::before/::after)
+   have their own anchor, independent of the arrow's own slide transform. */
+function SendArrow() {
+  return (
+    <span className="arrow-wrap">
+      <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+    </span>
+  );
+}
+
+/* Stroke-animatable replacements for the scope list's static tick/X icons.
+   Only the 10 list-item icons are swapped — the two column-header icons
+   (h4.yes / h4.no) are titles, not staggered "rows", and are left as-is. */
+function CanTick() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <polyline className="can-tick" points="2,6 5,9 10,3" />
+    </svg>
+  );
+}
+function OutX() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path className="out-x" d="M3,3 L9,9 M9,3 L3,9" />
+    </svg>
+  );
+}
 
 const FAQ: { q: string; a?: string }[] = [
   {
@@ -39,25 +83,37 @@ export default function ContactPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '72px' }}>
         <div className="wrap">
           <div className="channels">
+            {/* connector web — purely decorative, sits behind the cards;
+                line coordinates are filled in by ContactAnimated once the
+                cards have their real rendered positions */}
+            <svg className="web-svg" aria-hidden="true">
+              <line className="web-line" />
+              <line className="web-line" />
+              <line className="web-line" />
+              <line className="web-line" />
+              <line className="web-line" />
+              <line className="web-line" />
+            </svg>
+
             <a className="channel" href="mailto:support@atlas.app">
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Product &amp; onboarding</span></div>
+              <div className="top"><EnvelopeIcon /><span className="lbl">Product &amp; onboarding</span></div>
               <p className="mail">support@atlas.app</p>
-              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+              <SendArrow />
             </a>
             <a className="channel" href="mailto:sales@atlas.app">
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Pricing &amp; plans</span></div>
+              <div className="top"><EnvelopeIcon /><span className="lbl">Pricing &amp; plans</span></div>
               <p className="mail">sales@atlas.app</p>
-              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+              <SendArrow />
             </a>
             <a className="channel" href="mailto:ops@atlas.app" style={{ marginTop: '32px' }}>
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Integrations &amp; imports</span></div>
+              <div className="top"><EnvelopeIcon /><span className="lbl">Integrations &amp; imports</span></div>
               <p className="mail">ops@atlas.app</p>
-              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+              <SendArrow />
             </a>
             <a className="channel" href="mailto:security@atlas.app" style={{ marginTop: '32px' }}>
-              <div className="top"><svg width="30" height="21" viewBox="0 0 30 21" fill="none"><rect x=".65" y=".65" width="28.7" height="19.7" rx="2" stroke="#d99405" strokeWidth="1.3"/><path d="M0 2 L15 14 L30 2" stroke="#d99405" strokeWidth="1.3"/></svg><span className="lbl">Security &amp; privacy</span></div>
+              <div className="top"><EnvelopeIcon /><span className="lbl">Security &amp; privacy</span></div>
               <p className="mail">security@atlas.app</p>
-              <svg className="go" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 0 L16 7 L9 14 M0 7 H14" stroke="#d99405" strokeWidth="1.5"/></svg>
+              <SendArrow />
             </a>
           </div>
 
@@ -66,21 +122,21 @@ export default function ContactPage() {
             <div>
               <h4 className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>WHAT WE CAN HELP WITH</h4>
               <ul>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Product and workflow questions</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Import and integration guidance</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Plan and pricing questions</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Security and privacy requests</li>
-                <li className="yes"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M0 5.5 L5 11 L14 0" stroke="#24c88a" strokeWidth="2"/></svg>Partnership and collaboration inquiries</li>
+                <li className="yes"><CanTick />Product and workflow questions</li>
+                <li className="yes"><CanTick />Import and integration guidance</li>
+                <li className="yes"><CanTick />Plan and pricing questions</li>
+                <li className="yes"><CanTick />Security and privacy requests</li>
+                <li className="yes"><CanTick />Partnership and collaboration inquiries</li>
               </ul>
             </div>
             <div>
               <h4 className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#5c6b7e" strokeWidth="1.6"/></svg>OUTSIDE OUR SCOPE</h4>
               <ul>
-                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Investment advice</li>
-                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Trade execution or signals</li>
-                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Buy/sell recommendations</li>
-                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Managed trading</li>
-                <li className="no"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M0 0 L11 11 M11 0 L0 11" stroke="#3a4a5c" strokeWidth="1.6"/></svg>Guaranteed profitability claims</li>
+                <li className="no"><OutX />Investment advice</li>
+                <li className="no"><OutX />Trade execution or signals</li>
+                <li className="no"><OutX />Buy/sell recommendations</li>
+                <li className="no"><OutX />Managed trading</li>
+                <li className="no"><OutX />Guaranteed profitability claims</li>
               </ul>
             </div>
           </div>
@@ -121,6 +177,7 @@ export default function ContactPage() {
         </div>
       </div>
 
+      <ContactAnimated />
       <Footer />
     </div>
   );
