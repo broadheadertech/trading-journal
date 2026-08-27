@@ -2,13 +2,18 @@
 
 import { useEffect } from 'react';
 
-/* Homepage stat count-up. Display-only: it rewrites nothing but the numeric
-   portion of text already on the page, and only after the number scrolls into
-   view. No markup, classes or data attributes are added — targets are found by
-   the classes the stat blocks already carry. */
+/* Homepage stat odometer reveal. Display-only: it rewrites nothing but the
+   numeric portion of text already on the page, and only after the number
+   scrolls into view. No markup is added to the tree until the moment the
+   animation is about to run — until then the server-rendered plain text is
+   all that exists (progressive enhancement, and the reduced-motion/no-JS
+   fallback for free). Targets are found by the classes the stat blocks
+   already carry. */
 
-const DURATION = 1800;
-const STAGGER = 120;
+/* The 1.1s / cubic-bezier(.16,1,.3,1) reel duration and easing live in
+   app/atlas.css's .odo-spin rule — nothing here drives per-frame timing. */
+const DIGIT_STAGGER = 80;
+const GROUP_STAGGER = 150;
 const THRESHOLD = 0.25;
 
 /* Stat figures. Deliberately an allowlist rather than "every bold element":
@@ -35,20 +40,41 @@ type Target = {
   el: HTMLElement;
   original: string;
   prefix: string;
+  numText: string;
   suffix: string;
-  end: number;
-  decimals: number;
-  grouped: boolean;
-  delay: number;
+  groupDelay: number;
 };
 
-function format(value: number, decimals: number, grouped: boolean) {
-  return grouped
-    ? value.toLocaleString('en-US', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      })
-    : value.toFixed(decimals);
+const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+function escapeHtml(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* Builds the per-digit odometer markup for one stat, matching t.original
+   character-for-character once every strip settles. Digits become vertical
+   reels; everything else (commas, +/×, unit text) is plain static text. */
+function buildOdometerHTML(t: Target): string {
+  let html = escapeHtml(t.prefix);
+  let digitIndex = 0;
+
+  for (const ch of t.numText) {
+    if (ch >= '0' && ch <= '9') {
+      const finalDigit = Number(ch);
+      // 9 wraps: the overshoot spins one step past the last real digit, so a
+      // duplicate 0 is appended for it to land on — the settle from there
+      // back up to the real 9 is a continuous, in-view scroll, not a jump.
+      const reel = finalDigit === 9 ? [...DIGITS, '0'] : DIGITS;
+      const delay = t.groupDelay + digitIndex * DIGIT_STAGGER;
+      const strip = reel.map((d) => `<span>${d}</span>`).join('');
+      html += `<span class="odo-digit"><span class="odo-strip" style="--final:${finalDigit};animation-delay:${delay}ms">${strip}</span></span>`;
+      digitIndex += 1;
+    } else {
+      html += escapeHtml(ch);
+    }
+  }
+
+  return html + escapeHtml(t.suffix);
 }
 
 export default function StatCountUp() {
@@ -63,64 +89,41 @@ export default function StatCountUp() {
     const targets: Target[] = [];
 
     // read every original value once, up front — this is the source of truth
-    // for both the end value and the formatting
+    // for both the digit reels and the final resting text
     document.querySelectorAll<HTMLElement>(TARGETS).forEach((el) => {
       const original = el.textContent ?? '';
       const match = original.trim().match(STAT_RE);
       if (!match) return; // not a standalone number — leave it alone
 
       const [, prefix, numText, suffix] = match;
-      const end = parseFloat(numText.replace(/,/g, ''));
-      if (!Number.isFinite(end)) return;
+      if (!Number.isFinite(parseFloat(numText.replace(/,/g, '')))) return;
 
       const group = el.closest(GROUPS) ?? el;
       const index = groupCounts.get(group) ?? 0;
       groupCounts.set(group, index + 1);
 
-      targets.push({
-        el,
-        original,
-        prefix,
-        suffix,
-        end,
-        decimals: numText.includes('.') ? numText.split('.')[1].length : 0,
-        grouped: numText.includes(','),
-        delay: index * STAGGER,
-      });
+      targets.push({ el, original, prefix, numText, suffix, groupDelay: index * GROUP_STAGGER });
     });
 
     if (!targets.length) return;
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const frames = new Map<HTMLElement, number>();
+    const byElement = new Map(targets.map((t) => [t.el, t]));
 
     const run = (t: Target) => {
-      const startedAt = performance.now();
-      const scale = Math.pow(10, t.decimals);
-
-      const step = (now: number) => {
-        // clamped so a backgrounded tab resumes at the end rather than
-        // overshooting on a huge elapsed delta
-        const elapsed = Math.min(now - startedAt, DURATION);
-        const progress = elapsed / DURATION;
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(eased * t.end * scale) / scale;
-
-        if (elapsed < DURATION) {
-          t.el.textContent = t.prefix + format(current, t.decimals, t.grouped) + t.suffix;
-          frames.set(t.el, requestAnimationFrame(step));
-        } else {
-          // restore the original string verbatim so the resting value is
-          // character-for-character what the server rendered
-          t.el.textContent = t.original;
-          frames.delete(t.el);
-        }
-      };
-
-      frames.set(t.el, requestAnimationFrame(step));
+      // DOM is untouched until this exact moment — nothing before this line
+      // mutates the page.
+      t.el.setAttribute('aria-label', t.original);
+      t.el.innerHTML = buildOdometerHTML(t);
+      // let the resting (translateY(0)) frame paint before the animation
+      // class is applied, so every strip visibly starts from the top.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          t.el.querySelectorAll<HTMLElement>('.odo-strip').forEach((strip) => {
+            strip.classList.add('odo-spin');
+          });
+        });
+      });
     };
-
-    const byElement = new Map(targets.map((t) => [t.el, t]));
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -128,8 +131,7 @@ export default function StatCountUp() {
           if (!entry.isIntersecting) continue;
           const target = byElement.get(entry.target as HTMLElement);
           io.unobserve(entry.target); // fires once per element, never resets
-          if (!target) continue;
-          timers.push(setTimeout(() => run(target), target.delay));
+          if (target) run(target);
         }
       },
       { threshold: THRESHOLD },
@@ -139,10 +141,9 @@ export default function StatCountUp() {
 
     return () => {
       io.disconnect();
-      timers.forEach(clearTimeout);
-      frames.forEach((id) => cancelAnimationFrame(id));
       // leave every number showing its true value
       targets.forEach((t) => {
+        t.el.removeAttribute('aria-label');
         t.el.textContent = t.original;
       });
     };

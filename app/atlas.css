@@ -167,6 +167,78 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero-checks{grid-template-columns:1fr}
 }
 
+/* ---- hero load-in: camera-focus reveal ----
+   Fires once on mount (no scroll trigger, no repeat) — plain animation-delay
+   is enough since there is no trigger point other than initial paint. The
+   amber word gets its own later, heavier-blur pass; wrapping it and the rest
+   of the headline in one parent animation would force them to sync, which
+   the two-speed "resolve" effect depends on NOT happening. */
+@media (prefers-reduced-motion:no-preference){
+  .hero-eyebrow,.hero h1,.hero-copy,.hero-actions,.hero-checks,.hero-badge{
+    opacity:0;filter:blur(8px);transform:translateY(6px) scale(.995);
+    animation:heroFocusIn .95s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  .hero-eyebrow{animation-delay:.12s}
+  .hero h1{animation-delay:.28s}
+  .hero-copy{animation-delay:.52s}
+  .hero-actions{animation-delay:.70s}
+  .hero-checks{animation-delay:.86s}
+  /* the mobile/narrow-viewport stat badge (the map's own chrome.stat covers
+     the >=1181px case — see AtlasWorldMap.module.css) */
+  .hero-badge{animation-duration:.8s;animation-delay:1.05s}
+  .hero h1 em{
+    opacity:0;filter:blur(10px);transform:none;
+    animation:heroFocusInAmber .8s cubic-bezier(.22,1,.36,1) .58s forwards;
+  }
+}
+/* ---- stat odometer reveal ----
+   Markup is injected by StatCountUp.tsx only once its IntersectionObserver
+   fires, so a reduced-motion visitor (or JS-disabled) never sees any of this
+   — the server-rendered plain number is all that ever exists for them.
+   overflow:hidden on .odo-digit is load-bearing: without it the whole 0-9
+   reel is visible instead of a single windowed digit.
+
+   Several stat groups (.hero-badge, .stat, .num, .edge .kpi) already carry a
+   bare "X span{...}" rule for their own static unit-label span (e.g. "TRADERS
+   WORLDWIDE"). Those are unscoped descendant selectors, so they also match
+   these newly-injected spans and, at equal specificity, win on source order
+   — stomping display/font-size/color with values meant for a small caption,
+   not a digit. The !importants below are a deliberate, narrow override of
+   that pre-existing pattern, not a fight with it. */
+.odo-digit{
+  display:inline-block!important;height:1em;overflow:hidden;position:relative;
+  vertical-align:top;font-variant-numeric:tabular-nums;
+  font-size:inherit!important;font-weight:inherit!important;color:inherit!important;
+  letter-spacing:normal!important;margin:0!important;
+}
+.odo-strip{
+  display:flex!important;flex-direction:column;transform:translateY(0);
+  font-size:inherit!important;font-weight:inherit!important;color:inherit!important;
+  letter-spacing:normal!important;margin:0!important;
+}
+.odo-strip span{
+  display:block!important;height:1em;line-height:1em;
+  font-size:inherit!important;font-weight:inherit!important;color:inherit!important;
+  letter-spacing:inherit!important;margin:0!important;
+}
+.odo-strip.odo-spin{
+  animation:odoSpin 1.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes odoSpin{
+  0%{transform:translateY(0)}
+  70%{transform:translateY(calc(-1em * (var(--final) + 1)))}
+  100%{transform:translateY(calc(-1em * var(--final)))}
+}
+
+@keyframes heroFocusIn{
+  0%{opacity:0;filter:blur(8px);transform:translateY(6px) scale(.995)}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+}
+@keyframes heroFocusInAmber{
+  0%{opacity:0;filter:blur(10px)}
+  100%{opacity:1;filter:blur(0)}
+}
+
 /* two-column section head used across the page */
 .sechead{display:grid;grid-template-columns:1fr 400px;gap:40px;align-items:start}
 .sechead .right{padding-top:16px}
@@ -584,6 +656,87 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .faillist .failrow:nth-child(5)::before,
 .faillist .failrow:nth-child(5) h4{animation-delay:.67s}
 
+/* ============ solution-card reveal (plays once) ============
+   Fires from its own IntersectionObserver on .solve (see
+   WhyTradersFailAnimated.tsx), independent of the .sec07.is-in fail-row
+   entrance above — by the time .solve is 25% visible the fail rows have
+   long since played and settled, so the two never race.
+
+   The fail rows use transition, not animation: they are moving to a new
+   permanent resting state, not playing a one-shot effect, and must not
+   snap back. Every one-shot piece (card, bloom, rule, heading, body) keeps
+   its hidden initial state scoped to prefers-reduced-motion:no-preference,
+   so a reduced-motion visitor never inherits a hidden resting state the
+   (stripped) animation would otherwise have been responsible for revealing
+   — solve/bloom/rule/words/paragraph simply render at their plain, always-
+   visible default, and the fail rows are never dimmed at all. */
+
+.failrow{transition:opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1), filter .6s ease}
+/* animation:none hands opacity back from the row's own earlier entrance
+   (.faillist .failrow{animation:fadein ... both}, above) — fill-mode:both
+   keeps permanent hold of opacity after that animation finishes, which
+   would otherwise silently block this transition from ever taking effect. */
+.sec07.solved .failrow{opacity:.32;transform:translateY(5px);filter:blur(.4px);animation:none}
+.sec07.solved .faillist .failrow:nth-child(1){transition-delay:.04s}
+.sec07.solved .faillist .failrow:nth-child(2){transition-delay:.10s}
+.sec07.solved .faillist .failrow:nth-child(3){transition-delay:.16s}
+.sec07.solved .faillist .failrow:nth-child(4){transition-delay:.22s}
+.sec07.solved .faillist .failrow:nth-child(5){transition-delay:.28s}
+
+/* bloom sits behind .solve (earlier in DOM order, no z-index conflict) but
+   above .sec07's own background — .wrap is already position:relative. */
+.solve-bloom{position:absolute;left:0;right:0;bottom:-20px;height:100px;
+  background:radial-gradient(60% 100% at 50% 100%,rgba(217,148,5,.16),transparent 70%);
+  pointer-events:none;z-index:0}
+.solve{position:relative;z-index:1}
+.solve h3 .w{display:inline-block}
+
+@media (prefers-reduced-motion:no-preference){
+  .solve{opacity:0;transform:translateY(26px) scale(.985);box-shadow:0 0 0 rgba(217,148,5,0)}
+  .sec07.solved .solve{animation:solveLift .85s cubic-bezier(.22,1,.36,1) .35s forwards}
+
+  .solve-bloom{opacity:0}
+  .sec07.solved .solve-bloom{animation:fadein 1.1s ease .5s forwards}
+
+  .solve::before{transform:scaleX(0);transform-origin:left}
+  .sec07.solved .solve::before{animation:ruleDraw .55s cubic-bezier(.4,0,.2,1) .85s forwards}
+
+  .solve h3 .w{opacity:0;transform:translateY(8px)}
+  .sec07.solved .solve h3 .w{animation:wordIn .4s cubic-bezier(.22,1,.36,1) forwards}
+  .sec07.solved .solve h3 .w:nth-child(1){animation-delay:.95s}
+  .sec07.solved .solve h3 .w:nth-child(2){animation-delay:1.01s}
+  .sec07.solved .solve h3 .w:nth-child(3){animation-delay:1.07s}
+  .sec07.solved .solve h3 .w:nth-child(4){animation-delay:1.13s}
+  .sec07.solved .solve h3 .w:nth-child(5){animation-delay:1.19s}
+  .sec07.solved .solve h3 .w:nth-child(6){animation-delay:1.25s}
+  .sec07.solved .solve h3 .w:nth-child(7){animation-delay:1.31s}
+
+  .solve p{opacity:0}
+  .sec07.solved .solve p{animation:fadein .6s ease 1.35s forwards}
+}
+
+@keyframes solveLift{
+  0%{opacity:0;transform:translateY(26px) scale(.985);box-shadow:0 0 0 rgba(217,148,5,0)}
+  100%{opacity:1;transform:translateY(0) scale(1);box-shadow:0 -2px 40px rgba(217,148,5,.08),0 14px 40px rgba(0,0,0,.5)}
+}
+@keyframes ruleDraw{
+  0%{transform:scaleX(0)}
+  100%{transform:scaleX(1)}
+}
+@keyframes wordIn{
+  0%{opacity:0;transform:translateY(8px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+/* mobile: shorter lift distance, no scale — same keyframe name, so the
+   later (matching) definition simply wins over the desktop one above. */
+@media (max-width:767px){
+  @keyframes solveLift{
+    0%{opacity:0;transform:translateY(16px);box-shadow:0 0 0 rgba(217,148,5,0)}
+    100%{opacity:1;transform:translateY(0);box-shadow:0 -2px 40px rgba(217,148,5,.08),0 14px 40px rgba(0,0,0,.5)}
+  }
+}
+
 /* ============ CTA hover shimmer ============
    Additive only: size, colour, padding, font, border, background and layout
    are untouched. Scoped to the two hero CTAs and the navbar CTA — .btn-amber
@@ -816,43 +969,64 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .hiw3d-stage { perspective: 900px; perspective-origin: 50% 30%; }
 
-.hiw3d-card { position: relative; transform-style: preserve-3d; }
+.hiw3d-card {
+  position: relative; transform-style: preserve-3d;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
 
 /* entrance, then ambient float once the entrance has finished (delay ==
    that card's own entrance delay + duration, so the handoff is seamless —
    float's default fill-mode is `none`, so it contributes nothing to
    `transform` until its delay elapses and the entrance is left in sole
-   control up to that point). */
-.hiw3d-c1 { transform: rotateX(14deg) rotateY(12deg);
+   control up to that point).
+
+   Resting tilt cut from 14-16deg to 9-10deg (and the float peak scaled down
+   by the same per-card, per-axis ratio) to reduce the angle the browser has
+   to resample .face's text/borders through — steeper angles make ordinary
+   subpixel antialiasing read as noticeably softer. translateZ(0) is prefixed
+   onto every 3D-transformed element on this card (card/panel/face/badge) to
+   keep them on one consistent GPU compositing path for the whole animation,
+   rather than switching layers mid-flight. */
+.hiw3d-c1 { transform: translateZ(0) rotateX(9deg) rotateY(7deg);
   animation: hiw3dEnter1 .75s cubic-bezier(.22,1,.36,1) .05s both paused,
              hiw3dFloat1 8s ease-in-out .8s infinite paused; }
-.hiw3d-c2 { transform: rotateX(16deg) rotateY(0deg);
+.hiw3d-c2 { transform: translateZ(0) rotateX(10deg) rotateY(0deg);
   animation: hiw3dEnter2 .75s cubic-bezier(.22,1,.36,1) .2s both paused,
              hiw3dFloat2 9s ease-in-out .95s infinite paused; }
-.hiw3d-c3 { transform: rotateX(14deg) rotateY(-12deg);
+.hiw3d-c3 { transform: translateZ(0) rotateX(9deg) rotateY(-7deg);
   animation: hiw3dEnter3 .75s cubic-bezier(.22,1,.36,1) .35s both paused,
              hiw3dFloat3 7.5s ease-in-out 1.1s infinite paused; }
 
 .hiw3d-stage.is-in .hiw3d-card { animation-play-state: running; }
 
-.hiw3d-panel { position: relative; transform-style: preserve-3d; }
+.hiw3d-panel {
+  position: relative; transform-style: preserve-3d;
+  transform: translateZ(0);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
 
 /* ---------- side edges — fake thickness, never affect layout ---------- */
 .hiw3d-edge-l {
   position: absolute; top: 4px; bottom: 4px; left: -6px; width: 8px;
   border-radius: 8px 0 0 8px;
   background: linear-gradient(90deg, #020406, #040709);
-  border: 1px solid #0A1018; border-right: 0;
+  border: 1.5px solid #0A1018; border-right: 0;
   filter: brightness(.6);
   transform: translateZ(-4px);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 .hiw3d-edge-b {
   position: absolute; bottom: -6px; left: 4px; right: 4px; height: 8px;
   border-radius: 0 0 8px 8px;
   background: linear-gradient(180deg, #040709, #020406);
-  border: 1px solid #0A1018; border-top: 0;
+  border: 1.5px solid #0A1018; border-top: 0;
   filter: brightness(.7);
   transform: translateZ(-4px);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 
 /* ---------- face — the visible surface ---------- */
@@ -862,11 +1036,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   border-radius: 8px;
   overflow: hidden;
   background: linear-gradient(160deg, #0D1522 0%, #080D14 60%, #060A11 100%);
-  border: 1px solid #1A2840;
+  border: 1.5px solid #1A2840;
   border-top-color: #2A3F5A;
   border-left-color: #1E3048;
-  box-shadow: -14px 28px 48px rgba(0,0,0,.6), -4px 8px 16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
+  box-shadow: -6px 10px 16px rgba(0,0,0,.45), -14px 24px 36px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
   padding: 20px 20px 24px;
+  transform: translateZ(0);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 .hiw3d-face::before {
   content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
@@ -885,12 +1062,47 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   padding: 3px 8px;
   border-radius: 2px;
   background: #08111E;
-  border: 1px solid rgba(217,148,5,.55);
+  border: 1.5px solid rgba(217,148,5,.55);
   color: #D99405;
   font-family: var(--micro), ui-monospace, monospace;
   font-size: 8.5px; font-weight: 700; letter-spacing: .14em;
   box-shadow: 0 4px 14px rgba(0,0,0,.55), inset 0 0 0 1px rgba(217,148,5,.1);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
+
+/* ---------- text sharpness under the tilt ----------
+   Scoped to .face's actual text leaves only (never their wrapping rows/
+   icons) — translateZ(0.01px) on every wrapper would multiply compositing
+   layers for no benefit, so it goes only on the elements that render glyphs. */
+.hiw3d-face,
+.hiw3d-drop small,
+.hiw3d-row span:not(.hiw3d-icon),
+.hiw3d-hd,
+.hiw3d-leak-top span,
+.hiw3d-leak-top b,
+.hiw3d-weekval,
+.hiw3d-weekbar b,
+.hiw3d-score-badge {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.hiw3d-drop small,
+.hiw3d-row span:not(.hiw3d-icon),
+.hiw3d-hd,
+.hiw3d-leak-top span,
+.hiw3d-leak-top b,
+.hiw3d-weekval,
+.hiw3d-weekbar b {
+  transform: translateZ(0.01px);
+}
+/* .hiw3d-score-badge is excluded from the translateZ(0.01px) rule above: it
+   already carries its own animation (hiw3dBadge) driving `transform`, which
+   would permanently own the property and silently discard a plain static
+   transform declared alongside it — same class of bug as the fill-mode
+   conflicts elsewhere on this page. Font smoothing above still applies. */
 
 /* ======================================================================
    card 1 — connect
@@ -1039,13 +1251,16 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ======================================================================
    keyframes
    ====================================================================== */
-@keyframes hiw3dEnter1 { 0% { opacity: 0; transform: translateY(36px) rotateX(14deg) rotateY(12deg); } 100% { opacity: 1; transform: translateY(0) rotateX(14deg) rotateY(12deg); } }
-@keyframes hiw3dEnter2 { 0% { opacity: 0; transform: translateY(36px) rotateX(16deg) rotateY(0deg); } 100% { opacity: 1; transform: translateY(0) rotateX(16deg) rotateY(0deg); } }
-@keyframes hiw3dEnter3 { 0% { opacity: 0; transform: translateY(36px) rotateX(14deg) rotateY(-12deg); } 100% { opacity: 1; transform: translateY(0) rotateX(14deg) rotateY(-12deg); } }
+@keyframes hiw3dEnter1 { 0% { opacity: 0; transform: translateZ(0) translateY(36px) rotateX(9deg) rotateY(7deg); } 100% { opacity: 1; transform: translateZ(0) translateY(0) rotateX(9deg) rotateY(7deg); } }
+@keyframes hiw3dEnter2 { 0% { opacity: 0; transform: translateZ(0) translateY(36px) rotateX(10deg) rotateY(0deg); } 100% { opacity: 1; transform: translateZ(0) translateY(0) rotateX(10deg) rotateY(0deg); } }
+@keyframes hiw3dEnter3 { 0% { opacity: 0; transform: translateZ(0) translateY(36px) rotateX(9deg) rotateY(-7deg); } 100% { opacity: 1; transform: translateZ(0) translateY(0) rotateX(9deg) rotateY(-7deg); } }
 
-@keyframes hiw3dFloat1 { 0%,100% { transform: rotateX(14deg) rotateY(12deg) translateY(0); } 50% { transform: rotateX(10deg) rotateY(7deg) translateY(-9px); } }
-@keyframes hiw3dFloat2 { 0%,100% { transform: rotateX(16deg) rotateY(0deg) translateY(0); } 50% { transform: rotateX(12deg) rotateY(2deg) translateY(-11px); } }
-@keyframes hiw3dFloat3 { 0%,100% { transform: rotateX(14deg) rotateY(-12deg) translateY(0); } 50% { transform: rotateX(10deg) rotateY(-7deg) translateY(-8px); } }
+/* peak angles scaled by the same per-axis ratio as the resting-angle cut
+   above (~0.58-0.64x), so the float's dip-toward-flat motion keeps the same
+   relative feel at the new, shallower resting tilt. */
+@keyframes hiw3dFloat1 { 0%,100% { transform: translateZ(0) rotateX(9deg) rotateY(7deg) translateY(0); } 50% { transform: translateZ(0) rotateX(6.4deg) rotateY(4.1deg) translateY(-9px); } }
+@keyframes hiw3dFloat2 { 0%,100% { transform: translateZ(0) rotateX(10deg) rotateY(0deg) translateY(0); } 50% { transform: translateZ(0) rotateX(7.5deg) rotateY(1.3deg) translateY(-11px); } }
+@keyframes hiw3dFloat3 { 0%,100% { transform: translateZ(0) rotateX(9deg) rotateY(-7deg) translateY(0); } 50% { transform: translateZ(0) rotateX(6.4deg) rotateY(-4.1deg) translateY(-8px); } }
 
 /* ---- card 1 : period 6400ms ---- */
 @keyframes hiw3dDrop {
