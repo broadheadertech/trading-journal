@@ -2,6 +2,33 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
+import SecurityAnimated from '@/components/landing/SecurityAnimated';
+
+/* Shared shield icon for every .bound card. Same 18x21 visual footprint as
+   the original single <path> icon — the checkmark path and the ring/trace
+   overlays are new elements layered on top, per the animation spec, not a
+   redesign of the icon itself. */
+function SecurityCard({ title, children }: { title: string; children: string }) {
+  return (
+    <div className="bound">
+      {/* one-time perimeter scan — purely decorative, never intercepts clicks */}
+      <svg className="bound-trace" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <rect x="1" y="1" width="98" height="98" vectorEffect="non-scaling-stroke" />
+      </svg>
+
+      <span className="ic-wrap">
+        <svg className="ic sh" width="18" height="21" viewBox="0 0 18 21" fill="none" aria-hidden="true">
+          <path className="sh-path" d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" />
+          <path className="sh-check" d="M5 10.2 L7.6 12.8 L13 7" />
+        </svg>
+        <span className="sh-ring" />
+      </span>
+
+      <h4>{title}</h4>
+      <p>{children}</p>
+    </div>
+  );
+}
 
 export default function SecurityPage() {
   return (
@@ -12,7 +39,7 @@ export default function SecurityPage() {
         <div className="panelgrid"></div>
         <div className="wrap">
           <p className="kicker" style={{ color: '#fff' }}>
-            <svg width="24" height="24" viewBox="0 0 17 17" fill="none" style={{ marginLeft: '-32px' }}><circle cx="8.5" cy="8.5" r="8" stroke="#fff" strokeOpacity=".35"/><rect x="5" y="7.6" width="7" height="5.4" rx="1" stroke="#fff" strokeOpacity=".7"/><path d="M6.6 7.6V6.2a1.9 1.9 0 013.8 0v1.4" stroke="#fff" strokeOpacity=".7"/></svg>
+            <svg className="ic-lock" width="24" height="24" viewBox="0 0 17 17" fill="none" style={{ marginLeft: '-32px' }}><circle cx="8.5" cy="8.5" r="8" stroke="#fff" strokeOpacity=".35"/><rect x="5" y="7.6" width="7" height="5.4" rx="1" stroke="#fff" strokeOpacity=".7"/><path d="M6.6 7.6V6.2a1.9 1.9 0 013.8 0v1.4" stroke="#fff" strokeOpacity=".7"/></svg>
             READ AND ANALYTICS ONLY
           </p>
           <h1 className="light">Read-only analytics with explicit<em>non-trading boundaries</em></h1>
@@ -23,18 +50,12 @@ export default function SecurityPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '80px' }}>
         <div className="wrap">
           <div className="bounds">
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>Read-only account access</h4><p>Use read-only credentials wherever connectors require them. Atlas is designed for post-trade data retrieval only.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>No order execution path</h4><p>The platform is analytics software. It does not submit, modify, or cancel orders — there is no code path that could.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>Scoped data usage</h4><p>Imported payloads are used for normalization, analytics, and verdict generation only. Nothing else, nowhere else.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>Background task isolation</h4><p>Import, aggregate, and verdict computations run via service/task boundaries to reduce request-layer risk.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>Idempotent imports</h4><p>Deterministic hashes prevent duplicate trade creation during reruns and recovery. Re-importing the same file is always safe.</p></div>
-            <div className="bound"><svg className="ic" width="18" height="21" viewBox="0 0 18 21" fill="none"><path d="M9 0 L18 3.5 L18 10.5 C18 16 14 19 9 21 C4 19 0 16 0 10.5 L0 3.5 L9 0 Z" stroke="#d99405" strokeWidth="1.2"/></svg>
-              <h4>Operational visibility</h4><p>Import logs track statuses, sources, and errors to support incident response and reproducibility.</p></div>
+            <SecurityCard title="Read-only account access">Use read-only credentials wherever connectors require them. Atlas is designed for post-trade data retrieval only.</SecurityCard>
+            <SecurityCard title="No order execution path">The platform is analytics software. It does not submit, modify, or cancel orders — there is no code path that could.</SecurityCard>
+            <SecurityCard title="Scoped data usage">Imported payloads are used for normalization, analytics, and verdict generation only. Nothing else, nowhere else.</SecurityCard>
+            <SecurityCard title="Background task isolation">Import, aggregate, and verdict computations run via service/task boundaries to reduce request-layer risk.</SecurityCard>
+            <SecurityCard title="Idempotent imports">Deterministic hashes prevent duplicate trade creation during reruns and recovery. Re-importing the same file is always safe.</SecurityCard>
+            <SecurityCard title="Operational visibility">Import logs track statuses, sources, and errors to support incident response and reproducibility.</SecurityCard>
           </div>
 
           <hr className="inset-rule" style={{ marginTop: '86px' }} />
@@ -62,6 +83,7 @@ export default function SecurityPage() {
         </div>
       </div>
 
+      <SecurityAnimated />
       <Footer />
     </div>
   );

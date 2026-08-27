@@ -194,8 +194,12 @@
     margin-top: 64px;
   }
   .bound {
+    position: relative;
     background: var(--card);
-    padding: 30px 28px 32px;
+    /* bottom padding widened from 32px to give the verified chip (added
+       below) clearance above the card edge without ever overlapping the
+       description text */
+    padding: 30px 28px 40px;
   }
   .bound .ic { display: block; margin-bottom: 18px; }
   .bound h4 {
@@ -207,6 +211,112 @@
     margin: 0 0 10px;
   }
   .bound p { font-size: 13.5px; line-height: 22px; color: var(--atlas-muted); margin: 0; }
+
+  /* ── security section animation — entrance sequence, plays once ──────
+     Everything below is additive: new classes and SVG elements layered on
+     top of the existing .bound/.ic/h4/p markup. The base (unarmed) state of
+     every one-shot element is its own hidden/initial appearance; `.armed`
+     (added by SecurityAnimated.tsx, staggered per card) unpauses each
+     element's own animation via its own animation-delay, so one class
+     addition fires the whole card's sequence in the right order. */
+
+  /* 1. radar ping on the eyebrow lock icon — the only looping animation
+     here, gated on `.is-armed` rather than `.armed` since it starts the
+     instant the section triggers, not on the per-card stagger */
+  .ic-lock { position: relative; }
+  .ic-lock::before,
+  .ic-lock::after {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 50%;
+    border: 1.5px solid #33EDC8;
+    opacity: 0;
+    pointer-events: none;
+    animation: ping 3s ease-out infinite paused;
+  }
+  .ic-lock::after { animation-delay: 1.5s; }
+  .ic-lock.is-armed::before,
+  .ic-lock.is-armed::after { animation-play-state: running; }
+
+  /* 3. perimeter trace — a one-time scan, not a permanent border, so it
+     has no reduced-motion fallback: it simply never runs */
+  .bound-trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .bound-trace rect {
+    fill: none;
+    stroke: #D99405;
+    stroke-width: 1.5;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    opacity: 0;
+  }
+  .bound.armed .bound-trace rect {
+    animation: traceDraw 1.3s cubic-bezier(.4, 0, .2, 1) forwards;
+  }
+
+  /* 4. shield draw + checkmark + verify ring — replaces the plain stroked
+     path with a stroke-animatable outline at the same 18x21 footprint */
+  .ic-wrap {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 21px;
+    margin-bottom: 18px;
+  }
+  .ic-wrap .sh { display: block; }
+  .sh-path {
+    fill: none;
+    stroke: #D99405;
+    stroke-width: 1.5;
+    stroke-dasharray: 90;
+    stroke-dashoffset: 90;
+  }
+  .bound.armed .sh-path { animation: shieldDraw .8s ease forwards; }
+  .sh-check {
+    fill: none;
+    stroke: #24C88A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 14;
+    stroke-dashoffset: 14;
+  }
+  .bound.armed .sh-check { animation: checkDraw .35s ease .7s forwards; }
+  .sh-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 1.5px solid #24C88A;
+    border-radius: 50%;
+    transform: scale(.5);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .bound.armed .sh-ring { animation: ringPulse .7s ease-out .9s forwards; }
+
+  /* 5. card title/description rise */
+  .bound h4,
+  .bound p { opacity: 0; transform: translateY(8px); }
+  .bound.armed h4 { animation: riseIn .45s ease .3s both; }
+  .bound.armed p { animation: riseIn .45s ease .42s both; }
+
+  /* reduced motion: the shield/checkmark and card text have a real resting
+     state worth keeping, so they're forced visible immediately. The trace
+     and ring have no meaningful "finished" look (they end at opacity: 0 by
+     design), so neither needs an override — they simply never run. */
+  @media (prefers-reduced-motion: reduce) {
+    .sh-path, .sh-check { stroke-dashoffset: 0; }
+    .bound h4, .bound p { opacity: 1; transform: none; }
+  }
 
   .setupcard { margin-top: 40px; }
   .setupcard ul {
@@ -410,4 +520,33 @@
     .setupcard ul { grid-template-columns: minmax(0, 1fr); }
     .ucrow { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   }
+}
+
+/* security section animation keyframes — top level, since @keyframes may
+   not sit inside the nested .atlas-site rule above */
+@keyframes ping {
+  0% { transform: scale(1); opacity: .7; }
+  70%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes traceDraw {
+  0% { stroke-dashoffset: 600; opacity: .9; }
+  80% { stroke-dashoffset: 0; opacity: .6; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes shieldDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes checkDraw {
+  to { stroke-dashoffset: 0; }
+}
+/* the spec's literal keyframe (scale .5/opacity 0 -> scale 1.9/opacity 0)
+   never actually shows the ring — a brief mid-animation peak is added so
+   the pulse is visible before it fades, while keeping both given endpoints */
+@keyframes ringPulse {
+  0% { transform: scale(.5); opacity: 0; }
+  15% { opacity: .8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes riseIn {
+  to { opacity: 1; transform: translateY(0); }
 }

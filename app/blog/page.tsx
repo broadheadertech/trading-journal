@@ -1,17 +1,11 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
 import { BLOG_ARTICLES, POPULAR_SLUGS, type BlogArticle } from '@/lib/blog-articles';
-
-const SPARK = [
-  'M0 130 L19 120 L38 108 L56 91 L75 94 L94 86 L131 74 L169 60 L206 52 L244 38 L281 30 L319 18 L356 12 L394 4',
-  'M0 130 L19 111 L38 96 L56 100 L75 84 L94 75 L131 68 L169 54 L206 48 L244 36 L281 28 L319 20 L356 10 L394 2',
-  'M0 117 L19 120 L38 130 L56 121 L75 125 L94 112 L131 104 L169 96 L206 84 L244 78 L281 62 L319 54 L356 40 L394 30',
-];
 
 const SIDE_PATHS = [
   'M0 49 L5 60 L10 44 L15 60 L20 51 L25 50 L30 40 L40 44 L52 30 L64 34 L76 20 L88 24 L104 8',
@@ -36,24 +30,23 @@ function ReadArrow() {
   );
 }
 
-function ArticleCard({ article, idx }: { article: BlogArticle; idx: number }) {
-  const c = idx === 0 ? '#d99405' : '#8a6a18';
-  const d = SPARK[idx % SPARK.length];
+function ArticleCard({
+  article,
+  className,
+  style,
+}: {
+  article: BlogArticle;
+  className?: string;
+  style?: CSSProperties;
+}) {
   const cat = article.category.toUpperCase();
   return (
-    <Link className="art" href={`/blog/${article.slug}`}>
-      <div className="thumb">
-        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }}></span>
-        <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }}></span>
-        <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }}></span>
-        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }}></span>
-        <span className="chip" style={{ color: c }}>{cat}</span>
-        <svg viewBox="0 0 394 130" preserveAspectRatio="none" style={{ position: 'absolute', left: '18px', top: '28px', width: '394px', maxWidth: 'calc(100% - 36px)', height: '130px' }} fill="none">
-          <path d={`${d} L394 130 L0 130 Z`} fill={c} fillOpacity=".14" />
-          <path d={d} stroke={c} strokeWidth="1.8" />
-        </svg>
-        <span className="slug">/{article.slug}</span>
-      </div>
+    <Link
+      className={className ? `art ${className}` : 'art'}
+      href={`/blog/${article.slug}`}
+      style={style}
+      data-category={article.category}
+    >
       <div className="meta"><b>{cat}</b><span><ClockIcon />5 min</span></div>
       <h3>{article.title}</h3>
       {article.excerpt ? <p>{article.excerpt}</p> : null}
@@ -65,6 +58,7 @@ function ArticleCard({ article, idx }: { article: BlogArticle; idx: number }) {
 export default function BlogPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [catsExpanded, setCatsExpanded] = useState(false);
 
   const categories = useMemo(() => {
     const set = new Set<string>();
@@ -72,17 +66,34 @@ export default function BlogPage() {
     return Array.from(set);
   }, []);
 
-  const filtered = useMemo(() => {
-    let list = BLOG_ARTICLES;
-    if (activeCategory !== 'All') list = list.filter((a) => a.category === activeCategory);
+  // Cards mount whenever they pass the search text — category no longer
+  // shrinks this list. Every mounted card carries data-category (see
+  // ArticleCard), and category filtering hides/reveals among these mounted
+  // cards by matching that attribute's value, case-insensitively, rather
+  // than by removing non-matching articles from the render tree.
+  const searchFiltered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter(
-        (a) => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q),
-      );
-    }
-    return list;
-  }, [search, activeCategory]);
+    if (!q) return BLOG_ARTICLES;
+    return BLOG_ARTICLES.filter(
+      (a) => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q),
+    );
+  }, [search]);
+
+  // search + category combined — drives the existing "Showing X of Y" count
+  // above the grid (unchanged behavior) and the pagination math below.
+  const filtered = useMemo(() => {
+    if (activeCategory === 'All') return searchFiltered;
+    const target = activeCategory.toLowerCase();
+    return searchFiltered.filter((a) => a.category.toLowerCase() === target);
+  }, [searchFiltered, activeCategory]);
+
+  // each matching card's position within the active category — used to
+  // decide which 6-at-a-time window is visible, independent of which of
+  // the two columns it happens to render in
+  const categoryPos = useMemo(
+    () => new Map(filtered.map((a, i) => [a.slug, i])),
+    [filtered],
+  );
 
   const popular = POPULAR_SLUGS
     .map((s) => BLOG_ARTICLES.find((a) => a.slug === s))
@@ -92,8 +103,75 @@ export default function BlogPage() {
   const secondary = popular.slice(1, 4);
   const trending = popular.slice(0, 5);
 
-  const colA = filtered.filter((_, i) => i % 2 === 0);
-  const colB = filtered.filter((_, i) => i % 2 === 1);
+  // pagination — cards stay in the DOM; only visibility toggles
+  const BATCH = 6;
+  const total = filtered.length;
+  const [visibleCount, setVisibleCount] = useState(BATCH);
+  // start of the most-recently-revealed batch; Infinity means "nothing to
+  // animate" so the first paint (and a fresh filter) never plays the reveal
+  const [revealFrom, setRevealFrom] = useState(Infinity);
+  const [fading, setFading] = useState(false);
+  const [indicatorGone, setIndicatorGone] = useState(false);
+
+  const allShown = visibleCount >= total;
+
+  // a new category or search resets pagination to the first 6 of that set.
+  // Adjusted during render (React's sanctioned pattern for "state derived
+  // from a changed prop") rather than in an effect, so there is no extra
+  // committed frame showing the old count before the reset applies.
+  const filterKey = `${activeCategory}|${search}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(BATCH);
+    setRevealFrom(Infinity);
+    setFading(false);
+    setIndicatorGone(false);
+  }
+
+  // "all shown" can happen either from clicking through or from a filter
+  // that already has 6 or fewer matches — either way, hold the completed
+  // message for 2s then fade it, rather than leaving it up indefinitely.
+  // (fading/indicatorGone only need resetting on a filter change, which the
+  // render-time block above already does — allShown can't flip back to
+  // false any other way, since total only changes when the filter does.)
+  useEffect(() => {
+    if (!allShown) return;
+    const t = setTimeout(() => setFading(true), 2000);
+    return () => clearTimeout(t);
+  }, [allShown]);
+
+  useEffect(() => {
+    if (!fading) return;
+    const t = setTimeout(() => setIndicatorGone(true), 500);
+    return () => clearTimeout(t);
+  }, [fading]);
+
+  function handleLoadMore() {
+    const next = Math.min(total, visibleCount + BATCH);
+    setRevealFrom(visibleCount);
+    setVisibleCount(next);
+  }
+
+  // colA/colB membership is fixed by position in the mounted (search-only)
+  // set, so switching categories never moves a card to the other column —
+  // only its visibility, via cardProps below, changes.
+  const indexed = searchFiltered.map((a, i) => ({ a, i }));
+  const colA = indexed.filter(({ i }) => i % 2 === 0);
+  const colB = indexed.filter(({ i }) => i % 2 === 1);
+
+  function cardProps(article: BlogArticle) {
+    const pos = categoryPos.get(article.slug);
+    const hidden = pos === undefined || pos >= visibleCount;
+    const revealing = !hidden && pos !== undefined && pos >= revealFrom;
+    return {
+      className: hidden ? 'is-hidden' : revealing ? 'is-revealing' : undefined,
+      style:
+        revealing && pos !== undefined
+          ? ({ ['--stagger' as string]: `${(pos - revealFrom) * 0.07}s` } as CSSProperties)
+          : undefined,
+    };
+  }
 
   return (
     <div className="atlas-site">
@@ -192,13 +270,58 @@ export default function BlogPage() {
       <div style={{ borderTop: '1px solid var(--line)', marginTop: '67px', paddingTop: '55px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
-          <div className="artgrid">
-            <div className="artcol" id="artcolA">
-              {colA.map((a, i) => <ArticleCard key={a.slug} article={a} idx={i * 2} />)}
+
+          {/* mobile-only: the sidebar category list can sit far below the
+              fold on small screens, so the same filtering stays reachable
+              here as a horizontal scrollable pill row */}
+          <div className="cats-mobile">
+            <button type="button" className={activeCategory === 'All' ? 'on' : undefined} onClick={() => setActiveCategory('All')}>All</button>
+            {categories.map((c) => (
+              <button key={c} type="button" className={activeCategory === c ? 'on' : undefined} onClick={() => setActiveCategory(c)}>{c}</button>
+            ))}
+          </div>
+
+          {/* .artwrap is the whole two-column row — main content and the
+              sidebar are direct siblings here, sharing one flex row, so
+              they start at the same top edge and the sidebar never gets
+              pushed onto its own row by the grid's auto-placement. */}
+          <div className="artwrap">
+            <div className="artmain">
+              {total === 0 ? (
+                <div className="artempty">No articles in this category yet.</div>
+              ) : (
+                <>
+                  <div className="artgrid">
+                    <div className="artcol" id="artcolA">
+                      {colA.map(({ a }) => <ArticleCard key={a.slug} article={a} {...cardProps(a)} />)}
+                    </div>
+                    <div className="artcol" id="artcolB">
+                      {colB.map(({ a }) => <ArticleCard key={a.slug} article={a} {...cardProps(a)} />)}
+                    </div>
+                  </div>
+
+                  <div className="loadmore-row">
+                    {!indicatorGone && (
+                      <p className={`loadmore-count${fading ? ' is-fading' : ''}`}>
+                        {allShown
+                          ? (activeCategory !== 'All'
+                              ? `All ${total} ${activeCategory} articles loaded`
+                              : 'All articles loaded')
+                          : `Showing ${visibleCount} of ${total} articles${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className={`loadmore-btn${allShown ? ' is-done' : ''}`}
+                      onClick={handleLoadMore}
+                    >
+                      Load More Articles <span className="loadmore-arrow">→</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="artcol" id="artcolB">
-              {colB.map((a, i) => <ArticleCard key={a.slug} article={a} idx={i * 2 + 1} />)}
-            </div>
+
             <div className="blogside">
               <h4>TRENDING NOW</h4>
               <div className="trend">
@@ -208,15 +331,37 @@ export default function BlogPage() {
               </div>
               <div className="cats">
                 <h4>BY CATEGORY</h4>
-                {categories.map((c) => (
+                <a
+                  role="button"
+                  tabIndex={0}
+                  className={activeCategory === 'All' ? 'on' : undefined}
+                  onClick={() => setActiveCategory('All')}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory('All'); } }}
+                >All<span>{BLOG_ARTICLES.length}</span></a>
+                {categories.map((c, i) => (
                   <a
                     key={c}
                     role="button"
                     tabIndex={0}
+                    // "All" is always item 1, so category index 4 is item 6
+                    // — everything after that is hidden until expanded
+                    className={[
+                      activeCategory === c ? 'on' : '',
+                      !catsExpanded && i >= 5 ? 'is-hidden' : '',
+                    ].filter(Boolean).join(' ') || undefined}
                     onClick={() => setActiveCategory(c)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory(c); } }}
                   >{c}<span>{BLOG_ARTICLES.filter((a) => a.category === c).length}</span></a>
                 ))}
+                {categories.length > 5 && (
+                  <button
+                    type="button"
+                    className="cats-toggle"
+                    onClick={() => setCatsExpanded((v) => !v)}
+                  >
+                    {catsExpanded ? 'Show less ↑' : 'Show more categories ↓'}
+                  </button>
+                )}
               </div>
             </div>
           </div>

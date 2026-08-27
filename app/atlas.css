@@ -792,3 +792,321 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @media (prefers-reduced-motion:reduce){
   .chart3d-price{display:none}
 }
+
+/* ============================================================================
+   "Connect / Discover / Build Consistency" — deep 3D floating cards
+   ============================================================================
+   Copy, labels and data values are untouched (see HowItWorksCards.tsx). This
+   block is the 3D shell, the ambient float, the entrance, and the looping
+   internal micro-demos.
+
+   Design of the loop mechanism: every animated element's BASE (non-animated)
+   CSS is its *finished* appearance — ticks shown, bars full, dropzone active,
+   badge visible. `.is-loop` attaches an infinite @keyframes animation whose
+   own 0% is the *reset* state and 100% matches the base again, so:
+     - before the entrance fires, and under prefers-reduced-motion (which
+       never adds `.is-loop` and which the global `animation:none` rule
+       strips anyway), every card already reads as the completed demo — never
+       an empty frame.
+     - once `.is-loop` runs, each cycle visibly resets and replays.
+   This is the same "paused/base=rest, class flips it live" idea used
+   elsewhere on this page, just with the polarity chosen so idle == finished
+   rather than idle == hidden, since these are demos that show their own
+   result at rest, not one-shot reveals. */
+
+.hiw3d-stage { perspective: 900px; perspective-origin: 50% 30%; }
+
+.hiw3d-card { position: relative; transform-style: preserve-3d; }
+
+/* entrance, then ambient float once the entrance has finished (delay ==
+   that card's own entrance delay + duration, so the handoff is seamless —
+   float's default fill-mode is `none`, so it contributes nothing to
+   `transform` until its delay elapses and the entrance is left in sole
+   control up to that point). */
+.hiw3d-c1 { transform: rotateX(14deg) rotateY(12deg);
+  animation: hiw3dEnter1 .75s cubic-bezier(.22,1,.36,1) .05s both paused,
+             hiw3dFloat1 8s ease-in-out .8s infinite paused; }
+.hiw3d-c2 { transform: rotateX(16deg) rotateY(0deg);
+  animation: hiw3dEnter2 .75s cubic-bezier(.22,1,.36,1) .2s both paused,
+             hiw3dFloat2 9s ease-in-out .95s infinite paused; }
+.hiw3d-c3 { transform: rotateX(14deg) rotateY(-12deg);
+  animation: hiw3dEnter3 .75s cubic-bezier(.22,1,.36,1) .35s both paused,
+             hiw3dFloat3 7.5s ease-in-out 1.1s infinite paused; }
+
+.hiw3d-stage.is-in .hiw3d-card { animation-play-state: running; }
+
+.hiw3d-panel { position: relative; transform-style: preserve-3d; }
+
+/* ---------- side edges — fake thickness, never affect layout ---------- */
+.hiw3d-edge-l {
+  position: absolute; top: 4px; bottom: 4px; left: -6px; width: 8px;
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(90deg, #020406, #040709);
+  border: 1px solid #0A1018; border-right: 0;
+  filter: brightness(.6);
+  transform: translateZ(-4px);
+}
+.hiw3d-edge-b {
+  position: absolute; bottom: -6px; left: 4px; right: 4px; height: 8px;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #040709, #020406);
+  border: 1px solid #0A1018; border-top: 0;
+  filter: brightness(.7);
+  transform: translateZ(-4px);
+}
+
+/* ---------- face — the visible surface ---------- */
+.hiw3d-face {
+  position: relative;
+  min-height: 190px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0D1522 0%, #080D14 60%, #060A11 100%);
+  border: 1px solid #1A2840;
+  border-top-color: #2A3F5A;
+  border-left-color: #1E3048;
+  box-shadow: -14px 28px 48px rgba(0,0,0,.6), -4px 8px 16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
+  padding: 20px 20px 24px;
+}
+.hiw3d-face::before {
+  content: ""; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+}
+.hiw3d-face::after {
+  content: ""; position: absolute; inset: 0; border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255,255,255,.04) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* ---------- step badge — floats above the face in 3D space ---------- */
+.hiw3d-badge {
+  position: absolute; top: -13px; left: 12px; z-index: 5;
+  transform: translateZ(18px);
+  padding: 3px 8px;
+  border-radius: 2px;
+  background: #08111E;
+  border: 1px solid rgba(217,148,5,.55);
+  color: #D99405;
+  font-family: var(--micro), ui-monospace, monospace;
+  font-size: 8.5px; font-weight: 700; letter-spacing: .14em;
+  box-shadow: 0 4px 14px rgba(0,0,0,.55), inset 0 0 0 1px rgba(217,148,5,.1);
+}
+
+/* ======================================================================
+   card 1 — connect
+   ====================================================================== */
+.hiw3d-drop {
+  position: relative;
+  height: 62px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  border-radius: 4px;
+  border: 1.5px dashed #D99405;
+  background: rgba(217,148,5,.07);
+  animation: hiw3dDrop 6400ms linear infinite paused;
+}
+.hiw3d-drop small { font-weight: 700; font-size: 10.5px; color: var(--text-3); }
+.hiw3d-arrow { display: block; animation: hiw3dArrow 6400ms ease-in-out infinite paused; }
+
+.hiw3d-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.hiw3d-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10.5px; color: var(--muted-3);
+  opacity: 1; transform: translateX(0);
+}
+.hiw3d-row1 { animation: hiw3dRowIn1 6400ms ease-out infinite paused; }
+.hiw3d-row2 { animation: hiw3dRowIn2 6400ms ease-out infinite paused; }
+.hiw3d-row3 { animation: hiw3dRowIn3 6400ms ease-out infinite paused; }
+
+.hiw3d-icon { position: relative; width: 9px; height: 9px; flex: none; }
+.hiw3d-icon .hiw3d-spinner,
+.hiw3d-icon .hiw3d-tick { position: absolute; inset: 0; }
+.hiw3d-spinner {
+  opacity: 0;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #182333; border-top-color: #D99405;
+  animation: hiw3dSpin .65s linear infinite;
+}
+.hiw3d-tick { opacity: 1; }
+.hiw3d-row1 .hiw3d-spinner { animation: hiw3dSpin .65s linear infinite, hiw3dSwapOn1 6400ms linear infinite paused; }
+.hiw3d-row1 .hiw3d-tick { animation: hiw3dSwapOff1 6400ms linear infinite paused; }
+.hiw3d-row2 .hiw3d-spinner { animation: hiw3dSpin .65s linear infinite, hiw3dSwapOn2 6400ms linear infinite paused; }
+.hiw3d-row2 .hiw3d-tick { animation: hiw3dSwapOff2 6400ms linear infinite paused; }
+.hiw3d-row3 .hiw3d-spinner { animation: hiw3dSpin .65s linear infinite, hiw3dSwapOn3 6400ms linear infinite paused; }
+.hiw3d-row3 .hiw3d-tick { animation: hiw3dSwapOff3 6400ms linear infinite paused; }
+
+.hiw3d-progress {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: #0A1520;
+}
+.hiw3d-progress i {
+  display: block; height: 100%; width: 100%; transform-origin: left;
+  background: linear-gradient(90deg, #D99405, #24C88A);
+  animation: hiw3dProgress 6400ms ease infinite paused;
+}
+
+.hiw3d-stage.is-in .hiw3d-drop,
+.hiw3d-stage.is-in .hiw3d-arrow,
+.hiw3d-stage.is-in .hiw3d-row1,
+.hiw3d-stage.is-in .hiw3d-row2,
+.hiw3d-stage.is-in .hiw3d-row3,
+.hiw3d-stage.is-in .hiw3d-row1 .hiw3d-spinner,
+.hiw3d-stage.is-in .hiw3d-row1 .hiw3d-tick,
+.hiw3d-stage.is-in .hiw3d-row2 .hiw3d-spinner,
+.hiw3d-stage.is-in .hiw3d-row2 .hiw3d-tick,
+.hiw3d-stage.is-in .hiw3d-row3 .hiw3d-spinner,
+.hiw3d-stage.is-in .hiw3d-row3 .hiw3d-tick,
+.hiw3d-stage.is-in .hiw3d-progress i { animation-play-state: running; }
+
+/* ======================================================================
+   card 2 — discover
+   ====================================================================== */
+.hiw3d-hd { margin: 0; font-weight: 700; font-size: 9px; color: var(--amber); letter-spacing: .03em; }
+
+.hiw3d-scan {
+  position: absolute; left: 0; right: 0; height: 18px; top: -18px;
+  background: linear-gradient(180deg, transparent, rgba(240,72,94,.06), transparent);
+  pointer-events: none;
+  animation: hiw3dScan 5900ms ease-in-out infinite paused;
+}
+
+.hiw3d-leak-row { position: relative; margin-top: 13px; padding-bottom: 8px; }
+.hiw3d-leak-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; color: var(--text-3); }
+.hiw3d-leak-top b { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+.hiw3d-leak-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--rail); overflow: hidden; }
+.hiw3d-leak-bar i {
+  display: block; height: 100%; transform-origin: left;
+  background: linear-gradient(90deg, var(--fill), color-mix(in srgb, var(--fill) 27%, transparent));
+}
+.hiw3d-leak-row:nth-child(2) .hiw3d-leak-bar i { animation: hiw3dLeakBar1 5900ms cubic-bezier(.4,0,.2,1) infinite paused; }
+.hiw3d-leak-row:nth-child(3) .hiw3d-leak-bar i { animation: hiw3dLeakBar2 5900ms cubic-bezier(.4,0,.2,1) infinite paused; }
+.hiw3d-leak-row:nth-child(4) .hiw3d-leak-bar i { animation: hiw3dLeakBar3 5900ms cubic-bezier(.4,0,.2,1) infinite paused; }
+.hiw3d-leak-row:nth-child(5) .hiw3d-leak-bar i { animation: hiw3dLeakBar4 5900ms cubic-bezier(.4,0,.2,1) infinite paused; }
+
+.hiw3d-stage.is-in .hiw3d-scan,
+.hiw3d-stage.is-in .hiw3d-leak-bar i { animation-play-state: running; }
+
+/* ======================================================================
+   card 3 — build consistency
+   ====================================================================== */
+.hiw3d-weekbars { position: relative; display: flex; align-items: flex-end; gap: 12px; height: 100px; margin-top: 18px; }
+.hiw3d-weekbar { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.hiw3d-weekval { display: block; font-family: var(--mono); font-size: 9px; color: #aab8ca; margin-bottom: 6px; }
+.hiw3d-weekfill {
+  display: block; width: 100%; height: var(--h); border-radius: 3px 3px 0 0;
+  transform-origin: bottom; transform: scaleY(1);
+  background: linear-gradient(180deg, var(--fill), color-mix(in srgb, var(--fill) 28%, transparent));
+  position: relative;
+  overflow: visible;
+}
+.hiw3d-weekfill::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  animation: hiw3dShimmer 3s ease-in-out infinite;
+}
+.hiw3d-weekbar:nth-child(2) .hiw3d-weekfill::after { animation-delay: .3s; }
+.hiw3d-weekbar:nth-child(3) .hiw3d-weekfill::after { animation-delay: .6s; }
+.hiw3d-weekbar:nth-child(4) .hiw3d-weekfill::after { animation-delay: .9s; }
+
+.hiw3d-weekbar b { display: block; font-weight: 700; font-size: 9px; color: #aab8ca; margin-top: 7px; }
+
+.hiw3d-w4glow {
+  position: absolute; left: 0; right: 0; bottom: 22px; height: 20px; z-index: -1;
+  background: radial-gradient(50% 100% at 50% 100%, rgba(36,200,138,.35), transparent);
+  opacity: 1;
+  animation: hiw3dGlow 6100ms ease infinite paused;
+}
+
+.hiw3d-score-badge {
+  position: absolute; top: -2px; right: 0; z-index: 3;
+  padding: 3px 8px; border-radius: 2px;
+  background: rgba(36,200,138,.1); border: 1px solid rgba(36,200,138,.3);
+  box-shadow: 0 4px 12px rgba(36,200,138,.15);
+  font-family: var(--mono); font-weight: 700; font-size: 10px; color: var(--green);
+  opacity: 1; transform: translateY(0) scale(1);
+  animation: hiw3dBadge 6100ms cubic-bezier(.34,1.56,.64,1) infinite paused;
+}
+
+.hiw3d-weekbar:nth-child(2) .hiw3d-weekfill { animation: hiw3dWeekBar1 6100ms cubic-bezier(.34,1.56,.64,1) infinite paused; }
+.hiw3d-weekbar:nth-child(3) .hiw3d-weekfill { animation: hiw3dWeekBar2 6100ms cubic-bezier(.34,1.56,.64,1) infinite paused; }
+.hiw3d-weekbar:nth-child(4) .hiw3d-weekfill { animation: hiw3dWeekBar3 6100ms cubic-bezier(.34,1.56,.64,1) infinite paused; }
+.hiw3d-weekbar:nth-child(5) .hiw3d-weekfill { animation: hiw3dWeekBar4 6100ms cubic-bezier(.34,1.56,.64,1) infinite paused; }
+
+.hiw3d-stage.is-in .hiw3d-weekbar .hiw3d-weekfill,
+.hiw3d-stage.is-in .hiw3d-w4glow,
+.hiw3d-stage.is-in .hiw3d-score-badge { animation-play-state: running; }
+
+/* ======================================================================
+   keyframes
+   ====================================================================== */
+@keyframes hiw3dEnter1 { 0% { opacity: 0; transform: translateY(36px) rotateX(14deg) rotateY(12deg); } 100% { opacity: 1; transform: translateY(0) rotateX(14deg) rotateY(12deg); } }
+@keyframes hiw3dEnter2 { 0% { opacity: 0; transform: translateY(36px) rotateX(16deg) rotateY(0deg); } 100% { opacity: 1; transform: translateY(0) rotateX(16deg) rotateY(0deg); } }
+@keyframes hiw3dEnter3 { 0% { opacity: 0; transform: translateY(36px) rotateX(14deg) rotateY(-12deg); } 100% { opacity: 1; transform: translateY(0) rotateX(14deg) rotateY(-12deg); } }
+
+@keyframes hiw3dFloat1 { 0%,100% { transform: rotateX(14deg) rotateY(12deg) translateY(0); } 50% { transform: rotateX(10deg) rotateY(7deg) translateY(-9px); } }
+@keyframes hiw3dFloat2 { 0%,100% { transform: rotateX(16deg) rotateY(0deg) translateY(0); } 50% { transform: rotateX(12deg) rotateY(2deg) translateY(-11px); } }
+@keyframes hiw3dFloat3 { 0%,100% { transform: rotateX(14deg) rotateY(-12deg) translateY(0); } 50% { transform: rotateX(10deg) rotateY(-7deg) translateY(-8px); } }
+
+/* ---- card 1 : period 6400ms ---- */
+@keyframes hiw3dDrop {
+  0%   { border-color: rgba(217,148,5,.35); background: transparent; }
+  6.25%  { border-color: rgba(217,148,5,.35); background: transparent; }
+  6.30%  { border-color: #D99405; background: rgba(217,148,5,.07); }
+  100% { border-color: #D99405; background: rgba(217,148,5,.07); }
+}
+@keyframes hiw3dArrow {
+  0% { transform: translateY(0); } 11.72% { transform: translateY(-5px); } 23.44% { transform: translateY(0); }
+  35.16% { transform: translateY(-5px); } 46.88% { transform: translateY(0); } 58.59% { transform: translateY(-5px); }
+  66.41% { transform: translateY(0); } 100% { transform: translateY(0); }
+}
+@keyframes hiw3dRowIn1 { 0%,14.06% { opacity: 0; transform: translateX(-8px); } 16.41%,100% { opacity: 1; transform: translateX(0); } }
+@keyframes hiw3dRowIn2 { 0%,32.81% { opacity: 0; transform: translateX(-8px); } 35.16%,100% { opacity: 1; transform: translateX(0); } }
+@keyframes hiw3dRowIn3 { 0%,51.56% { opacity: 0; transform: translateX(-8px); } 53.91%,100% { opacity: 1; transform: translateX(0); } }
+@keyframes hiw3dSwapOn1 { 0%,28.91% { opacity: 1; } 29.30%,100% { opacity: 0; } }
+@keyframes hiw3dSwapOff1 { 0%,28.91% { opacity: 0; } 29.30%,100% { opacity: 1; } }
+@keyframes hiw3dSwapOn2 { 0%,47.66% { opacity: 1; } 48.05%,100% { opacity: 0; } }
+@keyframes hiw3dSwapOff2 { 0%,47.66% { opacity: 0; } 48.05%,100% { opacity: 1; } }
+@keyframes hiw3dSwapOn3 { 0%,66.41% { opacity: 1; } 66.80%,100% { opacity: 0; } }
+@keyframes hiw3dSwapOff3 { 0%,66.41% { opacity: 0; } 66.80%,100% { opacity: 1; } }
+@keyframes hiw3dProgress { 0%,10.94% { transform: scaleX(0); } 65.63%,100% { transform: scaleX(1); } }
+
+/* ---- card 2 : period 5900ms ---- */
+@keyframes hiw3dScan {
+  0%,20.34% { top: -18px; opacity: 1; } 61.02% { top: 100%; opacity: 1; } 66%,100% { top: 100%; opacity: 0; }
+}
+@keyframes hiw3dLeakBar1 { 0%,5.42% { transform: scaleX(0); } 21.53%,100% { transform: scaleX(1); } }
+@keyframes hiw3dLeakBar2 { 0%,13.22% { transform: scaleX(0); } 29.32%,100% { transform: scaleX(1); } }
+@keyframes hiw3dLeakBar3 { 0%,21.02% { transform: scaleX(0); } 37.12%,100% { transform: scaleX(1); } }
+@keyframes hiw3dLeakBar4 { 0%,28.81% { transform: scaleX(0); } 44.92%,100% { transform: scaleX(1); } }
+
+/* ---- card 3 : period 6100ms ---- */
+@keyframes hiw3dWeekBar1 { 0%,4.59% { transform: scaleY(0); } 15.25%,100% { transform: scaleY(1); } }
+@keyframes hiw3dWeekBar2 { 0%,10.98% { transform: scaleY(0); } 21.64%,100% { transform: scaleY(1); } }
+@keyframes hiw3dWeekBar3 { 0%,17.38% { transform: scaleY(0); } 28.03%,100% { transform: scaleY(1); } }
+@keyframes hiw3dWeekBar4 { 0%,23.77% { transform: scaleY(0); } 34.43%,100% { transform: scaleY(1); } }
+@keyframes hiw3dBadge { 0%,35.90% { opacity: 0; transform: translateY(6px) scale(.9); } 43.28%,100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hiw3dGlow { 0%,35.90% { opacity: 0; } 45.74%,100% { opacity: 1; } }
+@keyframes hiw3dSpin { to { transform: rotate(360deg); } }
+@keyframes hiw3dShimmer { 0% { left: -60%; } 100% { left: 130%; } }
+
+/* ======================================================================
+   reduced motion — no tilt, no float, no loops; every element already
+   renders at its finished state via base CSS above
+   ====================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hiw3d-stage { perspective: none; }
+  .hiw3d-card { transform: none; }
+}
+
+/* ======================================================================
+   mobile — flatten Y rotation, keep a fixed 8deg X tilt, smaller float
+   ====================================================================== */
+@media (max-width: 768px) {
+  .hiw3d-c1, .hiw3d-c2, .hiw3d-c3 { transform: rotateX(8deg); }
+  .hiw3d-face { padding: 16px 16px 20px; }
+}
+@media (max-width: 768px) {
+  @keyframes hiw3dFloat1 { 0%,100% { transform: rotateX(8deg) translateY(0); } 50% { transform: rotateX(8deg) translateY(-5px); } }
+  @keyframes hiw3dFloat2 { 0%,100% { transform: rotateX(8deg) translateY(0); } 50% { transform: rotateX(8deg) translateY(-5px); } }
+  @keyframes hiw3dFloat3 { 0%,100% { transform: rotateX(8deg) translateY(0); } 50% { transform: rotateX(8deg) translateY(-5px); } }
+}
