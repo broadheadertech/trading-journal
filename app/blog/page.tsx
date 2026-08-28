@@ -181,16 +181,18 @@ export default function BlogPage() {
         <div className="panelgrid" style={{ width: '520px' }}></div>
         <div className="wrap">
           <p className="kicker" style={{ color: '#fff', fontSize: '12.5px', marginBottom: '19px' }}>TRADING BLOG</p>
-          <h1>Real research on<em style={{ fontWeight: 400 }}>trading psychology</em></h1>
-          <p className="sub" style={{ marginTop: '41px' }}>Expert articles on mistake patterns, behavioral analytics, and data-driven performance improvement.</p>
+          <div className="bo-mask" style={{ overflow: 'hidden', marginTop: '18px' }}>
+            <h1 className="bo-heading">Real research on<em style={{ fontWeight: 400 }}>trading psychology</em></h1>
+          </div>
+          <p className="sub bo-lead" style={{ marginTop: '41px' }}>Expert articles on mistake patterns, behavioral analytics, and data-driven performance improvement.</p>
         </div>
       </div>
 
       {/* featured */}
       {featured && (
         <div className="wrap" style={{ marginTop: '67px' }}>
-          <hr className="inset-rule" />
-          <div className="feat">
+          <hr className="inset-rule bo-divider" />
+          <div className="feat bo-feat">
             <div>
               <Link href={`/blog/${featured.slug}`}>
                 <div className="thumb" style={{ height: '300px' }}>
@@ -198,19 +200,22 @@ export default function BlogPage() {
                   <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }}></span>
                   <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }}></span>
                   <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }}></span>
-                  <span className="kicker" style={{ left: '50%', transform: 'translateX(-50%)', top: '19px', whiteSpace: 'nowrap' }}>{featured.category.toUpperCase()}</span>
-                  <span className="badge">FEATURED</span>
+                  <span className="kicker bo-kicker" style={{ left: '50%', transform: 'translateX(-50%)', top: '19px', whiteSpace: 'nowrap' }}>{featured.category.toUpperCase()}</span>
+                  <span className="badge bo-badge">FEATURED</span>
                   <svg viewBox="0 0 724 254" preserveAspectRatio="none" style={{ position: 'absolute', left: '18px', top: '28px', width: '724px', maxWidth: 'calc(100% - 36px)', height: '254px' }} fill="none">
                     <defs><linearGradient id="bf1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#d99405" stopOpacity=".22" /><stop offset="1" stopColor="#d99405" stopOpacity="0" /></linearGradient></defs>
-                    <path d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48 L724 254 Z" fill="url(#bf1)" />
-                    <path d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48" stroke="#d99405" strokeWidth="1.8" />
+                    <path className="bo-area" d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48 L724 254 Z" fill="url(#bf1)" />
+                    <path className="bo-line" d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48" stroke="#d99405" strokeWidth="1.8" />
+                    <circle className="bo-dot" cx="724" cy="48" r="4.5" fill="#d99405" />
                   </svg>
-                  <span className="slug">/{featured.slug}</span>
+                  <span className="slug bo-slug">/{featured.slug}</span>
                 </div>
-                <div className="meta"><b>{featured.category.toUpperCase()}</b><span><ClockIcon />8 min read</span></div>
-                <h2>{featured.title}</h2>
-                <p className="dek">{featured.excerpt}</p>
-                <span className="readlink">Read article<ReadArrow /></span>
+                <div className="meta bo-meta"><b>{featured.category.toUpperCase()}</b><span><ClockIcon />8 min read</span></div>
+                <div className="bo-mask" style={{ overflow: 'hidden', marginTop: '14px' }}>
+                  <h2 className="bo-title">{featured.title}</h2>
+                </div>
+                <p className="dek bo-dek">{featured.excerpt}</p>
+                <span className="readlink bo-readlink">Read article<ReadArrow /></span>
               </Link>
             </div>
 
@@ -219,7 +224,12 @@ export default function BlogPage() {
                 <Link
                   key={a.slug}
                   href={`/blog/${a.slug}`}
-                  style={i === 2 ? { borderTop: '1px solid var(--line)', paddingTop: '24px' } : undefined}
+                  className="bo-side"
+                  style={{
+                    ...(i === 2 ? { borderTop: '1px solid var(--line)', paddingTop: '24px' } : {}),
+                    ['--bo-delay' as string]: `${1.3 + i * 0.18}s`,
+                    ['--bo-chart-delay' as string]: `${1.55 + i * 0.18}s`,
+                  } as CSSProperties}
                 >
                   <div className="thumb" style={i === 2 ? { height: '110px' } : undefined}>
                     <svg
@@ -229,7 +239,7 @@ export default function BlogPage() {
                       fill="none"
                     >
                       <path d={`${SIDE_PATHS[i]} ${i === 2 ? 'L104 64 L0 64 Z' : 'L104 104 L0 104 Z'}`} fill="#d99405" fillOpacity=".12" />
-                      <path d={SIDE_PATHS[i]} stroke="#d99405" strokeWidth="1.8" />
+                      <path className="bo-side-line" d={SIDE_PATHS[i]} stroke="#d99405" strokeWidth="1.8" />
                     </svg>
                   </div>
                   <div><b>{a.category.toUpperCase()}</b><h4>{a.title}</h4><span>5 min read</span></div>
@@ -267,7 +277,7 @@ export default function BlogPage() {
       </div>
 
       {/* articles */}
-      <div style={{ borderTop: '1px solid var(--line)', marginTop: '67px', paddingTop: '55px' }}>
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '67px', paddingTop: '55px', paddingBottom: '80px' }}>
         <div className="wrap">
           <hr className="inset-rule" />
 

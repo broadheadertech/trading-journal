@@ -28,6 +28,7 @@ export default function LandingPage() {
       <ScrollReveal selector=".sec02" />
       <ScrollReveal selector=".sec03" threshold={0.2} />
       <ScrollReveal selector=".sec07" threshold={0.2} />
+      <ScrollReveal selector=".sec09" threshold={0.2} />
       <StatCountUp />
       <ButtonShimmer />
       <AtlasMethod />

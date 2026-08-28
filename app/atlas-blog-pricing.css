@@ -801,3 +801,183 @@
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================================================
+   BLOG INDEX — one-time entrance ("index draw"), app/blog/page.tsx only.
+   Every .bo-* class below is unique to that page's hero + featured card, so
+   nothing here can leak onto other .phero/.feat instances elsewhere.
+
+   The whole block lives inside `(prefers-reduced-motion: no-preference)`,
+   mirroring .hero-eyebrow etc. in app/atlas.css: under reduced motion the
+   hidden initial styles (opacity:0, translateY, dash offsets) are never
+   applied in the first place, so every element simply renders at its normal,
+   fully-visible state with no extra override needed.
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  /* masked line-rise — heading (105% start, per spec) and featured title
+     (100% start) share the "slide up out of an overflow:hidden wrapper"
+     technique but not a keyframe, since the two starting offsets differ. */
+  .atlas-site .phero h1.bo-heading {
+    margin: 0;
+    transform: translateY(105%);
+    animation: bo-mask-rise-105 .85s cubic-bezier(.22, 1, .36, 1) .1s forwards;
+  }
+  .atlas-site .feat h2.bo-title {
+    margin: 0;
+    transform: translateY(100%);
+    animation: bo-mask-rise-100 .6s cubic-bezier(.22, 1, .36, 1) 2.85s forwards;
+  }
+
+  .atlas-site .bo-lead {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: bo-fade-up .6s ease .55s forwards;
+  }
+  .atlas-site .bo-divider {
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: bo-scale-x .8s cubic-bezier(.4, 0, .2, 1) .75s forwards;
+  }
+  .atlas-site .bo-feat {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: bo-fade-up-lg .75s cubic-bezier(.22, 1, .36, 1) 1s forwards;
+  }
+
+  /* featured card chrome */
+  .atlas-site .bo-kicker { opacity: 0; animation: bo-fade-in .4s ease 1.5s forwards; }
+  .atlas-site .bo-badge {
+    transform: scale(0);
+    animation: bo-badge-pop .4s cubic-bezier(.34, 1.56, .64, 1) 1.6s forwards;
+  }
+
+  /* featured chart — .bo-draw omits its 0% keyframe on purpose, so each path
+     draws from its OWN pre-animation stroke-dashoffset (900 here, 220 for the
+     sidebar mini-charts below) rather than needing a duplicate keyframe per
+     path length. Dasharray values are safe overestimates of the actual
+     measured path lengths (~815 / ~198 at most). */
+  .atlas-site .bo-line {
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    animation: bo-draw 1.5s cubic-bezier(.4, 0, .2, 1) 1.15s forwards;
+  }
+  .atlas-site .bo-area { opacity: 0; animation: bo-fade-in .8s ease 2.4s forwards; }
+  .atlas-site .bo-dot {
+    opacity: 0;
+    animation: bo-fade-in .4s cubic-bezier(.34, 1.56, .64, 1) 2.6s forwards;
+  }
+  .atlas-site .bo-slug { opacity: 0; animation: bo-fade-in .4s ease 2.7s forwards; }
+
+  /* featured metadata block, sequenced after the chart finishes drawing */
+  .atlas-site .bo-meta { opacity: 0; animation: bo-fade-in .4s ease 2.75s forwards; }
+  .atlas-site .bo-dek { opacity: 0; animation: bo-fade-in .5s ease 3.1s forwards; }
+  .atlas-site .bo-readlink { opacity: 0; animation: bo-fade-in .4s ease 3.25s forwards; }
+
+  /* sidebar rows — per-row delay comes from --bo-delay/--bo-chart-delay
+     custom properties set inline per item (index-driven, so this scales past
+     3 rows automatically rather than relying on nth-child). */
+  .atlas-site .bo-side {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: bo-slide-in .55s cubic-bezier(.22, 1, .36, 1) var(--bo-delay, 1.3s) forwards;
+  }
+  .atlas-site .bo-side-line {
+    stroke-dasharray: 220;
+    stroke-dashoffset: 220;
+    animation: bo-draw .9s cubic-bezier(.4, 0, .2, 1) var(--bo-chart-delay, 1.55s) forwards;
+  }
+}
+
+@keyframes bo-mask-rise-105 { from { transform: translateY(105%); } to { transform: translateY(0); } }
+@keyframes bo-mask-rise-100 { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes bo-fade-up    { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bo-fade-up-lg { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bo-slide-in   { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes bo-scale-x    { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes bo-fade-in    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bo-badge-pop  { from { transform: scale(0); } to { transform: scale(1); } }
+/* no 0% keyframe: the animated element's own stroke-dashoffset (set on the
+   .bo-line / .bo-side-line rules above) supplies the starting value */
+@keyframes bo-draw { to { stroke-dashoffset: 0; } }
+
+/* ============================================================================
+   PRICING PAGE (app/pricing/page.tsx) — entrance for the three plan cards.
+   Same animation, same keyframes (cardRise/proLift/proLiftSm/badgeSpring/
+   rowSlide — defined once in app/atlas.css and loaded globally via
+   app/layout.tsx) as the homepage's .sec09 pricing section. The only
+   difference is the trigger: this page has no .sec09 wrapper, so
+   ScrollReveal adds `is-in` straight onto .plans itself (see the
+   <ScrollReveal selector=".plans" .../> call in app/pricing/page.tsx)
+   instead of a section ancestor. Everything below is prefixed `.atlas-site`
+   on purpose — .plans/.plan are also used, unscoped, by the homepage's
+   Pricing.tsx, which renders outside .atlas-site, so this can't double up
+   with (or fight) the .sec09 rules in app/atlas.css.
+   ========================================================================== */
+.atlas-site .plans .plan { animation: cardRise .6s cubic-bezier(.22, 1, .36, 1) both paused; }
+.atlas-site .plans .plan:nth-child(1) { animation-delay: .1s; }
+.atlas-site .plans .plan:nth-child(3) { animation-delay: .46s; }
+.atlas-site .plans .plan.pro {
+  animation: cardRise .6s cubic-bezier(.22, 1, .36, 1) .28s both paused,
+             proLift .6s ease .95s both paused;
+}
+.atlas-site .plans.is-in .plan { animation-play-state: running; }
+
+.atlas-site .plans .plan.pro .badge { animation: badgeSpring .4s cubic-bezier(.34, 1.56, .64, 1) 1.1s both paused; }
+.atlas-site .plans.is-in .plan.pro .badge { animation-play-state: running; }
+
+.atlas-site .plans .plan li { animation: rowSlide .35s ease both paused; }
+.atlas-site .plans.is-in .plan li { animation-play-state: running; }
+
+/* feature-row stagger: same base-delay-per-card + .08s-per-row scheme as
+   the homepage section — row counts match exactly (8 / 10 / 11) between
+   the two pages' Core/Pro/Elite <ul> lists. */
+.atlas-site .plans .plan:nth-child(1) li:nth-child(1) { animation-delay: .50s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(2) { animation-delay: .58s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(3) { animation-delay: .66s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(4) { animation-delay: .74s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(5) { animation-delay: .82s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(6) { animation-delay: .90s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(7) { animation-delay: .98s; }
+.atlas-site .plans .plan:nth-child(1) li:nth-child(8) { animation-delay: 1.06s; }
+
+.atlas-site .plans .plan.pro li:nth-child(1) { animation-delay: .68s; }
+.atlas-site .plans .plan.pro li:nth-child(2) { animation-delay: .76s; }
+.atlas-site .plans .plan.pro li:nth-child(3) { animation-delay: .84s; }
+.atlas-site .plans .plan.pro li:nth-child(4) { animation-delay: .92s; }
+.atlas-site .plans .plan.pro li:nth-child(5) { animation-delay: 1.00s; }
+.atlas-site .plans .plan.pro li:nth-child(6) { animation-delay: 1.08s; }
+.atlas-site .plans .plan.pro li:nth-child(7) { animation-delay: 1.16s; }
+.atlas-site .plans .plan.pro li:nth-child(8) { animation-delay: 1.24s; }
+.atlas-site .plans .plan.pro li:nth-child(9) { animation-delay: 1.32s; }
+.atlas-site .plans .plan.pro li:nth-child(10) { animation-delay: 1.40s; }
+
+.atlas-site .plans .plan:nth-child(3) li:nth-child(1) { animation-delay: .86s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(2) { animation-delay: .94s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(3) { animation-delay: 1.02s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(4) { animation-delay: 1.10s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(5) { animation-delay: 1.18s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(6) { animation-delay: 1.26s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(7) { animation-delay: 1.34s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(8) { animation-delay: 1.42s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(9) { animation-delay: 1.50s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(10) { animation-delay: 1.58s; }
+.atlas-site .plans .plan:nth-child(3) li:nth-child(11) { animation-delay: 1.66s; }
+
+@media (max-width: 767px) {
+  .atlas-site .plans .plan.pro {
+    animation: cardRise .6s cubic-bezier(.22, 1, .36, 1) .28s both paused,
+               proLiftSm .6s ease .95s both paused;
+  }
+}
+
+/* Pro's -8px lift + glow is a permanent resting position, not just an
+   animation endpoint, so — same as the homepage section — it needs an
+   explicit static fallback once prefers-reduced-motion strips the
+   animation (global rule, app/atlas.css) rather than relying on a
+   keyframe that will never run. */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-site .plans .plan.pro { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(217, 148, 5, .18); }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 767px) {
+  .atlas-site .plans .plan.pro { transform: translateY(-4px); }
+}
