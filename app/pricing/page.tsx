@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
+import ScrollReveal from '@/components/landing/ScrollReveal';
 
 const PLAN_PRICES = {
   core: { m: '$29', a: '$24' },
@@ -37,6 +38,7 @@ export default function PricingPage() {
   return (
     <div className="atlas-site">
       <LandingNav />
+      <ScrollReveal selector=".plans" threshold={0.2} />
 
       <div className="phero" style={{ '--band': '420px', padding: '118px 0 0' } as CSSProperties}>
         <div className="panelgrid"></div>

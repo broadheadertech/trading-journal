@@ -109,6 +109,27 @@ const CORRIDORS: [string, string][] = [
 /** Arc lift constant — raise for taller, more dramatic corridors. */
 const ARC_LIFT = 90;
 
+/* Hero load-in timing. The spec's reference numbers (0.60s/0.82s/1.04s for
+   routes, 1.45s/1.55s/1.65s for nodes) assume 3 routes and 3 nodes; this map
+   has 8 corridors and 12 exchanges, so the same per-item stagger interval
+   (0.22s / 0.10s) is carried forward across the real counts instead of
+   compressing everything into the original 3-item window. */
+const ROUTE_REVEAL_DELAY_START = 0.6;
+const ROUTE_REVEAL_DELAY_STEP = 0.22;
+const ROUTE_REVEAL_DURATION = 2.1;
+const NODE_REVEAL_DELAY_START = 1.45;
+const NODE_REVEAL_DELAY_STEP = 0.1;
+
+const routeRevealDelay = (i: number) => ROUTE_REVEAL_DELAY_START + i * ROUTE_REVEAL_DELAY_STEP;
+const nodeRevealDelay = (i: number) => NODE_REVEAL_DELAY_START + i * NODE_REVEAL_DELAY_STEP;
+
+/* Once every one-shot route reveal has finished, the map hands control back
+   to the pre-existing ambient redraw loop (see .frame.settled in the CSS
+   module) — this is when that handoff happens. */
+const HERO_SETTLE_MS = Math.ceil(
+  (routeRevealDelay(CORRIDORS.length - 1) + ROUTE_REVEAL_DURATION) * 1000,
+) + 60;
+
 type Route = { arc: string; chord: string; color: string; name: string };
 
 function buildRoutes(classIndices: number[]): Route[] {
@@ -173,7 +194,7 @@ function MapContent({ routes }: { routes: Route[] }) {
             pathLength={1}
             strokeDasharray={1}
             className={styles.routeShadow}
-            style={{ animationDelay: `${-i * 0.62}s` }}
+            style={{ '--ambient-delay': `${-i * 0.62}s`, '--route-delay': `${routeRevealDelay(i)}s` } as React.CSSProperties}
           />
         ))}
       </g>
@@ -190,7 +211,7 @@ function MapContent({ routes }: { routes: Route[] }) {
             strokeDasharray={1}
             filter="url(#atlasRouteBlur)"
             className={styles.routeGlow}
-            style={{ animationDelay: `${-i * 0.62}s` }}
+            style={{ '--ambient-delay': `${-i * 0.62}s`, '--route-delay': `${routeRevealDelay(i)}s` } as React.CSSProperties}
           />
         ))}
         {routes.map((r, i) => (
@@ -202,7 +223,7 @@ function MapContent({ routes }: { routes: Route[] }) {
             pathLength={1}
             strokeDasharray={1}
             className={styles.routeLine}
-            style={{ animationDelay: `${-i * 0.62}s` }}
+            style={{ '--ambient-delay': `${-i * 0.62}s`, '--route-delay': `${routeRevealDelay(i)}s` } as React.CSSProperties}
           />
         ))}
       </g>
@@ -212,7 +233,11 @@ function MapContent({ routes }: { routes: Route[] }) {
         const x = px(n.lon);
         const y = py(n.lat);
         return (
-          <g key={n.id}>
+          <g
+            key={n.id}
+            className={styles.nodeGroup}
+            style={{ '--node-delay': `${nodeRevealDelay(i)}s` } as React.CSSProperties}
+          >
             <ellipse cx={x} cy={y} rx={7} ry={2.4} fill="#000000" opacity={0.55} />
             <line x1={x} y1={y} x2={x} y2={y - LIFT} stroke="#D99405" strokeWidth={1} opacity={0.28} />
             <circle
@@ -250,8 +275,17 @@ export default function AtlasWorldMap() {
     [classIndices],
   );
 
+  /* Component-mount lifecycle, not a session flag: a hard refresh remounts
+     this and replays the hero reveal; client-side nav that keeps the map
+     mounted does not re-trigger it. */
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSettled(true), HERO_SETTLE_MS);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
-    <div className={styles.frame} aria-hidden="true" role="presentation">
+    <div className={`${styles.frame} ${settled ? styles.settled : ''}`} aria-hidden="true" role="presentation">
       <div className={styles.canvas}>
         <div className={styles.stage}>
           <svg

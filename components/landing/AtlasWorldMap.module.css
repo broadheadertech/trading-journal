@@ -88,19 +88,36 @@
 .routeLine {
   stroke-dashoffset: 0;
   opacity: 0.7;
-  animation: atlasRouteLine 7s ease-in-out infinite;
 }
 
 .routeGlow {
   stroke-dashoffset: 0;
   opacity: 0.2;
-  animation: atlasRouteGlow 7s ease-in-out infinite;
 }
 
 .routeShadow {
   stroke-dashoffset: 0;
   opacity: 0.4;
+}
+
+/* Ambient redraw cycle only kicks in once the one-shot hero reveal below has
+   finished (.frame.settled) — before that, :not(.settled) below owns these
+   properties instead. Gating with mutually-exclusive selectors, rather than
+   layering a second animation on top, avoids the two fighting over the same
+   stroke-dashoffset/opacity. */
+.frame.settled .routeLine {
+  animation: atlasRouteLine 7s ease-in-out infinite;
+  animation-delay: var(--ambient-delay, 0s);
+}
+
+.frame.settled .routeGlow {
+  animation: atlasRouteGlow 7s ease-in-out infinite;
+  animation-delay: var(--ambient-delay, 0s);
+}
+
+.frame.settled .routeShadow {
   animation: atlasRouteShadow 7s ease-in-out infinite;
+  animation-delay: var(--ambient-delay, 0s);
 }
 
 @keyframes atlasRouteLine {
@@ -178,31 +195,115 @@
   white-space: nowrap;
 }
 
+/* Matches the chart section's JOURNALED chip exactly: label on top, mono
+   value beneath, in a 269x43 blue-gradient panel. The markup order is left
+   alone — both lines are placed absolutely, so the value can sit under the
+   label without reordering the JSX. */
 .stat {
   right: var(--inset);
   bottom: var(--inset);
-  padding: 10px 16px 11px;
-  text-align: right;
-  background: rgba(5, 7, 12, 0.82);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  width: 269px;
+  height: 43px;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #10396e 0%, #00090f 58%);
 }
 
 .statValue {
-  display: block;
-  font-size: 22px;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
+  position: absolute;
+  left: 25px;
+  top: 20px;
+  font-family: var(--mono), ui-monospace, monospace;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.02em;
   color: var(--text);
 }
 
 .statLabel {
-  display: block;
-  margin-top: 5px;
+  position: absolute;
+  left: 25px;
+  top: 6px;
+  font-family: var(--body), system-ui, sans-serif;
+  font-weight: 500;
   font-size: 9px;
-  letter-spacing: 0.16em;
-  color: var(--muted);
+  letter-spacing: 0.02em;
+  color: #8598b1;
+}
+
+/* ---------- hero load-in: camera-focus reveal ----------
+   Fires once on mount, not on scroll. The map fades/unblurs as a whole first
+   (.canvas — the void background, graticule and dot field); routes then draw
+   themselves in on top, and nodes fade in last. .chrome/.stat is a sibling of
+   .canvas (see the comment above .canvas) so its own, separately-timed
+   reveal never gets caught in the map's blur. All of it is scoped under
+   prefers-reduced-motion:no-preference so a reduced-motion visitor gets the
+   plain always-drawn/always-visible resting styles above with no hidden
+   initial state to ever get stuck in. */
+@media (prefers-reduced-motion:no-preference){
+  .canvas{
+    opacity: 0;
+    filter: blur(10px);
+    animation: heroMapFocusIn 1.6s cubic-bezier(.22,1,.36,1) .2s forwards;
+  }
+
+  .stat{
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(6px) scale(.995);
+    animation: heroStatFocusIn .8s cubic-bezier(.22,1,.36,1) 1.05s forwards;
+  }
+
+  .routeLine,.routeGlow,.routeShadow{
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+
+  .frame:not(.settled) .routeLine{
+    animation: heroRouteReveal 2.1s cubic-bezier(.4,0,.2,1) var(--route-delay, 0s) forwards;
+  }
+
+  .frame:not(.settled) .routeGlow{
+    animation: heroRouteRevealGlow 2.1s cubic-bezier(.4,0,.2,1) var(--route-delay, 0s) forwards;
+  }
+
+  .frame:not(.settled) .routeShadow{
+    animation: heroRouteRevealShadow 2.1s cubic-bezier(.4,0,.2,1) var(--route-delay, 0s) forwards;
+  }
+
+  .nodeGroup{
+    opacity: 0;
+    animation: heroNodeFadeIn .5s ease var(--node-delay, 0s) forwards;
+  }
+}
+
+@keyframes heroMapFocusIn {
+  0%   { opacity: 0; filter: blur(10px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+@keyframes heroStatFocusIn {
+  0%   { opacity: 0; filter: blur(8px); transform: translateY(6px) scale(.995); }
+  100% { opacity: 1; filter: blur(0);   transform: translateY(0) scale(1); }
+}
+
+@keyframes heroRouteReveal {
+  0%   { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0.7; }
+}
+
+@keyframes heroRouteRevealGlow {
+  0%   { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0.2; }
+}
+
+@keyframes heroRouteRevealShadow {
+  0%   { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0.4; }
+}
+
+@keyframes heroNodeFadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 /* ---------- responsive ---------- */

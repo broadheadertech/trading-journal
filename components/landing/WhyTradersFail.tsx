@@ -1,3 +1,5 @@
+import WhyTradersFailAnimated from './WhyTradersFailAnimated';
+
 export default function WhyTradersFail() {
   return (
     <div className="sec07">
@@ -17,10 +19,12 @@ export default function WhyTradersFail() {
           </div>
         </div>
 
+        <div className="solve-bloom" aria-hidden="true" />
         <div className="solve">
-          <h3>Atlas was built to solve all five.</h3>
+          <h3><span className="w">Atlas</span> <span className="w">was</span> <span className="w">built</span> <span className="w">to</span> <span className="w">solve</span> <span className="w">all</span> <span className="w">five.</span></h3>
           <p>By combining education, analytics, accountability, and community, traders gain the tools needed to achieve long-term consistency.</p>
         </div>
+        <WhyTradersFailAnimated />
       </div>
     </div>
   );

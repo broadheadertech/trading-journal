@@ -194,8 +194,12 @@
     margin-top: 64px;
   }
   .bound {
+    position: relative;
     background: var(--card);
-    padding: 30px 28px 32px;
+    /* bottom padding widened from 32px to give the verified chip (added
+       below) clearance above the card edge without ever overlapping the
+       description text */
+    padding: 30px 28px 40px;
   }
   .bound .ic { display: block; margin-bottom: 18px; }
   .bound h4 {
@@ -207,6 +211,112 @@
     margin: 0 0 10px;
   }
   .bound p { font-size: 13.5px; line-height: 22px; color: var(--atlas-muted); margin: 0; }
+
+  /* ── security section animation — entrance sequence, plays once ──────
+     Everything below is additive: new classes and SVG elements layered on
+     top of the existing .bound/.ic/h4/p markup. The base (unarmed) state of
+     every one-shot element is its own hidden/initial appearance; `.armed`
+     (added by SecurityAnimated.tsx, staggered per card) unpauses each
+     element's own animation via its own animation-delay, so one class
+     addition fires the whole card's sequence in the right order. */
+
+  /* 1. radar ping on the eyebrow lock icon — the only looping animation
+     here, gated on `.is-armed` rather than `.armed` since it starts the
+     instant the section triggers, not on the per-card stagger */
+  .ic-lock { position: relative; }
+  .ic-lock::before,
+  .ic-lock::after {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 50%;
+    border: 1.5px solid #33EDC8;
+    opacity: 0;
+    pointer-events: none;
+    animation: ping 3s ease-out infinite paused;
+  }
+  .ic-lock::after { animation-delay: 1.5s; }
+  .ic-lock.is-armed::before,
+  .ic-lock.is-armed::after { animation-play-state: running; }
+
+  /* 3. perimeter trace — a one-time scan, not a permanent border, so it
+     has no reduced-motion fallback: it simply never runs */
+  .bound-trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .bound-trace rect {
+    fill: none;
+    stroke: #D99405;
+    stroke-width: 1.5;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    opacity: 0;
+  }
+  .bound.armed .bound-trace rect {
+    animation: traceDraw 1.3s cubic-bezier(.4, 0, .2, 1) forwards;
+  }
+
+  /* 4. shield draw + checkmark + verify ring — replaces the plain stroked
+     path with a stroke-animatable outline at the same 18x21 footprint */
+  .ic-wrap {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 21px;
+    margin-bottom: 18px;
+  }
+  .ic-wrap .sh { display: block; }
+  .sh-path {
+    fill: none;
+    stroke: #D99405;
+    stroke-width: 1.5;
+    stroke-dasharray: 90;
+    stroke-dashoffset: 90;
+  }
+  .bound.armed .sh-path { animation: shieldDraw .8s ease forwards; }
+  .sh-check {
+    fill: none;
+    stroke: #24C88A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 14;
+    stroke-dashoffset: 14;
+  }
+  .bound.armed .sh-check { animation: checkDraw .35s ease .7s forwards; }
+  .sh-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 1.5px solid #24C88A;
+    border-radius: 50%;
+    transform: scale(.5);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .bound.armed .sh-ring { animation: ringPulse .7s ease-out .9s forwards; }
+
+  /* 5. card title/description rise */
+  .bound h4,
+  .bound p { opacity: 0; transform: translateY(8px); }
+  .bound.armed h4 { animation: riseIn .45s ease .3s both; }
+  .bound.armed p { animation: riseIn .45s ease .42s both; }
+
+  /* reduced motion: the shield/checkmark and card text have a real resting
+     state worth keeping, so they're forced visible immediately. The trace
+     and ring have no meaningful "finished" look (they end at opacity: 0 by
+     design), so neither needs an override — they simply never run. */
+  @media (prefers-reduced-motion: reduce) {
+    .sh-path, .sh-check { stroke-dashoffset: 0; }
+    .bound h4, .bound p { opacity: 1; transform: none; }
+  }
 
   .setupcard { margin-top: 40px; }
   .setupcard ul {
@@ -265,6 +375,63 @@
   }
   .scope li svg { flex: none; margin-top: 5px; }
   .scope li.no { color: var(--muted-2); }
+
+  /* ── scope panel animation — additive, plays once with the contact
+     section's entrance sequence (see ContactAnimated.tsx, which adds
+     .armed to .scope at the same moment it arms the email cards). Column 1
+     is "can help with" (green ticks), column 2 is "outside our scope"
+     (grey X) — the two are interleaved can/out/can/out per row so both
+     columns fill in parallel rather than one after the other. */
+  .scope li {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  .scope.armed li {
+    animation: itemIn .35s ease forwards;
+  }
+  .can-tick {
+    fill: none;
+    stroke: #24C88A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 12;
+    stroke-dashoffset: 12;
+  }
+  .out-x {
+    fill: none;
+    stroke: #4A5867;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 8;
+    stroke-dashoffset: 8;
+  }
+  .scope.armed > div:nth-child(1) li:nth-child(1) { animation-delay: .9s; }
+  .scope.armed > div:nth-child(1) li:nth-child(2) { animation-delay: 1.03s; }
+  .scope.armed > div:nth-child(1) li:nth-child(3) { animation-delay: 1.16s; }
+  .scope.armed > div:nth-child(1) li:nth-child(4) { animation-delay: 1.29s; }
+  .scope.armed > div:nth-child(1) li:nth-child(5) { animation-delay: 1.42s; }
+  .scope.armed > div:nth-child(2) li:nth-child(1) { animation-delay: .95s; }
+  .scope.armed > div:nth-child(2) li:nth-child(2) { animation-delay: 1.08s; }
+  .scope.armed > div:nth-child(2) li:nth-child(3) { animation-delay: 1.21s; }
+  .scope.armed > div:nth-child(2) li:nth-child(4) { animation-delay: 1.34s; }
+  .scope.armed > div:nth-child(2) li:nth-child(5) { animation-delay: 1.47s; }
+
+  .scope.armed > div:nth-child(1) li:nth-child(1) .can-tick { animation: tickDraw .4s ease .9s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(2) .can-tick { animation: tickDraw .4s ease 1.03s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(3) .can-tick { animation: tickDraw .4s ease 1.16s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(4) .can-tick { animation: tickDraw .4s ease 1.29s forwards; }
+  .scope.armed > div:nth-child(1) li:nth-child(5) .can-tick { animation: tickDraw .4s ease 1.42s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(1) .out-x { animation: xDraw .3s ease .95s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(2) .out-x { animation: xDraw .3s ease 1.08s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(3) .out-x { animation: xDraw .3s ease 1.21s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(4) .out-x { animation: xDraw .3s ease 1.34s forwards; }
+  .scope.armed > div:nth-child(2) li:nth-child(5) .out-x { animation: xDraw .3s ease 1.47s forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scope li { opacity: 1; transform: none; }
+    .can-tick, .out-x { stroke-dashoffset: 0; }
+  }
 
   /* ── numbered principle lists (/about) ──────────────────────────────── */
   .numbered {
@@ -410,4 +577,42 @@
     .setupcard ul { grid-template-columns: minmax(0, 1fr); }
     .ucrow { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   }
+}
+
+/* security section animation keyframes — top level, since @keyframes may
+   not sit inside the nested .atlas-site rule above */
+@keyframes ping {
+  0% { transform: scale(1); opacity: .7; }
+  70%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes traceDraw {
+  0% { stroke-dashoffset: 600; opacity: .9; }
+  80% { stroke-dashoffset: 0; opacity: .6; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes shieldDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes checkDraw {
+  to { stroke-dashoffset: 0; }
+}
+/* the spec's literal keyframe (scale .5/opacity 0 -> scale 1.9/opacity 0)
+   never actually shows the ring — a brief mid-animation peak is added so
+   the pulse is visible before it fades, while keeping both given endpoints */
+@keyframes ringPulse {
+  0% { transform: scale(.5); opacity: 0; }
+  15% { opacity: .8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes riseIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes itemIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes tickDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes xDraw {
+  to { stroke-dashoffset: 0; }
 }
