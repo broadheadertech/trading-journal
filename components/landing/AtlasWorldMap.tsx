@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import styles from './AtlasWorldMap.module.css';
+import { FlagArt, type FlagCode } from './atlasFlagIcons';
 
 /* ------------------------------------------------------------------
    ATLAS hero world map.
@@ -155,6 +156,172 @@ function buildRoutes(classIndices: number[]): Route[] {
   });
 }
 
+/* ------------------------------------------------------------------
+   Flag-route layer (additive on top of the 8 static corridors above).
+
+   A rotating set of 3 country-to-country routes with flag markers at each
+   end, cycling every 7s per route (staggered 0s/2.3s/4.6s so they never
+   all swap together). Philippines is pinned to one route at all times;
+   its partner — and both ends of the other two routes — rotate randomly
+   from FLAG_COUNTRIES, reusing the exact same arc math and 7-class color
+   palette as the static corridors above so this reads as one system.
+   ------------------------------------------------------------------ */
+
+type FlagCountry = { name: string; code: FlagCode; lat: number; lon: number };
+
+const FLAG_COUNTRIES: FlagCountry[] = [
+  { name: 'Philippines', code: 'PH', lat: 14.5995, lon: 120.9842 },
+  { name: 'United States', code: 'US', lat: 38.9072, lon: -77.0369 },
+  { name: 'Japan', code: 'JP', lat: 35.6762, lon: 139.6503 },
+  { name: 'United Kingdom', code: 'GB', lat: 51.5074, lon: -0.1278 },
+  { name: 'Singapore', code: 'SG', lat: 1.3521, lon: 103.8198 },
+  { name: 'Germany', code: 'DE', lat: 52.5200, lon: 13.4050 },
+  { name: 'Australia', code: 'AU', lat: -33.8688, lon: 151.2093 },
+  { name: 'Brazil', code: 'BR', lat: -23.5505, lon: -46.6333 },
+  { name: 'India', code: 'IN', lat: 19.0760, lon: 72.8777 },
+  { name: 'South Africa', code: 'ZA', lat: -26.2041, lon: 28.0473 },
+  { name: 'UAE', code: 'AE', lat: 25.2048, lon: 55.2708 },
+  { name: 'Canada', code: 'CA', lat: 43.6532, lon: -79.3832 },
+  { name: 'South Korea', code: 'KR', lat: 37.5665, lon: 126.9780 },
+  { name: 'Mexico', code: 'MX', lat: 19.4326, lon: -99.1332 },
+  { name: 'Nigeria', code: 'NG', lat: 6.5244, lon: 3.3792 },
+];
+
+const FLAG_AT = Object.fromEntries(FLAG_COUNTRIES.map((c) => [c.code, c])) as Record<FlagCode, FlagCountry>;
+
+/* Countries whose static horizontal position falls outside the 10%-90%
+   band are excluded from ever being picked — that band is where the
+   canvas's own edge vignette (.canvas mask-image, ~22%/88%) starts
+   dissolving the map, so a flag spawning there would render half-faded.
+   Of the 15, this excludes only Australia (~92%). PH is always within
+   band and never filtered even when it's someone else's random partner. */
+const FLAG_ELIGIBLE = FLAG_COUNTRIES.filter((c) => {
+  const pct = ((c.lon + 180) / 360) * 100;
+  return pct >= 10 && pct <= 90;
+});
+const FLAG_POOL = FLAG_ELIGIBLE.filter((c) => c.code !== 'PH');
+
+/** How far a flag marker floats above the plane — same 2D fake-elevation
+ *  trick as the exchange nodes' LIFT, just a different constant per spec. */
+const FLAG_LIFT = 16;
+
+let flagRouteIdSeed = 0;
+const nextFlagRouteId = () => flagRouteIdSeed++;
+
+const randomFrom = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+type FlagRoute = { id: number; fromCode: FlagCode; toCode: FlagCode; colorIdx: number };
+
+/** Picks a fresh route for one slot, avoiding any country already active
+ *  in the OTHER currently-active slots (`others`) so the 3 concurrent
+ *  routes never repeat a country between them. Slot 0 always keeps PH
+ *  fixed at one end. */
+function nextFlagRoute(slotIndex: number, others: FlagRoute[]): FlagRoute {
+  const usedElsewhere = new Set(others.flatMap((r) => [r.fromCode, r.toCode]));
+  const colorIdx = Math.floor(Math.random() * CLASSES.length);
+
+  if (slotIndex === 0) {
+    const pool = FLAG_POOL.filter((c) => !usedElsewhere.has(c.code));
+    const partner = randomFrom(pool.length ? pool : FLAG_POOL);
+    return { id: nextFlagRouteId(), fromCode: 'PH', toCode: partner.code, colorIdx };
+  }
+
+  const pool1 = FLAG_POOL.filter((c) => !usedElsewhere.has(c.code));
+  const a = randomFrom(pool1.length ? pool1 : FLAG_POOL);
+  const usedElsewhere2 = new Set([...usedElsewhere, a.code]);
+  const pool2 = FLAG_POOL.filter((c) => !usedElsewhere2.has(c.code));
+  const b = randomFrom(pool2.length ? pool2 : FLAG_POOL.filter((c) => c.code !== a.code));
+  return { id: nextFlagRouteId(), fromCode: a.code, toCode: b.code, colorIdx };
+}
+
+/** Reduced-motion fallback: 3 static routes picked once, same no-repeat
+ *  rule, never cycled. */
+function buildStaticFlagRoutes(): FlagRoute[] {
+  const result: FlagRoute[] = [];
+  for (let i = 0; i < 3; i++) result.push(nextFlagRoute(i, result));
+  return result;
+}
+
+type FlagArc = { arc: string; chord: string; color: string };
+
+function buildFlagArc(route: FlagRoute): FlagArc {
+  const from = FLAG_AT[route.fromCode];
+  const to = FLAG_AT[route.toCode];
+  const x1 = px(from.lon);
+  const y1 = py(from.lat) - FLAG_LIFT;
+  const x2 = px(to.lon);
+  const y2 = py(to.lat) - FLAG_LIFT;
+  const dist = Math.hypot(x2 - x1, y2 - y1);
+  const cx = (x1 + x2) / 2;
+  const cy = (y1 + y2) / 2 - (ARC_LIFT + dist * 0.2);
+  return {
+    arc: `M${x1.toFixed(1)} ${y1.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`,
+    chord: `M${x1.toFixed(1)} ${(y1 + FLAG_LIFT).toFixed(1)}L${x2.toFixed(1)} ${(y2 + FLAG_LIFT).toFixed(1)}`,
+    color: CLASSES[route.colorIdx].color,
+  };
+}
+
+/** Flag + ISO code label, riser and floor shadow — the same depth cues as
+ *  the exchange nodes above. The billboard group (flag + label only) is
+ *  nested apart from the riser/shadow specifically so it alone can carry
+ *  a CSS `rotateX(-30deg)` counter-transform (see .flagBillboard) that
+ *  cancels .stage's rotateX(30deg) tilt and faces the camera — an SVG
+ *  `transform` attribute and a CSS `transform` on the SAME element don't
+ *  compose (the CSS one wins outright), so position (attribute) and
+ *  counter-rotation (CSS class) are kept on separate nested <g>s. */
+function FlagMarker({ country, color }: { country: FlagCountry; color: string }) {
+  const x = px(country.lon);
+  const groundY = py(country.lat);
+  const liftedY = groundY - FLAG_LIFT;
+  return (
+    <g className={styles.flagMarker}>
+      <ellipse cx={x} cy={groundY} rx={6} ry={2} fill="#000000" opacity={0.5} />
+      <line x1={x} y1={groundY} x2={x} y2={liftedY} stroke={color} strokeWidth={1} opacity={0.35} />
+      <g transform={`translate(${x.toFixed(1)} ${liftedY.toFixed(1)})`}>
+        <g className={styles.flagBillboard}>
+          <g transform="translate(-9 -12)">
+            <g clipPath="url(#atlasFlagClip)">
+              <FlagArt code={country.code} />
+            </g>
+            <rect width={18} height={12} rx={1} fill="none" stroke="rgba(255,255,255,.2)" strokeWidth={1} />
+            <text x={9} y={20} textAnchor="middle" className={styles.flagIso}>{country.code}</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  );
+}
+
+function FlagRouteLayer({ routes, animated }: { routes: (FlagRoute | null)[]; animated: boolean }) {
+  return (
+    <>
+      {routes.map((route) => {
+        if (!route) return null;
+        const { arc, chord, color } = buildFlagArc(route);
+        return (
+          <g key={route.id}>
+            <path d={chord} pathLength={1} strokeDasharray={1} stroke="#000000" strokeWidth={3} fill="none" className={styles.flagRouteShadow} />
+            <path d={arc} pathLength={1} strokeDasharray={1} stroke={color} strokeWidth={5} fill="none" filter="url(#atlasRouteBlur)" className={styles.flagRouteGlow} />
+            <path d={arc} pathLength={1} strokeDasharray={1} stroke={color} strokeWidth={1.6} fill="none" strokeLinecap="round" className={styles.flagRouteLine} />
+            {animated && (
+              <g className={styles.flagPacket}>
+                <circle r={4} fill={color} filter="url(#atlasRouteBlur)" opacity={0.7}>
+                  <animateMotion dur="1.85s" begin="1.8s" repeatCount="2" path={arc} />
+                </circle>
+                <circle r={1.8} fill="#ffffff">
+                  <animateMotion dur="1.85s" begin="1.8s" repeatCount="2" path={arc} />
+                </circle>
+              </g>
+            )}
+            <FlagMarker country={FLAG_AT[route.fromCode]} color={color} />
+            <FlagMarker country={FLAG_AT[route.toCode]} color={color} />
+          </g>
+        );
+      })}
+    </>
+  );
+}
+
 /* The surface — graticule and dot field. It is defined once and stamped
    twice with <use>, which keeps the duplicated copy out of the markup;
    nothing in here animates, so there is no shadow-tree styling to worry
@@ -182,7 +349,15 @@ function MapSurface({ rows }: { rows: DotRow[] }) {
   );
 }
 
-function MapContent({ routes }: { routes: Route[] }) {
+function MapContent({
+  routes,
+  flagRoutes,
+  flagAnimated,
+}: {
+  routes: Route[];
+  flagRoutes: (FlagRoute | null)[];
+  flagAnimated: boolean;
+}) {
   return (
     <>
       {/* route shadows lie flat on the plane, under everything */}
@@ -253,6 +428,10 @@ function MapContent({ routes }: { routes: Route[] }) {
           </g>
         );
       })}
+
+      {/* flag-route layer — additive, drawn on top of the static corridors
+          and nodes above so its arcs/markers never sit underneath them */}
+      <FlagRouteLayer routes={flagRoutes} animated={flagAnimated} />
     </>
   );
 }
@@ -274,6 +453,54 @@ export default function AtlasWorldMap() {
     () => (classIndices ? buildRoutes(classIndices) : []),
     [classIndices],
   );
+
+  /* Flag-route layer: 3 slots cycling every 7s, staggered 0s/2.3s/4.6s so
+     they never all swap together. Slot 0 is pinned to Philippines and
+     activates immediately (t=0) so PH is guaranteed active from the first
+     frame; slots 1/2 activate at their own offset and then repeat every
+     7s from there. State starts empty and is seeded client-side only, for
+     the same hydration-mismatch reason as classIndices above. Reduced
+     motion swaps this whole scheme for a single static pick with no
+     interval and no travelling packet (see the JSX below and the
+     `no-preference`-gated CSS animations in the stylesheet). */
+  const [flagRoutes, setFlagRoutes] = useState<(FlagRoute | null)[]>([null, null, null]);
+  const [flagAnimated, setFlagAnimated] = useState(true);
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFlagAnimated(!reduced);
+
+    if (reduced) {
+      setFlagRoutes(buildStaticFlagRoutes());
+      return;
+    }
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const intervals: ReturnType<typeof setInterval>[] = [];
+
+    function activate(slotIndex: number) {
+      setFlagRoutes((prev) => {
+        const next = prev.slice() as (FlagRoute | null)[];
+        const others = next.filter((r, i) => i !== slotIndex && r) as FlagRoute[];
+        next[slotIndex] = nextFlagRoute(slotIndex, others);
+        return next;
+      });
+    }
+
+    [0, 2300, 4600].forEach((offset, slotIndex) => {
+      const start = () => {
+        activate(slotIndex);
+        intervals.push(setInterval(() => activate(slotIndex), 7000));
+      };
+      if (offset === 0) start();
+      else timers.push(setTimeout(start, offset));
+    });
+
+    return () => {
+      timers.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
+    };
+  }, []);
 
   /* Component-mount lifecycle, not a session flag: a hard refresh remounts
      this and replays the hero reveal; client-side nav that keeps the map
@@ -298,6 +525,11 @@ export default function AtlasWorldMap() {
               <filter id="atlasRouteBlur" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation={4} />
               </filter>
+              {/* shared 18x12 rounded-rect clip for every flag marker, so
+                  the flag art never draws outside its own border */}
+              <clipPath id="atlasFlagClip">
+                <rect width={18} height={12} rx={1} />
+              </clipPath>
               <MapSurface rows={rows} />
             </defs>
 
@@ -307,11 +539,11 @@ export default function AtlasWorldMap() {
             <g className={styles.scroll}>
               <g>
                 <use href="#atlasSurface" />
-                <MapContent routes={routes} />
+                <MapContent routes={routes} flagRoutes={flagRoutes} flagAnimated={flagAnimated} />
               </g>
               <g transform={`translate(${W} 0)`}>
                 <use href="#atlasSurface" />
-                <MapContent routes={routes} />
+                <MapContent routes={routes} flagRoutes={flagRoutes} flagAnimated={flagAnimated} />
               </g>
             </g>
 
