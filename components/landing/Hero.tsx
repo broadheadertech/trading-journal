@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import AtlasWorldMap from './AtlasWorldMap';
+import GlobeRoutes from './GlobeRoutes';
 
 export default function Hero() {
   return (
@@ -21,8 +21,13 @@ export default function Hero() {
         <div className="hero-badge"><b>128,326+</b><span>TRADERS WORLDWIDE</span></div>
       </div>
       {/* sits outside .wrap so it can occupy the hero's right half outright,
-          rather than being scoped to the centred copy column */}
-      <div className="hero-map"><AtlasWorldMap /></div>
+          rather than being scoped to the centred copy column. Same amber
+          palette (#D99405 dots/outline/grid, #05070c ocean) as the
+          Originkit hero-24 globe preview at /originkit-preview, plus real
+          3D circulating trade routes riding on the globe's own rotation. */}
+      <div className="hero-map">
+        <GlobeRoutes />
+      </div>
     </div>
   );
 }
