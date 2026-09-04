@@ -1,0 +1,82 @@
+
+> crypto-journal@1.0.0 dev
+> next dev
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\Admin\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\Admin\atlas\trading-journal\package-lock.json
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.100.11:3000
+- Environments: .env
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 4s
+○ Compiling / ...
+ GET / 200 in 12.7s (compile: 10.0s, proxy.ts: 185ms, render: 2.5s)
+○ Compiling /pricing ...
+ GET /pricing 200 in 7.4s (compile: 7.2s, proxy.ts: 18ms, render: 187ms)
+ GET / 200 in 416ms (compile: 11ms, proxy.ts: 14ms, render: 390ms)
+ GET /pricing 200 in 185ms (compile: 7ms, proxy.ts: 13ms, render: 164ms)
+ GET /demo 200 in 2.8s (compile: 1654ms, proxy.ts: 22ms, render: 1124ms)
+ GET /sign-in 200 in 3.6s (compile: 3.4s, proxy.ts: 15ms, render: 202ms)
+ GET /app 404 in 1051ms (compile: 898ms, proxy.ts: 16ms, render: 137ms)
+ GET /app 404 in 122ms (compile: 17ms, proxy.ts: 12ms, render: 93ms)
+ GET / 200 in 537ms (compile: 8ms, proxy.ts: 11ms, render: 518ms)
+ GET / 200 in 537ms (compile: 10ms, proxy.ts: 35ms, render: 492ms)
+ POST / 200 in 85ms (compile: 21ms, proxy.ts: 28ms, render: 36ms)
+ GET / 200 in 1588ms (compile: 9ms, proxy.ts: 23ms, render: 1557ms)
+ POST / 200 in 1340ms (compile: 38ms, proxy.ts: 135ms, render: 1167ms)
+✓ Finished writing to filesystem cache in 12.0s
+✓ Compiled in 1021ms
+✓ Compiled in 564ms
+ GET / 200 in 1240ms (compile: 603ms, proxy.ts: 28ms, render: 609ms)
+ GET / 200 in 204ms (compile: 10ms, proxy.ts: 15ms, render: 179ms)
+ GET / 200 in 1628ms (compile: 8ms, proxy.ts: 22ms, render: 1599ms)
+ GET / 200 in 349ms (compile: 7ms, proxy.ts: 9ms, render: 332ms)
+✓ Compiled in 2.5s
+✓ Finished filesystem cache database compaction in 16.5s
+✓ Compiled in 2.5s
+ GET / 200 in 6.3s (compile: 624ms, proxy.ts: 46ms, render: 5.6s)
+ POST / 200 in 85ms (compile: 11ms, proxy.ts: 28ms, render: 46ms)
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 3.5s (compile: 66ms, proxy.ts: 29ms, render: 3.4s)
+ POST / 200 in 1043ms (compile: 14ms, proxy.ts: 61ms, render: 967ms)
+ GET / 200 in 20.4s (compile: 724ms, proxy.ts: 15ms, render: 19.7s)
+ POST / 200 in 356ms (compile: 139ms, proxy.ts: 33ms, render: 184ms)
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 7.4s (compile: 9ms, proxy.ts: 25ms, render: 7.3s)
+ POST / 200 in 7.7s (compile: 185ms, proxy.ts: 1937ms, render: 5.5s)
+✓ Finished writing to filesystem cache in 49s
+✓ Finished writing to filesystem cache in 2.9min
+✓ Finished writing to filesystem cache in 69s
+ GET / 200 in 106s (compile: 27.8s, proxy.ts: 16.1s, render: 62s)
+ GET / 200 in 963ms (compile: 32ms, proxy.ts: 34ms, render: 897ms)
+ POST / 200 in 93ms (compile: 32ms, proxy.ts: 48ms, render: 12ms)
+ GET / 200 in 471ms (compile: 6ms, proxy.ts: 24ms, render: 442ms)
+ GET / 200 in 797ms (compile: 56ms, proxy.ts: 21ms, render: 720ms)
+ POST / 200 in 42ms (compile: 8ms, proxy.ts: 22ms, render: 12ms)
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 673ms (compile: 6ms, proxy.ts: 13ms, render: 655ms)
+ POST / 200 in 238ms (compile: 77ms, proxy.ts: 81ms, render: 80ms)
+ GET / 200 in 48s (compile: 3.9s, proxy.ts: 9.7s, render: 34.4s)
+ POST / 200 in 79ms (compile: 20ms, proxy.ts: 27ms, render: 31ms)
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 1591ms (compile: 7ms, proxy.ts: 14ms, render: 1570ms)
+ POST / 200 in 34.6s (compile: 65ms, proxy.ts: 43ms, render: 34.5s)
+✓ Finished writing to filesystem cache in 14.2s
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 1622ms (compile: 6ms, proxy.ts: 24ms, render: 1592ms)
+ POST / 200 in 2.7s (compile: 2.3s, proxy.ts: 291ms, render: 60ms)
+✓ Compiled in 1534ms
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 11.0s (compile: 2.5s, proxy.ts: 14ms, render: 8.5s)
+ POST / 200 in 14.5s (compile: 10.2s, proxy.ts: 4.2s, render: 110ms)
+Clerk: Refreshing the session token resulted in an infinite redirect loop. This usually means that your Clerk instance keys do not match - make sure to copy the correct publishable and secret keys from the Clerk dashboard.
+ GET / 200 in 1126ms (compile: 9ms, proxy.ts: 15ms, render: 1101ms)
+ POST / 200 in 686ms (compile: 558ms, proxy.ts: 39ms, render: 89ms)
