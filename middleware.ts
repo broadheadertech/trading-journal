@@ -21,6 +21,7 @@ const isPublicRoute = createRouteMatcher([
   '/terms',
   '/u/(.*)',           // public profile pages
   '/api/stripe/webhook',
+  '/originkit-preview', // throwaway Originkit component preview
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

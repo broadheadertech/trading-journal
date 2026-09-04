@@ -47,6 +47,11 @@
   inset: 0;
   transform: rotateX(30deg) scale(1.35) translateY(-2%);
   transform-origin: 50% 50%;
+  /* Needed so the flag-marker billboards below can carry their own
+     independent rotateX(-30deg) counter-rotation instead of being
+     flattened into this element's single tilted plane. No visual effect
+     on the existing (purely 2D-drawn) map content. */
+  transform-style: preserve-3d;
 }
 
 .map {
@@ -54,6 +59,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 /* ---------- rotation loop ---------- */
@@ -61,6 +67,7 @@
 .scroll {
   animation: atlasScroll 44s linear infinite;
   will-change: transform;
+  transform-style: preserve-3d;
 }
 
 @keyframes atlasScroll {
@@ -139,6 +146,114 @@
   28%  { stroke-dashoffset: 0.55; opacity: 0.5; }
   66%  { stroke-dashoffset: 0;    opacity: 0.4; }
   100% { stroke-dashoffset: 0;    opacity: 0; }
+}
+
+/* ---------- flag-route layer (additive) ----------
+   Same resting-state-as-base-style / animate-only-under-no-preference
+   convention as everything above: reduced motion gets the fully-drawn,
+   fully-visible values below with no animation ever declared, since the
+   JS side also stops cycling routes and stops rendering the travelling
+   packet in that case (see the useEffect in AtlasWorldMap.tsx). */
+
+.flagRouteLine {
+  stroke-dashoffset: 0;
+  opacity: 0.85;
+}
+
+.flagRouteGlow {
+  stroke-dashoffset: 0;
+  opacity: 0.3;
+}
+
+.flagRouteShadow {
+  stroke-dashoffset: 0;
+  opacity: 0.45;
+}
+
+.flagMarker {
+  transform: scale(1);
+  opacity: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The flag + ISO-code cluster only — NOT the riser/floor-shadow, which
+   stay flat on the tilted plane like the exchange nodes' own risers.
+   transform-box:fill-box pivots the rotation around this group's own
+   18x12 box rather than the whole SVG's viewBox origin. */
+.flagBillboard {
+  transform: rotateX(-30deg);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.flagIso {
+  font-family: var(--mono), "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  fill: var(--muted, #4a5867);
+  text-transform: uppercase;
+}
+
+.flagPacket {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flagRouteLine {
+    animation: flagArcLine 7s ease-in-out both;
+  }
+  .flagRouteGlow {
+    animation: flagArcGlow 7s ease-in-out both;
+  }
+  .flagRouteShadow {
+    animation: flagArcShadow 7s ease-in-out both;
+  }
+  .flagMarker {
+    animation: flagMarkerLifecycle 7s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+  .flagPacket {
+    animation: flagPacketVisible 7s linear both;
+  }
+}
+
+/* Phases (of the 7s route lifecycle, as %):
+   0-1.2s pop-in (0-17.14%), 0.3-1.8s arc draw (4.29-25.71%),
+   1.8-5.5s packet travel — handled by <animateMotion>, not this keyframe
+   (25.71-78.57%), 5.5-7s fade out (78.57-100%). */
+@keyframes flagMarkerLifecycle {
+  0%      { transform: scale(0.4); opacity: 0; }
+  17.14%  { transform: scale(1);   opacity: 1; animation-timing-function: ease; }
+  78.57%  { transform: scale(1);   opacity: 1; }
+  100%    { transform: scale(0.4); opacity: 0; }
+}
+
+@keyframes flagArcLine {
+  0%, 4.29% { stroke-dashoffset: 1; opacity: 0; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  25.71%    { stroke-dashoffset: 0; opacity: 0.85; }
+  78.57%    { stroke-dashoffset: 0; opacity: 0.85; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes flagArcGlow {
+  0%, 4.29% { stroke-dashoffset: 1; opacity: 0; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  25.71%    { stroke-dashoffset: 0; opacity: 0.3; }
+  78.57%    { stroke-dashoffset: 0; opacity: 0.3; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes flagArcShadow {
+  0%, 4.29% { stroke-dashoffset: 1; opacity: 0; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+  25.71%    { stroke-dashoffset: 0; opacity: 0.45; }
+  78.57%    { stroke-dashoffset: 0; opacity: 0.45; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes flagPacketVisible {
+  0%, 25.71%    { opacity: 0; }
+  28%           { opacity: 1; }
+  76%           { opacity: 1; }
+  78.57%, 100%  { opacity: 0; }
 }
 
 /* ---------- meridian shimmer ---------- */
@@ -315,5 +430,11 @@
 
   .stage {
     transform: rotateX(24deg) scale(1.3) translateY(-2%);
+  }
+
+  /* .stage tilts 24deg here instead of 30deg, so the flag billboards'
+     counter-rotation needs to match or they'd over/under-correct */
+  .flagBillboard {
+    transform: rotateX(-24deg);
   }
 }

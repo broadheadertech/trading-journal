@@ -18,9 +18,20 @@ const THRESHOLD = 0.25;
 
 /* Stat figures. Deliberately an allowlist rather than "every bold element":
    HowItWorks' W1..W4 week labels and the pricing figures (which have their own
-   monthly/annual toggle writing to them) must not be touched. */
+   monthly/annual toggle writing to them) must not be touched.
+
+   .hero-badge b is deliberately NOT in this list. It used to be
+   display:none at wide viewports (the world map carried its own duplicate
+   stat chip instead — see [class*="statValue"] below), so this path never
+   actually ran there. Now that .hero-badge shows at every width, the digits
+   were rendering blank — this element sits inside .hero's own opacity/blur
+   entrance reveal, and IntersectionObserver fires on geometric visibility
+   regardless of that CSS opacity, so the odometer swap was racing the
+   hero's own fade-in in a way this simple badge doesn't need to survive.
+   It's a static trust number, not a stat that benefits from a count-up —
+   left out entirely so the plain, always-correct server-rendered text is
+   guaranteed to show. */
 const TARGETS = [
-  '.hero-badge b',
   '[class*="statValue"]', // world-map stat block (CSS-module hashed class)
   '.statrow .stat b',
   '.numbers .num b',
@@ -30,7 +41,7 @@ const TARGETS = [
 ].join(',');
 
 /* Containers whose stats read as one group, for the stagger. */
-const GROUPS = '.statrow, .numbers, .edge, .leakcard, .hero-badge';
+const GROUPS = '.statrow, .numbers, .edge, .leakcard';
 
 /* prefix may hold symbols only ($, −, +) — never letters, so "W1" is not a
    stat — then the number, then any suffix (+, ×, %, K+, " SEC", " YEAR"). */

@@ -39,7 +39,7 @@ export default function SecurityPage() {
         <div className="panelgrid"></div>
         <div className="wrap">
           <p className="kicker" style={{ color: '#fff' }}>
-            <svg className="ic-lock" width="24" height="24" viewBox="0 0 17 17" fill="none" style={{ marginLeft: '-32px' }}><circle cx="8.5" cy="8.5" r="8" stroke="#fff" strokeOpacity=".35"/><rect x="5" y="7.6" width="7" height="5.4" rx="1" stroke="#fff" strokeOpacity=".7"/><path d="M6.6 7.6V6.2a1.9 1.9 0 013.8 0v1.4" stroke="#fff" strokeOpacity=".7"/></svg>
+            <svg className="ic-lock" width="24" height="24" viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="8" stroke="#fff" strokeOpacity=".35"/><rect x="5" y="7.6" width="7" height="5.4" rx="1" stroke="#fff" strokeOpacity=".7"/><path d="M6.6 7.6V6.2a1.9 1.9 0 013.8 0v1.4" stroke="#fff" strokeOpacity=".7"/></svg>
             READ AND ANALYTICS ONLY
           </p>
           <h1 className="light">Read-only analytics with explicit<em>non-trading boundaries</em></h1>

@@ -136,9 +136,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-check svg{width:11px;height:9px;flex:none}
 /* 658px is the badge's y in the Figma frame, but it resolves against .wrap,
    which already sits below .hero's 109px padding-top — so it landed at 767px
-   and its 52px pill crossed the hairline into .sec01. Subtract the padding. */
+   and its 52px pill crossed the hairline into .sec01. Subtract the padding.
+   Nudged further right/down (right:34->18, top:549->595) from that Figma
+   spot — the globe now sitting in .hero-map reads noticeably larger than
+   whatever occupied that space in the original design, so the badge was
+   overlapping its lower-left curve. */
 /* same chip design as the chart's JOURNALED panel and the world map's stat */
-.hero-badge{position:absolute;right:34px;top:549px;
+.hero-badge{position:absolute;right:6px;top:595px;
   width:269px;height:43px;border-radius:2px;
   background:linear-gradient(135deg,#10396e 0%,#00090f 58%)}
 .hero-badge b{position:absolute;left:25px;top:20px;font-family:var(--mono);font-weight:400;font-size:15px;letter-spacing:.02em;color:var(--text)}
@@ -146,16 +150,26 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* The map fills the hero's right side edge to edge. It bleeds up by the
    navbar's 88px so it reaches the very top of the page — the nav is opaque
    and sits at z-index 60, so the overlap never shows. Height comes from the
-   hero, not from the map's own ratio. */
+   hero, not from the map's own ratio.
+
+   pointer-events was none — the globe (components/originkit/ui/hero-24/
+   globe.tsx) already implements full drag-to-rotate and hover-to-pause
+   (handleMouseDown/handleMouseMove, stopOnHover), it was just never able
+   to receive the mouse events that would drive it. cursor:grab signals
+   the affordance up front; the canvas itself has no cursor styling of its
+   own, so this is the only place to set it. */
 .hero-map{position:absolute;top:-88px;bottom:0;right:0;width:58%;
-  overflow:hidden;pointer-events:none}
-/* the world map carries its own TRADERS WORLDWIDE stat block, so the
-   standalone badge only shows at the widths where the map is hidden */
+  overflow:hidden;cursor:grab}
+.hero-map:active{cursor:grabbing}
 @media(min-width:1181px){
   /* nav (88px) + hero = exactly one viewport, so the map spans navbar top to
      hero bottom; min-height keeps the copy from overflowing on short screens */
   .hero{height:calc(100vh - 88px)}
-  .hero-badge{display:none}
+  /* .hero-badge used to be hidden here because AtlasWorldMap carried its own
+     duplicate "128,326+ TRADERS WORLDWIDE" chip baked into the SVG — now
+     that the hero-map holds the Globe component instead (no chip of its
+     own), the standalone badge stays visible at every width, at its
+     original absolute position (right:34px / top:549px, relative to .wrap). */
 }
 @media(max-width:1180px){
   .hero-map{display:none}
@@ -183,8 +197,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero-copy{animation-delay:.52s}
   .hero-actions{animation-delay:.70s}
   .hero-checks{animation-delay:.86s}
-  /* the mobile/narrow-viewport stat badge (the map's own chrome.stat covers
-     the >=1181px case — see AtlasWorldMap.module.css) */
+  /* trust-stat badge — now visible (and animated in) at every width, since
+     the hero-map no longer carries its own duplicate stat chip */
   .hero-badge{animation-duration:.8s;animation-delay:1.05s}
   .hero h1 em{
     opacity:0;filter:blur(10px);transform:none;

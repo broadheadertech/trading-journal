@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
+import ScrollReveal from '@/components/landing/ScrollReveal';
 
 const FAQ: { q: string; a?: string }[] = [
   {
@@ -22,22 +23,23 @@ export default function AboutPage() {
   return (
     <div className="atlas-site">
       <LandingNav />
+      <ScrollReveal selector=".aboutHero" threshold={0.2} />
 
-      <div className="phero" style={{ '--band': '440px', padding: '140px 0 0' } as CSSProperties}>
+      <div className="phero aboutHero" style={{ '--band': '440px', padding: '140px 0 0' } as CSSProperties}>
         <div className="panelgrid"></div>
         <div className="wrap">
-          <h1>Built to make trading<em>review measurable</em></h1>
-          <p className="sub" style={{ marginTop: '32px', maxWidth: '620px' }}>Atlas exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.</p>
+          <h1 className="aboutHeadline">Built to make trading<em><span className="aboutAmber">review</span> <span className="aboutAmber">measurable</span></em></h1>
+          <p className="sub aboutLead" style={{ marginTop: '32px', maxWidth: '620px' }}>Atlas exists because most traders never see the dollar cost of their own behavior. We built the platform to fix that — and to make discipline something you can prove, not something you hope you have.</p>
         </div>
       </div>
 
-      <div style={{ borderTop: '1px solid var(--line)', marginTop: '72px' }}>
+      <div className="aboutPrinciples" style={{ borderTop: '1px solid var(--line)', marginTop: '72px' }}>
         <div className="wrap">
           <div className="numbered">
-            <div className="np"><span className="n">01</span><h4>Make trading review measurable</h4><p>Atlas turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked over time.</p></div>
-            <div className="np"><span className="n">02</span><h4>Behavioral, not advisory</h4><p>We don’t hand out signals or pick trades. We measure what already happened and quantify the gap between your plan and your execution.</p></div>
-            <div className="np"><span className="n">03</span><h4>Read-only by design</h4><p>Atlas never holds funds, never executes orders, never asks for withdrawal permissions. Analytics-only is a hard product boundary, not a marketing line.</p></div>
-            <div className="np"><span className="n">04</span><h4>Privacy-first infrastructure</h4><p>Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks — engineered to be the safest place your trade history can live.</p></div>
+            <div className="np"><span className="ab-ring" /><span className="n">01</span><h4>Make trading review measurable</h4><p>Atlas turns raw trade history into evidence — costly patterns ranked by dollar impact, discipline tracked over time.</p></div>
+            <div className="np"><span className="ab-ring" /><span className="n">02</span><h4>Behavioral, not advisory</h4><p>We don’t hand out signals or pick trades. We measure what already happened and quantify the gap between your plan and your execution.</p></div>
+            <div className="np"><span className="ab-ring" /><span className="n">03</span><h4>Read-only by design</h4><p>Atlas never holds funds, never executes orders, never asks for withdrawal permissions. Analytics-only is a hard product boundary, not a marketing line.</p></div>
+            <div className="np"><span className="ab-ring" /><span className="n">04</span><h4>Privacy-first infrastructure</h4><p>Hosted in Europe under GDPR. Idempotent imports, scoped data usage, isolated background tasks — engineered to be the safest place your trade history can live.</p></div>
           </div>
 
           <hr className="inset-rule" style={{ marginTop: '67px' }} />
