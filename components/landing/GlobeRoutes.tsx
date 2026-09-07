@@ -336,7 +336,18 @@ export default function GlobeRoutes() {
 
   return (
     <Globe
+<<<<<<< HEAD
       scale={8}
+=======
+      /* globe.tsx frames the sphere from scale alone: it sets
+         globeRadius = scale-multiplier and cameraDistance = 2.5 / that same
+         multiplier, so apparent size grows with the SQUARE of the multiplier
+         and is completely independent of the container box. At scale 8 the
+         sphere covered only ~68% of its container width (measured: 258px of
+         a 380px box), which is why enlarging the CSS box alone still read as
+         a small globe floating in dead space. 9.5 fills ~90% instead. */
+      scale={9.5}
+>>>>>>> 328174d (adjusted globe 3d hero structure from flat to underneath style)
       stopOnHover
       initialLatitude={23}
       initialLongitude={-23}
