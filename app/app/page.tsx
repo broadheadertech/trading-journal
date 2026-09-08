@@ -11,6 +11,7 @@ import { filterTradesByTimeRange } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { getRequiredTier } from '@/lib/features';
 import UpgradePrompt from '@/components/UpgradePrompt';
+import QrPaymentStatusBanner from '@/components/QrPaymentStatusBanner';
 import BrainMascot from '@/components/BrainMascot';
 import OnboardingWizard from '@/components/OnboardingWizard';
 import { useTrades, useStrategies, useChecklists, useJournal, useGoals, useProfile } from '@/hooks/useStore';
@@ -86,6 +87,13 @@ function AppContent() {
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // Suppress the site-wide forex-chart ambient backdrop (body::before) inside the
+  // authenticated app — it only belongs on the marketing/landing surface.
+  useEffect(() => {
+    document.body.classList.add('app-shell');
+    return () => document.body.classList.remove('app-shell');
   }, []);
 
   // Ensure every authenticated user has a subscription record
@@ -447,7 +455,8 @@ function AppContent() {
         onTimeRangeChange={setTimeRange}
         lastSyncedAt={lastSyncedAt}
       >
-        <section className="page on">
+        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <QrPaymentStatusBanner />
           {activeTab === 'dashboard' && (
             <Dashboard
               trades={filteredTrades}

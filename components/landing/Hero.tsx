@@ -3,27 +3,15 @@ import GlobeRoutes from './GlobeRoutes';
 
 export default function Hero() {
   return (
-    <div className="hero">
-      {/* Abstract ambient streaks, parented to .hero rather than the globe
-          stage — the empty space they fill is the section's outer corners.
-          Purely decorative, and dropped entirely below 480px. */}
-      <div className="hero-beam hero-beam-1" aria-hidden="true" />
-      <div className="hero-beam hero-beam-2" aria-hidden="true" />
-
-      <div className="hero-content">
-        <p className="hero-eyebrow">A GLOBAL TRADING COMMUNITY</p>
-        <h1>The Complete Trading<em>ECOSYSTEM</em>for Modern Traders</h1>
-        <p className="hero-copy">Atlas is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.</p>
-        <div className="hero-actions">
-          <Link className="btn btn-amber" href="/pricing">Join Atlas Now</Link>
-          <Link className="btn btn-ghost" href="/demo">Watch Free Training</Link>
-        </div>
-        <div className="hero-checks">
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Daily Live Market Analysis</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Trade Journal &amp; Analytics</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Funded Trader Roadmap</div>
-          <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Global Trading Community</div>
-        </div>
+    <section className="relative overflow-hidden">
+      {/* Dark overlay so copy stays readable */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/70 to-[var(--background)]" />
+      {/* Northern Lights aurora ambient pattern */}
+      <div className="aurora-bg" />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-pink-500 opacity-[0.06] rounded-full blur-[140px]" />
+        <div className="absolute top-1/4 right-1/3 w-[420px] h-[360px] bg-cyan-400 opacity-[0.05] rounded-full blur-[130px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[350px] bg-emerald-400 opacity-[0.04] rounded-full blur-[120px]" />
       </div>
 
       {/* Globe sits centred below the copy instead of occupying the hero's

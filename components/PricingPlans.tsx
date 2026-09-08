@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useSubscription } from '@/hooks/useSubscription';
-import { X, Check, CircleNotch, Crown } from '@phosphor-icons/react';
+import { X, Check, Loader2, Crown, QrCode } from 'lucide-react';
+import QrPaymentModal from '@/components/QrPaymentModal';
 
 interface PricingPlansProps {
   open: boolean;
   onClose: () => void;
 }
 
-type Provider = 'stripe' | 'paymongo';
+type Provider = 'stripe' | 'paymongo' | 'qr';
 
 export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   const plans = useQuery(api.subscriptions.getActivePlans);
@@ -20,12 +21,20 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   const [provider, setProvider] = useState<Provider>('stripe');
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [qrPlan, setQrPlan] = useState<{ planId: string; name: string; price: number } | null>(null);
 
   if (!open) return null;
 
   type Plan = NonNullable<typeof plans>[number];
 
   const handleSubscribe = async (plan: Plan) => {
+    // QR payment is a manual, admin-verified flow — open the upload modal
+    // instead of redirecting to a hosted checkout.
+    if (provider === 'qr') {
+      const price = interval === 'year' ? plan.priceYearly : plan.priceMonthly;
+      setQrPlan({ planId: plan.planId, name: plan.name, price });
+      return;
+    }
     setLoading(plan.planId);
     setError(null);
     try {
@@ -127,36 +136,45 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
         <h2>Choose Your Plan</h2>
         <p className="sub">Unlock premium features for your trading journal</p>
 
-        {/* Interval toggle */}
-        <div className="switches">
-          <button
-            onClick={() => setInterval('month')}
-            className={interval === 'month' ? 'on' : undefined}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setInterval('year')}
-            className={interval === 'year' ? 'on' : undefined}
-          >
-            Yearly <small>Save ~17%</small>
-          </button>
-        </div>
+          {/* Payment provider toggle — Stripe for international cards, PayMongo for PH local methods */}
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <button
+              onClick={() => setProvider('stripe')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                provider === 'stripe'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              Card (Stripe)
+            </button>
+            <button
+              onClick={() => setProvider('paymongo')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors ${
+                provider === 'paymongo'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              GCash / GrabPay (PH)
+            </button>
+            <button
+              onClick={() => setProvider('qr')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-medium transition-colors inline-flex items-center gap-1 ${
+                provider === 'qr'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+              }`}
+            >
+              <QrCode size={12} /> Pay via QR
+            </button>
+          </div>
 
-        {/* Payment provider toggle — Stripe for international cards, PayMongo for PH local methods */}
-        <div className="switches" style={{ marginTop: 10 }}>
-          <button
-            onClick={() => setProvider('stripe')}
-            className={provider === 'stripe' ? 'out' : undefined}
-          >
-            Card (Stripe)
-          </button>
-          <button
-            onClick={() => setProvider('paymongo')}
-            className={provider === 'paymongo' ? 'out' : undefined}
-          >
-            GCash / GrabPay (PH)
-          </button>
+          {provider === 'qr' && (
+            <p className="mt-2 text-[11px] text-[var(--muted-foreground)] max-w-md mx-auto">
+              Scan our QR to pay, then upload your screenshot + reference ID. We verify it manually and activate your plan.
+            </p>
+          )}
         </div>
 
         {error && (
@@ -235,8 +253,8 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                       disabled={loading === plan.planId || !canSubscribe}
                       className="cta amber disabled:opacity-50"
                     >
-                      {loading === plan.planId && <CircleNotch size={14} className="animate-spin" style={{ marginRight: 8 }} />}
-                      {canSubscribe ? 'Subscribe' : 'Coming Soon'}
+                      {loading === plan.planId && <Loader2 size={14} className="animate-spin" />}
+                      {!canSubscribe ? 'Coming Soon' : provider === 'qr' ? 'Pay via QR' : 'Subscribe'}
                     </button>
                   )}
                 </div>
@@ -259,6 +277,13 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
         )}
         </div>
       </div>
+
+      <QrPaymentModal
+        open={qrPlan !== null}
+        onClose={() => setQrPlan(null)}
+        plan={qrPlan}
+        interval={interval}
+      />
     </div>
   );
 }
