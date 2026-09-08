@@ -568,7 +568,7 @@ function AppContent() {
               <Tools />
             ) : <UpgradePrompt requiredTier={getRequiredTier('tools')} />
           )}
-        </section>
+        </main>
       </Sidebar>
 
     </div>

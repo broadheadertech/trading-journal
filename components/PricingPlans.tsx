@@ -175,7 +175,6 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
               Scan our QR to pay, then upload your screenshot + reference ID. We verify it manually and activate your plan.
             </p>
           )}
-        </div>
 
         {error && (
           <div className="warn" style={{ textAlign: 'left' }}>
@@ -185,7 +184,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
 
         {!plans ? (
           <div className="flex justify-center py-8">
-            <CircleNotch size={24} className="animate-spin" style={{ color: 'var(--muted)' }} />
+            <Loader2 size={24} className="animate-spin" style={{ color: 'var(--muted)' }} />
           </div>
         ) : sorted.length === 0 ? (
           <p className="empty-line">No plans available yet. Check back soon!</p>
@@ -244,7 +243,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                       disabled={loading === 'portal'}
                       className="cta ghost disabled:opacity-50"
                     >
-                      {loading === 'portal' && <CircleNotch size={14} className="animate-spin" style={{ marginRight: 8 }} />}
+                      {loading === 'portal' && <Loader2 size={14} className="animate-spin" style={{ marginRight: 8 }} />}
                       Manage Subscription
                     </button>
                   ) : (

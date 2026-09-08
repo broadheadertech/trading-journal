@@ -1,42 +1,7 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { Check, ArrowRight, Zap, Users, Star, Target, QrCode } from 'lucide-react';
-import AtmosphericBackground from './AtmosphericBackground';
-
-type Plan = {
-  _id: string;
-  planId: string;
-  name: string;
-  tagline?: string;
-  goal?: string;
-  priceMonthly: number;
-  priceYearly: number;
-  features: string[];
-  isActive: boolean;
-  isHighlighted?: boolean;
-  sortOrder: number;
-};
-
-const ICON_BY_PLAN: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  core: Zap,
-  pro: Star,
-  elite: Users,
-};
-
-const ACCENT_BY_PLAN: Record<string, string> = {
-  core: 'from-pink-400 to-fuchsia-400',
-  pro: 'from-orange-400 to-amber-400',
-  elite: 'from-fuchsia-400 to-pink-500',
-};
-
-export default function Pricing() {
-  const [interval, setInterval] = useState<'month' | 'year'>('month');
-  const plans = useQuery(api.subscriptions.getActivePlans) as Plan[] | undefined;
-
-  const sortedPlans = (plans ?? []).slice().sort((a, b) => a.sortOrder - b.sortOrder);
 
 type Cycle = 'monthly' | 'annual';
 
@@ -80,90 +45,9 @@ const ELITE_FEATURES = [
 
 function Check({ stroke }: { stroke: string }) {
   return (
-    <section id="pricing" className="relative overflow-hidden py-20 sm:py-24">
-      <AtmosphericBackground />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
-        >
-          <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
-            Pricing
-          </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Plans for{' '}
-            <span className="neon-headline">solo traders and teams</span>
-          </h2>
-          <p className="mt-4 text-[var(--muted-foreground)] max-w-xl mx-auto">
-            15-day free trial on every plan. No credit card to start.
-          </p>
-
-          <div className="inline-flex items-center gap-1 mt-7 p-1 rounded-full border border-[var(--border)] bg-[var(--card)]">
-            <button
-              onClick={() => setInterval('month')}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                interval === 'month'
-                  ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)]'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setInterval('year')}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                interval === 'year'
-                  ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900 shadow-[0_0_20px_-4px_rgba(251,146,60,0.6)]'
-                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              Annual
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                interval === 'year' ? 'bg-slate-900/20 text-slate-900' : 'bg-pink-500/15 text-pink-400'
-              }`}>
-                Save 17%
-              </span>
-            </button>
-          </div>
-        </motion.div>
-
-        {plans === undefined ? (
-          <PricingSkeleton />
-        ) : sortedPlans.length === 0 ? (
-          <div className="text-center text-sm text-[var(--muted-foreground)] py-12">
-            No active plans configured. Run <code className="text-pink-400">seedPlans</code> from the Convex dashboard to populate them.
-          </div>
-        ) : (
-          <div className={`grid grid-cols-1 ${sortedPlans.length === 2 ? 'md:grid-cols-2 max-w-4xl' : 'md:grid-cols-3 max-w-6xl'} gap-5 mx-auto`}>
-            {sortedPlans.map((p, i) => <TierCard key={p._id} plan={p} interval={interval} idx={i} />)}
-          </div>
-        )}
-
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[var(--muted-foreground)]">
-          <span className="flex items-center gap-1.5"><Check size={12} className="text-pink-400" /> No credit card required</span>
-          <span className="opacity-30">·</span>
-          <span className="flex items-center gap-1.5"><Check size={12} className="text-pink-400" /> Cancel anytime</span>
-          <span className="opacity-30">·</span>
-          <span className="flex items-center gap-1.5"><Check size={12} className="text-pink-400" /> Full access during trial</span>
-        </div>
-
-        {/* Manual QR payment — GCash / Maya / bank QRPH / crypto. Users complete it
-            after signing in (upload proof + reference ID), so route them to sign-up. */}
-        <div className="mt-4 flex items-center justify-center">
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
-          >
-            <QrCode size={14} className="text-pink-400" />
-            Prefer GCash / crypto? Pay via QR
-          </Link>
-        </div>
-      </div>
-    </section>
+    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" aria-hidden="true">
+      <path d="M1 5.5 5 9.5 13 1" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -247,6 +131,14 @@ export default function Pricing() {
           <div><i></i>No credit card required</div>
           <div><i></i>Cancel anytime</div>
           <div><i></i>Full access during trial</div>
+        </div>
+
+        {/* Manual QR payment — GCash / Maya / bank QRPH / crypto. Users complete it
+            after signing in (upload proof + reference ID), so route them to sign-up. */}
+        <div style={{ textAlign: 'center', marginTop: '22px' }}>
+          <Link className="buy" href="/sign-up" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            Prefer GCash / crypto? Pay via QR
+          </Link>
         </div>
       </div>
     </div>

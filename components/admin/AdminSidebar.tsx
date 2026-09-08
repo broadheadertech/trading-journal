@@ -7,16 +7,16 @@ import { cn } from '@/lib/utils';
 import BrainMascot from '@/components/BrainMascot';
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: SquaresFour },
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/brain', label: 'Brain Monitor', icon: Brain },
-  { href: '/admin/flags', label: 'Anti-Gaming Alerts', icon: ShieldWarning },
+  { href: '/admin/flags', label: 'Anti-Gaming Alerts', icon: ShieldAlert },
   { href: '/admin/thresholds', label: 'Thresholds', icon: SlidersHorizontal },
   { href: '/admin/inspect', label: 'Brain Inspect', icon: Microscope },
-  { href: '/admin/trends', label: 'Score Trends', icon: TrendUp },
+  { href: '/admin/trends', label: 'Score Trends', icon: TrendingUp },
   { href: '/admin/courses', label: 'Courses', icon: GraduationCap },
-  { href: '/admin/events', label: 'Events', icon: CalendarDots },
-  { href: '/admin/community', label: 'Community', icon: Chats },
+  { href: '/admin/events', label: 'Events', icon: CalendarDays },
+  { href: '/admin/community', label: 'Community', icon: MessagesSquare },
   { href: '/admin/coaches',   label: 'Coaches',   icon: Headphones },
   { href: '/admin/articles',  label: 'Articles',  icon: BookOpen },
   { href: '/admin/revenue', label: 'Revenue & Billing', icon: CreditCard },
