@@ -28,21 +28,21 @@ export const TIERS: Record<TierName, TierConfig> = {
     maxTrades: 200,
     maxStrategies: 10,
     hasTeam: false,
-    label: 'Tradia Core',
+    label: 'Atlas Core',
   },
   pro: {
     tabs: ALL_TABS,
     maxTrades: -1,
     maxStrategies: -1,
     hasTeam: false,
-    label: 'Tradia Pro',
+    label: 'Atlas Pro',
   },
   elite: {
     tabs: ALL_TABS,
     maxTrades: -1,
     maxStrategies: -1,
     hasTeam: true,
-    label: 'Tradia Elite',
+    label: 'Atlas Elite',
   },
 };
 

@@ -1,65 +1,31 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import AtmosphericBackground from './AtmosphericBackground';
+
+const V_LINES = Array.from({ length: Math.floor(1440 / 48) + 1 }, (_, i) => i * 48);
+const H_LINES = Array.from({ length: Math.floor(420 / 48) + 1 }, (_, i) => i * 48);
 
 export default function MidCTA() {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-24">
-      <AtmosphericBackground />
-
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="relative rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-500/5 via-emerald-500/5 to-fuchsia-500/5 p-10 sm:p-14 text-center overflow-hidden"
-        >
-          {/* Inner glow */}
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-pink-400 opacity-[0.08] rounded-full blur-[80px]" />
-          {/* Grid backdrop */}
-          <div className="absolute inset-0 opacity-[0.04]" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }} />
-
-          <div className="relative">
-            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
-              Stop Repeating
-            </span>
-            <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Your next trade doesn&apos;t have to{' '}
-              <span className="neon-headline">repeat the same mistake</span>
-            </h2>
-            <p className="mt-4 text-base text-[var(--muted-foreground)] max-w-2xl mx-auto">
-              Upload your trades. See the dollar cost of every pattern. Fix the biggest one first.
-            </p>
-
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
-              >
-                Start Free Trial
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="/demo"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors"
-              >
-                See Demo First
-              </Link>
-            </div>
-
-            <p className="mt-5 text-xs text-[var(--muted-foreground)]">
-              14 days free · No credit card · Setup in 60 seconds
-            </p>
-          </div>
-        </motion.div>
+    <div className="cta">
+      <svg className="gridbg" id="ctagrid" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+        {V_LINES.map((x) => (
+          <line key={`v${x}`} x1={x} y1={0} x2={x} y2={420} stroke="#0e1725" strokeWidth={1} />
+        ))}
+        {H_LINES.map((y) => (
+          <line key={`h${y}`} x1={0} y1={y} x2={1440} y2={y} stroke="#0e1725" strokeWidth={1} />
+        ))}
+      </svg>
+      <div className="wrap">
+        <p className="kicker">STOP REPEATING</p>
+        <h2>Your next trade doesn&#8217;t have to<br /><span>repeat the same mistake</span></h2>
+        <p className="sub">Upload your trades. See the dollar cost of every pattern. Fix the biggest one first.</p>
+        <div className="row">
+          <Link className="btn btn-amber" href="/pricing">Start Free Trial
+            <svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg>
+          </Link>
+          <Link className="btn btn-ghost" href="/demo">See Demo First</Link>
+        </div>
+        <p className="fine">14 days free &middot; No credit card &middot; Setup in 60 seconds</p>
       </div>
-    </section>
+    </div>
   );
 }

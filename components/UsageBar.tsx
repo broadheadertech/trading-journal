@@ -9,8 +9,8 @@ interface UsageBarProps {
 
 function getColor(percentage: number): string {
   if (percentage >= 95) return 'var(--red)';
-  if (percentage >= 80) return 'var(--yellow)';
-  if (percentage >= 60) return 'var(--yellow)';
+  if (percentage >= 80) return 'var(--amber)';
+  if (percentage >= 60) return 'var(--amber)';
   return 'var(--green)';
 }
 
@@ -20,23 +20,58 @@ export default function UsageBar({ label, current, max, isUnlimited }: UsageBarP
 
   return (
     <div>
-      <div className="flex justify-between text-xs mb-1">
-        <span className="text-[var(--muted-foreground)]">{label}</span>
-        <span className="font-medium text-[var(--foreground)]">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 10,
+          marginBottom: 7,
+        }}
+      >
+        <span
+          className="lbl"
+          style={{
+            fontSize: 9.5,
+            fontWeight: 700,
+            letterSpacing: '.04em',
+            textTransform: 'uppercase',
+            color: 'var(--muted-2)',
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            fontFamily: 'var(--mono)',
+            fontVariantNumeric: 'tabular-nums',
+            fontWeight: 700,
+            fontSize: 11.5,
+            letterSpacing: '.02em',
+            color: isUnlimited ? 'var(--green)' : percentage >= 80 ? color : 'var(--text)',
+          }}
+        >
           {isUnlimited ? (
-            <span className="text-[var(--green)]">{current} / &infin;</span>
+            <>{current} / &infin;</>
           ) : (
-            <span style={{ color: percentage >= 80 ? color : undefined }}>
+            <>
               {current} / {max}
-            </span>
+            </>
           )}
         </span>
       </div>
       {!isUnlimited && (
-        <div className="h-2 rounded-full bg-[var(--muted)] overflow-hidden">
+        <div style={{ height: 2, background: 'var(--rail)', position: 'relative' }}>
           <div
-            className="h-full rounded-full transition-all duration-300"
-            style={{ width: `${percentage}%`, backgroundColor: color }}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              height: '100%',
+              width: `${percentage}%`,
+              background: color,
+              transition: 'width .3s ease',
+            }}
           />
         </div>
       )}

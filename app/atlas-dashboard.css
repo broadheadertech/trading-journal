@@ -1,0 +1,722 @@
+/* ============================================================================
+   ATLAS dashboard design system â€” extracted VERBATIM from
+   uiux/atlasdashboard.html and scoped under .atlas-dash via CSS nesting.
+
+   Why scoped (app/atlas.css is NOT):
+     - 30 class names are defined in BOTH sheets with different rules
+       (card, nav, brand, hero, stat, badge, price, chip, avatar, ...)
+     - 4 design tokens differ in value between them:
+         --text-2   marketing #e4ebf2   dashboard #9fb0c2
+         --muted-3  marketing #94a5b8   dashboard #4a5867
+         --muted-4  marketing #aebbca   dashboard #3a4a5c
+         --muted    is a TEXT color here, but a SURFACE color in globals.css
+   Unscoped, whichever sheet loaded last would silently win.
+
+   Adds --side:240px and --top:72px for the sidebar / topbar geometry.
+
+   To change anything here: edit uiux/atlasdashboard.html and re-extract, so the
+   built app and the reference build cannot drift.
+   ========================================================================== */
+
+.atlas-dash{
+
+  /* ── MARKETING LEAKAGE GUARD — read before editing ──────────────────────
+     app/atlas.css is GLOBAL (unscoped), and 30 class names exist in both
+     sheets. Any property the marketing rule sets that the dashboard rule
+     does not re-declare leaks straight into the app.
+
+     This was not theoretical. `.plan` is the topbar plan chip here and the
+     PRICING CARD there — so `min-height:744px` + a card background painted a
+     744px dark column down the middle of the dashboard, over the content.
+     `.hero` and `.nav` were leaking too.
+
+     These resets come FIRST so the real rules below (same specificity, later
+     in the file) win. Only properties the dashboard does not set are reset.
+     If you add a class that also exists in atlas.css, add it here. */
+  .plan{min-height:0;background:none;border:0;border-radius:0;padding:0;
+        position:static;flex-direction:row}
+  .hero{position:relative}
+  /* Marketing's .hero paints a full-bleed scrim through a pseudo-element:
+     .hero::before{height:712px; background:linear-gradient(180deg,
+     rgba(10,20,32,.9), rgba(5,8,13,0))}. The `.hero{position:relative}` reset
+     above is what gives it a containing block here, so it laid a 90%-opaque
+     dark veil straight over the Net P&L card — washing out the big number,
+     the win/loss counts and the BEST/WORST/AVG insets. It reads as "blurry"
+     rather than "dark" because it is a translucent film over live text, and
+     pointer-events:none meant nothing but the visuals gave it away.
+     The dashboard defines no .hero pseudo-elements of its own. */
+  .hero::before{content:none}
+  .nav{position:static;height:auto;background:none;border-bottom:0;z-index:auto}
+  .brand{margin-right:0}
+  .card{backdrop-filter:none}
+  .stat{padding:21px 20px}
+  .num{padding:0}
+  /* .num span is marketing's homepage stat caption (unscoped, direct match on
+     any span inside a .num-classed ancestor). .klist.num (Trading rules list)
+     carries the leaked "num" class too, and its rule-text <span> has no color
+     of its own in the dashboard sheet — it only INHERITS #c0ccda from the row
+     div. A rule that directly matches an element always wins over an
+     inherited value, regardless of specificity, so the marketing rule's
+     color/size/weight/spacing overrode the inherited style: numbered rules
+     rendered in a blue-gray (#b9c6d4) at 10px/700 instead of
+     the intended #c0ccda at 13.5px/400 — visibly bluer, smaller, and bolder
+     than the "Key concepts" list beside it, which has no "num" class and so
+     was never touched. (The numeral <b> was unaffected because the dashboard
+     DOES directly target .klist.num div b, so that one resolved by ordinary
+     specificity instead of falling through to inheritance.) */
+  .num span{color:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;margin-top:0;display:inline}
+  /* .steps is marketing's homepage "How It Works" 5-step row (unscoped,
+     display:grid;grid-template-columns:repeat(5,1fr);margin-top:-14px) and
+     the Connect Broker install checklist here. The dashboard's own .steps
+     rule only sets margin-top/border-top — it never declares `display` — so
+     the leaked grid-of-5-columns applied unopposed, squeezing all five
+     numbered steps into cramped side-by-side columns instead of the intended
+     stacked list. margin-top isn't reset here: the dashboard's own
+     margin-top:22px already wins that property by specificity. */
+  .steps{display:block}
+  /* .cta is the marketing CTA BAND (height:420px; padding:73px 0 0) and the
+     Subscribe BUTTON here. .plan4 .cta re-declared height and margin-top but
+     not padding, so every button carried 73px of top padding and its label
+     was pushed out of the 40px box and clipped by the card edge. */
+  .cta{padding:0;margin-top:0;height:auto;border-top:0;overflow:visible;background:none}
+  &{
+    --bg:#05080d; --panel:#0a0f17; --panel-2:#0c1119; --grid:#0e1725; --hair:#101922;
+    --line:#182432; --line-2:#24344a; --rail:#141e2a;
+    --amber:#d99405; --green:#24c88a; --red:#ff4d5e;
+    --ink:#0a0a0a;
+    --text:#edf2f7; --text-2:#9fb0c2; --muted:#7f8ea3; --muted-2:#5c6b7e; --muted-3:#4a5867; --muted-4:#3a4a5c;
+    --display:'Archivo',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+    --mono:'Geist Mono',ui-monospace,monospace;
+    --side:240px; --top:72px;
+  }
+  & *, & *::before, & *::after{box-sizing:border-box}
+  &{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:13.5px;line-height:1.35;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ============================= SHARED PAGE PATTERNS ============================= */
+  .phead{margin-bottom:34px}
+  .phead .eyebrow{margin:0 0 22px;font-size:12px;color:#c3cdda;display:flex;align-items:center;gap:8px}
+  .phead h2{font-family:var(--display);font-weight:700;font-size:46px;line-height:50px;margin:0;color:var(--text)}
+  .phead .sub{margin:22px 0 0;font-size:16.5px;line-height:26px;color:var(--muted);max-width:680px}
+  .phead .actions{position:absolute;right:0;top:0;display:flex;gap:16px}
+  .pwrap{position:relative}
+  @media(max-width:900px){
+    .phead h2{font-size:32px;line-height:38px}
+    .phead .actions{position:static;margin-top:22px;flex-wrap:wrap}
+  }
+
+  .btn-a{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:40px;padding:0 20px;border-radius:2px;
+    background:var(--amber);color:var(--ink);font-weight:700;font-size:13px}
+  .btn-a:hover{background:#f0a409}
+  .btn-g{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:40px;padding:0 20px;border-radius:2px;
+    border:1px solid var(--line-2);color:var(--text);font-weight:700;font-size:13px}
+  .btn-g:hover{border-color:var(--muted)}
+  .btn-d{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 20px;border-radius:2px;
+    border:1px solid var(--line);color:var(--muted-3);font-weight:700;font-size:13px;cursor:default}
+
+  /* tab strip */
+  .tabs{display:flex;align-items:center;gap:0;flex-wrap:wrap;position:relative;border-bottom:1px solid var(--line);margin-bottom:38px}
+  .tabs button{padding:11px 20px;font-size:12.5px;color:var(--text-2);position:relative;border-radius:2px 2px 0 0}
+  .tabs button.on{background:var(--amber);color:var(--ink);font-weight:700}
+  .tabs.line button.on{background:none;color:var(--text);font-weight:700}
+  .tabs.line button.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--amber)}
+
+  /* generic empty-state panel */
+  .blank{border:1px solid var(--line-2);border-radius:2px;background:var(--bg-cta,#070c13);position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px}
+  .blank .corner{position:absolute;width:14px;height:14px;border:1px solid var(--line-2)}
+  .blank .badge{width:52px;height:52px;border-radius:3px;display:flex;align-items:center;justify-content:center;margin-bottom:32px}
+  .blank h4{font-family:var(--display);font-weight:700;font-size:22px;line-height:24px;margin:0}
+  .blank p{margin:14px 0 0;font-size:14px;color:var(--muted)}
+
+  .footnote{text-align:center;font-size:12.5px;color:var(--muted-2);margin-top:44px}
+
+  /* two-column layouts */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  .split-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .split-2u{display:grid;grid-template-columns:720px 1fr;gap:40px;align-items:start}
+  @media(max-width:1240px){.split-2u{grid-template-columns:1fr}}
+  @media(max-width:960px){.split,.split-3{grid-template-columns:1fr}}
+
+  /* rule / concept lists */
+  .klist{margin-top:20px;border-top:1px solid var(--line-2)}
+  .klist div{display:grid;grid-template-columns:4px 1fr;gap:14px;align-items:start;padding:11px 0;border-bottom:1px solid var(--hair);
+    font-size:13.5px;line-height:18px;color:#c0ccda}
+  .klist div i{width:4px;height:4px;background:var(--amber);margin-top:7px}
+  .klist.num div{grid-template-columns:22px 1fr;gap:0}
+  .klist.num div b{font-family:var(--display);font-weight:700;font-size:12px;color:var(--amber)}
+
+  /* ---- signals ---- */
+  .provider{border:1px solid var(--line);border-radius:2px;background:rgba(10,15,23,.2);padding:32px 24px 24px;position:relative;text-align:center}
+  .provider .accent{position:absolute;left:0;top:-1px;width:60px;height:3px}
+  .provider .av{width:68px;height:68px;margin:0 auto;border-radius:3px;background:#0f1620;border:1px solid currentColor}
+  .provider h4{font-family:var(--display);font-weight:700;font-size:18px;line-height:20px;margin:14px 0 0;color:var(--text);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .provider .meta{margin:8px 0 0;font-size:12px;color:var(--muted-2)}
+  .provider .big{margin-top:34px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:12px}
+  .provider .big b{display:block;font-family:var(--mono);font-weight:500;font-size:34px;line-height:44px}
+  .provider .big span{display:block;font-weight:700;font-size:10px;color:var(--muted-2);letter-spacing:.03em}
+  .provider .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+  .provider .row3 div{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:9px 4px}
+  .provider .row3 b{display:block;font-family:var(--mono);font-weight:500;font-size:15px;line-height:20px}
+  .provider .row3 span{display:block;font-weight:700;font-size:9px;color:var(--muted-2);margin-top:4px}
+  .provider .last{margin:9px 0 0;font-size:11px;color:var(--muted-2)}
+  .provider .follow{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;margin-top:16px;border-radius:2px;
+    background:var(--amber);color:var(--ink);font-weight:700;font-size:14px}
+  .provider .vp{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;font-size:13px;color:var(--amber)}
+
+  .analyst{border:1px solid var(--line);border-radius:2px;background:rgba(10,15,23,.2);padding:16px 18px;position:relative;margin-bottom:20px}
+  .analyst .rank{position:absolute;left:13px;top:8px;font-family:var(--display);font-weight:700;font-size:11px;color:var(--amber)}
+  .analyst .whorow{display:flex;align-items:center;gap:12px;margin-left:18px}
+  .analyst .whorow .av{width:30px;height:30px;border-radius:3px;background:#0f1620;border:1px solid currentColor;flex:none}
+  .analyst .whorow h5{font-family:var(--display);font-weight:700;font-size:14px;margin:0;color:var(--text)}
+  .analyst .whorow p{margin:5px 0 0;font-size:11px;color:var(--muted-2)}
+  .analyst .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+  .analyst .row3 div{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:7px 4px;text-align:center}
+  .analyst .row3 b{display:block;font-family:var(--mono);font-weight:500;font-size:14px;line-height:18px}
+  .analyst .row3 span{display:block;font-weight:700;font-size:8.5px;color:var(--muted-2);margin-top:4px}
+  .analyst .follow{display:flex;align-items:center;justify-content:center;height:34px;margin-top:12px;border-radius:2px;
+    background:var(--amber);color:var(--ink);font-weight:700;font-size:12.5px}
+
+  .disclaim{display:flex;gap:20px;margin-top:44px;border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:2px;
+    background:var(--panel-2);padding:18px 24px;font-size:12.5px;line-height:20px;color:var(--muted)}
+  .disclaim b{color:var(--amber);font-weight:700}
+
+  /* ---- connect broker ---- */
+  /* Field captions (DATE, PAIR, SESSION, ...) were 9.5px on --muted-2, the same
+     near-invisible pairing the .lbl captions had. Same remedy: one step up in
+     size and onto --text-2, which stays a clear step below the --text input
+     values so the label/value hierarchy still reads. */
+  .field label{display:block;font-weight:700;font-size:10.5px;color:var(--text-2);letter-spacing:.04em;margin-bottom:9px}
+  .field .box{height:42px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
+    padding:0 16px;font-size:13px;color:var(--text)}
+  .field .box.ph{color:var(--muted-3)}
+  .steps{margin-top:22px;border-top:1px solid var(--line)}
+  .step{display:grid;grid-template-columns:24px 1fr;gap:0 22px;padding:22px 0;border-bottom:1px solid var(--hair)}
+  /* reference drops the rule under the final step */
+  .steps .step:last-child{border-bottom:0}
+  .step .n{width:24px;height:24px;border:1px solid var(--amber);border-radius:2px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:700;font-size:12px;color:var(--amber)}
+  .step h5{font-family:var(--display);font-weight:700;font-size:14.5px;margin:3px 0 0;color:var(--text)}
+  .step p{margin:12px 0 0;font-size:12.5px;line-height:20px;color:var(--muted)}
+  .step .btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  .step .btns .sm{height:32px;padding:0 16px;border-radius:2px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:8px}
+  .step .btns .sm.amber{background:var(--amber);color:var(--ink)}
+  .step .btns .sm.ghost{border:1px solid var(--line-2);color:#c0ccda}
+  .step .btns .hint{font-size:11.5px;color:var(--muted-2)}
+  .codebox{height:36px;margin-top:14px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);
+    display:flex;align-items:center;padding:0 16px;font-size:12.5px;color:#c0ccda}
+  .warn{display:flex;gap:16px;margin-top:26px;border:1px solid #3a2a12;border-radius:2px;background:#14100a;padding:16px 20px;
+    font-size:12.5px;line-height:20px;color:var(--muted)}
+  .warn b{color:var(--amber);font-weight:700}
+  .doclink{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-size:12.5px;color:#668298}
+
+  /* ---- courses ---- */
+  .course{width:380px;max-width:100%;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;overflow:hidden}
+  .course .accent{position:absolute;left:0;top:0;width:56px;height:3px;background:var(--amber);z-index:1}
+  .course .art{height:170px;background:#070c13;position:relative;display:flex;align-items:center;justify-content:center}
+  .course .price{position:absolute;left:20px;bottom:-14px;height:28px;padding:0 16px;border:1px solid #151719;border-radius:2px;
+    background:var(--bg);display:inline-flex;align-items:center;font-family:var(--mono);font-size:12.5px}
+  .course .body{padding:36px 24px 24px}
+  .course h4{font-family:var(--display);font-weight:700;font-size:22px;line-height:24px;margin:0}
+  .course .foot{display:flex;align-items:center;margin-top:26px;padding-top:26px;border-top:1px solid var(--line);font-size:13px}
+  .course .foot .life{color:#33edc8}
+  .course .foot .go{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;color:var(--amber)}
+
+  /* ---- rewards ---- */
+  .reward{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:28px 24px;
+    display:flex;flex-direction:column}
+  .reward .accent{position:absolute;left:0;top:-1px;width:56px;height:3px}
+  .reward .rtop{display:flex;align-items:flex-start;gap:16px}
+  .reward .ic{width:44px;height:44px;border-radius:3px;flex:none}
+  .reward h4{font-family:var(--display);font-weight:700;font-size:18px;line-height:20px;margin:0;color:var(--text)}
+  .reward .tag{margin-left:auto;height:20px;padding:0 8px;border-radius:2px;display:inline-flex;align-items:center;
+    font-weight:500;font-size:9px;letter-spacing:.03em}
+  .reward p{margin:14px 0 0 60px;font-size:13px;line-height:19px;color:var(--muted)}
+  .reward .prog{margin:30px 0 0 60px;height:2px;background:var(--rail);position:relative}
+  .reward .prog i{position:absolute;left:0;top:0;bottom:0;width:3%;background:var(--green)}
+  .reward .st{margin:14px 0 0 60px;font-size:12px;color:var(--muted-2)}
+  /* keep the progress rail + status on a shared baseline when sibling cards in the
+     same grid row have descriptions of different lengths */
+  .reward > p:not(.st){margin-bottom:auto}
+  .earn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
+  .earn div{height:38px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
+    gap:14px;padding:0 14px;font-size:12.5px;color:#c0ccda}
+  .earn div b{margin-left:auto;font-weight:700;font-size:12.5px;color:var(--amber)}
+  @media(max-width:900px){.earn{grid-template-columns:1fr}}
+
+  /* ---- indicators ---- */
+  .ind{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:26px 24px 0;min-height:226px;
+    display:flex;flex-direction:column}
+  .ind .accent{position:absolute;left:0;top:-1px;width:48px;height:3px}
+  .ind .ic{width:40px;height:40px;border-radius:3px}
+  .ind .kick{margin:21px 0 0;font-weight:500;font-size:9px;letter-spacing:.04em}
+  .ind h4{font-family:var(--display);font-weight:700;font-size:19px;line-height:21px;margin:14px 0 0;color:var(--text)}
+  .ind p{margin:12px 0 0;font-size:13px;line-height:19px;color:var(--muted)}
+  .ind .foot{margin-top:auto;display:flex;align-items:center;padding:12px 0 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted-2)}
+  .ind .foot .go{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--amber)}
+
+  /* ---- economic calendar ---- */
+  .filters{display:flex;flex-direction:column;gap:24px}
+  .filters .grp{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .filters .hd{display:flex;align-items:center;gap:12px;font-weight:700;font-size:10px;color:#919eaf;letter-spacing:.04em;margin-bottom:14px}
+  .chip{height:30px;padding:0 14px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:inline-flex;
+    align-items:center;gap:9px;font-size:12px;color:#c0ccda}
+  .chip.on{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+  .chip i{width:7px;height:7px;border-radius:1px}
+  .daygroup{margin-top:34px}
+  .daygroup .dh{display:flex;align-items:baseline;gap:20px;padding-bottom:12px;border-bottom:1px solid var(--line-2)}
+  .daygroup .dh b{font-weight:700;font-size:11.5px;letter-spacing:.03em}
+  .daygroup .dh span{font-size:11.5px;color:var(--muted-2)}
+  .daygroup .dh em{margin-left:auto;font-style:normal;font-size:11px;color:var(--muted-2)}
+  /* align-items:start, not center. Each row mixes single-line content (.t
+     time, .evwho badges — ~19-20px tall) with the two-line .col blocks
+     (label + value — ~30-34px tall). center() centers every item in the
+     row's own auto height, which is set by the TALLEST item — so the
+     single-line time and badges get pushed down to center against the
+     taller metric blocks, and end up sitting lower than FORECAST/PREVIOUS/
+     ACTUAL instead of sharing a top edge with them. start makes every
+     column's content begin at the same line, which is what a header row
+     is supposed to do. */
+  .ev{display:grid;grid-template-columns:104px 1fr 130px 130px 100px;gap:0 16px;align-items:start;min-height:66px;margin-top:8px;
+    border:1px solid var(--line);border-left-width:3px;border-radius:2px;background:var(--panel);padding:16px 24px}
+  .ev .t{font-family:var(--display);font-weight:700;font-size:15px}
+  .ev .evwho{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:400;font-size:13px;margin-left:0}
+  .ev .evwho .cc{font-weight:700;font-size:10.5px;color:var(--muted-2)}
+  .ev .evwho .cur{height:18px;padding:0 10px;border:1px solid var(--line-2);border-radius:2px;background:var(--panel-2);
+    display:inline-flex;align-items:center;font-weight:700;font-size:9.5px;color:#c0ccda}
+  .ev .evwho .imp{height:18px;padding:0 10px;border:1px solid currentColor;border-radius:2px;display:inline-flex;align-items:center;gap:6px;
+    font-weight:700;font-size:9px;opacity:.9}
+  .ev .name{grid-column:2;font-family:var(--display);font-weight:700;font-size:15px;margin-top:4px}
+  .ev .col{text-align:right}
+  .ev .col b{display:block;font-weight:700;font-size:8.5px;color:var(--muted-2);letter-spacing:.03em}
+  .ev .col em{display:block;font-style:normal;font-family:var(--mono);font-size:14px;margin-top:4px;color:var(--text)}
+  .ev .col em.dash{font-family:var(--display);font-weight:700;color:var(--muted)}
+  @media(max-width:1100px){
+    .ev{grid-template-columns:80px 1fr;height:auto;padding:16px 18px;row-gap:10px}
+    .ev .col{grid-column:span 1;text-align:left}
+  }
+
+  /* ---- world monitoring ---- */
+  .mapcard{height:560px;position:relative;overflow:hidden}
+  .layers{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .layers b{font-weight:700;font-size:10px;color:#d0e5ff;letter-spacing:.04em;margin-right:36px}
+  .layers span{display:inline-flex;align-items:center;gap:12px;font-size:12px;color:#c0ccda}
+  .layers span i{width:8px;height:8px;border-radius:1px}
+  .layers span.off{color:var(--muted-4)}
+  .globe{position:absolute;left:50%;top:94px;transform:translateX(-50%);width:412px;height:412px;border:1px solid rgba(217,148,5,.25);border-radius:50%}
+  .globe .inner{position:absolute;inset:16px;border:1px solid rgba(217,148,5,.75);border-radius:50%}
+  .globe .node{position:absolute;width:16px;height:16px;border:1px solid;border-radius:50%}
+  .tickgrid{display:grid;gap:12px;margin-top:14px}
+  .tick{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:15px 16px}
+  .tick b{display:block;font-weight:700;font-size:9px;color:var(--muted-2);letter-spacing:.04em}
+  .tick em{display:block;font-style:normal;font-family:var(--mono);font-size:18px;line-height:23px;margin-top:5px;color:var(--text)}
+  .tick span{display:block;font-family:var(--mono);font-size:11px;margin-top:6px}
+  .sect{font-weight:700;font-size:10px;letter-spacing:.04em;margin:38px 0 12px}
+  .news{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .news a{border:1px solid var(--line);border-radius:2px;background:var(--panel);overflow:hidden;display:block}
+  .news .art{height:110px;background:#070c13;display:flex;align-items:center;justify-content:center}
+  .news .art i{width:34px;height:34px;border-radius:3px;border:1px solid rgba(217,148,5,.7)}
+  .news h5{margin:0;padding:16px 16px 0;font-weight:700;font-size:11.5px;line-height:17px;color:var(--text)}
+  .news span{display:block;padding:12px 16px 16px;font-size:11px;color:var(--muted-2)}
+  @media(max-width:1100px){.news{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.news{grid-template-columns:1fr}}
+  .fxrow{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 40px;margin-top:22px}
+  .fxrow div{display:flex;align-items:baseline;font-size:12.5px;color:#c0ccda}
+  .fxrow div em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:12.5px;color:var(--text)}
+  .quake{display:flex;align-items:baseline;gap:14px;padding:6px 0;font-size:11.5px;color:#c0ccda}
+  .quake b{font-family:var(--display);font-weight:700;font-size:11.5px;width:32px;flex:none}
+  .quake span{margin-left:auto;font-size:10.5px;color:var(--muted-2)}
+  .domain{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:20px}
+  .domain .ic{width:36px;height:36px;border-radius:3px}
+  .domain .kick{margin:14px 0 0;font-weight:500;font-size:9px;letter-spacing:.04em}
+  .domain h4{font-family:var(--display);font-weight:700;font-size:16px;line-height:17px;margin:12px 0 0;color:var(--text)}
+  .domain p{margin:12px 0 0;font-size:11.5px;line-height:16px;color:var(--muted)}
+  .srcbar{display:flex;align-items:center;gap:20px;margin-top:26px;border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:22px 24px}
+  .srcbar .ic{width:36px;height:36px;border-radius:3px;flex:none}
+  .srcbar h4{font-family:var(--display);font-weight:700;font-size:15px;margin:0;color:var(--text)}
+  .srcbar p{margin:8px 0 0;font-size:12px;color:var(--muted)}
+
+  /* ---- articles / community sidebars ---- */
+  .listnav{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:18px 16px}
+  .listnav .search{height:40px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
+    gap:14px;padding:0 14px;font-size:13px;color:var(--muted-2);margin-bottom:26px}
+  .listnav h6{font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em;margin:0 0 12px}
+  .listnav a{display:flex;align-items:center;gap:18px;height:34px;padding:0 14px;font-size:13px;color:var(--text-2);border-radius:2px}
+  .listnav a.on{background:#2a1f0a;color:var(--amber);font-weight:700;position:relative}
+  .listnav a.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+  .listnav a i{width:8px;height:8px;border-radius:1px;flex:none}
+  .listnav a:hover{color:var(--text)}
+
+  /* ---- community posts ---- */
+  .post{display:grid;grid-template-columns:70px 1fr;gap:0 16px;height:104px;align-items:center;margin-bottom:14px;
+    border:1px solid var(--line);border-left-width:3px;border-radius:2px;background:var(--panel);padding:0 20px}
+  .post .vote{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted)}
+  .post .vote b{font-family:var(--display);font-weight:700;font-size:13px;color:var(--text)}
+  .post .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11.5px;font-weight:400;color:var(--muted-2)}
+  /* Fixed width, not shrink-to-fit. The category badge is the first item on
+     the meta line, so when it sized to its label ("Q&A" vs "Trade Reviews")
+     everything after it — by <author>, tier badge, date — started at a
+     different x on every row, and the list read as ragged down the page.
+     104px clears the longest label ("Announcements"/"Trade Reviews") at
+     9.5px, so the metadata now lines up in a column across all posts. */
+  .post .meta .cat{height:20px;min-width:104px;padding:0 12px;border:1px solid currentColor;border-radius:2px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:9.5px;opacity:.85}
+  .post .meta strong{color:var(--text);font-weight:700}
+  .post h5{font-family:var(--display);font-weight:700;font-size:15px;margin:8px 0 0;color:var(--text)}
+  .post .body{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+  .post .foot{display:flex;align-items:center;gap:20px;margin-top:8px;font-size:11px;color:var(--muted-2)}
+
+  /* ---- journal ---- */
+  .jcal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:22px}
+  .jcal .dow{text-align:center;font-weight:700;font-size:10px;color:var(--muted-2);padding-bottom:6px}
+  .jcal .day{min-height:57px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:8px 10px}
+  .jcal .day.out{background:#080d14}
+  .jcal .day.today{border-color:var(--amber)}
+  .jcal .day b{display:block;font-family:var(--display);font-weight:700;font-size:13px}
+  .jcal .day.out b{color:var(--muted-2)}
+  .jcal .day em{display:block;font-style:normal;font-weight:700;font-size:10px;color:var(--green);margin-top:4px}
+  .jcal .day small{display:block;font-size:9.5px;color:var(--muted-2);margin-top:1px}
+  .jcal .day.out em{color:var(--muted-4);font-weight:400;font-size:10px}
+  .jstats{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:22px}
+  .jstat{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:16px}
+  .jstat b{display:block;font-weight:700;font-size:9px;color:var(--muted-2);letter-spacing:.04em}
+  .jstat em{display:block;font-style:normal;font-family:var(--mono);font-size:19px;line-height:22px;margin-top:9px;color:var(--text)}
+  .jstat small{display:block;font-size:9.5px;color:var(--muted-2);margin-top:6px}
+  @media(max-width:1240px){.jstats{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:760px){.jstats{grid-template-columns:repeat(2,1fr)}}
+  .qrow{display:flex;align-items:center;min-height:40px;margin-top:8px;border:1px solid var(--line);border-radius:2px;
+    background:var(--panel-2);padding:0 16px;font-size:12.5px;color:#c0ccda}
+  .qrow em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:12.5px}
+
+  /* ---- subscription modal ---- */
+  .modal{border:1px solid var(--line-2);border-radius:2px;background:#080d14;position:relative;padding:32px 28px 40px;text-align:center}
+  .modal .accent{position:absolute;left:0;top:-1px;width:120px;height:3px;background:var(--amber)}
+  .modal .corner{position:absolute;width:16px;height:16px;border:1px solid var(--line-2)}
+  .modal h2{font-family:var(--display);font-weight:700;font-size:30px;line-height:33px;margin:0;color:var(--text)}
+  .modal .sub{margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+  .modal .switches{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .modal .switches button{height:32px;padding:0 20px;border-radius:2px;border:1px solid var(--line);background:var(--panel-2);
+    font-weight:700;font-size:12.5px;color:#c0ccda;display:inline-flex;align-items:center;gap:10px}
+  .modal .switches button.on{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+  .modal .switches button.out{background:none;border-color:var(--amber);color:var(--amber)}
+  .modal .switches button small{font-weight:700;font-size:10px;color:var(--green)}
+  .plans4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px;text-align:left}
+  .plan4{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:25px 24px;display:flex;flex-direction:column;position:relative}
+  .plan4.hot{background:#0f1118;border-color:var(--amber)}
+  .plan4.hot::before{content:"";position:absolute;left:-1px;right:-1px;top:-1px;height:3px;background:var(--amber)}
+  .plan4 h4{font-family:var(--display);font-weight:700;font-size:15px;margin:0;color:var(--text);display:flex;align-items:center;gap:12px}
+  .plan4 h4.amber{color:var(--amber)}
+  .plan4 .price{display:flex;align-items:baseline;gap:9px;margin-top:22px}
+  .plan4 .price b{font-family:var(--display);font-weight:700;font-size:32px;line-height:35px}
+  .plan4 .price span{font-size:12.5px;color:var(--muted)}
+  .plan4 ul{list-style:none;margin:24px 0 0;padding:24px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+  .plan4 li{display:grid;grid-template-columns:12px 1fr;gap:6px;align-items:start;font-size:11.5px;line-height:16px;color:#c0ccda}
+  .plan4 li svg{margin-top:3px}
+  .plan4 .cta{display:flex;align-items:center;justify-content:center;height:40px;margin-top:auto;border-radius:2px;
+    font-weight:700;font-size:12.5px}
+  .plan4 .cta.amber{background:var(--amber);color:var(--ink)}
+  .plan4 .cta.ghost{border:1px solid var(--line-2);color:var(--muted)}
+  @media(max-width:1240px){.plans4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.plans4{grid-template-columns:1fr}}
+
+  /* ---- profile ---- */
+  .profwrap{max-width:800px;margin-left:40px}
+  .pcard{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:48px 48px 18px}
+  .pcard .accent{position:absolute;left:0;top:-1px;width:56px;height:3px;background:var(--amber)}
+  .pcard .prow{display:flex;gap:28px;align-items:flex-start}
+  .pcard .av{width:96px;height:96px;border-radius:3px;background:var(--amber);color:var(--ink);flex:none;
+    display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:40px}
+  .pcard .pmeta{flex:1;min-width:0;padding-top:2px}
+  .pcard h3{font-family:var(--display);font-weight:700;font-size:30px;line-height:33px;margin:0;color:var(--text)}
+  .pcard .handle{margin:10px 0 0;font-size:14px;line-height:17px;color:var(--muted)}
+  .pcard .nudge{display:flex;align-items:center;gap:16px;height:40px;margin-top:18px;border:1px solid #3a2a12;border-radius:2px;
+    background:#14100a;padding:0 15px;font-size:12.5px;color:#c0ccda}
+  .pcard .nudge a{margin-left:auto;flex:none;font-weight:700;font-size:12.5px;color:var(--amber);border-bottom:1px solid var(--amber);
+    line-height:16px}
+  .pcard .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px -20px 0}
+  .pcard .cards3 > div{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:15px 18px;height:96px}
+  .pcard .cards3 b{font-weight:500;font-size:9.5px;letter-spacing:.04em}
+  .pcard .cards3 p{margin:11px 0 0;font-size:12px;line-height:18px;color:var(--muted)}
+  .pcard .cards3 .nums{display:flex;gap:58px;margin-top:6px}
+  .pcard .cards3 .nums em{display:block;font-style:normal;font-family:var(--display);font-weight:700;font-size:22px;line-height:24px;color:var(--text)}
+  .pcard .cards3 .nums span{display:block;font-weight:700;font-size:9px;color:var(--muted-2);margin-top:9px;letter-spacing:.03em}
+
+  .ptabs{display:flex;align-items:center;gap:0;margin-top:31px;border-bottom:1px solid var(--line)}
+  .ptabs button{display:inline-flex;align-items:center;gap:10px;padding:0 0 14px;margin-right:56px;position:relative;
+    font-size:14px;color:var(--text-2)}
+  .ptabs button em{font-style:normal;font-weight:700;font-size:10.5px;color:var(--muted-2)}
+  .ptabs button svg{color:var(--muted-2)}
+  .ptabs button.on{color:var(--text);font-weight:700}
+  .ptabs button.on svg{color:var(--amber)}
+  .ptabs button.on::after{content:"";position:absolute;left:-14px;right:-14px;bottom:-1px;height:2px;background:var(--amber)}
+  .pblank{height:180px;margin-top:26px;padding:0 24px}
+  .pblank p{margin:0;font-size:14px;color:var(--muted)}
+  @media(max-width:900px){
+    .profwrap{margin-left:0}
+    .pcard{padding:28px 24px 24px}
+    .pcard .prow{flex-direction:column}
+    .pcard .cards3{grid-template-columns:1fr;margin:18px 0 0}
+    .pcard .cards3 > div{height:auto}
+    .ptabs button{margin-right:32px}
+    .pblank{height:auto;padding:40px 24px}
+  }
+
+  /* ============================= SIDEBAR ============================= */
+  /* The SIDEBAR itself must not scroll — the NAV does. Scrolling .side while
+     its children can shrink is what let .foot ("Light Mode"/"Logout") paint on
+     top of the last nav rows. Here .nav is the only flexible child and owns the
+     overflow; brand, foot and collapse are all flex:none, so they can never
+     collapse into each other regardless of how many tabs a tier unlocks. */
+  .side{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:var(--bg);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;z-index:40;overflow:hidden}
+  .side::-webkit-scrollbar{width:6px}
+  .side::-webkit-scrollbar-thumb{background:#16202c;border-radius:3px}
+  .brand{display:flex;align-items:center;gap:12px;height:72px;padding:0 28px;border-bottom:1px solid var(--line);flex:none}
+  .brand svg{display:block}
+  /* flex:0 0 auto is load-bearing. .side is a flex column with overflow-y:auto;
+     without it .nav (18 items = 720px) shrinks below its content height, its
+     rows spill out of the shrunken box, and .foot renders ON TOP of them —
+     which is why "Light Mode"/"Logout" overlapped "Connect Broker"/"Courses". */
+  /* min-height:0 is required: without it a flex child refuses to shrink below
+     its content height and overflows the column instead of scrolling. */
+  .nav{padding:12px 0 0;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+  .nav::-webkit-scrollbar{width:6px}
+  .nav::-webkit-scrollbar-thumb{background:#16202c;border-radius:3px}
+  .nav a,.nav .dead{display:flex;align-items:center;gap:0;height:40px;padding:0 0 0 26px;position:relative;
+    font-size:13.5px;color:var(--text-2)}
+  .nav a .ic,.nav .dead .ic{width:16px;height:16px;flex:none;display:block}
+  .nav a .lb,.nav .dead .lb{margin-left:16px}
+  .nav a:hover{color:var(--text);background:rgba(12,17,25,.6)}
+  .nav a.on{background:var(--panel-2);color:var(--text);font-weight:700}
+  .nav a.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+  .nav a.on .ic{color:var(--amber)}
+  .nav .dead{color:var(--text-2);opacity:.55;cursor:default}
+  .nav h5{margin:32px 0 8px;padding:0 26px;font-weight:700;font-size:9.5px;color:var(--muted-3);letter-spacing:.05em}
+  .side .foot{flex:none;border-top:1px solid var(--line);padding:20px 0 8px}
+  .side .foot a{display:flex;align-items:center;height:44px;padding:0 0 0 26px;font-size:13.5px;color:var(--text-2)}
+  .side .foot a:hover{color:var(--text)}
+  .side .foot .ic{width:16px;height:16px;flex:none}
+  .side .foot .lb{margin-left:17px}
+  .collapse{flex:none;align-self:center;margin:16px 0 24px;width:24px;height:26px;border:1px solid var(--line-2);border-radius:2px;
+    display:flex;align-items:center;justify-content:center}
+  .collapse:hover{border-color:var(--muted)}
+
+  /* ============================= TOPBAR ============================= */
+  .top{position:fixed;left:var(--side);right:0;top:0;height:var(--top);background:var(--bg);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:0 24px;gap:0;z-index:30}
+  .top h1{font-family:var(--display);font-weight:700;font-size:14px;line-height:17px;margin:0}
+  .range{display:flex;align-items:center;gap:0;margin-left:52px}
+  .range button{padding:6px 14px;font-size:11px;color:var(--muted);border-radius:2px}
+  .range button.on{background:var(--amber);color:var(--ink);font-weight:700;padding:6px 12px}
+  .top .right{margin-left:auto;display:flex;align-items:center;gap:0}
+  .synced{display:flex;align-items:center;gap:8px;font-weight:900;font-size:11px;color:var(--green);margin-right:22px}
+  .addtrade{display:inline-flex;align-items:center;gap:9px;height:38px;padding:0 18px;border-radius:2px;background:var(--amber);
+    color:var(--ink);font-weight:700;font-size:13px}
+  .addtrade:hover{background:#f0a409}
+  .help{width:14px;height:16px;border:1.3px solid var(--muted);border-radius:2px;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:10px;color:var(--muted);margin-left:15px}
+  .plan{font-size:12px;color:var(--muted-2);margin-left:20px}
+  .who{font-weight:700;font-size:13px;margin-left:19px}
+  .bell{margin-left:22px;display:block}
+  .avatar{width:30px;height:29px;border-radius:2px;background:var(--amber);color:var(--ink);font-family:var(--display);font-weight:700;
+    font-size:14px;display:flex;align-items:center;justify-content:center;margin-left:13px}
+  .burger{display:none;width:34px;height:34px;align-items:center;justify-content:center;margin-right:14px}
+  .burger span{display:block;width:16px;height:1px;background:var(--text);position:relative}
+  .burger span::before,.burger span::after{content:"";position:absolute;left:0;width:16px;height:1px;background:var(--text)}
+  .burger span::before{top:-5px}.burger span::after{top:5px}
+
+  @media(max-width:1180px){
+    .synced,.plan,.who{display:none}
+  }
+  @media(max-width:900px){
+    .side{transform:translateX(-100%);transition:transform .2s}
+    .side.open{transform:none}
+    .top{left:0}
+    .burger{display:flex}
+    .main{margin-left:0!important}
+    .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:35;display:none}
+    .scrim.on{display:block}
+  }
+
+  /* ============================= MAIN ============================= */
+  .main{margin-left:var(--side);padding-top:var(--top);position:relative;min-height:100vh}
+  /* Page background grid. Dialled back from full strength — at opacity 1 the
+     60px lattice competed with the card borders and read as noise behind the
+     data. Kept as a texture, not a feature. */
+  .main::before{content:"";position:absolute;left:0;right:0;top:var(--top);bottom:0;pointer-events:none;z-index:0;
+    opacity:.35;
+    background-image:repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 60px),
+                     repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 60px)}
+  /* overflow-x:clip (not hidden) contains anything that would bleed past the
+     right edge without creating a scroll container — so it cannot clip the
+     fixed topbar or its dropdowns, which live outside .page. */
+  .page{position:relative;z-index:1;padding:32px 40px 64px;display:none;overflow-x:clip;max-width:100%}
+
+  /* Clerk mounts portal containers for <UserButton>. In dev these can be left
+     empty in the DOM; an empty one with a painted background shows up as a
+     stray dark strip over the content. Empty portals render nothing. */
+  #clerk-components:empty,
+  [data-clerk-portal]:empty{display:none!important}
+  .page.on{display:block}
+  /* Fluid left column, fixed right rail. The reference hard-codes 800px because
+     it was drawn at 1440 (240 sidebar + 80 padding leaves exactly 1120 = 800+
+     288+32). On anything wider the fixed 800 stopped growing while .stats kept
+     stretching, so the hero row ended ~470px short of the stat row below it. */
+  .grid2{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:24px 32px;align-items:start}
+  @media(max-width:1080px){.grid2{grid-template-columns:1fr}}
+
+  /* cards */
+  .card{border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:19px 28px 24px}
+  .card > .accent{position:absolute;left:0;top:-1px;height:3px}
+  .card h3{font-family:var(--display);font-weight:700;font-size:17px;line-height:18px;margin:0}
+  .card h4{font-family:var(--display);font-weight:700;font-size:15px;line-height:16px;margin:0}
+  .card .sub{margin:9px 0 0;font-size:12.5px;color:var(--muted-2)}
+  .card .sub.sm{font-size:11.5px}
+  .inset{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:11px 16px}
+  /* .lbl is the micro-caption label used everywhere (BEST DAY, NET P&L, WIN
+     RATE, ...) — 245 uses across 36 files. Started at --muted-2 (#5c6b7e,
+     near-invisible on --panel/--panel-2 at 9px). One tier up to --muted
+     (#7f8ea3) still read as too dim on screen — now --text-2 (#9fb0c2),
+     clearly legible while staying a visible step below the full-bright
+     --text (#edf2f7) values sitting directly beneath these labels, so the
+     label/value hierarchy is preserved without the labels washing out. */
+  .lbl{font-weight:700;font-size:9px;color:var(--text-2);letter-spacing:.04em;margin:0}
+  .lbl.b10{font-size:10px}
+  .lbl.b95{font-size:9.5px}
+
+  /* hero P&L */
+  .hero{min-height:210px;padding:30px 28px}
+  .hero .row1{display:flex;align-items:center;gap:27px}
+  /* NET P&L label sits at the very top of the hero card, right against the
+     page's grid-textured background near the card edge — the generic .lbl
+     tone (--text-2) still read as low-contrast/washed out here specifically,
+     even after the broader .lbl legibility pass. Full-bright --text for this
+     one label, since it's effectively the hero card's title. */
+  .hero .row1 .lbl{color:var(--text);opacity:1}
+  .pill{height:20px;padding:0 12px;border-radius:2px;background:#0f2018;display:inline-flex;align-items:center;
+    font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green);opacity:1}
+  .bignum{font-family:var(--mono);font-weight:500;font-size:44px;line-height:57px;margin:6px 0 0;color:var(--text)}
+  .wl{display:flex;gap:0;align-items:center;margin-top:4px;font-family:var(--mono);font-size:13px}
+  .wl span{display:flex;align-items:center;gap:7px}
+  .wl .l{margin-left:69px}
+  .tri{display:grid;grid-template-columns:repeat(3,240px);gap:12px;margin-top:20px}
+  .tri .inset{min-height:44px;padding:9px 16px}
+  .tri em{display:block;font-style:normal;font-size:12.5px;color:var(--muted);margin-top:3px}
+  .tri em.g{font-family:var(--mono);font-weight:500;color:var(--green)}
+  @media(max-width:1420px){.tri{grid-template-columns:repeat(3,1fr)}}
+
+  /* execution score */
+  .score{min-height:210px;text-align:center;padding:34px 22px}
+  /* Renamed from `.ring` — that name collides with Tailwind's built-in `ring`
+     utility (a box-shadow ring), which Tailwind generates for ANY element
+     whose className is exactly "ring" regardless of which stylesheet it came
+     from. The result was a square box-shadow painted around this round SVG
+     dial. `.scoredial` cannot collide with any Tailwind utility name. */
+  .scoredial{position:relative;width:80px;height:80px;margin:0 auto}
+  .scoredial .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:34px;color:var(--text)}
+  /* .score .ttl sits directly under the 80px dial with only 14px of margin;
+     on the "Execution Score" title that reads as touching/overlapping the
+     ring's bottom edge. Give it real clearance. */
+  .score .ttl{font-family:var(--display);font-weight:700;font-size:14px;color:var(--amber);margin:22px 0 0}
+  .score p{margin:9px 0 0;font-size:11.5px;line-height:18px;color:var(--muted-2)}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+  .stat{min-height:104px;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;padding:21px 20px}
+  .stat .accent{position:absolute;left:0;top:-1px;width:44px;height:2.5px}
+  /* Same role as .lbl (stat-tile caption e.g. "TOTAL TRADES") — matched to the
+     same tone for consistency. */
+  .stat b{display:block;font-weight:700;font-size:9.5px;color:var(--text-2);letter-spacing:.04em}
+  .stat em{display:block;font-style:normal;font-family:var(--mono);font-size:26px;line-height:34px;margin-top:8px}
+  @media(max-width:1080px){.stats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.stats{grid-template-columns:1fr}}
+
+  /* chart / empty states */
+  .seg{display:flex;gap:0;align-items:center;margin-left:auto}
+  .seg button{height:28px;padding:0 15px;border-radius:2px;font-weight:700;font-size:12px;color:var(--muted)}
+  .seg button.on{background:var(--amber);color:var(--ink)}
+  .plot{height:180px;margin-top:34px;position:relative;
+    background-image:repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 44px),
+                     repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 44px)}
+  .plot .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
+  .empty-line{text-align:center;font-size:14px;color:var(--muted);padding:44px 0}
+
+  /* metric rows */
+  .mrow{display:flex;align-items:center;gap:0;padding:10px 0;border-bottom:1px solid var(--hair);font-size:12.5px;color:var(--text-2)}
+  .mrow:last-child{border-bottom:1px solid var(--hair)}
+  .mrow .ic{width:16px;flex:none;color:var(--muted-3)}
+  .mrow .lb{margin-left:24px}
+  .mrow .val{margin-left:auto;font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--text)}
+  .mrow .val.dash{font-family:var(--body);font-weight:700;color:var(--muted)}
+
+  /* activity map */
+  .amap{margin-top:24px}
+  .amaphead{display:grid;grid-template-columns:153px repeat(4,1fr);gap:6px;align-items:center;margin-bottom:12px}
+  .amaphead b{font-weight:700;font-size:11px;color:var(--muted-2)}
+  .amaphead span{text-align:center;font-size:11px;color:var(--text-2)}
+  .amaprow{display:grid;grid-template-columns:153px repeat(4,1fr);gap:6px;align-items:center;margin-bottom:8px}
+  .amaprow > b{font-weight:400;font-size:12.5px;color:var(--text-2)}
+  .cell{min-height:28px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted-4)}
+  .amapnote{margin:18px 0 0;font-size:11.5px;color:var(--muted-2)}
+
+  /* next best actions */
+  .nba{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:33px}
+  .nba .inset{min-height:88px;position:relative;padding:15px 16px}
+  .nba .inset .accent{position:absolute;left:0;top:-1px;width:36px;height:3px}
+  .nba em{display:block;font-style:normal;font-family:var(--mono);font-size:20px;line-height:26px;margin-top:8px}
+  .nba small{display:block;font-size:10.5px;color:var(--muted-2);margin-top:6px}
+  .note{min-height:44px;margin-top:22px;display:flex;align-items:center;padding:0 18px;font-size:12px;color:var(--muted);
+    border:1px solid var(--line);border-radius:2px;background:var(--panel-2)}
+  /* width:100% is load-bearing: the reference build uses <a class="ghostbtn">,
+     which is block-level and stretches on its own. The app renders a <button>
+     (it navigates via onClick, not href), and form controls shrink-to-fit even
+     as block-level flex containers — so the button collapsed to the width of
+     its label instead of spanning the card like the .note above it. */
+  .ghostbtn{display:flex;align-items:center;justify-content:center;gap:12px;height:44px;margin-top:14px;width:100%;
+    border:1px solid var(--line-2);border-radius:2px;font-weight:700;font-size:14px}
+  .ghostbtn:hover{border-color:var(--muted)}
+  @media(max-width:900px){.nba{grid-template-columns:1fr}}
+
+  /* ============================= FORM CONTROLS =============================
+     globals.css gives every input/textarea/select an 8px radius, 14px type and
+     --input-bg, which is off-system inside the dashboard. Re-key them to ATLAS
+     (2px radius, panel-2, 12.5px). Controls that already carry an ATLAS class
+     (.chip selects, .btn-*) are excluded so their own rules keep winning. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.chip),
+  textarea:not(.chip),
+  select:not(.chip){
+    background:var(--panel-2);border:1px solid var(--line);border-radius:2px;color:var(--text);
+    min-height:40px;padding:0 14px;font-family:var(--body);font-size:13.5px}
+  textarea:not(.chip){min-height:84px;padding:11px 14px;line-height:20px}
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.chip):focus,
+  textarea:not(.chip):focus,
+  select:not(.chip):focus{border-color:var(--amber);box-shadow:none}
+  input::placeholder,textarea::placeholder{color:var(--muted-3)}
+
+  /* Native date/time controls paint their picker icon from the UA stylesheet,
+     which assumes a light page — on --panel-2 the calendar/clock glyphs came
+     out near-black on near-black and read as invisible. color-scheme:dark is
+     the standards-based fix: it tells the UA to render its built-in widgetry
+     (the indicator, and the picker popup itself) for a dark surface. No
+     invert() filter here — that would fight color-scheme and double-invert. */
+  input[type="date"],input[type="time"],input[type="datetime-local"],input[type="month"]{color-scheme:dark}
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+  input[type="month"]::-webkit-calendar-picker-indicator{opacity:.75;cursor:pointer}
+  input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  input[type="time"]::-webkit-calendar-picker-indicator:hover,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+  input[type="month"]::-webkit-calendar-picker-indicator:hover{opacity:1}
+
+  .viewall{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13px;color:var(--amber)}
+  .cardhead{display:flex;align-items:flex-start}
+}

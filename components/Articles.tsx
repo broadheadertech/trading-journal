@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { BookOpen, ArrowLeft, Search, Eye, Tag, Calendar, ArrowRight, Lock } from 'lucide-react';
+import { BookOpen, ArrowLeft, MagnifyingGlass as Search, Eye, Tag, Calendar, ArrowRight, Lock } from '@phosphor-icons/react';
 import { useSubscription } from '@/hooks/useSubscription';
 
 type View = 'list' | 'detail';
@@ -44,92 +44,92 @@ export default function Articles() {
     : articles;
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <BookOpen size={12} /> Articles & insights
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Read, learn, <span className="gradient-text">level up</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+    <div>
+      <div className="phead">
+        <p className="eyebrow">Articles &amp; insights</p>
+        <h2>Read, learn, level up</h2>
+        <p className="sub">
           Long-form articles from senior traders and coaches — strategy breakdowns, psychology deep-dives, and market analysis.
         </p>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,300px) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
         {/* Sidebar — categories + tags */}
-        <aside className="glass rounded-2xl p-4 space-y-4 h-fit anim-fade-up" style={{ animationDelay: '60ms' }}>
-          <div className="relative">
-            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
+        <div className="listnav">
+          <div className="search">
+            <Search size={12} />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search articles..."
-              className="w-full pl-7 pr-2 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                background: 'none',
+                border: 0,
+                outline: 'none',
+                font: 'inherit',
+                fontSize: 13,
+                color: 'var(--text)',
+              }}
             />
           </div>
 
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5">Categories</div>
-            <div className="space-y-0.5">
-              {CATEGORIES.map(c => (
-                <button
-                  key={c}
-                  onClick={() => { setCategory(c); setTag(null); }}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs ${
-                    category === c
-                      ? 'bg-pink-500/15 text-pink-400 font-medium'
-                      : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/40'
-                  }`}
-                >
-                  {c === 'all' ? 'All Categories' : c}
-                </button>
-              ))}
-            </div>
-          </div>
+          <h6>CATEGORIES</h6>
+          {CATEGORIES.map(c => (
+            <a
+              key={c}
+              onClick={() => { setCategory(c); setTag(null); }}
+              className={category === c ? 'on' : undefined}
+              style={{ cursor: 'pointer' }}
+            >
+              {c === 'all' ? 'All Categories' : c}
+            </a>
+          ))}
 
           {tags.length > 0 && (
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5">Popular Tags</div>
-              <div className="flex flex-wrap gap-1">
+            <>
+              <h6 style={{ marginTop: 26 }}>POPULAR TAGS</h6>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {tags.slice(0, 12).map((t: any) => (
                   <button
                     key={t.name}
                     onClick={() => setTag(tag === t.name ? null : t.name)}
-                    className={`text-[10px] px-2 py-0.5 rounded-full ${
-                      tag === t.name
-                        ? 'bg-pink-500 text-white'
-                        : 'bg-[var(--muted)]/30 text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60'
-                    }`}
+                    className={tag === t.name ? 'chip on' : 'chip'}
+                    style={{ height: 24, padding: '0 10px', fontSize: 11 }}
                   >
-                    #{t.label} <span className="opacity-60">{t.count}</span>
+                    #{t.label} <em style={{ fontStyle: 'normal', opacity: 0.6 }}>{t.count}</em>
                   </button>
                 ))}
               </div>
               {tag && (
-                <button onClick={() => setTag(null)} className="mt-2 text-[10px] text-pink-400 hover:underline">
+                <button
+                  onClick={() => setTag(null)}
+                  style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: 'var(--amber)' }}
+                >
                   Clear tag filter
                 </button>
               )}
-            </div>
+            </>
           )}
-        </aside>
+        </div>
 
         {/* Article grid */}
-        <div className="space-y-4">
+        <div>
           {filtered.length === 0 ? (
-            <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-              <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-                <BookOpen size={28} className="text-pink-400" />
-              </div>
-              <p className="text-[var(--foreground)] font-medium">No articles yet</p>
-              <p className="text-sm text-[var(--muted-foreground)] mt-1">New content drops weekly. Stay tuned.</p>
+            <div className="blank" style={{ minHeight: 320 }}>
+              <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+              <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+              <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+              <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+                <BookOpen size={24} color="#d99405" />
+              </span>
+              <h4>No articles yet</h4>
+              <p>New content drops weekly. Stay tuned.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="news" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(230px,1fr))' }}>
               {filtered.map((a: any, idx: number) => (
                 <ArticleCard
                   key={a.id}
@@ -147,44 +147,83 @@ export default function Articles() {
 }
 
 function ArticleCard({ article: a, idx, onOpen }: { article: any; idx: number; onOpen: () => void }) {
+  const metaStyle = {
+    fontStyle: 'normal',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+  } as const;
   return (
-    <article
+    <a
       onClick={onOpen}
-      style={{ animationDelay: `${idx * 60}ms` }}
-      className="group glass rounded-3xl overflow-hidden card-lift anim-fade-up cursor-pointer flex flex-col"
+      style={{ animationDelay: `${idx * 60}ms`, cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
     >
-      <div className="relative h-40 overflow-hidden">
+      <div className="art" style={{ position: 'relative', overflow: 'hidden', flex: 'none' }}>
         {a.coverImage ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src={a.coverImage} alt={a.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-pink-500/30 via-emerald-500/20 to-pink-700/10 flex items-center justify-center">
-            <BookOpen size={40} className="text-white/40" />
-          </div>
+          <i style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BookOpen size={16} color="#d99405" />
+          </i>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
-        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur text-[10px] font-bold uppercase tracking-wider text-white">
+        <b
+          className="chip"
+          style={{
+            position: 'absolute',
+            left: 10,
+            top: 10,
+            height: 20,
+            padding: '0 10px',
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: '.04em',
+            textTransform: 'uppercase',
+          }}
+        >
           {a.category}
-        </div>
+        </b>
         {a.accessTier !== 'public' && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/90 backdrop-blur text-[10px] font-bold uppercase tracking-wider text-white">
+          <b
+            className="chip on"
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: 10,
+              height: 20,
+              padding: '0 10px',
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '.04em',
+              textTransform: 'uppercase',
+            }}
+          >
             <Lock size={9} /> {a.accessTier === 'paid' ? 'Pro' : 'Subscriber'}
-          </div>
+          </b>
         )}
       </div>
-      <div className="p-5 flex-1 flex flex-col">
-        <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight leading-snug line-clamp-2">{a.title}</h3>
-        <p className="text-sm text-[var(--muted-foreground)] line-clamp-2 mt-1 flex-1">{a.excerpt}</p>
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
-          <span className="flex items-center gap-1.5">
-            <Calendar size={11} /> {timeAgo(a.publishedAt ?? a.createdAt)}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Eye size={11} /> {a.viewCount}
-          </span>
-        </div>
+      <h5>{a.title}</h5>
+      <span style={{ flex: 1, paddingBottom: 12 }}>{a.excerpt}</span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          margin: '0 16px 16px',
+          paddingTop: 12,
+          borderTop: '1px solid var(--line)',
+          fontSize: 10.5,
+          color: 'var(--muted-2)',
+        }}
+      >
+        <em style={metaStyle}>
+          <Calendar size={10} /> {timeAgo(a.publishedAt ?? a.createdAt)}
+        </em>
+        <em style={{ ...metaStyle, marginLeft: 'auto' }}>
+          <Eye size={10} /> {a.viewCount}
+        </em>
       </div>
-    </article>
+    </a>
   );
 }
 
@@ -206,65 +245,91 @@ function ArticleDetail({ id, onBack }: { id: string; onBack: () => void }) {
   }, [article, tierName]);
 
   if (!article) {
-    return <div className="text-[var(--muted-foreground)] text-sm">Loading…</div>;
+    return <p className="empty-line">Loading…</p>;
   }
 
   return (
-    <article className="relative max-w-3xl mx-auto space-y-6 anim-fade-up">
-      <div className="hero-glow" />
-
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to articles
+    <div style={{ maxWidth: 820 }}>
+      <button onClick={onBack} className="btn-g" style={{ height: 34, padding: '0 16px', marginBottom: 26 }}>
+        <ArrowLeft size={12} /> Back to articles
       </button>
 
       {article.coverImage && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={article.coverImage} alt={article.title} className="w-full h-72 object-cover rounded-3xl" />
+        <img
+          src={article.coverImage}
+          alt={article.title}
+          style={{
+            width: '100%',
+            height: 280,
+            objectFit: 'cover',
+            border: '1px solid var(--line)',
+            borderRadius: 2,
+            display: 'block',
+            marginBottom: 26,
+          }}
+        />
       )}
 
-      <header className="space-y-3">
-        <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--muted-foreground)]">
-          <span className="px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400 font-bold uppercase tracking-wider">{article.category}</span>
-          <span>·</span>
+      <div className="phead">
+        <p className="eyebrow" style={{ flexWrap: 'wrap', gap: 12 }}>
+          <b className="chip on" style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>
+            {article.category}
+          </b>
           <span>by {article.authorName}</span>
-          <span>·</span>
+          <span style={{ color: 'var(--muted-2)' }}>·</span>
           <span>{timeAgo(article.publishedAt ?? article.createdAt)}</span>
-          <span>·</span>
-          <span className="flex items-center gap-1"><Eye size={11} /> {article.viewCount} views</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--foreground)] leading-tight">{article.title}</h1>
-        <p className="text-lg text-[var(--muted-foreground)]">{article.excerpt}</p>
-      </header>
+          <span style={{ color: 'var(--muted-2)' }}>·</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Eye size={11} /> {article.viewCount} views</span>
+        </p>
+        <h2>{article.title}</h2>
+        <p className="sub">{article.excerpt}</p>
+      </div>
 
       {!canRead ? (
-        <div className="glass rounded-3xl p-10 text-center space-y-3">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/30 to-orange-500/10 flex items-center justify-center">
-            <Lock size={26} className="text-amber-400" />
-          </div>
-          <h3 className="text-lg font-bold text-[var(--foreground)]">This is a {article.accessTier === 'paid' ? 'Pro' : 'subscriber'} article</h3>
-          <p className="text-sm text-[var(--muted-foreground)] max-w-md mx-auto">
-            Upgrade to read the full piece plus everything else in our archive.
-          </p>
-          <button className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-semibold flex items-center gap-2 mx-auto">
+        <div className="blank">
+          <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+            <Lock size={24} color="#d99405" />
+          </span>
+          <h4>This is a {article.accessTier === 'paid' ? 'Pro' : 'subscriber'} article</h4>
+          <p style={{ maxWidth: 420 }}>Upgrade to read the full piece plus everything else in our archive.</p>
+          <button className="btn-a" style={{ marginTop: 24 }}>
             See plans <ArrowRight size={14} />
           </button>
         </div>
       ) : (
-        <div className="prose prose-invert max-w-none text-[var(--foreground)] whitespace-pre-wrap leading-relaxed">
+        <div
+          className="card"
+          style={{ whiteSpace: 'pre-wrap', maxWidth: 700, fontSize: 14, lineHeight: '24px', color: 'var(--text-2)', padding: '28px' }}
+        >
           {article.body}
         </div>
       )}
 
       {article.tags && article.tags.length > 0 && (
-        <div className="pt-6 border-t border-[var(--border)] flex items-center gap-2 flex-wrap">
-          <Tag size={12} className="text-[var(--muted-foreground)]" />
+        <div
+          style={{
+            marginTop: 26,
+            paddingTop: 22,
+            borderTop: '1px solid var(--line)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexWrap: 'wrap',
+          }}
+        >
+          <Tag size={12} color="#5c6b7e" />
           {article.tags.map((t: string) => (
-            <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)]/30 text-[var(--muted-foreground)]">
+            <span key={t} className="chip" style={{ height: 24, padding: '0 10px', fontSize: 11 }}>
               #{t}
             </span>
           ))}
         </div>
       )}
-    </article>
+    </div>
   );
 }

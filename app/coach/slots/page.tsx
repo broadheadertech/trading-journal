@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useToast } from '@/components/ui/Toast';
-import { Plus, Trash2, Calendar } from 'lucide-react';
+import { Plus, Trash as Trash2, Calendar, Calendar as CalendarClock } from '@phosphor-icons/react';
 
 const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -18,7 +18,7 @@ export default function CoachSlotsPage() {
   const [startsAt, setStartsAt] = useState('');
 
   if (!profile) {
-    return <p className="text-sm text-[var(--muted-foreground)]">Apply to become a coach first.</p>;
+    return <p className="empty-line">Apply to become a coach first.</p>;
   }
 
   const handleAdd = async () => {
@@ -35,51 +35,92 @@ export default function CoachSlotsPage() {
   };
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Availability</h1>
-      <p className="text-sm text-[var(--muted-foreground)]">
-        Add the times you&apos;re available. Each slot creates a {profile.sessionDurationMin}-minute booking window.
-      </p>
+    <div style={{ maxWidth: 720 }}>
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <CalendarClock size={13} style={{ color: 'var(--amber)' }} /> BOOKING WINDOWS
+        </p>
+        <h2>Availability</h2>
+        <p className="sub">
+          Add the times you&apos;re available. Each slot creates a {profile.sessionDurationMin}-minute booking window.
+        </p>
+      </div>
 
-      <div className="glass rounded-3xl p-6 space-y-3">
-        <div className="text-xs font-medium text-[var(--muted-foreground)]">New slot start time</div>
-        <div className="flex gap-2">
-          <input
-            type="datetime-local"
-            value={startsAt}
-            onChange={(e) => setStartsAt(e.target.value)}
-            className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
-          />
-          <button
-            disabled={!startsAt}
-            onClick={handleAdd}
-            className="px-4 py-2 rounded-lg bg-gradient-to-br from-pink-500 to-pink-700 text-white text-sm font-medium flex items-center gap-1 disabled:opacity-50"
-          >
-            <Plus size={14} /> Add
-          </button>
+      <div className="card pwrap">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>New slot</h3>
+            <p className="sub">Times use your local timezone.</p>
+          </div>
+        </div>
+
+        <div className="field" style={{ marginTop: 20 }}>
+          <label>NEW SLOT START TIME</label>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <input
+              type="datetime-local"
+              value={startsAt}
+              onChange={(e) => setStartsAt(e.target.value)}
+              className="box"
+              style={{ flex: 1, minWidth: 0, display: 'block', outline: 'none' }}
+            />
+            <button
+              disabled={!startsAt}
+              onClick={handleAdd}
+              className="btn-a disabled:opacity-50"
+              style={{ height: 42, flex: 'none' }}
+            >
+              <Plus size={14} /> Add
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-2">
-        {slots.length === 0 && <p className="text-sm text-[var(--muted-foreground)]">No upcoming slots.</p>}
-        {slots.map((s: any) => (
-          <div key={s.id} className="glass rounded-2xl p-4 flex items-center gap-3">
-            <Calendar size={16} className="text-pink-400" />
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-[var(--foreground)] text-sm">{new Date(s.startsAt).toLocaleString()}</div>
-              <div className="text-xs text-[var(--muted-foreground)]">{s.isBooked ? 'Booked' : 'Open'}</div>
+      <p className="lbl b10" style={{ margin: '32px 0 14px' }}>
+        UPCOMING SLOTS{slots.length > 0 && <span style={{ color: 'var(--amber)' }}> · {slots.length}</span>}
+      </p>
+
+      {slots.length === 0 ? (
+        <p className="empty-line">No upcoming slots.</p>
+      ) : (
+        slots.map((s: any) => (
+          <div
+            key={s.id}
+            className="card"
+            style={{ padding: '14px 18px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 14 }}
+          >
+            <div className="inset" style={{ width: 40, height: 40, padding: 0, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Calendar size={18} style={{ color: 'var(--amber)' }} />
             </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 13, color: 'var(--text)' }}>
+                {new Date(s.startsAt).toLocaleString()}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--muted-2)', marginTop: 4 }}>
+                {profile.sessionDurationMin}-minute window
+              </div>
+            </div>
+            <span className="chip" style={{ color: s.isBooked ? 'var(--green)' : 'var(--muted)', flex: 'none' }}>
+              <i style={{ background: s.isBooked ? 'var(--green)' : 'var(--muted-3)' }} />
+              {s.isBooked ? 'Booked' : 'Open'}
+            </span>
             {!s.isBooked && (
               <button
                 onClick={() => deleteSlot({ id: s.id })}
-                className="p-2 rounded-lg hover:bg-[var(--red)]/10 text-[var(--red)]"
+                style={{
+                  width: 30, height: 30, flex: 'none', borderRadius: 2,
+                  border: '1px solid var(--line)', background: 'var(--panel-2)', color: 'var(--red)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+                aria-label="Delete slot"
               >
                 <Trash2 size={14} />
               </button>
             )}
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   );
 }

@@ -5,6 +5,18 @@ import type { Stage } from '@/lib/types';
 // Story 7.3 — FR36: upgrade prompt fires when free-tier score hits/exceeds the Kid stage cap
 const UPGRADE_TRIGGER_SCORE = 350;
 
+/* ── ATLAS raw tokens (brain dimension is position:fixed — see BrainMiniWidget) ── */
+const T = {
+  amber: '#d99405',
+  ink: '#0a0a0a',
+  panel: '#0a0f17',
+  line2: '#24344a',
+  text: '#edf2f7',
+  text2: '#9fb0c2',
+  muted2: '#5c6b7e',
+  display: "'Archivo',system-ui,sans-serif",
+};
+
 function stageLabel(s: Stage): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -28,37 +40,55 @@ export default function UpgradePrompt({ currentScore, currentStage, planId, onUp
     <div
       role="status"
       aria-live="polite"
-      className="flex flex-col gap-2
-                 bg-amber-500/12 border border-amber-500/35 rounded-xl px-4 py-3
-                 shadow-[0_0_20px_rgba(245,158,11,0.08)]"
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 16,
+        border: `1px solid ${T.line2}`,
+        borderRadius: 2,
+        background: T.panel,
+        padding: '15px 20px',
+      }}
     >
+      {/* amber accent rule — ATLAS card accent */}
+      <span style={{ position: 'absolute', left: 0, top: -1, width: 60, height: 3, background: T.amber }} />
+
       {/* Stage earned label + message */}
-      <div>
-        <p className="text-sm text-white/80 leading-snug">
+      <div style={{ flex: '1 1 260px', minWidth: 0 }}>
+        <p style={{ margin: 0, fontFamily: T.display, fontWeight: 700, fontSize: 15, lineHeight: '18px', color: T.text }}>
           You&apos;ve earned{' '}
-          <span className="text-amber-400 font-semibold">{stageLabel(currentStage)}</span>
+          <span style={{ color: T.amber }}>{stageLabel(currentStage)}</span>
           {' '}— unlock your true brain stage
         </p>
-        <p className="text-xs text-white/40 mt-0.5 leading-relaxed">
+        <p style={{ margin: '9px 0 0', fontSize: 12, lineHeight: '18px', color: T.muted2 }}>
           Your brain grew beyond the free tier. Upgrade to reveal your true stage.
         </p>
       </div>
 
       {/* CTA — emphasises unlocking, not buying (FR36) */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={onUpgradeClick}
-          className="text-xs font-semibold
-                     bg-amber-500/20 hover:bg-amber-500/30
-                     text-amber-300 border border-amber-500/40
-                     rounded-lg px-3 py-1.5
-                     transition-colors cursor-pointer
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50"
-        >
-          Unlock Growth
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={onUpgradeClick}
+        style={{
+          flex: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 36,
+          padding: '0 20px',
+          borderRadius: 2,
+          border: 0,
+          background: T.amber,
+          color: T.ink,
+          fontWeight: 700,
+          fontSize: 12.5,
+          cursor: 'pointer',
+        }}
+      >
+        Unlock Growth
+      </button>
     </div>
   );
 }

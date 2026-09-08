@@ -6,8 +6,8 @@ import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { TabId } from '@/lib/types';
 import {
-  Users, Radio, TrendingUp, BookOpen, Loader2, Trophy, ArrowRight,
-} from 'lucide-react';
+  Users, Radio, TrendUp, BookOpen, CircleNotch, Trophy, ArrowRight,
+} from '@phosphor-icons/react';
 import TopAnalysts from '@/components/TopAnalysts';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import SignalRationale from '@/components/SignalRationale';
@@ -59,22 +59,20 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
   const data = useQuery(api.feed.getFollowingFeed, { limit: 60 });
 
   return (
-    <div className="relative max-w-6xl mx-auto">
-      <header className="space-y-2 mb-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <Users size={13} className="text-pink-400" /> Following
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">Your feed</h1>
-        <p className="text-sm text-[var(--muted-foreground)]">
+    <div style={{ position: 'relative' }}>
+      <div className="phead">
+        <p className="eyebrow"><Users size={13} /> Following</p>
+        <h2>Your feed</h2>
+        <p className="sub">
           Latest signals, public trades, and posts from the traders you follow.
         </p>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,320px)', gap: 32, alignItems: 'start' }}>
         {/* Main column — the feed itself */}
-        <main className="min-w-0">
+        <main style={{ minWidth: 0 }}>
           {data === undefined ? (
-            <div className="text-center py-16"><Loader2 size={22} className="animate-spin inline text-pink-400" /></div>
+            <p className="empty-line"><CircleNotch size={20} className="animate-spin" style={{ display: 'inline' }} /></p>
           ) : data.following === 0 ? (
             <EmptyState
               title="You're not following anyone yet"
@@ -86,7 +84,7 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
               body="The people you follow haven't posted lately. Check back soon, or discover more analysts to follow."
             />
           ) : (
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {(data.items as FeedItem[]).map(item => (
                 <FeedCard key={item.id} item={item} />
               ))}
@@ -95,7 +93,7 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
         </main>
 
         {/* Right rail — who to follow */}
-        <aside className="lg:sticky lg:top-4 lg:self-start">
+        <aside style={{ position: 'sticky', top: 16, alignSelf: 'start' }}>
           <DiscoverSection onOpenTab={onOpenTab} />
         </aside>
       </div>
@@ -105,34 +103,47 @@ export default function FollowingFeed({ onOpenTab }: { onOpenTab: (tab: TabId) =
 
 function PosterRow({ item, verb }: { item: FeedItem; verb: string }) {
   return (
-    <div className="flex items-center gap-2.5 mb-2">
-      <Link href={`/u/${item.posterHandle}`} className="shrink-0">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+      <Link href={`/u/${item.posterHandle}`} style={{ flex: 'none' }}>
         {item.posterAvatar ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.posterAvatar} alt={item.posterName} className="w-8 h-8 rounded-full object-cover border border-[var(--border)]" />
+          <img
+            src={item.posterAvatar}
+            alt={item.posterName}
+            style={{ width: 30, height: 30, borderRadius: 3, objectFit: 'cover', border: '1px solid var(--line-2)' }}
+          />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-xs font-bold text-white">
+          <div
+            style={{
+              width: 30, height: 30, borderRadius: 3, background: '#0f1620',
+              border: '1px solid var(--amber)', color: 'var(--amber)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12,
+            }}
+          >
             {item.posterName.slice(0, 1).toUpperCase()}
           </div>
         )}
       </Link>
-      <div className="min-w-0 text-sm">
-        <Link href={`/u/${item.posterHandle}`} className="font-semibold text-[var(--foreground)] hover:text-pink-300 transition-colors">
+      <div style={{ minWidth: 0, fontSize: 12.5, color: 'var(--muted-2)' }}>
+        <Link href={`/u/${item.posterHandle}`} style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
           {item.posterName}
         </Link>
-        <span className="text-[var(--muted-foreground)]"> {verb}</span>
+        <span> {verb}</span>
       </div>
-      <span className="ml-auto text-[10px] text-[var(--muted-foreground)] shrink-0">{timeAgo(item.ts)}</span>
+      <span style={{ marginLeft: 'auto', flex: 'none', fontSize: 11, color: 'var(--muted-2)' }}>{timeAgo(item.ts)}</span>
     </div>
   );
 }
 
 function Level({ label, value, tone }: { label: string; value: string; tone?: 'red' | 'emerald' }) {
-  const color = tone === 'red' ? 'text-red-300' : tone === 'emerald' ? 'text-emerald-300' : 'text-[var(--foreground)]';
+  const color = tone === 'red' ? 'var(--red)' : tone === 'emerald' ? 'var(--green)' : 'var(--text)';
   return (
-    <div className="rounded-md bg-[var(--card)] border border-[var(--border)] px-2 py-1.5 text-center">
-      <div className="text-[9px] uppercase tracking-wide text-[var(--muted-foreground)]">{label}</div>
-      <div className={`text-sm font-bold tabular-nums mt-0.5 ${color}`}>{value}</div>
+    <div className="inset" style={{ padding: '9px 6px', textAlign: 'center' }}>
+      <p className="lbl">{label.toUpperCase()}</p>
+      <em style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, lineHeight: '20px', marginTop: 4, color }}>
+        {value}
+      </em>
     </div>
   );
 }
@@ -144,30 +155,45 @@ function FeedCard({ item }: { item: FeedItem }) {
     const isShort = item.direction === 'short';
     const entry = item.entryHigh !== item.entryLow ? `${item.entryLow}–${item.entryHigh}` : `${item.entryLow}`;
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden">
-        <div className="p-4 space-y-3">
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div style={{ padding: '20px 22px 22px' }}>
           <PosterRow item={item} verb="posted a signal" />
 
           {item.rationale && (
-            <SignalRationale text={item.rationale} symbol={item.symbol} className="text-sm text-[var(--foreground)]/90 leading-relaxed" />
+            <SignalRationale
+              text={item.rationale}
+              symbol={item.symbol}
+              className="sub"
+            />
           )}
 
           {/* Embedded signal ticket */}
-          <div className="rounded-lg border border-[var(--border)] bg-[var(--background)]/40 p-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Radio size={15} className="text-pink-400" />
-              <span className="font-mono font-bold text-base">{item.symbol}</span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${isShort ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+          <div className="inset" style={{ marginTop: 16, padding: '14px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <Radio size={14} color="#d99405" />
+              <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 15, color: 'var(--text)' }}>{item.symbol}</span>
+              <span
+                className="chip"
+                style={{ height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', color: isShort ? 'var(--red)' : 'var(--green)' }}
+              >
                 {isShort ? 'SELL' : 'BUY'}
               </span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                won ? 'bg-emerald-500/15 text-emerald-300' :
-                lost ? 'bg-red-500/15 text-red-300' :
-                'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-              }`}>{item.status}</span>
-              <span className="ml-auto text-[11px] font-bold tabular-nums text-pink-300">R:R {(item.rrRatio ?? 0).toFixed(1)}</span>
+              <span
+                className="chip"
+                style={{
+                  height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em',
+                  textTransform: 'uppercase',
+                  color: won ? 'var(--green)' : lost ? 'var(--red)' : 'var(--muted-2)',
+                }}
+              >
+                {item.status}
+              </span>
+              <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--amber)' }}>
+                R:R {(item.rrRatio ?? 0).toFixed(1)}
+              </span>
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7, marginTop: 12 }}>
               <Level label="Entry" value={entry} />
               <Level label="Stop loss" value={`${item.stopLoss}`} tone="red" />
               <Level label="Target" value={item.takeProfit != null ? `${item.takeProfit}` : '—'} tone="emerald" />
@@ -182,35 +208,50 @@ function FeedCard({ item }: { item: FeedItem }) {
   if (item.kind === 'trade') {
     const pnl = item.actualPnL ?? null;
     return (
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+      <div className="card" style={{ padding: '20px 22px 22px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
         <PosterRow item={item} verb={item.isOpen ? 'opened a trade' : 'shared a trade'} />
-        <div className="flex items-center gap-2 flex-wrap">
-          <TrendingUp size={14} className="text-emerald-400" />
-          <span className="font-mono font-bold">{item.coin}</span>
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.direction === 'short' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <TrendUp size={14} color="#24c88a" />
+          <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14, color: 'var(--text)' }}>{item.coin}</span>
+          <span
+            className="chip"
+            style={{
+              height: 20, padding: '0 10px', fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
+              color: item.direction === 'short' ? 'var(--red)' : 'var(--green)',
+            }}
+          >
             {item.direction}
           </span>
-          <span className={`ml-auto text-sm font-bold tabular-nums ${pnl !== null && pnl > 0 ? 'text-emerald-400' : pnl !== null && pnl < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
+          <span
+            style={{
+              marginLeft: 'auto', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 14,
+              color: pnl !== null && pnl > 0 ? 'var(--green)' : pnl !== null && pnl < 0 ? 'var(--red)' : 'var(--muted-2)',
+            }}
+          >
             {pnl !== null ? `${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}` : 'Open'}
           </span>
         </div>
-        <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums mt-1.5">
+        <p className="qrow" style={{ marginTop: 12, fontFamily: 'var(--mono)' }}>
           {item.entryPrice} → {item.exitPrice ?? '—'}
-        </div>
+        </p>
       </div>
     );
   }
 
   // article
   return (
-    <Link href={`/blog/${item.slug}`} className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors">
+    <Link href={`/blog/${item.slug}`} className="card" style={{ display: 'block', padding: '20px 22px 22px' }}>
+      <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
       <PosterRow item={item} verb="published a post" />
-      <div className="flex items-start gap-2">
-        <BookOpen size={14} className="text-purple-400 mt-0.5 shrink-0" />
-        <div className="min-w-0">
-          <h3 className="text-base font-bold text-[var(--foreground)] leading-snug">{item.title}</h3>
-          {item.excerpt && <p className="text-xs text-[var(--muted-foreground)] mt-1 line-clamp-2">{item.excerpt}</p>}
-          {item.category && <span className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)] mt-1.5 inline-block">{item.category}</span>}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <BookOpen size={14} color="#d99405" style={{ flex: 'none', marginTop: 3 }} />
+        <div style={{ minWidth: 0 }}>
+          <h4>{item.title}</h4>
+          {item.excerpt && <p className="sub">{item.excerpt}</p>}
+          {item.category && (
+            <p className="lbl" style={{ marginTop: 12, textTransform: 'uppercase' }}>{item.category}</p>
+          )}
         </div>
       </div>
     </Link>
@@ -219,28 +260,33 @@ function FeedCard({ item }: { item: FeedItem }) {
 
 function DiscoverSection({ onOpenTab, compact }: { onOpenTab: (tab: TabId) => void; compact?: boolean }) {
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Trophy size={15} className="text-amber-400" />
-        <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Top analysts to follow</h2>
-        <button
-          onClick={() => onOpenTab('signals')}
-          className="ml-auto text-[11px] font-semibold text-pink-300 hover:text-pink-200 inline-flex items-center gap-1"
-        >
+    <section>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+        <Trophy size={13} color="#d99405" />
+        <p className="lbl">TOP ANALYSTS TO FOLLOW</p>
+        <button onClick={() => onOpenTab('signals')} className="viewall" type="button" style={{ fontSize: 11.5 }}>
           All signals <ArrowRight size={12} />
         </button>
       </div>
-      <TopAnalysts limit={compact ? 5 : 10} />
+      <div style={{ borderTop: '1px solid var(--line-2)', paddingTop: 22 }}>
+        <TopAnalysts limit={compact ? 5 : 10} />
+      </div>
     </section>
   );
 }
 
 function EmptyState({ title, body }: { title: string; body: string }) {
   return (
-    <div className="text-center py-12 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50">
-      <Users size={28} className="mx-auto text-[var(--muted-foreground)] mb-3" />
-      <p className="text-base font-semibold text-[var(--foreground)]">{title}</p>
-      <p className="text-sm text-[var(--muted-foreground)] mt-1 max-w-sm mx-auto">{body}</p>
+    <div className="blank" style={{ minHeight: 280 }}>
+      <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+      <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+      <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+      <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+      <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
+        <Users size={24} color="#d99405" />
+      </span>
+      <h4>{title}</h4>
+      <p style={{ maxWidth: 420 }}>{body}</p>
     </div>
   );
 }

@@ -5,9 +5,10 @@ import { Trade, EmotionState, CircuitBreakerResult, CircuitBreakerType, CircuitB
 import { EMOTION_OPTIONS } from '@/lib/utils';
 import { runAllCircuitBreakers, getEmotionWarning, generateEmotionCoachAdvice, getCooldownDuration } from '@/lib/emotional-engine';
 import {
-  Shield, Brain, CheckCircle, AlertTriangle, XOctagon,
-  ChevronRight, ChevronLeft, Sparkles, Lock,
-} from 'lucide-react';
+  Shield, Brain, CheckCircle, Warning,
+  CaretRight, CaretLeft, Sparkle, Lock,
+} from '@phosphor-icons/react';
+import { Prohibit as XOctagon } from '@phosphor-icons/react';
 import CooldownOverlay from './CooldownOverlay';
 
 interface Props {
@@ -38,10 +39,11 @@ const EMOTION_RISK: Record<string, 'safe' | 'caution' | 'danger'> = {
   Anxious: 'danger', Overconfident: 'danger',
 };
 
-const RISK_COLORS = {
-  safe: 'border-[var(--green)] bg-green-500/10 text-[var(--green)]',
-  caution: 'border-[var(--yellow)] bg-yellow-500/10 text-[var(--yellow)]',
-  danger: 'border-[var(--red)] bg-red-500/10 text-[var(--red)]',
+// ATLAS token per risk level — used for inline borders / accents.
+const RISK_COLORS: Record<'safe' | 'caution' | 'danger', string> = {
+  safe: 'var(--green)',
+  caution: 'var(--amber)',
+  danger: 'var(--red)',
 };
 
 export default function EmotionalCheckpoint({
@@ -150,7 +152,7 @@ export default function EmotionalCheckpoint({
   // If there's an existing cooldown from a previous session, show it
   if (existingCooldown && stage === 0) {
     return (
-      <div className="space-y-4">
+      <div style={{ display: 'grid', gap: 16 }}>
         <CooldownOverlay
           expiresAt={existingCooldown.expiresAt}
           breakerType={existingCooldown.type}
@@ -158,7 +160,7 @@ export default function EmotionalCheckpoint({
           onExpired={() => onClearCooldown(existingCooldown.type)}
           onOverride={() => onClearCooldown(existingCooldown.type)}
         />
-        <button onClick={onCancel} className="w-full py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] rounded-lg">
+        <button onClick={onCancel} className="btn-g" style={{ width: '100%' }}>
           Cancel
         </button>
       </div>
@@ -166,114 +168,182 @@ export default function EmotionalCheckpoint({
   }
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'grid', gap: 22 }}>
       {/* Progress Steps */}
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {stageLabels.map((label, i) => (
-          <div key={i} className="flex items-center gap-1 sm:gap-2 flex-1">
-            <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
-              i < stage ? 'bg-[var(--green)] text-white' :
-              i === stage ? 'bg-[var(--accent)] text-white' :
-              'bg-[var(--muted)] text-[var(--muted-foreground)]'
-            }`}>
-              {i < stage ? <CheckCircle size={14} /> : i + 1}
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                width: 24,
+                height: 24,
+                flex: 'none',
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'var(--display)',
+                fontWeight: 700,
+                fontSize: 12,
+                border: `1px solid ${i <= stage ? (i < stage ? 'var(--green)' : 'var(--amber)') : 'var(--line-2)'}`,
+                background: i === stage ? 'var(--amber)' : 'transparent',
+                color: i === stage ? 'var(--ink)' : i < stage ? 'var(--green)' : 'var(--muted-3)',
+              }}
+            >
+              {i < stage ? <CheckCircle size={13} /> : i + 1}
             </div>
-            <span className="text-[10px] sm:text-xs text-[var(--muted-foreground)] hidden sm:block truncate">{label}</span>
-            {i < stageLabels.length - 1 && <div className="flex-1 h-px bg-[var(--border)]" />}
+            <span
+              className="lbl"
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                color: i === stage ? 'var(--text)' : 'var(--muted-2)',
+              }}
+            >
+              {label.toUpperCase()}
+            </span>
+            {i < stageLabels.length - 1 && <div style={{ flex: 1, height: 1, background: 'var(--line)' }} />}
           </div>
         ))}
       </div>
 
       {/* Stage 0: Emotional State */}
       {stage === 0 && (
-        <div className="space-y-4 animate-in">
-          <div className="flex items-center gap-2 mb-1">
-            <Shield size={18} className="text-[var(--accent)]" />
-            <h3 className="font-semibold">How are you feeling right now?</h3>
+        <div className="animate-in" style={{ display: 'grid', gap: 20 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Shield size={16} style={{ color: 'var(--amber)' }} />
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>
+                How are you feeling right now?
+              </h3>
+            </div>
+            <p style={{ margin: '10px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>
+              Be completely honest. This helps protect you from emotional decisions.
+            </p>
           </div>
-          <p className="text-sm text-[var(--muted-foreground)]">Be completely honest. This helps protect you from emotional decisions.</p>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(96px,1fr))', gap: 8 }}>
             {EMOTION_OPTIONS.map(opt => {
               const risk = EMOTION_RISK[opt.value] || 'caution';
               const isSelected = emotion === opt.value;
+              const c = RISK_COLORS[risk];
               return (
                 <button
                   key={opt.value}
                   onClick={() => setEmotion(opt.value as EmotionState)}
-                  className={`py-2.5 sm:py-3 text-xs sm:text-sm rounded-xl border-2 transition-all ${
-                    isSelected ? RISK_COLORS[risk] : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/50'
-                  }`}
+                  style={{
+                    padding: '12px 6px',
+                    borderRadius: 2,
+                    border: `1px solid ${isSelected ? c : 'var(--line)'}`,
+                    background: isSelected ? 'var(--panel-2)' : 'transparent',
+                    color: isSelected ? c : 'var(--muted)',
+                    cursor: 'pointer',
+                    transition: 'border-color .15s, color .15s',
+                  }}
                 >
-                  <div className="text-lg sm:text-xl mb-0.5">{opt.emoji}</div>
-                  <div className="text-[10px] sm:text-xs">{opt.label}</div>
+                  <div style={{ fontSize: 18, lineHeight: '22px' }}>{opt.emoji}</div>
+                  <div style={{ marginTop: 4, fontWeight: 700, fontSize: 9.5, letterSpacing: '.03em', textTransform: 'uppercase' }}>
+                    {opt.label}
+                  </div>
                 </button>
               );
             })}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Intensity: <span className={`font-bold ${intensity >= 7 ? 'text-[var(--red)]' : intensity >= 5 ? 'text-[var(--yellow)]' : 'text-[var(--green)]'}`}>{intensity}/10</span>
-            </label>
+          <div className="inset" style={{ padding: '15px 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <p className="lbl">INTENSITY</p>
+              <span
+                style={{
+                  marginLeft: 'auto',
+                  fontFamily: 'var(--mono)',
+                  fontWeight: 500,
+                  fontSize: 15,
+                  color: intensity >= 7 ? 'var(--red)' : intensity >= 5 ? 'var(--amber)' : 'var(--green)',
+                }}
+              >
+                {intensity}/10
+              </span>
+            </div>
             <input
               type="range"
               min="1"
               max="10"
               value={intensity}
               onChange={e => setIntensity(parseInt(e.target.value))}
-              className="w-full accent-[var(--accent)]"
+              style={{ width: '100%', marginTop: 12, accentColor: 'var(--amber)' }}
             />
-            <div className="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 10.5, color: 'var(--muted-2)' }}>
               <span>Mild</span>
               <span>Moderate</span>
               <span>Intense</span>
             </div>
           </div>
 
-          {emotionWarning && (
-            <div className={`p-3 rounded-xl border text-sm ${
-              emotionWarning.includes('drops') || emotionWarning.includes('loss')
-                ? 'bg-red-500/10 border-red-500/20 text-[var(--red)]'
-                : emotionWarning.includes('well')
-                  ? 'bg-green-500/10 border-green-500/20 text-[var(--green)]'
-                  : 'bg-yellow-500/10 border-yellow-500/20 text-[var(--yellow)]'
-            }`}>
-              <div className="flex items-start gap-2">
-                <Brain size={16} className="shrink-0 mt-0.5" />
+          {emotionWarning && (() => {
+            const wc =
+              emotionWarning.includes('drops') || emotionWarning.includes('loss') ? 'var(--red)' :
+              emotionWarning.includes('well') ? 'var(--green)' : 'var(--amber)';
+            return (
+              <div
+                className="inset"
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                  borderLeft: `3px solid ${wc}`,
+                  padding: '13px 16px',
+                  fontSize: 12.5,
+                  lineHeight: '19px',
+                  color: 'var(--text-2)',
+                }}
+              >
+                <Brain size={14} style={{ color: wc, flex: 'none', marginTop: 2 }} />
                 <span>{emotionWarning}</span>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       )}
 
       {/* Stage 1: Pre-Trade Checklist */}
       {stage === 1 && (
-        <div className="space-y-4 animate-in">
-          <div className="flex items-center gap-2 mb-1">
-            <CheckCircle size={18} className="text-[var(--accent)]" />
-            <h3 className="font-semibold">Pre-Trade Checklist</h3>
+        <div className="animate-in" style={{ display: 'grid', gap: 20 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <CheckCircle size={16} style={{ color: 'var(--amber)' }} />
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>
+                Pre-Trade Checklist
+              </h3>
+            </div>
+            <p style={{ margin: '10px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>
+              All items must be checked before you can proceed.
+            </p>
           </div>
-          <p className="text-sm text-[var(--muted-foreground)]">All items must be checked before you can proceed.</p>
 
-          <div className="space-y-2">
+          <div style={{ display: 'grid', gap: 8 }}>
             {CHECKLIST_ITEMS.map((item, i) => (
               <label
                 key={i}
-                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                  checklist[i]
-                    ? 'border-[var(--green)] bg-green-500/5'
-                    : 'border-[var(--border)] hover:border-[var(--accent)]/50'
-                }`}
+                className="inset"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  padding: '13px 16px',
+                  cursor: 'pointer',
+                  borderColor: checklist[i] ? 'var(--green)' : 'var(--line)',
+                  transition: 'border-color .15s',
+                }}
               >
                 <input
                   type="checkbox"
                   checked={checklist[i]}
                   onChange={e => setChecklist(prev => prev.map((v, j) => j === i ? e.target.checked : v))}
-                  className="w-5 h-5 rounded accent-[var(--green)] shrink-0"
+                  style={{ width: 15, height: 15, flex: 'none', accentColor: 'var(--green)' }}
                 />
-                <span className={`text-sm ${checklist[i] ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>
+                <span style={{ fontSize: 12.5, lineHeight: '18px', color: checklist[i] ? 'var(--text)' : 'var(--muted)' }}>
                   {item}
                 </span>
               </label>
@@ -281,7 +351,7 @@ export default function EmotionalCheckpoint({
           </div>
 
           {!allChecked && (
-            <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1.5">
+            <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: 'var(--muted-2)' }}>
               <Lock size={12} /> Complete all items to proceed
             </p>
           )}
@@ -290,32 +360,50 @@ export default function EmotionalCheckpoint({
 
       {/* Stage 2: Self-Reflection */}
       {stage === 2 && (
-        <div className="space-y-4 animate-in">
-          <div className="flex items-center gap-2 mb-1">
-            <Brain size={18} className="text-[var(--accent)]" />
-            <h3 className="font-semibold">Self-Reflection</h3>
-          </div>
-          <p className="text-sm text-[var(--muted-foreground)]">
-            Explain your trade thesis. Writing it down forces clarity and exposes weak reasoning.
-          </p>
-
+        <div className="animate-in" style={{ display: 'grid', gap: 20 }}>
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Why are you entering this trade? What&apos;s your edge?
-            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Brain size={16} style={{ color: 'var(--amber)' }} />
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 17, lineHeight: '18px', margin: 0, color: 'var(--text)' }}>
+                Self-Reflection
+              </h3>
+            </div>
+            <p style={{ margin: '10px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>
+              Explain your trade thesis. Writing it down forces clarity and exposes weak reasoning.
+            </p>
+          </div>
+
+          <div className="field">
+            <label>WHY ARE YOU ENTERING THIS TRADE? WHAT&apos;S YOUR EDGE?</label>
             <textarea
               value={reasoning}
               onChange={e => setReasoning(e.target.value)}
               rows={5}
               placeholder="Describe your trade setup, the catalyst, your entry/exit plan, and why the risk/reward is favorable..."
-              className="text-sm"
+              style={{
+                width: '100%',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
+                background: 'var(--panel-2)',
+                color: 'var(--text)',
+                padding: '12px 16px',
+                fontSize: 13,
+                lineHeight: '20px',
+                resize: 'vertical',
+              }}
             />
-            <div className="flex items-center justify-between mt-1">
-              <span className={`text-xs ${reasoningValid ? 'text-[var(--green)]' : 'text-[var(--muted-foreground)]'}`}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 11.5,
+                  color: reasoningValid ? 'var(--green)' : 'var(--muted-2)',
+                }}
+              >
                 {reasoning.length}/100 minimum characters
               </span>
               {!reasoningValid && (
-                <span className="text-xs text-[var(--red)] flex items-center gap-1">
+                <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: 'var(--red)' }}>
                   <Lock size={10} /> {100 - reasoning.length} more characters needed
                 </span>
               )}
@@ -326,7 +414,7 @@ export default function EmotionalCheckpoint({
 
       {/* Stage 3: Analysis & Review */}
       {stage === 3 && (
-        <div className="space-y-4 animate-in">
+        <div className="animate-in" style={{ display: 'grid', gap: 16 }}>
           {showCooldown && activeCooldownType ? (
             <CooldownOverlay
               expiresAt={new Date(Date.now() + getCooldownDuration(activeCooldownType)).toISOString()}
@@ -339,61 +427,94 @@ export default function EmotionalCheckpoint({
             <>
               {/* Circuit Breaker Results */}
               {breakerResults.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-sm font-medium flex items-center gap-2">
-                    <AlertTriangle size={16} className="text-[var(--yellow)]" />
-                    Circuit Breaker Results
-                  </h4>
-                  {breakerResults.map((result, i) => (
-                    <div
-                      key={i}
-                      className={`p-3 rounded-xl border text-sm flex items-start gap-2 ${
-                        result.severity === 'block'
-                          ? 'bg-red-500/10 border-red-500/20'
-                          : 'bg-yellow-500/10 border-yellow-500/20'
-                      }`}
-                    >
-                      {result.severity === 'block'
-                        ? <XOctagon size={16} className="text-[var(--red)] shrink-0 mt-0.5" />
-                        : <AlertTriangle size={16} className="text-[var(--yellow)] shrink-0 mt-0.5" />
-                      }
-                      <span>{result.message}</span>
-                    </div>
-                  ))}
+                <div style={{ display: 'grid', gap: 8 }}>
+                  <p className="lbl b10" style={{ marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Warning size={12} style={{ color: 'var(--amber)' }} />
+                    CIRCUIT BREAKER RESULTS
+                  </p>
+                  {breakerResults.map((result, i) => {
+                    const c = result.severity === 'block' ? 'var(--red)' : 'var(--amber)';
+                    return (
+                      <div
+                        key={i}
+                        className="inset"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 12,
+                          borderLeft: `3px solid ${c}`,
+                          padding: '13px 16px',
+                          fontSize: 12.5,
+                          lineHeight: '19px',
+                          color: 'var(--text-2)',
+                        }}
+                      >
+                        {result.severity === 'block'
+                          ? <XOctagon size={14} style={{ color: c, flex: 'none', marginTop: 2 }} />
+                          : <Warning size={14} style={{ color: c, flex: 'none', marginTop: 2 }} />
+                        }
+                        <span>{result.message}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
               {breakerResults.length === 0 && (
-                <div className="p-3 rounded-xl border border-green-500/20 bg-green-500/10 text-sm flex items-center gap-2 text-[var(--green)]">
-                  <CheckCircle size={16} />
+                <div
+                  className="inset"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    borderLeft: '3px solid var(--green)',
+                    padding: '13px 16px',
+                    fontSize: 12.5,
+                    color: 'var(--green)',
+                  }}
+                >
+                  <CheckCircle size={14} style={{ flex: 'none' }} />
                   No circuit breakers triggered. You&apos;re clear to proceed.
                 </div>
               )}
 
               {/* AI Coach */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-[var(--purple)]" />
-                  <span className="text-sm font-medium">AI Emotion Coach</span>
+              <div className="card" style={{ padding: '19px 24px 22px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <div className="cardhead" style={{ alignItems: 'center', gap: 10 }}>
+                  <Sparkle size={14} style={{ color: 'var(--amber)' }} />
+                  <h4>AI Emotion Coach</h4>
                 </div>
-                <p className="text-sm text-[var(--foreground)] whitespace-pre-line leading-relaxed">{aiAdvice}</p>
+                <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '21px', color: 'var(--text-2)', whiteSpace: 'pre-line' }}>
+                  {aiAdvice}
+                </p>
               </div>
 
               {/* Summary */}
-              <div className="bg-[var(--muted)]/50 rounded-xl p-4 space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                  <span>Emotion:</span>
-                  <span className="font-medium text-[var(--foreground)]">
+              <div className="inset" style={{ padding: '4px 16px 6px' }}>
+                <div className="mrow">
+                  <span className="lb" style={{ marginLeft: 0 }}>Emotion</span>
+                  <span className="val">
                     {EMOTION_OPTIONS.find(e => e.value === emotion)?.emoji} {emotion} ({intensity}/10)
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-[var(--muted-foreground)]">
-                  <span>Checklist:</span>
-                  <span className="text-[var(--green)]">All items confirmed</span>
+                <div className="mrow">
+                  <span className="lb" style={{ marginLeft: 0 }}>Checklist</span>
+                  <span className="val" style={{ color: 'var(--green)' }}>All items confirmed</span>
                 </div>
-                <div className="text-[var(--muted-foreground)]">
-                  <span>Reasoning: </span>
-                  <span className="text-[var(--foreground)]">{reasoning.slice(0, 80)}...</span>
+                <div className="mrow" style={{ alignItems: 'flex-start' }}>
+                  <span className="lb" style={{ marginLeft: 0, flex: 'none' }}>Reasoning</span>
+                  <span
+                    style={{
+                      marginLeft: 24,
+                      textAlign: 'right',
+                      fontSize: 12,
+                      lineHeight: '18px',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    {reasoning.slice(0, 80)}...
+                  </span>
                 </div>
               </div>
             </>
@@ -403,63 +524,63 @@ export default function EmotionalCheckpoint({
 
       {/* Navigation */}
       {!showCooldown && (
-        <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexWrap: 'wrap',
+            paddingTop: 18,
+            borderTop: '1px solid var(--line)',
+          }}
+        >
           <div>
             {stage > 0 ? (
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-1 px-3 py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] rounded-lg"
-              >
-                <ChevronLeft size={16} /> Back
+              <button onClick={handleBack} className="btn-g">
+                <CaretLeft size={14} /> Back
               </button>
             ) : (
-              <button
-                onClick={onCancel}
-                className="px-3 py-2 text-sm text-[var(--muted-foreground)] hover:bg-[var(--muted)] rounded-lg"
-              >
+              <button onClick={onCancel} className="btn-g">
                 Cancel
               </button>
             )}
           </div>
-          <div className="flex gap-2">
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {stage < 3 ? (
               <button
                 onClick={handleNext}
                 disabled={!canProceedStage(stage)}
-                className="flex items-center gap-1 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                className="btn-a"
+                style={{ opacity: canProceedStage(stage) ? 1 : 0.5 }}
               >
-                Next <ChevronRight size={16} />
+                Next <CaretRight size={14} />
               </button>
             ) : (
               <>
                 {hasBlocks && !showCooldown ? (
                   <button
                     onClick={handleProceedDespiteWarnings}
-                    className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-white rounded-lg font-medium"
+                    className="btn-a"
+                    style={{ background: 'var(--red)', color: '#fff' }}
                   >
                     Proceed Despite Risks
                   </button>
                 ) : hasWarnings ? (
                   <>
-                    <button
-                      onClick={onCancel}
-                      className="px-4 py-2 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]"
-                    >
-                      Review & Reconsider
+                    <button onClick={onCancel} className="btn-g">
+                      Review &amp; Reconsider
                     </button>
-                    <button
-                      onClick={handleProceedDespiteWarnings}
-                      className="px-4 py-2 text-sm bg-[var(--yellow)] hover:bg-yellow-600 text-black rounded-lg font-medium"
-                    >
+                    <button onClick={handleProceedDespiteWarnings} className="btn-a">
                       Proceed with Caution
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={handleProceed}
-                    className="flex items-center gap-2 px-5 py-2 text-sm bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg font-medium"
+                    className="btn-a"
+                    style={{ background: 'var(--green)', color: 'var(--ink)' }}
                   >
-                    <CheckCircle size={16} /> Proceed to Trade
+                    <CheckCircle size={14} /> Proceed to Trade
                   </button>
                 )}
               </>

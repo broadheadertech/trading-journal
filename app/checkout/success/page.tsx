@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import { CheckCircle, CircleNotch } from '@phosphor-icons/react';
 
 // Stripe redirects here after a completed Checkout Session. The webhook
 // (handled by /api/stripe/webhook) writes the userSubscription row a moment
@@ -26,8 +26,8 @@ export default function CheckoutSuccessPage() {
 
 function CheckoutSuccessFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-      <Loader2 size={28} className="text-pink-400 animate-spin" />
+    <div className="atlas-site" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <CircleNotch size={26} className="animate-spin" style={{ color: 'var(--amber)' }} />
     </div>
   );
 }
@@ -59,49 +59,53 @@ function CheckoutSuccessInner() {
   }, [isPaidActive, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] px-4">
-      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center shadow-xl">
+    <div className="atlas-site" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 20px' }}>
+      <div className="card-solid" style={{ width: '100%', maxWidth: '480px', padding: '38px 36px', textAlign: 'center', position: 'relative' }}>
+        <span style={{ position: 'absolute', left: 0, top: '-1px', width: '120px', height: '2px', background: isPaidActive ? 'var(--green)' : 'var(--amber)' }} />
         {isPaidActive ? (
           <>
-            <div className="mx-auto mb-4 inline-flex w-14 h-14 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/40">
-              <CheckCircle2 size={28} className="text-emerald-400" />
+            <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(36,200,138,.35)', borderRadius: '3px', background: 'rgba(36,200,138,.08)' }}>
+              <CheckCircle size={24} style={{ color: 'var(--green)' }} />
             </div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">You're in.</h1>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              Your <span className="font-semibold text-[var(--foreground)] capitalize">{subscription?.planId}</span> subscription
+            <p className="eyebrow" style={{ margin: '0 0 12px' }}>PAYMENT CONFIRMED</p>
+            <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>You&rsquo;re in.</h1>
+            <p style={{ margin: '14px 0 0', fontSize: '14px', lineHeight: '22px', color: 'var(--atlas-muted)' }}>
+              Your <span style={{ color: 'var(--amber)', fontWeight: 700, textTransform: 'capitalize' }}>{subscription?.planId}</span> subscription
               is active. Redirecting you to the app…
             </p>
             <button
               onClick={() => router.replace('/app')}
-              className="mt-6 w-full py-2.5 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 transition-all"
+              className="btn btn-amber"
+              style={{ width: '100%', marginTop: '28px' }}
             >
               Open the app
+              <svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg>
             </button>
           </>
         ) : (
           <>
-            <div className="mx-auto mb-4 inline-flex w-14 h-14 items-center justify-center rounded-full bg-pink-500/15 border border-pink-500/40">
-              <Loader2 size={28} className="text-pink-400 animate-spin" />
+            <div style={{ margin: '0 auto 20px', width: '52px', height: '52px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(217,148,5,.35)', borderRadius: '3px', background: 'rgba(217,148,5,.08)' }}>
+              <CircleNotch size={24} className="animate-spin" style={{ color: 'var(--amber)' }} />
             </div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">Confirming your payment…</h1>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              {provider === 'stripe' ? 'Stripe' : 'PayMongo'} has accepted your payment. We're waiting on the
+            <p className="eyebrow" style={{ margin: '0 0 12px' }}>AWAITING WEBHOOK</p>
+            <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '30px', lineHeight: '34px', color: 'var(--text)', margin: 0 }}>Confirming your payment…</h1>
+            <p style={{ margin: '14px 0 0', fontSize: '14px', lineHeight: '22px', color: 'var(--atlas-muted)' }}>
+              {provider === 'stripe' ? 'Stripe' : 'PayMongo'} has accepted your payment. We&rsquo;re waiting on the
               confirmation webhook to upgrade your account — this usually takes a few seconds.
             </p>
             {secondsWaited > 20 && (
-              <p className="mt-4 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-3 py-2">
+              <p style={{ margin: '20px 0 0', padding: '10px 14px', fontSize: '12.5px', lineHeight: '19px', color: 'var(--amber)', background: 'rgba(217,148,5,.07)', border: '1px solid rgba(217,148,5,.28)', borderRadius: '2px', textAlign: 'left' }}>
                 Taking longer than expected. Your subscription is safe — try refreshing in a moment, or
-                head into the app and it'll catch up automatically.
+                head into the app and it&rsquo;ll catch up automatically.
               </p>
             )}
-            <div className="mt-6 flex flex-col gap-2">
-              <button
-                onClick={() => router.replace('/app')}
-                className="w-full py-2.5 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors text-[var(--foreground)]"
-              >
-                Go to the app
-              </button>
-            </div>
+            <button
+              onClick={() => router.replace('/app')}
+              className="btn btn-ghost"
+              style={{ width: '100%', marginTop: '28px' }}
+            >
+              Go to the app
+            </button>
           </>
         )}
       </div>

@@ -17,7 +17,7 @@ There is no test suite configured; `npm test` does not exist.
 
 ## High-Level Architecture
 
-This is **Tradia** — a Next.js 16 / React 19 SaaS trading journal. The product surface is much larger than "journal": Dashboard, Journal sub-tabs, Playbook, Analytics, Psychology, Brain/Neuro-Score, Coaching, Community, Courses, Events, Signals, Leaderboard, World Monitoring, etc., all tier-gated.
+This is **Atlas** — a Next.js 16 / React 19 SaaS trading journal. The product surface is much larger than "journal": Dashboard, Journal sub-tabs, Playbook, Analytics, Psychology, Brain/Neuro-Score, Coaching, Community, Courses, Events, Signals, Leaderboard, World Monitoring, etc., all tier-gated.
 
 ### Two app surfaces — public landing vs. authenticated app
 

@@ -5,9 +5,10 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Headphones, ArrowLeft, ArrowRight, Star, Clock, Send, Check,
-  Calendar, MessageCircle, Video, X, Loader2, UserPlus, Users,
-} from 'lucide-react';
+  Headphones, ArrowLeft, ArrowRight, Star, Clock, PaperPlaneTilt as Send, Check,
+  Calendar, ChatCircle as MessageCircle, X, CircleNotch as Loader2, UserPlus, Users,
+} from '@phosphor-icons/react';
+import { VideoCamera as Video } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast';
 import CoachingCohorts from './CoachingCohorts';
@@ -19,6 +20,18 @@ const uid = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice
 const fmt = (iso: string) => {
   if (!iso) return '';
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+};
+
+// ATLAS form-control chrome (matches .field .box / .codebox in app/atlas-dashboard.css)
+const atlasField: React.CSSProperties = {
+  border: '1px solid var(--line)',
+  borderRadius: 2,
+  background: 'var(--panel-2)',
+  color: 'var(--text)',
+  padding: '10px 14px',
+  font: 'inherit',
+  fontSize: 13,
+  outline: 'none',
 };
 
 export default function Coaching() {
@@ -63,127 +76,134 @@ export default function Coaching() {
   }
 
   return (
-    <div className="relative space-y-10">
-      <div className="hero-glow" />
-
-      <header className="flex items-end justify-between flex-wrap gap-4 anim-fade-up">
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-            <Headphones size={12} /> {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-            {tab === 'sessions' ? (
-              <>Talk to a <span className="gradient-text">trading coach</span></>
-            ) : (
-              <>Join a <span className="gradient-text">trading cohort</span></>
-            )}
-          </h1>
-          <p className="text-base text-[var(--muted-foreground)] max-w-xl">
-            {tab === 'sessions'
-              ? 'Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.'
-              : 'Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+    <div>
+      <div className="phead pwrap">
+        <p className="eyebrow" style={{ color: '#0dfb78', fontWeight: 500 }}>
+          {tab === 'sessions' ? '1-on-1 sessions' : 'Group cohorts'}
+        </p>
+        <h2>{tab === 'sessions' ? 'Talk to a trading coach' : 'Join a trading cohort'}</h2>
+        <p className="sub">
+          {tab === 'sessions'
+            ? 'Hire a vetted coach for live video sessions. Book by the slot, message after, review when done.'
+            : 'Weekly group calls hosted by vetted coaches. Lower price than 1:1, peer accountability included.'}
+        </p>
+        <div className="actions" style={{ top: 26 }}>
           {user && tab === 'sessions' && (
-            <button
-              onClick={() => setView('mine')}
-              className="px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)]/60 backdrop-blur text-sm font-medium hover:bg-[var(--muted)]/60 transition-all"
-            >
+            <button type="button" onClick={() => setView('mine')} className="btn-g" style={{ height: 44 }}>
               My sessions ({myClientSessions.length})
             </button>
           )}
           {user && (
-            <Link
-              href="/coach"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 flex items-center gap-2"
-            >
-              <UserPlus size={16} />
+            <Link href="/coach" className="btn-a" style={{ height: 44 }}>
+              <UserPlus size={14} />
               {myCoachProfile ? 'Coach Hub' : 'Become a coach'}
             </Link>
           )}
         </div>
-      </header>
+      </div>
 
       {/* ── Tab toggle: 1-on-1 sessions vs Cohorts ── */}
-      <div className="glass rounded-2xl p-1.5 inline-flex gap-1">
+      <div className="tabs line" style={{ marginBottom: 42 }}>
         <button
           onClick={() => setTab('sessions')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            tab === 'sessions'
-              ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg'
-              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-          }`}
+          className={tab === 'sessions' ? 'on' : undefined}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            ...(tab === 'sessions'
+              ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 }
+              : null),
+          }}
         >
-          <Headphones size={16} /> 1-on-1 Sessions
+          <Headphones size={13} /> 1-on-1 Sessions
         </button>
         <button
           onClick={() => setTab('cohorts')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            tab === 'cohorts'
-              ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow-lg'
-              : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-          }`}
+          className={tab === 'cohorts' ? 'on' : undefined}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            ...(tab === 'cohorts'
+              ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 }
+              : null),
+          }}
         >
-          <Users size={16} /> Cohorts
+          <Users size={13} /> Cohorts
         </button>
       </div>
 
       {tab === 'cohorts' && <CoachingCohorts />}
 
       {tab === 'sessions' && (coaches.length === 0 ? (
-        <div className="relative overflow-hidden rounded-3xl border border-dashed border-[var(--border)] bg-[var(--card)]/40 backdrop-blur p-16 text-center">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-            <Headphones size={28} className="text-pink-400" />
-          </div>
-          <p className="text-[var(--foreground)] font-medium">No coaches available yet</p>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">Check back soon — we&apos;re onboarding the first cohort.</p>
+        <div className="blank" style={{ minHeight: 300 }}>
+          <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
+          <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+          <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)', color: '#00ffe8' }}>
+            <Headphones size={24} />
+          </span>
+          <h4>No coaches available yet</h4>
+          <p>Check back soon — we&apos;re onboarding the first cohort.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coaches.map((c: any, idx: number) => (
+        <div className="split-3">
+          {coaches.map((c: any) => (
             <article
               key={c.id}
-              style={{ animationDelay: `${idx * 60}ms` }}
-              className="group glass rounded-3xl card-lift anim-fade-up cursor-pointer overflow-hidden"
+              className="provider"
+              style={{ cursor: 'pointer', color: 'var(--amber)' }}
               onClick={() => { setCoachId(c.id); setView('detail'); }}
             >
-              <div className="p-6 flex items-start gap-4">
-                {c.photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.photoUrl} alt={c.displayName} className="w-16 h-16 rounded-2xl object-cover border border-[var(--border)]" />
-                ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-2xl font-bold text-[var(--foreground)]">
-                    {c.displayName.charAt(0)}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-lg text-[var(--foreground)] tracking-tight truncate">{c.displayName}</h3>
-                  <p className="text-xs text-[var(--muted-foreground)] truncate">{c.headline}</p>
-                  {(c.reviewCount ?? 0) > 0 && (
-                    <div className="flex items-center gap-1 mt-1 text-xs">
-                      <Star size={12} className="text-amber-400 fill-amber-400" />
-                      <span className="font-bold text-[var(--foreground)]">{c.avgRating?.toFixed(1)}</span>
-                      <span className="text-[var(--muted-foreground)]">({c.reviewCount})</span>
-                    </div>
-                  )}
+              <span className="accent" style={{ background: 'var(--amber)' }} />
+              {c.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={c.photoUrl}
+                  alt={c.displayName}
+                  className="av"
+                  style={{ display: 'block', objectFit: 'cover' }}
+                />
+              ) : (
+                <div
+                  className="av"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'var(--display)', fontWeight: 700, fontSize: 26, color: 'var(--text)',
+                  }}
+                >
+                  {c.displayName.charAt(0)}
                 </div>
-              </div>
+              )}
+              <h4>{c.displayName}</h4>
+              <p className="meta" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.headline}</p>
 
-              <div className="px-6 pb-4 flex flex-wrap gap-1.5">
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 14 }}>
                 {(c.specialties as string[]).slice(0, 3).map((s) => (
-                  <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{s}</span>
+                  <span key={s} className="chip" style={{ height: 22, padding: '0 10px', fontSize: '9.5px', letterSpacing: '.04em', textTransform: 'uppercase' }}>{s}</span>
                 ))}
               </div>
 
-              <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between">
-                <div className="text-sm">
-                  <span className="font-bold text-[var(--foreground)]">${c.hourlyRateUsd}</span>
-                  <span className="text-[var(--muted-foreground)]"> / hr · {c.sessionDurationMin}min</span>
+              <div className="big">
+                <b style={{ color: 'var(--text)' }}>${c.hourlyRateUsd}</b>
+                <span>PER HOUR</span>
+              </div>
+
+              <div className="row3">
+                <div>
+                  <b style={{ color: 'var(--text)' }}>{(c.reviewCount ?? 0) > 0 ? c.avgRating?.toFixed(1) : '--'}</b>
+                  <span>RATING</span>
                 </div>
-                <div className="flex items-center gap-1 text-sm font-medium text-pink-400 group-hover:gap-2 transition-all">
-                  Book <ArrowRight size={14} />
+                <div>
+                  <b style={{ color: 'var(--text)' }}>{c.reviewCount ?? 0}</b>
+                  <span>REVIEWS</span>
                 </div>
+                <div>
+                  <b style={{ color: 'var(--text)' }}>{c.sessionDurationMin}</b>
+                  <span>MINUTES</span>
+                </div>
+              </div>
+
+              <div className="follow">
+                Book <ArrowRight size={14} />
               </div>
             </article>
           ))}
@@ -216,7 +236,7 @@ function CoachDetail({
   if (!coach) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--muted-foreground)]" />
+        <Loader2 size={26} className="animate-spin" style={{ color: 'var(--muted)' }} />
       </div>
     );
   }
@@ -248,67 +268,74 @@ function CoachDetail({
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to coaches
+      <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
+        <ArrowLeft size={12} /> Back to coaches
       </button>
 
-      <div className="glass rounded-3xl p-6 sm:p-8 anim-fade-up">
+      <div className="card pwrap" style={{ padding: '28px 28px 24px' }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="flex items-start gap-6 flex-wrap">
           {coach.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coach.photoUrl} alt={coach.displayName} className="w-28 h-28 rounded-3xl object-cover border border-[var(--border)]" />
+            <img src={coach.photoUrl} alt={coach.displayName} style={{ width: 96, height: 96, borderRadius: 3, objectFit: 'cover', border: '1px solid var(--line)', flex: 'none' }} />
           ) : (
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-pink-500/30 to-emerald-500/10 flex items-center justify-center text-4xl font-bold text-[var(--foreground)]">
+            <div
+              className="flex items-center justify-center"
+              style={{ width: 96, height: 96, borderRadius: 3, background: 'var(--amber)', color: 'var(--ink)', fontFamily: 'var(--display)', fontWeight: 700, fontSize: 36, flex: 'none' }}
+            >
               {coach.displayName.charAt(0)}
             </div>
           )}
           <div className="flex-1 min-w-0 space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">{coach.displayName}</h1>
-            <p className="text-[var(--muted-foreground)]">{coach.headline}</p>
+            <h3 style={{ fontSize: 30, lineHeight: '33px' }}>{coach.displayName}</h3>
+            <p style={{ margin: 0, fontSize: 14, color: 'var(--muted)' }}>{coach.headline}</p>
             {(coach.reviewCount ?? 0) > 0 && (
-              <div className="flex items-center gap-1.5 text-sm">
-                <Star size={14} className="text-amber-400 fill-amber-400" />
-                <span className="font-bold text-[var(--foreground)]">{coach.avgRating?.toFixed(1)}</span>
-                <span className="text-[var(--muted-foreground)]">· {coach.reviewCount} reviews · {coach.totalSessions ?? 0} sessions</span>
+              <div className="flex items-center gap-1.5" style={{ fontSize: '12.5px', color: 'var(--muted-2)' }}>
+                <Star size={14} style={{ color: 'var(--amber)', fill: 'currentColor' }} />
+                <b style={{ color: 'var(--text)' }}>{coach.avgRating?.toFixed(1)}</b>
+                <span>· {coach.reviewCount} reviews · {coach.totalSessions ?? 0} sessions</span>
               </div>
             )}
             <div className="flex flex-wrap gap-1.5 pt-1">
               {(coach.specialties as string[]).map((s) => (
-                <span key={s} className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400 font-medium">{s}</span>
+                <span key={s} className="chip" style={{ height: 22, padding: '0 10px', fontSize: '9.5px', letterSpacing: '.04em', textTransform: 'uppercase' }}>{s}</span>
               ))}
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold text-[var(--foreground)]">${coach.hourlyRateUsd}<span className="text-base text-[var(--muted-foreground)]">/hr</span></div>
-            <div className="text-xs text-[var(--muted-foreground)] mt-1">{coach.sessionDurationMin}-min session = ${totalPrice.toFixed(2)}</div>
+          <div className="inset" style={{ textAlign: 'right' }}>
+            <b style={{ display: 'block', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 30, lineHeight: '38px', color: 'var(--text)' }}>
+              ${coach.hourlyRateUsd}<span style={{ fontSize: 13, color: 'var(--muted-2)' }}>/hr</span>
+            </b>
+            <span style={{ display: 'block', fontSize: 11, color: 'var(--muted-2)' }}>{coach.sessionDurationMin}-min session = ${totalPrice.toFixed(2)}</span>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-[var(--border)] whitespace-pre-wrap text-[var(--foreground)]">
+        <div className="mt-6 pt-6 whitespace-pre-wrap" style={{ borderTop: '1px solid var(--line)', fontSize: '13px', lineHeight: '20px', color: 'var(--muted)' }}>
           {coach.bio}
         </div>
       </div>
 
       {/* Available slots */}
-      <div className="glass rounded-3xl p-6 anim-fade-up" style={{ animationDelay: '80ms' }}>
+      <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
-            <Calendar size={18} className="text-pink-400" /> Available slots
-          </h2>
-          <span className="text-xs text-[var(--muted-foreground)]">{coach.timezone}</span>
+          <h3 className="flex items-center gap-2">
+            <Calendar size={16} style={{ color: 'var(--amber)' }} /> Available slots
+          </h3>
+          <span className="lbl b95">{coach.timezone}</span>
         </div>
         {slots.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] py-6 text-center">No open slots right now. Check back soon.</p>
+          <p className="empty-line">No open slots right now. Check back soon.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             {slots.map((s: any) => (
               <button
                 key={s.id}
                 onClick={() => { setSelectedSlot(s); setShowBooking(true); }}
-                className="px-3 py-2 rounded-xl border border-[var(--border)] hover:border-pink-400/50 hover:bg-pink-500/5 text-sm text-[var(--foreground)] text-left transition-all"
+                className="inset"
+                style={{ textAlign: 'left', cursor: 'pointer' }}
               >
-                <div className="font-medium">{new Date(s.startsAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                <div className="text-xs text-[var(--muted-foreground)]">{new Date(s.startsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+                <div style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{new Date(s.startsAt).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                <div style={{ marginTop: 4, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted-2)' }}>{new Date(s.startsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
               </button>
             ))}
           </div>
@@ -317,19 +344,19 @@ function CoachDetail({
 
       {/* Reviews */}
       {reviews.length > 0 && (
-        <div className="glass rounded-3xl p-6 anim-fade-up space-y-4" style={{ animationDelay: '160ms' }}>
-          <h2 className="text-lg font-bold text-[var(--foreground)]">Reviews</h2>
+        <div className="card space-y-4">
+          <h3>Reviews</h3>
           {reviews.map((r: any) => (
-            <div key={r.id} className="border-b border-[var(--border)] last:border-0 pb-4 last:pb-0">
+            <div key={r.id} className="last:border-0 pb-4 last:pb-0" style={{ borderBottom: '1px solid var(--hair)' }}>
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-[var(--foreground)] text-sm">{r.clientName}</span>
+                <span style={{ fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{r.clientName}</span>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} size={12} className={n <= r.rating ? 'text-amber-400 fill-amber-400' : 'text-[var(--muted-foreground)]/30'} />
+                    <Star key={n} size={12} style={n <= r.rating ? { color: 'var(--amber)', fill: 'currentColor' } : { color: 'var(--muted-4)' }} />
                   ))}
                 </div>
               </div>
-              <p className="text-sm text-[var(--muted-foreground)]">{r.comment}</p>
+              <p style={{ margin: 0, fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)' }}>{r.comment}</p>
             </div>
           ))}
         </div>
@@ -338,37 +365,37 @@ function CoachDetail({
       {/* Booking modal */}
       {showBooking && selectedSlot && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="glass rounded-3xl max-w-md w-full p-6 space-y-4">
+          <div className="card max-w-md w-full space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[var(--foreground)]">Book session</h2>
-              <button onClick={() => setShowBooking(false)} className="p-1 rounded hover:bg-[var(--muted)]"><X size={18} /></button>
-            </div>
-            <div className="text-sm">
-              <div className="text-[var(--muted-foreground)]">When</div>
-              <div className="font-medium text-[var(--foreground)]">{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
-            </div>
-            <div className="text-sm">
-              <div className="text-[var(--muted-foreground)]">Total</div>
-              <div className="font-bold text-[var(--foreground)] text-lg">${totalPrice.toFixed(2)}</div>
+              <h3>Book session</h3>
+              <button onClick={() => setShowBooking(false)} className="chip" style={{ width: 28, height: 28, padding: 0, justifyContent: 'center' }}><X size={14} /></button>
             </div>
             <div>
-              <div className="text-xs font-medium text-[var(--muted-foreground)] mb-1">What do you want to work on?</div>
+              <p className="lbl">WHEN</p>
+              <div style={{ marginTop: 6, fontSize: 13, color: 'var(--text)' }}>{fmt(selectedSlot.startsAt)} – {new Date(selectedSlot.endsAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</div>
+            </div>
+            <div>
+              <p className="lbl">TOTAL</p>
+              <div style={{ marginTop: 6, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 20, color: 'var(--text)' }}>${totalPrice.toFixed(2)}</div>
+            </div>
+            <div>
+              <p className="lbl" style={{ marginBottom: 9 }}>WHAT DO YOU WANT TO WORK ON?</p>
               <textarea
                 value={goals}
                 onChange={(e) => setGoals(e.target.value)}
                 rows={4}
                 placeholder="Specific goals, problems, or questions..."
-                className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                className="w-full" style={atlasField}
               />
             </div>
             <button
               disabled={busy || !goals.trim()}
               onClick={handleBook}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+              className="btn-a w-full disabled:opacity-50"
             >
               {busy ? 'Booking…' : `Confirm & pay $${totalPrice.toFixed(2)}`}
             </button>
-            <p className="text-[10px] text-[var(--muted-foreground)] text-center">
+            <p style={{ margin: 0, textAlign: 'center', fontSize: 10.5, color: 'var(--muted-2)' }}>
               Stub mode: payment is recorded automatically. Real Stripe Connect to be wired later.
             </p>
           </div>
@@ -388,12 +415,12 @@ export function MySessionsView({
 }) {
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back to coaches
+      <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
+        <ArrowLeft size={12} /> Back to coaches
       </button>
-      <h1 className="text-3xl font-bold tracking-tight text-[var(--foreground)]">My sessions</h1>
+      <div className="phead"><h2>My sessions</h2></div>
       {sessions.length === 0 ? (
-        <p className="text-sm text-[var(--muted-foreground)]">You haven&apos;t booked any sessions yet.</p>
+        <p className="empty-line">You haven&apos;t booked any sessions yet.</p>
       ) : (
         <div className="space-y-2">
           {sessions.map((s) => <SessionRow key={s.id} session={s} onOpen={() => onOpen(s.id)} />)}
@@ -405,26 +432,34 @@ export function MySessionsView({
 
 export function SessionRow({ session, onOpen }: { session: any; onOpen: () => void }) {
   const STATUS_COLORS: Record<string, string> = {
-    confirmed:   'bg-pink-500/15 text-pink-400',
-    in_progress: 'bg-blue-500/15 text-blue-400',
-    completed:   'bg-emerald-500/15 text-emerald-400',
-    cancelled:   'bg-[var(--muted)]/40 text-[var(--muted-foreground)]',
-    disputed:    'bg-amber-500/15 text-amber-400',
-    pending:     'bg-amber-500/15 text-amber-400',
+    confirmed:   'var(--amber)',
+    in_progress: 'var(--amber)',
+    completed:   'var(--green)',
+    cancelled:   'var(--muted-2)',
+    disputed:    'var(--red)',
+    pending:     'var(--amber)',
   };
   return (
     <button
       onClick={onOpen}
-      className="w-full text-left glass rounded-2xl p-4 flex items-center gap-3 card-lift"
+      className="card w-full text-left flex items-center gap-3"
+      style={{ padding: '14px 18px' }}
     >
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-emerald-500/10 flex items-center justify-center">
-        <Calendar size={20} className="text-pink-400" />
+      <div className="inset flex items-center justify-center" style={{ width: 44, height: 44, padding: 0, flex: 'none' }}>
+        <Calendar size={18} style={{ color: 'var(--amber)' }} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-[var(--foreground)]">{fmt(session.startsAt)}</div>
-        <div className="text-xs text-[var(--muted-foreground)]">{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
+        <div style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{fmt(session.startsAt)}</div>
+        <div style={{ marginTop: 5, fontSize: 11.5, color: 'var(--muted-2)' }}>{session.sessionDurationMin}-min · ${session.pricePaidUsd.toFixed(2)}</div>
       </div>
-      <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[session.status]}`}>
+      <span
+        className="chip"
+        style={{
+          flex: 'none', height: 20, padding: '0 10px', fontWeight: 700, fontSize: 9,
+          letterSpacing: '.04em', textTransform: 'uppercase',
+          color: STATUS_COLORS[session.status], borderColor: STATUS_COLORS[session.status],
+        }}
+      >
         {session.status.replace('_', ' ')}
       </span>
     </button>
@@ -469,7 +504,7 @@ export function SessionView({
   if (!session) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--muted-foreground)]" />
+        <Loader2 size={26} className="animate-spin" style={{ color: 'var(--muted)' }} />
       </div>
     );
   }
@@ -491,17 +526,18 @@ export function SessionView({
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-        <ArrowLeft size={16} /> Back
+      <button onClick={onBack} className="btn-g" style={{ height: 36 }}>
+        <ArrowLeft size={12} /> Back
       </button>
 
       {/* Session header */}
-      <div className="glass rounded-3xl p-6">
+      <div className="card pwrap">
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <div className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] mb-1">Session</div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{fmt(session.startsAt)}</h1>
-            <p className="text-sm text-[var(--muted-foreground)] mt-1">
+            <p className="lbl">SESSION</p>
+            <h3 style={{ marginTop: 9 }}>{fmt(session.startsAt)}</h3>
+            <p style={{ margin: '8px 0 0', fontSize: 12.5, color: 'var(--muted)' }}>
               {session.sessionDurationMin} minutes · ${session.pricePaidUsd.toFixed(2)} ·{' '}
               <span className="capitalize">{session.status.replace('_', ' ')}</span>
             </p>
@@ -512,9 +548,9 @@ export function SessionView({
                 href={session.meetingUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold shadow-lg shadow-teal-500/30"
+                className="btn-a"
               >
-                <Video size={16} /> Join call
+                <Video size={14} /> Join call
               </a>
             )}
             {session.status !== 'cancelled' && session.status !== 'completed' && (
@@ -524,7 +560,7 @@ export function SessionView({
                   await cancel({ id: sessionId });
                   showToast('Session cancelled', 'success');
                 }}
-                className="px-4 py-2 rounded-xl border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--red)] text-sm"
+                className="btn-g"
               >
                 Cancel
               </button>
@@ -532,21 +568,21 @@ export function SessionView({
           </div>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-[var(--border)] text-sm">
-          <div className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] mb-1">Goals</div>
-          <p className="text-[var(--foreground)]">{session.clientGoals}</p>
+        <div className="mt-4 pt-4 text-sm" style={{ borderTop: '1px solid var(--line)' }}>
+          <p className="lbl" style={{ marginBottom: 6 }}>GOALS</p>
+          <p style={{ margin: 0, color: 'var(--text)' }}>{session.clientGoals}</p>
         </div>
 
         {/* Coach controls */}
         {role === 'coach' && session.status !== 'cancelled' && session.status !== 'completed' && (
-          <div className="mt-4 pt-4 border-t border-[var(--border)] space-y-3">
+          <div className="mt-4 pt-4 space-y-3" style={{ borderTop: '1px solid var(--line)' }}>
             {!session.meetingUrl && (
               <div className="flex gap-2">
                 <input
                   value={meetingUrlInput}
                   onChange={(e) => setMeetingUrlInput(e.target.value)}
                   placeholder="Paste meeting URL (Zoom, Meet, Daily.co...)"
-                  className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                  className="flex-1 min-w-0" style={atlasField}
                 />
                 <button
                   onClick={async () => {
@@ -555,7 +591,7 @@ export function SessionView({
                     setMeetingUrlInput('');
                     showToast('Meeting URL set', 'success');
                   }}
-                  className="px-4 py-2 rounded-lg bg-pink-500 text-[var(--foreground)] text-sm font-medium"
+                  className="btn-a"
                 >
                   Save
                 </button>
@@ -564,7 +600,7 @@ export function SessionView({
             {session.status === 'confirmed' && session.meetingUrl && (
               <button
                 onClick={() => markInProgress({ id: sessionId })}
-                className="w-full py-2 rounded-lg bg-blue-500 text-[var(--foreground)] text-sm font-medium"
+                className="btn-a w-full"
               >
                 Start session
               </button>
@@ -576,14 +612,14 @@ export function SessionView({
                   onChange={(e) => setCoachNotes(e.target.value)}
                   placeholder="Post-session notes (private to you)"
                   rows={3}
-                  className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+                  className="w-full" style={atlasField}
                 />
                 <button
                   onClick={async () => {
                     await completeSession({ id: sessionId, coachNotes });
                     showToast('Session completed — funds released', 'success');
                   }}
-                  className="w-full py-2 rounded-lg bg-emerald-500 text-[var(--foreground)] text-sm font-medium"
+                  className="btn-a w-full"
                 >
                   Mark as completed
                 </button>
@@ -597,18 +633,18 @@ export function SessionView({
       {canReview && !showReviewForm && (
         <button
           onClick={() => setShowReviewForm(true)}
-          className="w-full py-3 glass rounded-2xl text-sm font-medium text-[var(--foreground)] hover:bg-[var(--muted)]/40"
+          className="btn-g w-full"
         >
           Leave a review →
         </button>
       )}
       {canReview && showReviewForm && (
-        <div className="glass rounded-3xl p-6 space-y-3">
-          <h3 className="font-bold text-[var(--foreground)]">How was your session?</h3>
+        <div className="card space-y-3">
+          <h3>How was your session?</h3>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
               <button key={n} onClick={() => setReviewRating(n)}>
-                <Star size={28} className={n <= reviewRating ? 'text-amber-400 fill-amber-400' : 'text-[var(--muted-foreground)]/30'} />
+                <Star size={28} style={n <= reviewRating ? { color: 'var(--amber)', fill: 'currentColor' } : { color: 'var(--muted-4)' }} />
               </button>
             ))}
           </div>
@@ -617,7 +653,7 @@ export function SessionView({
             onChange={(e) => setReviewComment(e.target.value)}
             placeholder="Share your experience..."
             rows={3}
-            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-sm"
+            className="w-full" style={atlasField}
           />
           <button
             disabled={!reviewComment.trim()}
@@ -632,7 +668,7 @@ export function SessionView({
               showToast('Review submitted!', 'success');
               setShowReviewForm(false);
             }}
-            className="w-full py-2 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)] text-sm font-semibold disabled:opacity-50"
+            className="btn-a w-full disabled:opacity-50"
           >
             Submit review
           </button>
@@ -640,23 +676,26 @@ export function SessionView({
       )}
 
       {/* Messages */}
-      <div className="glass rounded-3xl p-6 flex flex-col h-[500px]">
-        <h3 className="font-bold text-[var(--foreground)] flex items-center gap-2 mb-3">
-          <MessageCircle size={16} /> Messages
+      <div className="card flex flex-col h-[500px]">
+        <h3 className="flex items-center gap-2 mb-3">
+          <MessageCircle size={16} style={{ color: 'var(--amber)' }} /> Messages
         </h3>
         <div className="flex-1 overflow-y-auto space-y-3 pr-2">
           {messages.length === 0 ? (
-            <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No messages yet. Say hello!</p>
+            <p className="empty-line">No messages yet. Say hello!</p>
           ) : (
             messages.map((m: any) => {
               const mine = m.fromUserId === user?.id;
               return (
                 <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                    mine ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-[var(--foreground)]' : 'bg-[var(--muted)]/40 text-[var(--foreground)]'
-                  }`}>
+                  <div
+                    className="max-w-[75%] px-4 py-2"
+                    style={mine
+                      ? { borderRadius: 2, background: 'var(--amber)', color: 'var(--ink)' }
+                      : { borderRadius: 2, background: 'var(--panel-2)', border: '1px solid var(--line)', color: 'var(--text)' }}
+                  >
                     {!mine && <div className="text-[10px] font-medium opacity-70 mb-0.5">{m.fromName}</div>}
-                    <div className="text-sm whitespace-pre-wrap">{m.body}</div>
+                    <div className="whitespace-pre-wrap" style={{ fontSize: 12.5, lineHeight: '19px' }}>{m.body}</div>
                   </div>
                 </div>
               );
@@ -664,20 +703,20 @@ export function SessionView({
           )}
           <div ref={messagesEndRef} />
         </div>
-        <div className="pt-3 border-t border-[var(--border)] mt-3 flex gap-2">
+        <div className="pt-3 mt-3 flex gap-2" style={{ borderTop: '1px solid var(--line)' }}>
           <input
             value={body}
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
             placeholder="Type a message..."
-            className="flex-1 px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-xl text-sm"
+            className="flex-1 min-w-0" style={atlasField}
           />
           <button
             onClick={handleSend}
             disabled={!body.trim()}
-            className="px-4 py-2 rounded-xl bg-pink-500 text-[var(--foreground)] disabled:opacity-50"
+            className="btn-a disabled:opacity-50"
           >
-            <Send size={16} />
+            <Send size={14} />
           </button>
         </div>
       </div>

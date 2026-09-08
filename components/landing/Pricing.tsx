@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -40,6 +38,47 @@ export default function Pricing() {
 
   const sortedPlans = (plans ?? []).slice().sort((a, b) => a.sortOrder - b.sortOrder);
 
+type Cycle = 'monthly' | 'annual';
+
+const CORE_FEATURES = [
+  'Unlimited trade journaling',
+  'Basic performance analytics (win rate, avg win, equity curve)',
+  'Trading journal + notes system',
+  'Basic playbook rules',
+  'Manual trade entry',
+  'Behavioral insights (win rate, streaks, R:R data)',
+  'Session-in-trading tools (best sessions, session tracker)',
+  'Economic calendar access',
+];
+
+const PRO_FEATURES = [
+  'Everything in Core',
+  'Advanced analytics (AI scoring)',
+  'AI trade insights / mistake detection',
+  'Playbook automation & rule tracking',
+  'Trade tagging & strategy breakdown',
+  'Equity curve + drawdown analytics',
+  'Sessions & setup heatmap',
+  'Auto-sync (multi-broker / equipment brokers)',
+  'Performance reports & export',
+  'Priority support',
+];
+
+const ELITE_FEATURES = [
+  'Everything in Pro',
+  'Team / student management system',
+  'Shared workspace (shared, community integrations)',
+  'Cohort analytics (track students or members)',
+  'Mentor review & marking mode',
+  'Leaderboards & performance rankings',
+  'Audit logs (track member activity)',
+  'Aggregated reports (group performance)',
+  'Rules system (build your academy / trade rules)',
+  'Early access to new features',
+  '1:1 support',
+];
+
+function Check({ stroke }: { stroke: string }) {
   return (
     <section id="pricing" className="relative overflow-hidden py-20 sm:py-24">
       <AtmosphericBackground />
@@ -128,111 +167,88 @@ export default function Pricing() {
   );
 }
 
-function PricingSkeleton() {
+function Features({ items, stroke }: { items: string[]; stroke: string }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
-      {[0, 1, 2].map(i => (
-        <div key={i} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-7 animate-pulse">
-          <div className="h-9 w-24 rounded bg-[var(--muted)]/50 mb-4" />
-          <div className="h-12 w-32 rounded bg-[var(--muted)]/50 mb-6" />
-          <div className="space-y-2">
-            {[0, 1, 2, 3, 4].map(j => <div key={j} className="h-3 rounded bg-[var(--muted)]/30" />)}
-          </div>
-        </div>
+    <ul>
+      {items.map((item) => (
+        <li key={item}><Check stroke={stroke} /><span>{item}</span></li>
       ))}
-    </div>
+    </ul>
   );
 }
 
-function TierCard({ plan, interval, idx }: { plan: Plan; interval: 'month' | 'year'; idx: number }) {
-  const price = interval === 'year' ? plan.priceYearly : plan.priceMonthly;
-  const periodLabel = interval === 'year' ? '/year' : '/month';
-  const effectiveMonthly = interval === 'year' ? (plan.priceYearly / 12).toFixed(0) : null;
-  const Icon = ICON_BY_PLAN[plan.planId] ?? Zap;
-  const accent = ACCENT_BY_PLAN[plan.planId] ?? 'from-pink-400 to-fuchsia-400';
-  const highlighted = plan.isHighlighted === true;
+export default function Pricing() {
+  const [cycle, setCycle] = useState<Cycle>('monthly');
+  const annual = cycle === 'annual';
+  const price = (m: string, a: string) => (annual ? a : m);
+  const billed = annual ? 'Billed annually' : 'Billed monthly';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.4, delay: idx * 0.08 }}
-      className={`relative rounded-2xl p-6 sm:p-7 flex flex-col overflow-hidden ${
-        highlighted
-          ? 'border border-orange-500/40 bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-transparent'
-          : 'border border-[var(--border)] bg-[var(--card)]'
-      }`}
-    >
-      {highlighted && (
-        <>
-          <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-orange-400/10 blur-3xl" />
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/50 to-transparent" />
-        </>
-      )}
-
-      <div className="relative flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${accent} bg-opacity-20 flex items-center justify-center`}>
-            <Icon size={16} className="text-slate-900" />
-          </div>
+    <div className="sec09">
+      <div className="wrap">
+        <div className="pricehead">
           <div>
-            <h3 className="text-lg font-bold text-[var(--foreground)]">{plan.name}</h3>
-            {plan.tagline && (
-              <p className="text-[11px] text-[var(--muted-foreground)] leading-tight">{plan.tagline}</p>
-            )}
+            <p className="eyebrow">PRICING</p>
+            <h2 className="h2" style={{ marginTop: '11px' }}>Plans for solo traders and teams</h2>
+            <p className="lede-lg" style={{ marginTop: '23px' }}>30-day free trial on every plan. No credit card to start.</p>
+          </div>
+          <div className="right" style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '40px' }}>
+            <div className="toggle">
+              <button className={annual ? undefined : 'on'} data-cycle="monthly" onClick={() => setCycle('monthly')}>Monthly</button>
+              <button className={annual ? 'on' : undefined} data-cycle="annual" onClick={() => setCycle('annual')}>Annual</button>
+              <span className="save">SAVE 20%</span>
+            </div>
           </div>
         </div>
-        {highlighted && (
-          <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30">
-            Most popular
-          </span>
-        )}
-      </div>
 
-      <div className="relative mt-2 flex items-baseline gap-1">
-        <span className="text-5xl font-bold tabular-nums text-[var(--foreground)]">${price}</span>
-        <span className="text-sm text-[var(--muted-foreground)]">{periodLabel}</span>
-      </div>
-      {effectiveMonthly ? (
-        <p className="relative text-[11px] text-pink-400 mt-1 tabular-nums">
-          ${effectiveMonthly}/mo effective · 2 months free
-        </p>
-      ) : (
-        <p className="relative text-[11px] text-[var(--muted-foreground)] mt-1">Billed monthly</p>
-      )}
+        <div className="plans">
+          <div className="plan">
+            <h3>Atlas Core</h3>
+            <p className="who">For beginners to intermediate traders</p>
+            <div className="price"><b data-m="$29" data-a="$23">{price('$29', '$23')}</b><span>/month</span></div>
+            <p className="billed" data-m="Billed monthly" data-a="Billed annually">{billed}</p>
+            <Features items={CORE_FEATURES} stroke="#24c88a" />
+            <div className="foot">
+              <div className="best"><em>BEST</em><p>Best for traders who want to build a track record</p></div>
+              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <p className="nocard">No credit card required</p>
+            </div>
+          </div>
 
-      <ul className="relative mt-6 space-y-2.5 flex-1">
-        {plan.features.map(f => (
-          <li key={f} className="flex items-start gap-2 text-xs text-[var(--foreground)]">
-            <Check size={13} className="mt-0.5 text-pink-400 shrink-0" />
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
+          <div className="plan pro">
+            <span className="badge">MOST POPULAR</span>
+            <h3>Atlas Pro</h3>
+            <p className="who">For serious traders scaling up performance</p>
+            <div className="price"><b data-m="$39" data-a="$31">{price('$39', '$31')}</b><span>/month</span></div>
+            <p className="billed" data-m="Billed monthly" data-a="Billed annually">{billed}</p>
+            <Features items={PRO_FEATURES} stroke="#d99405" />
+            <div className="foot">
+              <div className="best"><em>BEST</em><p>Best for traders who want data-driven performance</p></div>
+              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <p className="nocard">No credit card required</p>
+            </div>
+          </div>
 
-      {plan.goal && (
-        <div className="relative mt-5 pt-4 border-t border-[var(--border)] flex items-start gap-2">
-          <Target size={13} className="mt-0.5 text-pink-400 shrink-0" />
-          <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed">
-            <span className="font-semibold text-[var(--foreground)]">Goal: </span>
-            {plan.goal}
-          </p>
+          <div className="plan">
+            <h3>Atlas Elite</h3>
+            <p className="who">For mentors, funded traders and trading communities</p>
+            <div className="price"><b data-m="$59" data-a="$47">{price('$59', '$47')}</b><span>/month</span></div>
+            <p className="billed" data-m="Billed monthly" data-a="Billed annually">{billed}</p>
+            <Features items={ELITE_FEATURES} stroke="#24c88a" />
+            <div className="foot">
+              <div className="best"><em>BEST</em><p>Best for communities that need visibility across every account</p></div>
+              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <p className="nocard">No credit card required</p>
+            </div>
+          </div>
         </div>
-      )}
 
-      <Link
-        href="/sign-up"
-        className={`relative mt-6 inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all ${
-          highlighted
-            ? 'text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)]'
-            : 'text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50'
-        }`}
-      >
-        Start 15-Day Free Trial
-        <ArrowRight size={14} />
-      </Link>
-      <p className="relative text-center text-[10px] text-[var(--muted-foreground)] mt-2">No credit card required</p>
-    </motion.div>
+        <div className="pricenotes">
+          <div><i></i>No credit card required</div>
+          <div><i></i>Cancel anytime</div>
+          <div><i></i>Full access during trial</div>
+        </div>
+      </div>
+    </div>
   );
 }

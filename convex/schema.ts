@@ -380,7 +380,7 @@ export default defineSchema({
     features: v.array(v.string()),
     isActive: v.boolean(),
     sortOrder: v.number(),
-    // Landing-page presentation fields (added 2026-05-07 for Tradia tier rollout)
+    // Landing-page presentation fields (added 2026-05-07 for Atlas tier rollout)
     tagline: v.optional(v.string()),
     goal: v.optional(v.string()),
     isHighlighted: v.optional(v.boolean()),
@@ -443,7 +443,7 @@ export default defineSchema({
     .index("by_market_status", ["market", "status"]),
 
   // ─── MT4/MT5 EA sync connections ────────────────────────────────────
-  // Per-user webhook tokens for the tradia-sync Expert Advisor. The EA
+  // Per-user webhook tokens for the atlas-sync Expert Advisor. The EA
   // POSTs every closed deal to /api/mt5-sync with the user's token; we
   // look up the userId here and write the deal into their `trades` table.
   mtConnections: defineTable({

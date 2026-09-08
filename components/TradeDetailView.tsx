@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { Trade } from '@/lib/types';
-import { EMOTION_OPTIONS, getRMultiple, getVerdictColor } from '@/lib/utils';
+import { EMOTION_OPTIONS, getRMultiple } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import { format } from 'date-fns';
-import { Edit2, TrendingUp, TrendingDown, Minus, Eye, Zap, RefreshCw, MessageSquare, Star, FlaskConical, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PencilSimple as Edit2, TrendUp as TrendingUp, TrendDown as TrendingDown, Minus, Eye, Lightning as Zap, ArrowsClockwise as RefreshCw, ChatText as MessageSquare, Star, Flask as FlaskConical, X, CaretLeft as ChevronLeft, CaretRight as ChevronRight } from '@phosphor-icons/react';
 import MarketTypeBadge from './MarketTypeBadge';
 
 interface Props {
@@ -16,11 +16,24 @@ interface Props {
 function MetaSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">{title}</p>
+      <p className="lbl b95" style={{ textTransform: 'uppercase', marginBottom: 12 }}>{title}</p>
       {children}
     </div>
   );
 }
+
+const NOTE_TEXT: React.CSSProperties = { margin: 0, fontSize: '12.5px', lineHeight: '20px', color: 'var(--text-2, var(--text))' };
+
+const NOTE_ACCENTS = {
+  default: 'var(--muted-2)',
+  amber: 'var(--amber)',
+  // purple/blue kept as distinct steps on the neutral ramp — these tag
+  // different note types, so collapsing them all onto amber erased the
+  // distinction the accent bar exists to convey.
+  purple: 'var(--text-2)',
+  blue: 'var(--muted)',
+  orange: 'var(--red)',
+} as const;
 
 function NoteCard({
   icon,
@@ -33,29 +46,24 @@ function NoteCard({
   children: React.ReactNode;
   accent?: 'default' | 'amber' | 'purple' | 'blue' | 'orange';
 }) {
-  const accentClasses = {
-    default: 'text-[var(--muted-foreground)]',
-    amber: 'text-[var(--yellow)]',
-    purple: 'text-[var(--purple)]',
-    blue: 'text-[var(--blue)]',
-    orange: 'text-[var(--loss)]',
-  };
+  const tone = NOTE_ACCENTS[accent];
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 space-y-2">
-      <div className={`flex items-center gap-2 ${accentClasses[accent]}`}>
-        <span className="shrink-0">{icon}</span>
-        <span className="text-[10px] font-semibold uppercase tracking-widest">{label}</span>
+    <div className="inset" style={{ position: 'relative', padding: '14px 16px' }}>
+      <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: tone }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, color: tone }}>
+        <span style={{ flex: 'none', display: 'inline-flex' }}>{icon}</span>
+        <span className="lbl" style={{ color: 'inherit', textTransform: 'uppercase' }}>{label}</span>
       </div>
-      {children}
+      <div style={{ marginTop: 10 }}>{children}</div>
     </div>
   );
 }
 
 function EmotionChip({ value }: { value: string }) {
   const opt = EMOTION_OPTIONS.find(e => e.value === value);
-  if (!opt) return <span className="text-sm text-[var(--muted-foreground)]">{value}</span>;
+  if (!opt) return <span style={{ fontSize: '12.5px', color: 'var(--muted)' }}>{value}</span>;
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--muted)] text-sm">
+    <span className="chip" style={{ height: 26, fontSize: '11.5px' }}>
       {opt.emoji} {opt.label}
     </span>
   );
@@ -71,7 +79,9 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
 
   const complianceIcon = (c: string) => c === 'yes' ? '✓' : c === 'partial' ? '~' : '✗';
   const complianceColor = (c: string) =>
-    c === 'yes' ? 'text-[var(--green)]' : c === 'partial' ? 'text-[var(--yellow)]' : 'text-[var(--red)]';
+    c === 'yes' ? 'var(--green)' : c === 'partial' ? 'var(--amber)' : 'var(--red)';
+
+  const bannerTone = trade.isOpen ? 'var(--amber)' : isWin ? 'var(--green)' : 'var(--red)';
 
   const hasNotes = trade.setupNotes || trade.executionNotes || trade.lessonNotes || trade.reasoning || trade.oneThingNote || (trade.lossHypothesis && isLoss);
   const hasCharts = trade.screenshots && trade.screenshots.length > 0;
@@ -82,70 +92,61 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
   };
 
   return (
-    <div className="space-y-5">
+    <div>
       {/* Result Banner */}
-      <div className={`rounded-xl p-4 flex items-start justify-between gap-3 ${
-        trade.isOpen
-          ? 'bg-[var(--muted)]/50 border border-[var(--border)]'
-          : isWin
-            ? 'bg-green-500/10 border border-green-500/20'
-            : 'bg-red-500/10 border border-red-500/20'
-      }`}>
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-bold text-lg">{trade.coin}</span>
+      <div className="card" style={{ padding: '19px 22px 22px', display: 'flex', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
+        <span className="accent" style={{ width: 56, background: bannerTone }} />
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 18 }}>{trade.coin}</span>
             <MarketTypeBadge type={trade.marketType} size="sm" />
             {trade.strategy && (
-              <span className="text-xs text-[var(--muted-foreground)] bg-[var(--muted)] px-2 py-0.5 rounded-full">
-                {trade.strategy}
-              </span>
+              <span className="chip" style={{ height: 22, fontSize: '10.5px' }}>{trade.strategy}</span>
             )}
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginTop: 12 }}>
             {trade.isOpen ? (
-              <span className="flex items-center gap-1.5 text-[var(--yellow)] font-semibold">
-                <Minus size={16} /> Open Position
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '13px', color: 'var(--amber)' }}>
+                <Minus size={15} /> Open Position
               </span>
             ) : isWin ? (
-              <span className="flex items-center gap-1.5 text-[var(--green)] font-semibold text-xl">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 24, color: 'var(--green)' }}>
                 <TrendingUp size={18} /> +{trade.actualPnLPercent?.toFixed(2)}%
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-[var(--red)] font-semibold text-xl">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 24, color: 'var(--red)' }}>
                 <TrendingDown size={18} /> {trade.actualPnLPercent?.toFixed(2)}%
               </span>
             )}
             {!trade.isOpen && trade.actualPnL !== null && (
-              <span className={`text-sm ${isWin ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: '13px', color: isWin ? 'var(--green)' : 'var(--red)' }}>
                 ({isWin ? '+' : ''}{formatCurrency(trade.actualPnL ?? 0)})
               </span>
             )}
           </div>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-[var(--muted-foreground)]">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px', marginTop: 12, fontSize: '11px', color: 'var(--muted-2)' }}>
             <span>Entry: {format(new Date(trade.entryDate), 'MMM d, yyyy')}</span>
             {trade.exitDate && !trade.isOpen && (
               <span>Exit: {format(new Date(trade.exitDate), 'MMM d, yyyy')}</span>
             )}
           </div>
         </div>
-        <button
-          onClick={onEdit}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[var(--border)] hover:bg-[var(--muted)] rounded-lg text-[var(--muted-foreground)] transition-colors"
-        >
+        <button onClick={onEdit} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12, flex: 'none' }}>
           <Edit2 size={12} /> Edit
         </button>
       </div>
 
       {/* Chart Screenshots */}
       {hasCharts && (
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Chart Analysis</p>
-          <div className={`grid gap-2 ${trade.screenshots.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+        <div style={{ marginTop: 24 }}>
+          <p className="lbl b95" style={{ textTransform: 'uppercase', marginBottom: 12 }}>Chart Analysis</p>
+          <div style={{ display: 'grid', gap: 10, gridTemplateColumns: trade.screenshots.length === 1 ? '1fr' : 'repeat(auto-fit,minmax(220px,1fr))' }}>
             {trade.screenshots.map((src, i) => (
               <button
                 key={i}
                 onClick={() => setLightboxIdx(i)}
-                className="relative group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--muted)] aspect-video"
+                className="relative group overflow-hidden aspect-video"
+                style={{ border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)' }}
               >
                 <img
                   src={src}
@@ -153,7 +154,8 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
                   className="w-full h-full object-contain"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                  <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ fontWeight: 700, fontSize: 11, color: '#fff', background: 'rgba(0,0,0,.6)', padding: '4px 10px', borderRadius: 2 }}>
                     View full
                   </span>
                 </div>
@@ -164,37 +166,40 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
       )}
 
       {/* Key numbers */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="stats" style={{ marginTop: 24 }}>
         {[
           { label: 'Entry', value: formatPrice(trade.entryPrice) },
           { label: 'Exit', value: trade.isOpen ? 'Open' : trade.exitPrice ? formatPrice(trade.exitPrice) : '—' },
           { label: 'P&L $', value: trade.isOpen ? '—' : formatCurrency(trade.actualPnL ?? 0), colored: !trade.isOpen },
           { label: 'R-Multiple', value: rMultiple !== null ? `${rMultiple >= 0 ? '+' : ''}${rMultiple.toFixed(2)}R` : '—', colored: rMultiple !== null },
         ].map(({ label, value, colored }) => (
-          <div key={label} className="bg-[var(--muted)]/40 rounded-xl p-3 text-center">
-            <p className="text-[10px] text-[var(--muted-foreground)] mb-0.5">{label}</p>
-            <p className={`text-sm font-semibold ${colored ? (parseFloat(value) >= 0 ? 'text-[var(--green)]' : 'text-[var(--red)]') : ''}`}>
+          <div key={label} className="inset" style={{ padding: '13px 16px' }}>
+            <p className="lbl" style={{ textTransform: 'uppercase' }}>{label}</p>
+            <p style={{
+              margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 15,
+              color: colored ? (parseFloat(value) >= 0 ? 'var(--green)' : 'var(--red)') : 'var(--text)',
+            }}>
               {value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24, marginTop: 26 }}>
         {/* Left column — meta */}
-        <div className="space-y-4">
+        <div style={{ display: 'grid', gap: 24, alignContent: 'start' }}>
           {(trade.emotion || trade.exitEmotion) && (
             <MetaSection title="Emotions">
-              <div className="space-y-1.5">
+              <div style={{ display: 'grid', gap: 8 }}>
                 {trade.emotion && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-[var(--muted-foreground)] w-10 shrink-0">Entry</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 34, flex: 'none', fontSize: '11px', color: 'var(--muted-2)' }}>Entry</span>
                     <EmotionChip value={trade.emotion} />
                   </div>
                 )}
                 {trade.exitEmotion && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-[var(--muted-foreground)] w-10 shrink-0">Exit</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ width: 34, flex: 'none', fontSize: '11px', color: 'var(--muted-2)' }}>Exit</span>
                     <EmotionChip value={trade.exitEmotion} />
                   </div>
                 )}
@@ -203,29 +208,22 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
           )}
 
           <MetaSection title="Confidence">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-2 rounded-full bg-[var(--muted)]">
-                <div
-                  className="h-2 rounded-full bg-[var(--accent)]"
-                  style={{ width: `${(trade.confidence / 10) * 100}%` }}
-                />
-              </div>
-              <span className="text-sm font-medium">{trade.confidence}/10</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ flex: 1, height: 2, background: 'var(--rail)', display: 'block' }}>
+                <i style={{ display: 'block', width: `${(trade.confidence / 10) * 100}%`, height: 2, background: 'var(--amber)' }} />
+              </span>
+              <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: '12.5px' }}>{trade.confidence}/10</span>
             </div>
           </MetaSection>
 
           {(trade.verdict || trade.selfVerdict) && (
             <MetaSection title="Verdict">
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {trade.verdict && (
-                  <span className={`px-2.5 py-1 rounded-full text-xs border ${getVerdictColor(trade.verdict)}`}>
-                    Journal: {trade.verdict}
-                  </span>
+                  <span className="chip" style={{ height: 26, fontSize: '11px' }}>Journal: {trade.verdict}</span>
                 )}
                 {trade.selfVerdict && (
-                  <span className="px-2.5 py-1 rounded-full text-xs border border-[var(--border)] text-[var(--muted-foreground)]">
-                    You: {trade.selfVerdict}
-                  </span>
+                  <span className="chip" style={{ height: 26, fontSize: '11px' }}>You: {trade.selfVerdict}</span>
                 )}
               </div>
             </MetaSection>
@@ -233,11 +231,9 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
 
           {trade.tags && trade.tags.length > 0 && (
             <MetaSection title="Tags">
-              <div className="flex flex-wrap gap-1.5">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {trade.tags.map(tag => (
-                  <span key={tag} className="px-2 py-0.5 bg-[var(--muted)] text-xs rounded-full text-[var(--muted-foreground)]">
-                    {tag}
-                  </span>
+                  <span key={tag} className="chip" style={{ height: 22, padding: '0 10px', fontSize: '10px' }}>{tag}</span>
                 ))}
               </div>
             </MetaSection>
@@ -245,15 +241,13 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
 
           {trade.ruleChecklist && trade.ruleChecklist.length > 0 && (
             <MetaSection title="Rules">
-              <div className="space-y-1">
+              <div>
                 {trade.ruleChecklist.map((r, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm">
-                    <span className={`font-bold shrink-0 mt-0.5 ${complianceColor(r.compliance)}`}>
+                  <div key={i} className="mrow" style={{ alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ flex: 'none', fontFamily: 'var(--mono)', fontWeight: 700, color: complianceColor(r.compliance) }}>
                       {complianceIcon(r.compliance)}
                     </span>
-                    <span className={r.compliance === 'no' ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}>
-                      {r.rule}
-                    </span>
+                    <span style={{ color: r.compliance === 'no' ? 'var(--text)' : 'var(--muted)' }}>{r.rule}</span>
                   </div>
                 ))}
               </div>
@@ -263,34 +257,34 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
 
         {/* Right column — note cards */}
         {hasNotes && (
-          <div className="space-y-3">
+          <div style={{ display: 'grid', gap: 12, alignContent: 'start' }}>
             {trade.setupNotes && (
               <NoteCard icon={<Eye size={13} />} label="What I Saw" accent="blue">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed">{trade.setupNotes}</p>
+                <p style={NOTE_TEXT}>{trade.setupNotes}</p>
               </NoteCard>
             )}
 
             {trade.executionNotes && (
               <NoteCard icon={<Zap size={13} />} label="What I Did" accent="purple">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed">{trade.executionNotes}</p>
+                <p style={NOTE_TEXT}>{trade.executionNotes}</p>
               </NoteCard>
             )}
 
             {trade.lessonNotes && (
               <NoteCard icon={<RefreshCw size={13} />} label="What I'd Change" accent="amber">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed">{trade.lessonNotes}</p>
+                <p style={NOTE_TEXT}>{trade.lessonNotes}</p>
               </NoteCard>
             )}
 
             {trade.reasoning && (
               <NoteCard icon={<MessageSquare size={13} />} label="Why I Entered" accent="default">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed">{trade.reasoning}</p>
+                <p style={NOTE_TEXT}>{trade.reasoning}</p>
               </NoteCard>
             )}
 
             {trade.oneThingNote && (
               <NoteCard icon={<Star size={13} />} label="One Thing" accent="purple">
-                <p className="text-sm italic text-[var(--foreground)] leading-relaxed">
+                <p style={{ ...NOTE_TEXT, fontStyle: 'italic' }}>
                   &ldquo;{trade.oneThingNote}&rdquo;
                 </p>
               </NoteCard>
@@ -298,7 +292,7 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
 
             {trade.lossHypothesis && isLoss && (
               <NoteCard icon={<FlaskConical size={13} />} label="Loss Hypothesis" accent="orange">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed">{trade.lossHypothesis}</p>
+                <p style={NOTE_TEXT}>{trade.lossHypothesis}</p>
               </NoteCard>
             )}
           </div>
@@ -308,36 +302,42 @@ export default function TradeDetailView({ trade, onEdit }: Props) {
       {/* Lightbox */}
       {lightboxIdx !== null && hasCharts && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(4,7,11,.94)' }}
           onClick={() => setLightboxIdx(null)}
         >
           <img
             src={trade.screenshots[lightboxIdx]}
             alt={`Chart ${lightboxIdx + 1}`}
-            className="max-w-[92vw] max-h-[88vh] object-contain rounded-xl"
+            className="max-w-[92vw] max-h-[88vh] object-contain"
+            style={{ border: '1px solid var(--line)', borderRadius: 2 }}
             onClick={e => e.stopPropagation()}
           />
           <button
             onClick={() => setLightboxIdx(null)}
-            className="absolute top-4 right-4 w-9 h-9 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors"
+            className="chip absolute top-4 right-4"
+            style={{ width: 36, height: 36, padding: 0, justifyContent: 'center' }}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
           {trade.screenshots.length > 1 && (
             <>
               <button
                 onClick={e => { e.stopPropagation(); goLightbox(-1); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors"
+                className="chip absolute left-4 top-1/2 -translate-y-1/2"
+                style={{ width: 36, height: 36, padding: 0, justifyContent: 'center' }}
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={16} />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); goLightbox(1); }}
-                className="absolute right-16 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors"
+                className="chip absolute right-16 top-1/2 -translate-y-1/2"
+                style={{ width: 36, height: 36, padding: 0, justifyContent: 'center' }}
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </button>
-              <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">
+              <p className="absolute bottom-4 left-1/2 -translate-x-1/2"
+                style={{ margin: 0, fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--muted)' }}>
                 {lightboxIdx + 1} / {trade.screenshots.length}
               </p>
             </>

@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { ArrowLeft, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, ShieldWarning } from '@phosphor-icons/react';
 import AdminSidebar from './AdminSidebar';
 import BrainMascot from '@/components/BrainMascot';
 
@@ -12,7 +12,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   if (!isLoaded) {
     return (
-      <div className="h-dvh flex items-center justify-center bg-[var(--background)]">
+      <div className="atlas-dash h-dvh flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <BrainMascot size={48} glow beat />
       </div>
     );
@@ -23,20 +23,20 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   if (!isAdmin) {
     return (
-      <div className="h-dvh flex items-center justify-center bg-[var(--background)]">
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 rounded-full bg-[var(--red)]/10 flex items-center justify-center">
-            <ShieldAlert size={32} className="text-[var(--red)]" />
-          </div>
-          <h1 className="text-xl font-bold text-[var(--foreground)]">Access Denied</h1>
-          <p className="text-sm text-[var(--muted-foreground)]">
-            You don&apos;t have permission to access the admin panel.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:bg-[var(--accent-hover)] transition-colors"
+      <div className="atlas-dash h-dvh flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <div className="blank" style={{ width: 'min(420px, 90vw)', padding: '52px 32px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div
+            className="badge"
+            style={{ border: '1px solid rgba(255,77,94,.4)', background: 'var(--panel-2)' }}
           >
-            <ArrowLeft size={16} />
+            <ShieldWarning size={22} style={{ color: 'var(--red)' }} />
+          </div>
+          <h4>Access Denied</h4>
+          <p>You don&apos;t have permission to access the admin panel.</p>
+          <Link href="/" className="btn-a" style={{ marginTop: 26 }}>
+            <ArrowLeft size={14} />
             Back to App
           </Link>
         </div>
@@ -45,19 +45,42 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="h-dvh flex bg-[var(--background)]">
+    <div className="atlas-dash h-dvh flex" style={{ background: 'var(--bg)' }}>
       <AdminSidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Admin header */}
-        <header className="shrink-0 h-14 border-b border-[var(--border)] bg-[var(--card)] flex items-center justify-between px-6">
-          <h2 className="text-sm font-semibold text-[var(--foreground)]">Back Office</h2>
-          <div className="flex items-center gap-3">
+        <header
+          className="shrink-0 flex items-center justify-between"
+          style={{
+            height: 'var(--top)',
+            padding: '0 24px',
+            background: 'var(--bg)',
+            borderBottom: '1px solid var(--line)',
+          }}
+        >
+          <div>
+            <p className="lbl b95" style={{ margin: 0 }}>BACK OFFICE</p>
+            <h1
+              style={{
+                margin: '6px 0 0',
+                fontFamily: 'var(--display)',
+                fontWeight: 700,
+                fontSize: 14,
+                lineHeight: '17px',
+                color: 'var(--text)',
+              }}
+            >
+              Atlas Admin
+            </h1>
+          </div>
+          <div className="flex items-center" style={{ gap: 18 }}>
             <Link
               href="/"
-              className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+              className="flex items-center"
+              style={{ gap: 8, fontSize: 12, fontWeight: 700, color: 'var(--muted)' }}
             >
-              <ArrowLeft size={14} />
+              <ArrowLeft size={13} />
               Back to App
             </Link>
             <UserButton afterSignOutUrl="/sign-in" />
@@ -65,7 +88,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* Scrollable content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto" style={{ padding: '32px 40px 64px' }}>
           {children}
         </main>
       </div>

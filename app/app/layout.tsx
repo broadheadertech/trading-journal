@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Tradia - Dashboard',
+  title: 'Atlas - Dashboard',
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

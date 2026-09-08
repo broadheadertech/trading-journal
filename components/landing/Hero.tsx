@@ -1,9 +1,5 @@
-﻿'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
-import HeroGlobe from './HeroGlobe';
+import GlobeRoutes from './GlobeRoutes';
 
 export default function Hero() {
   return (
@@ -18,91 +14,33 @@ export default function Hero() {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[350px] bg-emerald-400 opacity-[0.04] rounded-full blur-[120px]" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-12 sm:pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
-          {/* LEFT — Copy column */}
-          <div className="text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 mb-4"
-            >
-              <span className="neon-eyebrow text-[10px] font-bold tracking-[0.2em] uppercase">
-                A Global Trading Community
-              </span>
-            </motion.div>
+      {/* Globe sits centred below the copy instead of occupying the hero's
+          right half. The stage is width-capped (not full-bleed) so the two
+          float cards' small fixed insets land on the globe's edges — same
+          amber palette (#D99405 dots/outline/grid, #05070c ocean) as the
+          Originkit hero-24 globe preview at /originkit-preview, plus the
+          real 3D circulating trade routes, both carried over unchanged. */}
+      <div className="hero-globe-stage">
+        <div className="hero-globe-glow" aria-hidden="true" />
+        <div className="hero-globe-container">
+          <GlobeRoutes />
+        </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight"
-            >
-              <span className="text-[var(--foreground)]">The Complete Trading </span>
-              <span className="aurora-text">ECOSYSTEM</span>
-              <span className="text-[var(--foreground)]"> for Modern Traders</span>
-            </motion.h1>
+        {/* the existing trust stat, moved out of the hero's bottom-right
+            corner into a card clipping the globe's upper-left edge */}
+        <div className="float-card float-card-top">
+          <div className="hero-badge"><b>128,326+</b><span>TRADERS WORLDWIDE</span></div>
+        </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="mt-4 text-sm sm:text-base text-[var(--muted-foreground)] max-w-xl leading-relaxed"
-            >
-              Tradia is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3"
-            >
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] transition-all"
-              >
-                Join Tradia Now
-              </Link>
-              <Link
-                href="/demo"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--muted)]/50 transition-colors"
-              >
-                Watch Free Training
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.45 }}
-              className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2 max-w-md"
-            >
-              {[
-                'Daily Live Market Analysis',
-                'Trade Journal & Analytics',
-                'Funded Trader Roadmap',
-                'Global Trading Community',
-              ].map((f) => (
-                <span key={f} className="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
-                  <Check size={14} className="text-emerald-400 shrink-0" /> {f}
-                </span>
-              ))}
-            </motion.div>
+        {/* .avatar is the testimonial carousel's own badge, reused as-is */}
+        <div className="float-card float-card-bottom">
+          <p className="float-card-quote">&#8220;Finally stopped revenge trading.&#8221;</p>
+          <div className="float-card-by">
+            <div className="avatar">MR</div>
+            <div><b>Marcus R.</b><span>Futures Trader</span></div>
           </div>
-
-          {/* RIGHT — chrome-less 3D globe; sits on top of the atmospheric bg, no card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, x: 16 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
-          >
-            <HeroGlobe />
-          </motion.div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

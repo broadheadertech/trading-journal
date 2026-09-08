@@ -295,7 +295,7 @@ export function getVerdictDistribution(
   const VERDICT_COLORS: Record<string, string> = {
     'Well Executed': '#2dd4bf',
     'Good Discipline, Bad Luck': '#eab308',
-    'Poorly Executed': '#fb923c',
+    'Poorly Executed': '#d99405',
   };
   const counts: Record<string, number> = {
     'Well Executed': 0,

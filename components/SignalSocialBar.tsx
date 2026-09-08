@@ -5,7 +5,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { Heart, MessageCircle, Loader2, Send, Trash2 } from 'lucide-react';
+import { Heart, ChatCircle, CircleNotch, PaperPlaneTilt, Trash } from '@phosphor-icons/react';
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -37,34 +37,36 @@ export default function SignalSocialBar({ signalId }: { signalId: Id<'signals'> 
     }
   };
 
+  const disabled = busy || summary === undefined || !isSignedIn;
+
   return (
-    <div className="border-t border-[var(--border)]">
-      <div className="px-5 py-2 flex items-center gap-1">
+    <div style={{ borderTop: '1px solid var(--line)' }}>
+      <div style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
         <button
           onClick={onLike}
-          disabled={busy || summary === undefined || !isSignedIn}
+          disabled={disabled}
           title={isSignedIn ? (liked ? 'Unlike' : 'Like') : 'Sign in to like'}
           aria-pressed={liked}
-          className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-colors disabled:cursor-not-allowed ${
-            liked
-              ? 'text-pink-400 hover:bg-pink-500/10'
-              : 'text-[var(--muted-foreground)] hover:text-pink-300 hover:bg-[var(--muted)]/30 disabled:hover:bg-transparent disabled:hover:text-[var(--muted-foreground)]'
-          }`}
+          className={liked ? 'chip on' : 'chip'}
+          style={{ gap: 7, cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.55 : 1 }}
         >
-          <Heart size={14} className={liked ? 'fill-pink-400' : ''} />
-          <span className="tabular-nums">{likeCount}</span>
+          <Heart size={13} style={liked ? { fill: 'currentColor' } : undefined} />
+          <span style={{ fontFamily: 'var(--mono)', fontWeight: 500 }}>{likeCount}</span>
         </button>
         <button
           onClick={() => setOpen(o => !o)}
           title={open ? 'Hide comments' : 'Show comments'}
           aria-expanded={open}
-          className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-colors hover:bg-[var(--muted)]/30 ${
-            open ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-          }`}
+          className="chip"
+          style={{
+            gap: 7,
+            cursor: 'pointer',
+            ...(open ? { borderColor: 'var(--line-2)', color: 'var(--text)' } : {}),
+          }}
         >
-          <MessageCircle size={14} />
-          <span className="tabular-nums">{commentCount}</span>
-          <span className="hidden sm:inline text-[var(--muted-foreground)]">{commentCount === 1 ? 'comment' : 'comments'}</span>
+          <ChatCircle size={13} />
+          <span style={{ fontFamily: 'var(--mono)', fontWeight: 500 }}>{commentCount}</span>
+          <span style={{ color: 'var(--muted-2)' }}>{commentCount === 1 ? 'comment' : 'comments'}</span>
         </button>
       </div>
       {open && <CommentsPanel signalId={signalId} canInteract={!!isSignedIn} />}
@@ -93,62 +95,118 @@ function CommentsPanel({ signalId, canInteract }: { signalId: Id<'signals'>; can
   };
 
   return (
-    <div className="px-5 pb-3 space-y-2 bg-black/10">
+    <div style={{ padding: '4px 20px 16px', background: 'var(--panel-2)', borderTop: '1px solid var(--line)' }}>
       {comments === undefined ? (
-        <div className="py-3 text-center"><Loader2 size={14} className="animate-spin inline text-pink-400" /></div>
+        <div style={{ padding: '16px 0', textAlign: 'center' }}>
+          <CircleNotch size={14} className="animate-spin inline" style={{ color: 'var(--amber)' }} />
+        </div>
       ) : comments.length === 0 ? (
-        <p className="text-[11px] text-[var(--muted-foreground)] py-2">No comments yet. Start the conversation.</p>
+        <p style={{ margin: 0, padding: '14px 0', fontSize: 12, color: 'var(--muted-2)' }}>
+          No comments yet. Start the conversation.
+        </p>
       ) : (
-        comments.map(c => (
-          <div key={c._id} className="flex items-start gap-2 py-1.5">
-            {c.authorImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={c.authorImage} alt={c.authorName} className="w-6 h-6 rounded-full object-cover shrink-0 mt-0.5" />
-            ) : (
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">
-                {c.authorName.slice(0, 1).toUpperCase()}
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="text-[11px]">
-                <span className="font-semibold text-[var(--foreground)]">{c.authorName}</span>
-                <span className="text-[var(--muted-foreground)] ml-1.5">{timeAgo(c.createdAt)}</span>
-              </div>
-              <p className="text-xs text-[var(--foreground)]/90 leading-relaxed break-words">{c.body}</p>
-            </div>
-            {c.isMine && (
-              <button
-                onClick={() => deleteComment({ commentId: c._id })}
-                className="text-[var(--muted-foreground)] hover:text-red-400 shrink-0"
-                title="Delete comment"
+        <div style={{ paddingTop: 8 }}>
+          {comments.map(c => (
+            <div
+              key={c._id}
+              style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid var(--line)' }}
+            >
+              <span
+                style={{
+                  width: 26,
+                  height: 26,
+                  flex: 'none',
+                  marginTop: 1,
+                  borderRadius: 3,
+                  background: '#0f1620',
+                  border: '1px solid var(--amber)',
+                  color: 'var(--amber)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                <Trash2 size={12} />
-              </button>
-            )}
-          </div>
-        ))
+                {c.authorImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.authorImage} alt={c.authorName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 11 }}>
+                    {c.authorName.slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+              </span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12, color: 'var(--text)' }}>
+                    {c.authorName}
+                  </span>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
+                    {timeAgo(c.createdAt)}
+                  </span>
+                </div>
+                <p style={{ margin: '5px 0 0', fontSize: 12.5, lineHeight: '19px', color: 'var(--muted)', wordBreak: 'break-word' }}>
+                  {c.body}
+                </p>
+              </div>
+              {c.isMine && (
+                <button
+                  onClick={() => deleteComment({ commentId: c._id })}
+                  className="hover:text-[var(--red)]"
+                  style={{ flex: 'none', color: 'var(--muted-3)', cursor: 'pointer' }}
+                  title="Delete comment"
+                >
+                  <Trash size={12} />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       )}
       {canInteract ? (
-        <form onSubmit={submit} className="flex items-center gap-2 pt-1">
+        <form onSubmit={submit} style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
           <input
             value={text}
             onChange={e => setText(e.target.value)}
             maxLength={500}
             placeholder="Add a comment…"
-            className="flex-1 min-w-0 rounded-lg border border-[var(--border)] bg-black/20 px-2.5 py-1.5 text-xs outline-none focus:border-pink-500/40 placeholder:text-[var(--muted-foreground)]/60"
+            style={{
+              flex: 1,
+              minWidth: 0,
+              height: 34,
+              padding: '0 12px',
+              border: '1px solid var(--line)',
+              borderRadius: 2,
+              background: 'var(--panel)',
+              color: 'var(--text)',
+              fontSize: 12.5,
+              outline: 'none',
+            }}
           />
           <button
             type="submit"
             disabled={busy || !text.trim()}
             title="Post comment"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-pink-400 to-fuchsia-400 text-slate-900 disabled:opacity-40 shrink-0"
+            style={{
+              flex: 'none',
+              width: 34,
+              height: 34,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 2,
+              background: 'var(--amber)',
+              color: 'var(--ink)',
+              opacity: busy || !text.trim() ? 0.4 : 1,
+              cursor: busy || !text.trim() ? 'not-allowed' : 'pointer',
+            }}
           >
-            {busy ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
+            {busy ? <CircleNotch size={13} className="animate-spin" /> : <PaperPlaneTilt size={13} />}
           </button>
         </form>
       ) : (
-        <p className="text-[11px] text-[var(--muted-foreground)] pt-1">
-          <a href="/sign-in" className="text-pink-300 hover:underline font-medium">Sign in</a> to join the conversation.
+        <p style={{ margin: '12px 0 0', fontSize: 12, color: 'var(--muted-2)' }}>
+          <a href="/sign-in" style={{ color: 'var(--amber)', fontWeight: 700 }}>Sign in</a> to join the conversation.
         </p>
       )}
     </div>

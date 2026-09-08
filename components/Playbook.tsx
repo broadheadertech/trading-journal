@@ -5,11 +5,14 @@ import { Strategy, StrategyType, Trade } from '@/lib/types';
 import { STRATEGY_TYPES, getDisciplineScore } from '@/lib/utils';
 import { useCurrency } from '@/hooks/useCurrency';
 import {
-  Plus, Edit2, Trash2, X, ChevronDown, ChevronUp, AlertTriangle,
-  Shield, Sparkles, Zap, BookOpen, Target, Clock, BarChart3,
-  CheckCircle2, Circle, ArrowRight, ArrowLeft, Search, ToggleLeft, ToggleRight,
-  ChevronRight, Layers, FileText, Check,
-} from 'lucide-react';
+  Plus, PencilSimple, Trash, X, CaretDown, CaretUp, Warning,
+  Shield, Sparkle, Lightning, BookOpen, Target, Clock, ChartBar,
+  CheckCircle, ArrowRight, ArrowLeft, MagnifyingGlass,
+  CaretRight, Stack, FileText, Check,
+} from '@phosphor-icons/react';
+import {
+  Circle, ToggleLeft, ToggleRight,
+} from '@phosphor-icons/react';
 import Modal from './ui/Modal';
 import { useToast } from './ui/Toast';
 import {
@@ -390,18 +393,18 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
     'Drawdown control mode';
 
   const ListEditor = ({ label, field }: { label: string; field: 'rules' | 'entryChecklist' | 'exitChecklist' }) => (
-    <div>
-      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
+    <div className="field">
+      <label>{label.toUpperCase()}</label>
       <div className="space-y-2">
         {form[field].map((item, i) => (
           <div key={i} className="flex gap-2">
-            <input value={item} onChange={e => updateListItem(field, i, e.target.value)} placeholder={`${label} item ${i + 1}`} className="flex-1" />
+            <input value={item} onChange={e => updateListItem(field, i, e.target.value)} placeholder={`${label} item ${i + 1}`} className="box flex-1" />
             {form[field].length > 1 && (
-              <button onClick={() => removeListItem(field, i)} className="p-2 text-[var(--red)] hover:bg-red-500/10 rounded-lg"><X size={16} /></button>
+              <button onClick={() => removeListItem(field, i)} className="btn-g" style={{ height: 42, padding: '0 14px', color: 'var(--red)', borderColor: 'rgba(255,77,94,.4)' }}><X size={16} /></button>
             )}
           </div>
         ))}
-        <button onClick={() => addListItem(field)} className="text-sm text-[var(--accent)] hover:underline flex items-center gap-1"><Plus size={14} /> Add item</button>
+        <button onClick={() => addListItem(field)} className="viewall" style={{ marginLeft: 0, fontSize: 12 }}><Plus size={14} /> Add item</button>
       </div>
     </div>
   );
@@ -441,153 +444,151 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
   ], [strategies, metrics, formatCurrency]);
 
   return (
-    <div className="relative space-y-6 anim-fade-up">
-      <div className="hero-glow" />
-
-      {/* ── Hero Section ── */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">
-              <Shield size={12} /> Playbook Operating System
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3">Run your process like a system, not a mood.</h1>
-            <p className="text-[var(--muted-foreground)] text-sm max-w-2xl">
-              Use this page in order: execute top fixes, enforce guardrails, and track compliance drift. Every panel is synced to the selected account and period.
-            </p>
-          </div>
-          <div className="flex gap-2 shrink-0 flex-wrap">
-            <button onClick={openRuleComposer}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors">
-              <Plus size={14} /> Create Rule
-            </button>
-            <button onClick={openRuleSetComposer}
-              disabled={usage.strategies.isAtLimit}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--muted)] hover:bg-[var(--muted)]/80 border border-[var(--border)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
-              <Layers size={14} /> Create Ruleset
-            </button>
-            <button onClick={openStratComposer}
-              disabled={usage.strategies.isAtLimit}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[var(--muted)] hover:bg-[var(--muted)]/80 border border-[var(--border)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
-              <FileText size={14} /> Create Strategy
-            </button>
-            <button onClick={openActivationMixer}
-              className="flex items-center gap-2 px-4 py-2.5 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-colors">
-              <Zap size={14} /> Activate Set
-            </button>
-          </div>
+    <div className="relative anim-fade-up">
+      {/* ── Header ── */}
+      <div className="phead pwrap">
+        <p className="eyebrow">
+          <Shield size={13} style={{ color: 'var(--amber)' }} /> Playbook Operating System
+        </p>
+        <h2>Run your process like a system, not a mood.</h2>
+        <p className="sub">
+          Use this page in order: execute top fixes, enforce guardrails, and track compliance drift. Every panel is synced to the selected account and period.
+        </p>
+        <div className="actions" style={{ position: 'static', marginTop: 22, flexWrap: 'wrap', gap: 12 }}>
+          <button onClick={openRuleComposer} className="btn-a">
+            <Plus size={14} /> Create Rule
+          </button>
+          <button onClick={openRuleSetComposer} disabled={usage.strategies.isAtLimit}
+            className="btn-g" style={usage.strategies.isAtLimit ? { opacity: .5 } : undefined}>
+            <Stack size={14} /> Create Ruleset
+          </button>
+          <button onClick={openStratComposer} disabled={usage.strategies.isAtLimit}
+            className="btn-g" style={usage.strategies.isAtLimit ? { opacity: .5 } : undefined}>
+            <FileText size={14} /> Create Strategy
+          </button>
+          <button onClick={openActivationMixer} className="btn-g" style={{ borderColor: 'rgba(36,200,138,.4)', color: 'var(--green)' }}>
+            <Lightning size={14} /> Activate Set
+          </button>
         </div>
-
-        {/* Usage indicator */}
-        {!usage.strategies.isUnlimited && (
-          <div className="max-w-xs mb-4">
-            <UsageBar label="Strategies" current={usage.strategies.current} max={usage.strategies.max} isUnlimited={false} />
-          </div>
-        )}
       </div>
 
+      {/* Usage indicator */}
+      {!usage.strategies.isUnlimited && (
+        <div className="card" style={{ maxWidth: 340, marginBottom: 24 }}>
+          <UsageBar label="Strategies" current={usage.strategies.current} max={usage.strategies.max} isUnlimited={false} />
+        </div>
+      )}
+
       {/* ── 4 Stat Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Rules Active</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-2xl sm:text-3xl font-bold">{strategies.reduce((s, st) => s + st.rules.length, 0)}</p>
-            <p className="text-xs text-[var(--muted-foreground)]">engine armed</p>
-          </div>
+      <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', marginTop: 0 }}>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>RULES ACTIVE</b>
+          <em style={{ color: 'var(--text)' }}>{strategies.reduce((s, st) => s + st.rules.length, 0)}</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>engine armed</small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Compliance</p>
-          <div className="flex items-baseline gap-2">
-            <p className={`text-2xl sm:text-3xl font-bold ${metrics.compliance >= 80 ? 'text-green-400' : metrics.compliance >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>{metrics.compliance}%</p>
-            <p className="text-xs text-[var(--muted-foreground)]">{metrics.violations} violations</p>
-          </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>COMPLIANCE</b>
+          <em style={{ color: metrics.compliance >= 80 ? 'var(--green)' : metrics.compliance >= 60 ? 'var(--amber)' : 'var(--red)' }}>{metrics.compliance}%</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{metrics.violations} violations</small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Period Net P&L</p>
-          <div className="flex items-baseline gap-2">
-            <p className={`text-2xl sm:text-3xl font-bold ${metrics.netPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatCurrency(metrics.netPnL)}</p>
-            <p className="text-xs text-[var(--muted-foreground)]">{metrics.total} trades</p>
-          </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--green)' }} />
+          <b>PERIOD NET P&amp;L</b>
+          <em style={{ color: metrics.netPnL >= 0 ? 'var(--green)' : 'var(--red)' }}>{formatCurrency(metrics.netPnL)}</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>{metrics.total} trades</small>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Recoverable in Range</p>
-          <div className="flex items-baseline gap-2">
-            <p className="text-2xl sm:text-3xl font-bold text-green-400">{formatCurrency(metrics.recoverable)}</p>
-            <p className="text-xs text-[var(--muted-foreground)]">selected period</p>
-          </div>
+        <div className="stat" style={{ height: 'auto', minHeight: 104 }}>
+          <span className="accent" style={{ background: 'var(--amber)' }} />
+          <b>RECOVERABLE IN RANGE</b>
+          <em style={{ color: 'var(--green)' }}>{formatCurrency(metrics.recoverable)}</em>
+          <small style={{ display: 'block', fontSize: 10.5, color: 'var(--muted-2)', marginTop: 6 }}>selected period</small>
         </div>
       </div>
 
       {/* ── How to Run + Advices ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-[var(--card)] border border-[var(--accent)]/30 rounded-xl p-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
-            <Zap size={12} /> How to Run This Page
+      <div className="split" style={{ marginTop: 24 }}>
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>How to Run This Page</h3>
+              <p className="sub">Follow the sequence in order</p>
+            </div>
+            <Lightning size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
-          <div className="space-y-2">
+          <div className="klist num">
             {['Create your core trading rules.', 'Combine those rules into a reusable rule-set template.', 'Activate your rule set and run it live.'].map((step, i) => (
-              <div key={i} className="bg-[var(--muted)] rounded-lg px-4 py-3 text-sm">
-                {i + 1}. {step}
-              </div>
+              <div key={i}><b>{i + 1}</b><span>{step}</span></div>
             ))}
           </div>
         </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
-            <Sparkles size={12} /> Advices
+        <div className="card">
+          <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+          <div className="cardhead">
+            <div>
+              <h3>Advices</h3>
+              <p className="sub">Operating guidance for this cycle</p>
+            </div>
+            <Sparkle size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
           </div>
-          <div className="space-y-2">
+          <div className="klist num">
             {['Execute active rule set for 5-7 sessions before changing plan.', 'Keep compliance above 80% so rule impact compounds.', 'Review results and adjust rules and rule sets.'].map((tip, i) => (
-              <div key={i} className="bg-[var(--muted)] rounded-lg px-4 py-3 text-sm">
-                {i + 1}. {tip}
-              </div>
+              <div key={i}><b>{i + 1}</b><span>{tip}</span></div>
             ))}
           </div>
         </div>
       </div>
 
       {/* ── Sub-section Navigation ── */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="tabs" style={{ marginTop: 28, marginBottom: 24, overflowX: 'auto' }}>
         {SUB_SECTIONS.map(s => (
-          <button key={s.key} onClick={() => scrollToSection(s.key)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-[var(--accent)]/30 transition-colors whitespace-nowrap text-sm">
-            {s.key === 'Active Rule Sets' && <Sparkles size={14} className="text-[var(--accent)]" />}
-            {s.key === 'Playbook Library' && <BookOpen size={14} className="text-[var(--muted-foreground)]" />}
-            {s.key === 'Rules Library' && <Circle size={14} className="text-[var(--muted-foreground)]" />}
-            {s.key === 'Weekly Focus' && <Target size={14} className="text-[var(--muted-foreground)]" />}
-            {s.key === 'Impact' && <BarChart3 size={14} className="text-[var(--muted-foreground)]" />}
-            <span className="font-medium">{s.label}</span>
-            <span className="text-[var(--muted-foreground)] text-xs hidden sm:inline">&middot; {s.desc}</span>
+          <button key={s.key} onClick={() => scrollToSection(s.key)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+            {s.key === 'Active Rule Sets' && <Sparkle size={13} style={{ color: 'var(--amber)' }} />}
+            {s.key === 'Playbook Library' && <BookOpen size={13} style={{ color: 'var(--muted-3)' }} />}
+            {s.key === 'Rules Library' && <Circle size={13} style={{ color: 'var(--muted-3)' }} />}
+            {s.key === 'Weekly Focus' && <Target size={13} style={{ color: 'var(--muted-3)' }} />}
+            {s.key === 'Impact' && <ChartBar size={13} style={{ color: 'var(--muted-3)' }} />}
+            <span style={{ fontWeight: 700 }}>{s.label}</span>
+            <span className="hidden sm:inline" style={{ color: 'var(--muted-2)', fontSize: 11 }}>&middot; {s.desc}</span>
           </button>
         ))}
       </div>
 
       {/* â•â•â•â•â•â•â•â•â•â• MAIN CONTENT + SIDEBAR â•â•â•â•â•â•â•â•â•â• */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
 
         {/* ── Main content (3 cols) ── */}
         <div className="xl:col-span-3 space-y-6">
 
           {/* â•â•â•â•â•â•â•â•â•â• ACTIVE RULE SETS â•â•â•â•â•â•â•â•â•â• */}
           <div ref={activeRuleSetsRef} className="scroll-mt-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                  <h2 className="text-xl font-bold">Active Rule Sets</h2>
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>Active Rule Sets</h3>
+                  <p className="sub">Track active rule sets with live condition telemetry. Manual strategies are shown with ordered steps.</p>
                 </div>
-                <p className="text-xs text-[var(--muted-foreground)]">
-                  Track active rule sets with live condition telemetry. Manual strategies are shown with ordered steps.
-                </p>
+                <span className="chip" style={{ marginLeft: 'auto', flex: 'none' }}>
+                  <i style={{ background: 'var(--green)' }} /> {strategies.filter(s => activatedIds.has(s.id)).length} live
+                </span>
               </div>
 
               {strategies.filter(s => activatedIds.has(s.id)).length === 0 ? (
-                <div className="py-12 text-center">
-                  <p className="text-[var(--muted-foreground)] text-sm mb-3">No active rule sets. Activate one from the Playbook Library.</p>
-                  <button onClick={openActivationMixer} className="text-[var(--accent)] hover:underline text-sm">Activate a rule set</button>
+                <div className="blank" style={{ marginTop: 22, padding: '44px 28px', textAlign: 'center' }}>
+                  <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+                  <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+                  <div className="badge" style={{ margin: '0 auto 24px', border: '1px solid rgba(36,200,138,.4)', background: 'var(--panel-2)' }}>
+                    <Lightning size={22} style={{ color: 'var(--green)' }} />
+                  </div>
+                  <h4>No active rule sets</h4>
+                  <p>Activate one from the Playbook Library to start live tracking.</p>
+                  <button onClick={openActivationMixer} className="btn-a" style={{ marginTop: 24 }}>Activate a rule set</button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 12, marginTop: 22 }}>
                   {strategies.filter(s => activatedIds.has(s.id)).map(strategy => {
                     const ss = metrics.stratStats.find(s => s.id === strategy.id);
                     const sTrades = ss?.trades ?? [];
@@ -602,11 +603,9 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     const compliancePct = ss?.compliance ?? 100;
                     const violationCount = sTrades.filter(t => t.ruleChecklist.some(r => r.compliance === 'no')).length;
                     const progressLabel = compliancePct >= 80 ? 'STRONG' : compliancePct >= 50 ? 'BUILDING' : 'WEAK';
-                    const progressColor = compliancePct >= 80 ? 'bg-green-400' : compliancePct >= 50 ? 'bg-fuchsia-400' : 'bg-red-400';
-                    const progressTextColor = compliancePct >= 80 ? 'text-green-400' : compliancePct >= 50 ? 'text-fuchsia-400' : 'text-red-400';
-                    const progressBadgeBg = compliancePct >= 80 ? 'bg-green-500/20' : compliancePct >= 50 ? 'bg-fuchsia-500/20' : 'bg-red-500/20';
+                    const progressColor = compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--amber)' : 'var(--red)';
                     const level = totalRules >= 5 ? 'ADVANCED' : totalRules >= 3 ? 'STARTER' : 'BASIC';
-                    const levelColor = level === 'ADVANCED' ? 'bg-blue-500/20 text-fuchsia-400' : level === 'STARTER' ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-yellow-500/20 text-yellow-400';
+                    const levelColor = level === 'ADVANCED' ? 'var(--amber)' : level === 'STARTER' ? 'var(--text-2)' : 'var(--muted)';
                     // Leak / capture calculation
                     const poorLosses = sTrades.filter(t => t.verdict === 'Poorly Executed' && (t.actualPnL ?? 0) < 0);
                     const estLeak = poorLosses.reduce((s, t) => s + Math.abs(t.actualPnL ?? 0), 0);
@@ -617,137 +616,135 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     const impactingCount = poorLosses.length;
 
                     return (
-                      <div key={strategy.id} className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-5 flex flex-col">
-                        {/* Header: icon + STARTER badge */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="p-2.5 rounded-xl bg-[var(--card)]"><Shield size={18} className="text-[var(--accent)]" /></div>
-                          <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${levelColor}`}>{level}</span>
+                      <div key={strategy.id} className="inset" style={{ position: 'relative', padding: '15px 16px', display: 'flex', flexDirection: 'column' }}>
+                        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: progressColor }} />
+
+                        {/* Header: icon + level badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <Shield size={16} style={{ color: 'var(--amber)' }} />
+                          <span className="lbl" style={{ color: 'var(--green)' }}>LIVE TRACKING</span>
+                          <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: levelColor }}>{level}</span>
                         </div>
 
-                        {/* LIVE TRACKING + Details */}
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-semibold uppercase tracking-widest text-green-400">Live Tracking</span>
-                          <button onClick={() => setDetailsStrategyId(strategy.id)}
-                            className="flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--card)] border border-[var(--border)] text-xs text-[var(--accent)] hover:border-[var(--accent)]/30">
+                        {/* Name + description + details */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginTop: 12 }}>
+                          <div style={{ minWidth: 0 }}>
+                            <h4>{strategy.name}</h4>
+                            <p className="sub" style={{ margin: '7px 0 0' }}>
+                              {strategy.type === 'scalping' ? 'High-frequency risk containment' :
+                               strategy.type === 'swing' ? 'Patience and selectivity protocol' :
+                               strategy.type === 'breakout' ? 'Momentum capture discipline' :
+                               strategy.type === 'trend-following' ? 'Trend continuation mode' :
+                               'Drawdown control mode'}
+                            </p>
+                          </div>
+                          <button onClick={() => setDetailsStrategyId(strategy.id)} className="viewall" style={{ flex: 'none' }}>
                             Details <ArrowRight size={12} />
                           </button>
                         </div>
 
-                        {/* Name + description */}
-                        <h3 className="text-lg font-bold mb-0.5">{strategy.name}</h3>
-                        <p className="text-xs text-[var(--muted-foreground)] mb-4">
-                          {strategy.type === 'scalping' ? 'High-frequency risk containment' :
-                           strategy.type === 'swing' ? 'Patience and selectivity protocol' :
-                           strategy.type === 'breakout' ? 'Momentum capture discipline' :
-                           strategy.type === 'trend-following' ? 'Trend continuation mode' :
-                           'Drawdown control mode'}
-                        </p>
-
                         {/* Activated / Used / Priority */}
-                        <div className="flex bg-[var(--card)] rounded-lg overflow-hidden mb-4">
-                          <div className="flex-1 px-3 py-2 border-r border-[var(--border)]">
-                            <p className="text-[10px] text-[var(--muted-foreground)]">Activated</p>
-                            <p className="text-xs font-bold">{format(new Date(strategy.createdAt), 'MM/dd/yyyy')}</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginTop: 16 }}>
+                          <div className="inset" style={{ padding: '9px 12px' }}>
+                            <p className="lbl">ACTIVATED</p>
+                            <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--text)' }}>{format(new Date(strategy.createdAt), 'MM/dd/yyyy')}</p>
                           </div>
-                          <div className="flex-1 px-3 py-2 border-r border-[var(--border)]">
-                            <p className="text-[10px] text-[var(--muted-foreground)]">Used</p>
-                            <p className="text-xs font-bold">{sTrades.length}x</p>
+                          <div className="inset" style={{ padding: '9px 12px' }}>
+                            <p className="lbl">USED</p>
+                            <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--text)' }}>{sTrades.length}x</p>
                           </div>
-                          <div className="flex-1 px-3 py-2">
-                            <p className="text-[10px] text-[var(--muted-foreground)]">Priority</p>
-                            <p className="text-xs font-bold">P2</p>
+                          <div className="inset" style={{ padding: '9px 12px' }}>
+                            <p className="lbl">PRIORITY</p>
+                            <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--text)' }}>P2</p>
                           </div>
                         </div>
 
                         {/* Leak, Recovery and Capture */}
-                        <div className="bg-[var(--card)] rounded-lg p-3 mb-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-[10px] font-semibold uppercase tracking-widest text-yellow-400">Leak, Recovery and Capture</p>
-                            <p className="text-xs text-[var(--muted-foreground)]">{impactingCount}/{sTrades.length} impacting</p>
+                        <div style={{ marginTop: 16 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span className="lbl" style={{ color: 'var(--amber)' }}>LEAK, RECOVERY AND CAPTURE</span>
+                            <span style={{ marginLeft: 'auto', fontSize: 10.5, color: 'var(--muted-2)' }}>{impactingCount}/{sTrades.length} impacting</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 mb-2">
-                            <div className="bg-[var(--muted)] rounded px-3 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Est Leak</p>
-                              <p className="text-sm font-bold text-red-400">{formatCurrency(-estLeak)}</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginTop: 10 }}>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">EST LEAK</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--red)' }}>{formatCurrency(-estLeak)}</p>
                             </div>
-                            <div className="bg-[var(--muted)] rounded px-3 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Recoverable</p>
-                              <p className="text-sm font-bold text-green-400">{formatCurrency(recoverable)}</p>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">RECOVERABLE</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--green)' }}>{formatCurrency(recoverable)}</p>
                             </div>
                           </div>
-                          <div className="bg-green-500/10 rounded px-3 py-1.5 text-xs text-green-400 mb-2">
+                          <div className="note" style={{ height: 'auto', minHeight: 34, marginTop: 8, padding: '8px 14px', fontSize: 11, color: 'var(--green)' }}>
                             Recovery range: {formatCurrency(0)} to {formatCurrency(recoverable)}
                           </div>
-                          <div className="grid grid-cols-2 gap-2 mb-2">
-                            <div className="bg-green-500/10 rounded px-3 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Captured</p>
-                              <p className="text-sm font-bold text-green-400">{formatCurrency(capturedPnL)}</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginTop: 8 }}>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">CAPTURED</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--green)' }}>{formatCurrency(capturedPnL)}</p>
                             </div>
-                            <div className="bg-red-500/10 rounded px-3 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Missed</p>
-                              <p className="text-sm font-bold text-red-400">{formatCurrency(-missedPnL)}</p>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">MISSED</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--red)' }}>{formatCurrency(-missedPnL)}</p>
                             </div>
                           </div>
-                          <p className="text-[10px] text-[var(--muted-foreground)]">
+                          <p style={{ margin: '10px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
                             Opportunity capture: {capturePct}% captured &middot; {100 - capturePct}% missed
                           </p>
                         </div>
 
                         {/* Observed ledger */}
-                        <div className="bg-[var(--card)] rounded-lg px-3 py-2 text-[10px] text-[var(--muted-foreground)] mb-4">
+                        <p className="footnote" style={{ textAlign: 'left', marginTop: 14, fontSize: 10.5 }}>
                           Observed ledger: {sTrades.length} events &middot; PnL: {formatCurrency(ss?.pnl ?? 0)} &middot; Risk {formatCurrency(estLeak)} &middot; Confidence {compliancePct}%
-                        </div>
+                        </p>
 
                         {/* ── LIVE PROGRESS ── */}
-                        <div className="bg-[var(--card)] rounded-lg p-3 mb-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-bold">Live Progress</p>
-                            <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${progressBadgeBg} ${progressTextColor}`}>{progressLabel}</span>
+                        <div style={{ marginTop: 16 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span className="lbl b10">LIVE PROGRESS</span>
+                            <span style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: progressColor }}>{progressLabel}</span>
                           </div>
-                          {/* Progress bar */}
-                          <div className="h-2 rounded-full bg-[var(--muted)] overflow-hidden mb-3">
-                            <div className={`h-full rounded-full ${progressColor} transition-all`} style={{ width: `${compliancePct}%` }} />
+                          <div style={{ height: 2, marginTop: 10, background: 'var(--rail)', position: 'relative' }}>
+                            <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${compliancePct}%`, background: progressColor }} />
                           </div>
-                          {/* Stats grid */}
-                          <div className="grid grid-cols-3 gap-2 mb-2">
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Rules</p>
-                              <p className="text-xs font-bold">{totalRules}/{totalRules}</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginTop: 12 }}>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">RULES</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>{totalRules}/{totalRules}</p>
                             </div>
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Met</p>
-                              <p className="text-xs font-bold">{metRules}/{totalRules}</p>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">MET</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>{metRules}/{totalRules}</p>
                             </div>
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2 col-span-1" />
                           </div>
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Compliance</p>
-                              <p className="text-xs font-bold">{compliancePct}%</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginTop: 8 }}>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">COMPLIANCE</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>{compliancePct}%</p>
                             </div>
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Violations</p>
-                              <p className="text-xs font-bold">{violationCount}</p>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">VIOLATIONS</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>{violationCount}</p>
                             </div>
-                            <div className="bg-[var(--muted)] rounded px-2.5 py-2">
-                              <p className="text-[10px] text-[var(--muted-foreground)]">Changed</p>
-                              <p className="text-xs font-bold">0</p>
+                            <div className="inset" style={{ padding: '9px 12px' }}>
+                              <p className="lbl">CHANGED</p>
+                              <p style={{ margin: '6px 0 0', fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--text)' }}>0</p>
                             </div>
                           </div>
                         </div>
 
                         {/* ── Per-rule breakdown ── */}
                         {ruleBreakdown.length > 0 && (
-                          <div className="space-y-1.5">
+                          <div style={{ marginTop: 14 }}>
                             {ruleBreakdown.map((rb, i) => {
                               const status = rb.compliance >= 80 ? 'ON TRACK' : rb.compliance >= 50 ? 'BUILDING' : 'AT RISK';
-                              const statusColor = status === 'ON TRACK' ? 'bg-green-500/20 text-green-400' : status === 'BUILDING' ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-red-500/20 text-red-400';
+                              const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--amber)' : 'var(--red)';
                               return (
-                                <div key={i} className="flex items-center justify-between bg-[var(--card)] rounded-lg px-3 py-2">
-                                  <p className="text-xs truncate mr-2">
-                                    <span className="text-[var(--muted-foreground)]">{strategy.type}:</span> {rb.rule.length > 25 ? rb.rule.slice(0, 25) + '...' : rb.rule}
-                                  </p>
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${statusColor}`}>{status}</span>
+                                <div key={i} className="mrow">
+                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>
+                                    <span style={{ color: 'var(--muted-2)' }}>{strategy.type}:</span> {rb.rule.length > 25 ? rb.rule.slice(0, 25) + '...' : rb.rule}
+                                  </span>
+                                  <span className="val" style={{ fontFamily: 'var(--body)', fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: statusColor, flex: 'none' }}>{status}</span>
                                 </div>
                               );
                             })}
@@ -755,10 +752,10 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                         )}
 
                         {/* Actions */}
-                        <div className="flex gap-1.5 mt-3 pt-3 border-t border-[var(--border)]">
-                          <button onClick={() => openEdit(strategy)} className="flex items-center gap-1 px-3 py-1.5 text-xs hover:bg-[var(--card)] rounded-lg text-[var(--muted-foreground)]"><Edit2 size={12} /> Edit</button>
+                        <div style={{ display: 'flex', gap: 10, marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
+                          <button onClick={() => openEdit(strategy)} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}><PencilSimple size={12} /> Edit</button>
                           <button onClick={() => { setActivatedIds(prev => { const next = new Set(prev); next.delete(strategy.id); return next; }); showToast(`"${strategy.name}" deactivated`); }}
-                            className="flex items-center gap-1 px-3 py-1.5 text-xs hover:bg-red-500/10 rounded-lg text-red-400"><X size={12} /> Deactivate</button>
+                            className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12, borderColor: 'rgba(255,77,94,.4)', color: 'var(--red)' }}><X size={12} /> Deactivate</button>
                         </div>
                       </div>
                     );
@@ -770,83 +767,77 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* â•â•â•â•â•â•â•â•â•â• PLAYBOOK LIBRARY â•â•â•â•â•â•â•â•â•â• */}
           <div ref={playbookLibraryRef} className="scroll-mt-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[var(--muted)]"><BookOpen size={20} /></div>
-                  <div>
-                    <h2 className="text-xl font-bold">Playbook Library</h2>
-                    <p className="text-xs text-[var(--muted-foreground)]">One library for all your templates, including starter sets.</p>
-                  </div>
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>Playbook Library</h3>
+                  <p className="sub">One library for all your templates, including starter sets.</p>
                 </div>
-                <div className="flex gap-2 flex-wrap">
-                  <span className="px-3 py-1.5 rounded-lg bg-[var(--muted)] text-xs">{strategies.length} templates available</span>
-                  <button onClick={openRuleSetComposer} disabled={usage.strategies.isAtLimit}
-                    className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
-                    <Plus size={14} /> Create Rule Set
-                  </button>
-                  <button onClick={openStratComposer} disabled={usage.strategies.isAtLimit}
-                    className="flex items-center gap-1.5 px-4 py-1.5 bg-[var(--muted)] hover:bg-[var(--muted)]/80 border border-[var(--border)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
-                    <Plus size={14} /> Create Strategy
-                  </button>
-                </div>
+                <BookOpen size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
+              </div>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginTop: 18 }}>
+                <span className="chip">{strategies.length} templates available</span>
+                <button onClick={openRuleSetComposer} disabled={usage.strategies.isAtLimit}
+                  className="btn-a" style={usage.strategies.isAtLimit ? { height: 32, padding: '0 16px', fontSize: 12, opacity: .5 } : { height: 32, padding: '0 16px', fontSize: 12 }}>
+                  <Plus size={14} /> Create Rule Set
+                </button>
+                <button onClick={openStratComposer} disabled={usage.strategies.isAtLimit}
+                  className="btn-g" style={usage.strategies.isAtLimit ? { height: 32, padding: '0 16px', fontSize: 12, opacity: .5 } : { height: 32, padding: '0 16px', fontSize: 12 }}>
+                  <Plus size={14} /> Create Strategy
+                </button>
               </div>
 
               {strategies.length === 0 ? (
-                <div className="py-12 text-center text-[var(--muted-foreground)] text-sm">
-                  No templates yet. Create your first strategy template.
-                </div>
+                <div className="empty-line">No templates yet. Create your first strategy template.</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 20 }}>
                   {strategies.map(strategy => {
                     const level = strategy.rules.length >= 5 ? 'ADVANCED' : strategy.rules.length >= 3 ? 'INTERMEDIATE' : 'BEGINNER';
-                    const levelColor = level === 'ADVANCED' ? 'bg-blue-500/20 text-fuchsia-400' : level === 'INTERMEDIATE' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400';
+                    const levelColor = level === 'ADVANCED' ? 'var(--amber)' : level === 'INTERMEDIATE' ? 'var(--amber)' : 'var(--green)';
                     const isActive = activatedIds.has(strategy.id);
                     return (
-                      <div key={strategy.id} className="bg-[var(--muted)] rounded-xl p-5">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="p-2 rounded-lg bg-[var(--card)]">
-                            <Zap size={16} className="text-[var(--muted-foreground)]" />
-                          </div>
-                          <div className="flex gap-1.5">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${levelColor}`}>{level}</span>
-                            {isActive
-                              ? <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400">ACTIVE</span>
-                              : <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--card)] text-[var(--muted-foreground)]">SAVED</span>}
-                          </div>
+                      <div key={strategy.id} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: levelColor }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <Lightning size={14} style={{ color: 'var(--muted-3)' }} />
+                          <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: levelColor }}>{level}</span>
+                          {isActive
+                            ? <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)' }}>ACTIVE</span>
+                            : <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--muted-2)' }}>SAVED</span>}
                         </div>
-                        <h3 className="text-base font-bold mb-1">{strategy.name}</h3>
-                        <p className="text-xs text-[var(--muted-foreground)] mb-3">
+                        <h4 style={{ marginTop: 12 }}>{strategy.name}</h4>
+                        <p className="sub" style={{ margin: '8px 0 0' }}>
                           {strategy.type === 'scalping' ? 'Strict limits for high-frequency trading with anti-tilt pacing.' :
                            strategy.type === 'swing' ? 'Patience-first setup to reduce impulse entries and early exits.' :
                            strategy.type === 'breakout' ? 'Momentum capture with strict entry criteria.' :
                            `${strategy.type} strategy with ${strategy.rules.length} rules.`}
                         </p>
-                        <div className="flex flex-wrap gap-1.5 mb-3">
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
                           {[strategy.type, ...strategy.rules.slice(0, 2)].map((tag, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded-full bg-[var(--card)] text-[10px] text-[var(--muted-foreground)] border border-[var(--border)]">
+                            <span key={i} className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9.5, color: 'var(--muted-2)' }}>
                               #{tag.split(' ')[0]}
                             </span>
                           ))}
                         </div>
-                        <p className="text-xs text-[var(--muted-foreground)] mb-4">{strategy.rules.length} Rules</p>
-                        <div className="space-y-2">
+                        <p className="lbl" style={{ marginTop: 12 }}>{strategy.rules.length} RULES</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
                           {isActive ? (
                             <button onClick={() => { setActivatedIds(prev => { const next = new Set(prev); next.delete(strategy.id); return next; }); showToast(`"${strategy.name}" deactivated`); }}
-                              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors">
+                              className="btn-g" style={{ width: '100%', height: 34, fontSize: 12, borderColor: 'rgba(255,77,94,.4)', color: 'var(--red)' }}>
                               Deactivate <X size={14} />
                             </button>
                           ) : (
                             <button onClick={() => { setAmSelected([strategy.id]); setActivationMixerOpen(true); }}
-                              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors">
+                              className="btn-a" style={{ width: '100%', height: 34, fontSize: 12 }}>
                               Activate Rule Set <ArrowRight size={14} />
                             </button>
                           )}
-                          <button onClick={() => openEdit(strategy)} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--card)] hover:bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm transition-colors">
-                            <Edit2 size={12} /> Open & Adjust
+                          <button onClick={() => openEdit(strategy)} className="btn-g" style={{ width: '100%', height: 34, fontSize: 12 }}>
+                            <PencilSimple size={12} /> Open &amp; Adjust
                           </button>
-                          <button onClick={() => setDeleteConfirm(strategy.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-red-400 hover:bg-red-500/10 rounded-lg text-xs transition-colors">
-                            <Trash2 size={12} /> Delete
+                          <button onClick={() => setDeleteConfirm(strategy.id)} className="btn-g" style={{ width: '100%', height: 30, fontSize: 11.5, border: 0, color: 'var(--red)' }}>
+                            <Trash size={12} /> Delete
                           </button>
                         </div>
                       </div>
@@ -859,98 +850,89 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* â•â•â•â•â•â•â•â•â•â• RULES LIBRARY â•â•â•â•â•â•â•â•â•â• */}
           <div ref={rulesLibraryRef} className="scroll-mt-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[var(--muted)]"><Target size={20} /></div>
-                  <div>
-                    <h2 className="text-xl font-bold">Rules Library</h2>
-                    <p className="text-xs text-[var(--muted-foreground)]">Create, tune, and manage guardrails for this account.</p>
-                  </div>
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>Rules Library</h3>
+                  <p className="sub">Create, tune, and manage guardrails for this account.</p>
                 </div>
+                <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
               </div>
 
               {/* Category filter */}
-              <div className="flex gap-2 mb-5">
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18, marginBottom: 4 }}>
                 {RULE_CATEGORIES.map(c => (
-                  <button key={c} onClick={() => setRuleFilter(c)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      ruleFilter === c
-                        ? 'bg-[var(--accent)] text-[var(--foreground)]'
-                        : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--muted)]/80'
-                    }`}>{c}</button>
+                  <button key={c} onClick={() => setRuleFilter(c)} className={`chip${ruleFilter === c ? ' on' : ''}`}>{c}</button>
                 ))}
               </div>
 
               {filteredRules.length === 0 ? (
-                <div className="py-8 text-center text-[var(--muted-foreground)] text-sm">
-                  No rules found. Add rules to your strategies first.
-                </div>
+                <div className="empty-line">No rules found. Add rules to your strategies first.</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {filteredRules.map((r, i) => (
-                    <div key={i} className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-bold">P2 &middot; {r.rule}</p>
-                        <div className="p-1 rounded-full bg-green-500/20"><ToggleRight size={20} className="text-green-400" /></div>
-                      </div>
-                      <p className="text-xs text-[var(--muted-foreground)] mb-2">{r.strategy}</p>
-                      <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-2">
-                        <span>Last Triggered</span>
-                        <span className="font-medium text-[var(--foreground)]">{r.lastHit}</span>
-                      </div>
-                      <div className="h-1.5 rounded-full bg-[var(--card)] overflow-hidden mb-2">
-                        <div className="h-full bg-green-400 rounded-full transition-all" style={{ width: `${r.compliance}%` }} />
-                      </div>
-                      <p className="text-[10px] text-[var(--muted-foreground)]">{r.compliance}% compliance &middot; {r.total - r.compliant} violations</p>
-                      <div className="mt-2">
-                        <span className={`text-[10px] px-2 py-0.5 rounded border font-semibold ${
-                          r.compliance >= 90 ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                            : r.compliance >= 70 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                            : 'bg-red-500/20 text-red-400 border-red-500/30'
-                        }`}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 12, marginTop: 20 }}>
+                  {filteredRules.map((r, i) => {
+                    const impactColor = r.compliance >= 90 ? 'var(--green)' : r.compliance >= 70 ? 'var(--amber)' : 'var(--red)';
+                    return (
+                      <div key={i} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: impactColor }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>P2 &middot; {r.rule}</p>
+                          <ToggleRight size={18} style={{ marginLeft: 'auto', flex: 'none', color: 'var(--green)' }} />
+                        </div>
+                        <p className="sub" style={{ margin: '8px 0 0' }}>{r.strategy}</p>
+                        <div className="mrow" style={{ marginTop: 8 }}>
+                          <span className="lb" style={{ marginLeft: 0 }}>Last Triggered</span>
+                          <span className="val">{r.lastHit}</span>
+                        </div>
+                        <div style={{ height: 2, marginTop: 12, background: 'var(--rail)', position: 'relative' }}>
+                          <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${r.compliance}%`, background: impactColor }} />
+                        </div>
+                        <p style={{ margin: '10px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>{r.compliance}% compliance &middot; {r.total - r.compliant} violations</p>
+                        <span className="chip" style={{ marginTop: 10, height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: impactColor }}>
                           {r.compliance >= 90 ? 'HIGH IMPACT' : r.compliance >= 70 ? 'MEDIUM IMPACT' : 'LOW IMPACT'}
                         </span>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             {/* Behavior Targets */}
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 mt-4">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-[var(--muted)]"><Target size={18} /></div>
-                  <div>
-                    <h3 className="text-lg font-bold">Behavior Targets</h3>
-                    <p className="text-xs text-[var(--muted-foreground)]">Tracking your key discipline metrics</p>
-                  </div>
+            <div className="card" style={{ marginTop: 24 }}>
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>Behavior Targets</h3>
+                  <p className="sub">Tracking your key discipline metrics</p>
                 </div>
-                <Clock size={18} className="text-[var(--muted-foreground)]" />
+                <Clock size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 12, marginTop: 22 }}>
                 {[
                   { label: 'Risk Rules', value: behaviorTargets.risk, icon: Shield },
                   { label: 'Time Rules', value: behaviorTargets.time, icon: Clock },
                   { label: 'Behavior Rules', value: behaviorTargets.behavior, icon: Target },
-                  { label: 'Overall', value: behaviorTargets.overall, icon: CheckCircle2 },
+                  { label: 'Overall', value: behaviorTargets.overall, icon: CheckCircle },
                 ].map(item => (
-                  <div key={item.label} className="bg-[var(--muted)] rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="p-1.5 rounded-lg bg-[var(--card)]"><item.icon size={16} className="text-[var(--accent)]" /></div>
-                      <span className="text-[10px] text-[var(--muted-foreground)]">
-                        {item.value !== null && item.value > (behaviorTargets.overall ?? 0) ? <span className="text-green-400">&nearr; vs previous period</span> : <span>&mdash; vs previous period</span>}
+                  <div key={item.label} className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                    <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: (item.value ?? 0) >= 80 ? 'var(--green)' : 'var(--amber)' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <item.icon size={14} style={{ color: 'var(--amber)' }} />
+                      <span style={{ marginLeft: 'auto', fontSize: 10, color: item.value !== null && item.value > (behaviorTargets.overall ?? 0) ? 'var(--green)' : 'var(--muted-2)' }}>
+                        {item.value !== null && item.value > (behaviorTargets.overall ?? 0) ? '↗ vs previous period' : '— vs previous period'}
                       </span>
                     </div>
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">{item.label}</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">{item.value !== null ? `${item.value}%` : <span className="text-[var(--muted-foreground)]">&mdash;</span>}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">/ &ge; 80%</p>
+                    <p className="lbl" style={{ marginTop: 12 }}>{item.label.toUpperCase()}</p>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 8 }}>
+                      <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: item.value !== null ? 'var(--text)' : 'var(--muted-2)' }}>
+                        {item.value !== null ? `${item.value}%` : '—'}
+                      </span>
+                      <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>/ &ge; 80%</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-[var(--card)] overflow-hidden mt-2">
-                      <div className={`h-full rounded-full transition-all ${(item.value ?? 0) >= 80 ? 'bg-green-400' : 'bg-[var(--muted-foreground)]'}`} style={{ width: `${item.value ?? 0}%` }} />
+                    <div style={{ height: 2, marginTop: 14, background: 'var(--rail)', position: 'relative' }}>
+                      <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${item.value ?? 0}%`, background: (item.value ?? 0) >= 80 ? 'var(--green)' : 'var(--muted-3)' }} />
                     </div>
                   </div>
                 ))}
@@ -960,26 +942,29 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* â•â•â•â•â•â•â•â•â•â• WEEKLY FOCUS (placeholder) â•â•â•â•â•â•â•â•â•â• */}
           <div ref={weeklyFocusRef} className="scroll-mt-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2.5 rounded-xl bg-[var(--muted)]"><Target size={20} /></div>
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+              <div className="cardhead">
                 <div>
-                  <h2 className="text-xl font-bold">Weekly Focus</h2>
-                  <p className="text-xs text-[var(--muted-foreground)]">Execution cadence for this week</p>
+                  <h3>Weekly Focus</h3>
+                  <p className="sub">Execution cadence for this week</p>
                 </div>
+                <Target size={16} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="bg-[var(--muted)] rounded-xl p-4">
-                  <p className="text-sm font-bold mb-1">Top Rule to Watch</p>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 12, marginTop: 22 }}>
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
+                  <p className="lbl">TOP RULE TO WATCH</p>
+                  <p style={{ margin: '10px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                     {metrics.ruleHealth.length > 0
                       ? `Focus on "${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].rule}" — lowest compliance at ${metrics.ruleHealth.sort((a, b) => a.compliance - b.compliance)[0].compliance}%`
                       : 'No rules tracked yet.'}
                   </p>
                 </div>
-                <div className="bg-[var(--muted)] rounded-xl p-4">
-                  <p className="text-sm font-bold mb-1">Session Target</p>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+                  <p className="lbl">SESSION TARGET</p>
+                  <p style={{ margin: '10px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>
                     Run 5-7 sessions with current rule set before making adjustments. Track compliance daily.
                   </p>
                 </div>
@@ -988,99 +973,107 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
 
           {/* â•â•â•â•â•â•â•â•â•â• IMPACT & COMPLIANCE â•â•â•â•â•â•â•â•â•â• */}
-          <div ref={impactRef} className="scroll-mt-4 space-y-4">
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-[var(--muted)]"><BarChart3 size={20} /></div>
-                  <div>
-                    <h2 className="text-xl font-bold">Impact & Compliance</h2>
-                    <p className="text-xs text-[var(--muted-foreground)]">Measuring the ROI of your discipline</p>
-                  </div>
+          <div ref={impactRef} className="scroll-mt-4">
+            <div className="card">
+              <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+              <div className="cardhead">
+                <div>
+                  <h3>Impact &amp; Compliance</h3>
+                  <p className="sub">Measuring the ROI of your discipline</p>
                 </div>
                 {metrics.equityData.length > 0 && (
-                  <span className="px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs font-medium">
+                  <span className="chip" style={{ marginLeft: 'auto', flex: 'none' }}>
                     {metrics.equityData[0]?.date} &rarr; {metrics.equityData[metrics.equityData.length - 1]?.date}
                   </span>
                 )}
               </div>
 
               {/* 4 impact stat cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-                <div className="bg-[var(--muted)] rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Money Left on Table</p>
-                    <div className="p-1 rounded bg-red-500/10"><BarChart3 size={12} className="text-red-400" /></div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginTop: 22 }}>
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--red)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <p className="lbl">MONEY LEFT ON TABLE</p>
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--red)' }} />
                   </div>
-                  <p className="text-xl font-bold">{formatCurrency(-metrics.recoverable)}</p>
-                  <p className="text-[10px] text-red-400">Missed opportunity</p>
+                  <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{formatCurrency(-metrics.recoverable)}</p>
+                  <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--red)' }}>Missed opportunity</p>
                 </div>
-                <div className="bg-[var(--muted)] rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Projected Gain</p>
-                    <div className="p-1 rounded bg-green-500/10"><BarChart3 size={12} className="text-green-400" /></div>
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--green)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <p className="lbl">PROJECTED GAIN</p>
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
                   </div>
-                  <p className="text-xl font-bold text-green-400">{formatCurrency(metrics.recoverable)}</p>
-                  <p className="text-[10px] text-green-400">If rules followed</p>
+                  <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--green)' }}>{formatCurrency(metrics.recoverable)}</p>
+                  <p style={{ margin: '6px 0 0', fontSize: 10.5, color: 'var(--green)' }}>If rules followed</p>
                 </div>
-                <div className="bg-[var(--muted)] rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Avg Compliance</p>
-                    <div className="p-1 rounded bg-[var(--accent)]/10"><BarChart3 size={12} className="text-[var(--accent)]" /></div>
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <p className="lbl">AVG COMPLIANCE</p>
+                    <ChartBar size={12} style={{ marginLeft: 'auto', color: 'var(--amber)' }} />
                   </div>
-                  <p className="text-xl font-bold">{metrics.compliance}%</p>
+                  <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{metrics.compliance}%</p>
                 </div>
-                <div className="bg-[var(--muted)] rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Best Week</p>
-                    <div className="p-1 rounded bg-green-500/10"><CheckCircle2 size={12} className="text-green-400" /></div>
+                <div className="inset" style={{ position: 'relative', padding: '15px 16px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 36, height: 3, background: 'var(--amber)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <p className="lbl">BEST WEEK</p>
+                    <CheckCircle size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />
                   </div>
-                  <p className="text-xl font-bold">{metrics.bestWeek ? metrics.bestWeek[0] : '—'}</p>
+                  <p style={{ margin: '8px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 18, color: 'var(--text)' }}>{metrics.bestWeek ? metrics.bestWeek[0] : '—'}</p>
                 </div>
               </div>
 
               {/* Charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="split" style={{ marginTop: 24, gap: 20 }}>
                 {/* Estimated vs Actual PnL */}
-                <div className="bg-[var(--muted)] rounded-xl p-4">
-                  <h4 className="text-sm font-bold mb-3">Estimated vs Actual PnL</h4>
+                <div className="inset" style={{ padding: '15px 16px' }}>
+                  <p className="lbl b10">ESTIMATED VS ACTUAL PNL</p>
                   {metrics.equityData.length > 1 ? (
-                    <ResponsiveContainer width="100%" height={160}>
-                      <AreaChart data={metrics.equityData}>
-                        <defs>
-                          <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
-                        <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                        <Area type="monotone" dataKey="actual" stroke="#22c55e" fill="url(#pnlGrad)" strokeWidth={2} dot={{ r: 3, fill: '#22c55e' }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    <div style={{ height: 180, marginTop: 14 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={metrics.equityData}>
+                          <defs>
+                            <linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#24c88a" stopOpacity={0.3} />
+                              <stop offset="95%" stopColor="#24c88a" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#7f8ea3' }} axisLine={false} tickLine={false} />
+                          <YAxis tick={{ fontSize: 10, fill: '#7f8ea3' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
+                          <Tooltip contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7' }} />
+                          <Area type="monotone" dataKey="actual" stroke="#24c88a" fill="url(#pnlGrad)" strokeWidth={2} dot={{ r: 2, fill: '#24c88a' }} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   ) : (
-                    <div className="h-40 flex items-center justify-center text-xs text-[var(--muted-foreground)]">Not enough data</div>
+                    <div className="plot" style={{ marginTop: 14 }}><span className="empty">Not enough data</span></div>
                   )}
                 </div>
 
                 {/* Compliance Trend */}
-                <div className="bg-[var(--muted)] rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-bold">Compliance Trend</h4>
-                    <span className="flex items-center gap-1 text-[10px] text-green-400"><span className="w-1.5 h-1.5 rounded-full bg-green-400" /> Live</span>
+                <div className="inset" style={{ padding: '15px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <p className="lbl b10">COMPLIANCE TREND</p>
+                    <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)' }}>
+                      <i style={{ background: 'var(--green)' }} /> LIVE
+                    </span>
                   </div>
                   {metrics.weeklyCompliance.length > 1 ? (
-                    <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={metrics.weeklyCompliance}>
-                        <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} />
-                        <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-                        <Tooltip contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                        <Line type="monotone" dataKey="compliance" stroke="#22c55e" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3, fill: '#22c55e' }} />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <div style={{ height: 180, marginTop: 14 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={metrics.weeklyCompliance}>
+                          <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#7f8ea3' }} axisLine={false} tickLine={false} />
+                          <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#7f8ea3' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
+                          <Tooltip contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7' }} />
+                          <Line type="monotone" dataKey="compliance" stroke="#24c88a" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 2, fill: '#24c88a' }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   ) : (
-                    <div className="h-40 flex items-center justify-center text-xs text-[var(--muted-foreground)]">Not enough data</div>
+                    <div className="plot" style={{ marginTop: 14 }}><span className="empty">Not enough data</span></div>
                   )}
                 </div>
               </div>
@@ -1093,114 +1086,113 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         <div className="space-y-4">
 
           {/* Execution Checklist */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <CheckCircle2 size={16} className="text-[var(--accent)]" />
-              <h3 className="text-sm font-bold">Execution Checklist</h3>
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <CheckCircle size={14} style={{ color: 'var(--amber)' }} />
+              <h4>Execution Checklist</h4>
             </div>
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
               {executionChecklist.map((item, i) => (
-                <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-lg ${
-                  item.status === 'on-track' ? 'bg-green-500/5 border-l-2 border-green-400' : 'bg-yellow-500/5 border-l-2 border-yellow-400'
-                }`}>
-                  <div>
-                    <p className="text-sm font-medium">{item.label}</p>
-                    <p className="text-[10px] text-[var(--muted-foreground)]">{item.detail}</p>
+                <div key={i} className="inset" style={{ position: 'relative', padding: '11px 14px' }}>
+                  <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: item.status === 'on-track' ? 'var(--green)' : 'var(--amber)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: 12, color: 'var(--text)' }}>{item.label}</p>
+                      <p style={{ margin: '5px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>{item.detail}</p>
+                    </div>
+                    <span style={{ marginLeft: 'auto', flex: 'none', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: item.status === 'on-track' ? 'var(--green)' : 'var(--amber)' }}>
+                      {item.status === 'on-track' ? 'ON TRACK' : 'PENDING'}
+                    </span>
                   </div>
-                  <span className={`text-[10px] font-bold ${item.status === 'on-track' ? 'text-green-400' : 'text-yellow-400'}`}>
-                    {item.status === 'on-track' ? 'ON TRACK' : 'PENDING'}
-                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Active Rule Health */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Shield size={16} className="text-[var(--accent)]" />
-              <h3 className="text-sm font-bold">Active Rule Health</h3>
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <Shield size={14} style={{ color: 'var(--amber)' }} />
+              <h4>Active Rule Health</h4>
             </div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Sorted by Highest Impact First</p>
-            <div className="space-y-3">
+            <p className="lbl" style={{ marginTop: 10 }}>SORTED BY HIGHEST IMPACT FIRST</p>
+            <div style={{ marginTop: 8 }}>
               {metrics.ruleHealth
                 .sort((a, b) => b.total - a.total)
                 .slice(0, 5)
                 .map((r, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                      r.compliance >= 90 ? 'bg-green-500/20 text-green-400'
-                        : r.compliance >= 70 ? 'bg-yellow-500/20 text-yellow-400'
-                        : 'bg-red-500/20 text-red-400'
-                    }`}>#{i + 1}</span>
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium truncate">{r.rule.length > 20 ? r.rule.slice(0, 20) + '...' : r.rule}</p>
-                      <p className="text-[10px] text-[var(--muted-foreground)]">{r.strategy} &middot; Last hit: {r.lastHit}</p>
-                    </div>
+                <div key={i} className="mrow">
+                  <span className="ic" style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 10, color: r.compliance >= 90 ? 'var(--green)' : r.compliance >= 70 ? 'var(--amber)' : 'var(--red)' }}>#{i + 1}</span>
+                  <div style={{ minWidth: 0, marginLeft: 12 }}>
+                    <div style={{ fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.rule.length > 20 ? r.rule.slice(0, 20) + '...' : r.rule}</div>
+                    <div style={{ fontSize: 10, color: 'var(--muted-2)', marginTop: 3 }}>{r.strategy} &middot; Last hit: {r.lastHit}</div>
                   </div>
-                  <span className="text-xs font-bold ml-2 tabular-nums">{r.compliance}%</span>
+                  <span className="val">{r.compliance}%</span>
                 </div>
               ))}
               {metrics.ruleHealth.length === 0 && (
-                <p className="text-xs text-[var(--muted-foreground)]">No rules tracked yet.</p>
+                <p style={{ margin: '10px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No rules tracked yet.</p>
               )}
             </div>
           </div>
 
           {/* Hour Window Radar */}
-          <div className="bg-[var(--card)] border border-yellow-500/20 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle size={16} className="text-yellow-400" />
-              <h3 className="text-sm font-bold">Hour Window Radar</h3>
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <Warning size={14} style={{ color: 'var(--amber)' }} />
+              <h4>Hour Window Radar</h4>
             </div>
             {metrics.riskWindows.length > 0 && (
-              <div className="mb-3">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-red-400 mb-1">Risk Windows</p>
+              <div style={{ marginTop: 14 }}>
+                <p className="lbl" style={{ color: 'var(--red)' }}>RISK WINDOWS</p>
                 {metrics.riskWindows.map((w, i) => (
-                  <div key={i} className="flex justify-between text-xs py-0.5">
-                    <span>{w.hour}</span>
-                    <span className="text-red-400 font-medium tabular-nums">{formatCurrency(w.pnl)}</span>
+                  <div key={i} className="mrow">
+                    <span className="lb" style={{ marginLeft: 0 }}>{w.hour}</span>
+                    <span className="val" style={{ color: 'var(--red)' }}>{formatCurrency(w.pnl)}</span>
                   </div>
                 ))}
               </div>
             )}
             {metrics.edgeWindows.length > 0 && (
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-1">Edge Windows</p>
+              <div style={{ marginTop: 14 }}>
+                <p className="lbl" style={{ color: 'var(--green)' }}>EDGE WINDOWS</p>
                 {metrics.edgeWindows.map((w, i) => (
-                  <div key={i} className="flex justify-between text-xs py-0.5">
-                    <span>{w.hour}</span>
-                    <span className="text-green-400 font-medium tabular-nums">{formatCurrency(w.pnl)}</span>
+                  <div key={i} className="mrow">
+                    <span className="lb" style={{ marginLeft: 0 }}>{w.hour}</span>
+                    <span className="val" style={{ color: 'var(--green)' }}>{formatCurrency(w.pnl)}</span>
                   </div>
                 ))}
               </div>
             )}
             {metrics.riskWindows.length === 0 && metrics.edgeWindows.length === 0 && (
-              <p className="text-xs text-[var(--muted-foreground)]">Not enough data yet.</p>
+              <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>Not enough data yet.</p>
             )}
           </div>
 
           {/* Symbol Focus */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={16} className="text-[var(--accent)]" />
-              <h3 className="text-sm font-bold">Symbol Focus</h3>
+          <div className="card" style={{ padding: '19px 22px 20px' }}>
+            <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <Sparkle size={14} style={{ color: 'var(--amber)' }} />
+              <h4>Symbol Focus</h4>
             </div>
             {metrics.symbolFocus.length > 0 ? (
-              <div className="space-y-2">
+              <div style={{ marginTop: 10 }}>
                 {metrics.symbolFocus.map((s, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
+                  <div key={i} className="mrow">
                     <div>
-                      <p className="font-medium">{s.coin}</p>
-                      <p className="text-[10px] text-[var(--muted-foreground)]">{s.winRate}% WR &middot; {s.count} trades</p>
+                      <div style={{ fontWeight: 700, color: 'var(--text)' }}>{s.coin}</div>
+                      <div style={{ fontSize: 10, color: 'var(--muted-2)', marginTop: 3 }}>{s.winRate}% WR &middot; {s.count} trades</div>
                     </div>
-                    <span className="text-green-400 font-medium tabular-nums">{formatCurrency(s.pnl)}</span>
+                    <span className="val" style={{ color: 'var(--green)' }}>{formatCurrency(s.pnl)}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-[var(--muted-foreground)]">No high-confidence symbols detected in this period yet.</p>
+              <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No high-confidence symbols detected in this period yet.</p>
             )}
           </div>
 
@@ -1211,13 +1203,13 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingId ? 'Edit Strategy' : 'Create Rule Set Template'} size="lg">
         <div className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Template Name</label>
-              <input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Example: Drawdown Recovery Protocol" />
+            <div className="field">
+              <label>TEMPLATE NAME</label>
+              <input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="Example: Drawdown Recovery Protocol" className="box w-full" />
             </div>
-            <div>
-              <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Type</label>
-              <select value={form.type} onChange={e => setForm(prev => ({ ...prev, type: e.target.value as StrategyType }))}>
+            <div className="field">
+              <label>TYPE</label>
+              <select value={form.type} onChange={e => setForm(prev => ({ ...prev, type: e.target.value as StrategyType }))} className="box w-full">
                 {STRATEGY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
@@ -1226,29 +1218,29 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           <ListEditor label="Entry Criteria" field="entryChecklist" />
           <ListEditor label="Exit Criteria" field="exitChecklist" />
           <div>
-            <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Risk Parameters</label>
+            <p className="lbl b10" style={{ marginBottom: 12 }}>RISK PARAMETERS</p>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Max Position Size ($)</label>
-                <input type="number" value={form.riskParams.maxPositionSize ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxPositionSize: e.target.value ? Number(e.target.value) : undefined } }))} />
+              <div className="field">
+                <label>MAX POSITION SIZE ($)</label>
+                <input type="number" className="box w-full" value={form.riskParams.maxPositionSize ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxPositionSize: e.target.value ? Number(e.target.value) : undefined } }))} />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Max Loss (%)</label>
-                <input type="number" value={form.riskParams.maxLossPercent ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxLossPercent: e.target.value ? Number(e.target.value) : undefined } }))} />
+              <div className="field">
+                <label>MAX LOSS (%)</label>
+                <input type="number" className="box w-full" value={form.riskParams.maxLossPercent ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxLossPercent: e.target.value ? Number(e.target.value) : undefined } }))} />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Risk:Reward Ratio</label>
-                <input type="number" step="0.1" value={form.riskParams.riskRewardRatio ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, riskRewardRatio: e.target.value ? Number(e.target.value) : undefined } }))} />
+              <div className="field">
+                <label>RISK:REWARD RATIO</label>
+                <input type="number" step="0.1" className="box w-full" value={form.riskParams.riskRewardRatio ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, riskRewardRatio: e.target.value ? Number(e.target.value) : undefined } }))} />
               </div>
-              <div>
-                <label className="text-xs text-[var(--muted-foreground)]">Max Daily Loss ($)</label>
-                <input type="number" value={form.riskParams.maxDailyLoss ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxDailyLoss: e.target.value ? Number(e.target.value) : undefined } }))} />
+              <div className="field">
+                <label>MAX DAILY LOSS ($)</label>
+                <input type="number" className="box w-full" value={form.riskParams.maxDailyLoss ?? ''} onChange={e => setForm(prev => ({ ...prev, riskParams: { ...prev.riskParams, maxDailyLoss: e.target.value ? Number(e.target.value) : undefined } }))} />
               </div>
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-3 border-t border-[var(--border)]">
-            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)] transition-colors">Cancel</button>
-            <button onClick={handleSave} disabled={!form.name.trim()} className="px-4 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
+          <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={() => setIsModalOpen(false)} className="btn-g">Cancel</button>
+            <button onClick={handleSave} disabled={!form.name.trim()} className="btn-a" style={!form.name.trim() ? { opacity: .5 } : undefined}>
               {editingId ? 'Update' : 'Create'} Strategy
             </button>
           </div>
@@ -1257,10 +1249,12 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
       {/* Delete Confirmation */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Strategy" size="sm">
-        <p className="text-sm text-[var(--muted-foreground)] mb-4">Are you sure you want to delete this strategy? This cannot be undone.</p>
+        <div className="note" style={{ height: 'auto', minHeight: 44, padding: '12px 18px', marginTop: 0, marginBottom: 20 }}>
+          Are you sure you want to delete this strategy? This cannot be undone.
+        </div>
         <div className="flex justify-end gap-3">
-          <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
-          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="px-4 py-2 text-sm bg-[var(--red)] hover:bg-red-600 text-[var(--foreground)] rounded-lg">Delete</button>
+          <button onClick={() => setDeleteConfirm(null)} className="btn-g">Cancel</button>
+          <button onClick={() => deleteConfirm && handleDeleteConfirm(deleteConfirm)} className="btn-a" style={{ background: 'var(--red)', color: '#fff' }}>Delete</button>
         </div>
       </Modal>
 
@@ -1268,16 +1262,20 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       <Modal isOpen={ruleComposerOpen} onClose={() => setRuleComposerOpen(false)} title="Rule Composer" size="lg">
         <div>
           {/* Step indicator */}
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-6 flex-wrap">
             {[1, 2, 3].map(s => (
               <div key={s} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  rcStep === s ? 'bg-[var(--accent)] text-[var(--foreground)]' : rcStep > s ? 'bg-green-500/20 text-green-400' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                }`}>{rcStep > s ? <Check size={14} /> : s}</div>
-                <span className={`text-xs font-medium ${rcStep === s ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>
+                <span style={{
+                  width: 24, height: 24, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'var(--display)', fontWeight: 700, fontSize: 12,
+                  border: `1px solid ${rcStep === s ? 'var(--amber)' : rcStep > s ? 'var(--green)' : 'var(--line-2)'}`,
+                  background: rcStep === s ? 'var(--amber)' : 'transparent',
+                  color: rcStep === s ? 'var(--ink)' : rcStep > s ? 'var(--green)' : 'var(--muted-2)',
+                }}>{rcStep > s ? <Check size={13} /> : s}</span>
+                <span style={{ fontWeight: 700, fontSize: 11.5, color: rcStep === s ? 'var(--text)' : 'var(--muted-2)' }}>
                   {s === 1 ? 'Category & Type' : s === 2 ? 'Details' : 'Review'}
                 </span>
-                {s < 3 && <ChevronRight size={14} className="text-[var(--muted-foreground)]" />}
+                {s < 3 && <CaretRight size={13} style={{ color: 'var(--muted-3)' }} />}
               </div>
             ))}
           </div>
@@ -1286,20 +1284,16 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           {rcStep === 1 && (
             <div className="space-y-5">
               <div>
-                <p className="text-sm font-bold mb-3">Select Category</p>
-                <div className="grid grid-cols-3 gap-3">
+                <p className="lbl b10" style={{ marginBottom: 12 }}>SELECT CATEGORY</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 10 }}>
                   {(['Behavior', 'Discipline', 'Performance'] as RuleComposerCategory[]).map(cat => (
                     <button key={cat} onClick={() => { setRcCategory(cat); setRcRuleType(''); }}
-                      className={`p-4 rounded-xl border text-left transition-all ${
-                        rcCategory === cat ? 'border-[var(--accent)] bg-[var(--accent)]/10' : 'border-[var(--border)] bg-[var(--muted)] hover:border-[var(--accent)]/30'
-                      }`}>
-                      <div className="p-2 rounded-lg bg-[var(--card)] w-fit mb-2">
-                        {cat === 'Behavior' ? <Target size={16} className="text-blue-400" /> :
-                         cat === 'Discipline' ? <Shield size={16} className="text-yellow-400" /> :
-                         <BarChart3 size={16} className="text-green-400" />}
-                      </div>
-                      <p className="text-sm font-bold">{cat}</p>
-                      <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
+                      className="inset" style={{ textAlign: 'left', padding: '13px 16px', borderColor: rcCategory === cat ? 'var(--amber)' : 'var(--line)' }}>
+                      {cat === 'Behavior' ? <Target size={15} style={{ color: 'var(--amber)' }} /> :
+                       cat === 'Discipline' ? <Shield size={15} style={{ color: 'var(--amber)' }} /> :
+                       <ChartBar size={15} style={{ color: 'var(--green)' }} />}
+                      <p style={{ margin: '10px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{cat}</p>
+                      <p style={{ margin: '5px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
                         {cat === 'Behavior' ? 'Emotional & impulse controls' : cat === 'Discipline' ? 'Risk & session limits' : 'Target & outcome rules'}
                       </p>
                     </button>
@@ -1307,19 +1301,15 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 </div>
               </div>
               <div>
-                <p className="text-sm font-bold mb-3">Select Rule Type</p>
-                <div className="grid grid-cols-2 gap-2">
+                <p className="lbl b10" style={{ marginBottom: 12 }}>SELECT RULE TYPE</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 8 }}>
                   {RULE_TYPES[rcCategory].map(rt => (
                     <button key={rt} onClick={() => setRcRuleType(rt)}
-                      className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
-                        rcRuleType === rt ? 'border-[var(--accent)] bg-[var(--accent)]/10' : 'border-[var(--border)] bg-[var(--muted)] hover:border-[var(--accent)]/30'
-                      }`}>
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        rcRuleType === rt ? 'border-[var(--accent)]' : 'border-[var(--muted-foreground)]'
-                      }`}>
-                        {rcRuleType === rt && <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />}
-                      </div>
-                      <span className="text-sm">{rt}</span>
+                      className="inset" style={{ display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left', padding: '11px 14px', borderColor: rcRuleType === rt ? 'var(--amber)' : 'var(--line)' }}>
+                      <span style={{ width: 14, height: 14, flex: 'none', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${rcRuleType === rt ? 'var(--amber)' : 'var(--muted-3)'}` }}>
+                        {rcRuleType === rt && <span style={{ width: 6, height: 6, background: 'var(--amber)' }} />}
+                      </span>
+                      <span style={{ fontSize: 12, color: 'var(--text)' }}>{rt}</span>
                     </button>
                   ))}
                 </div>
@@ -1330,18 +1320,18 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           {/* Step 2: Details */}
           {rcStep === 2 && (
             <div className="space-y-4">
-              <div className="bg-[var(--muted)] rounded-xl p-4 mb-2">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Selected</p>
-                <p className="text-sm font-bold">{rcCategory} &middot; {rcRuleType || 'Custom'}</p>
+              <div className="inset" style={{ padding: '13px 16px' }}>
+                <p className="lbl">SELECTED</p>
+                <p style={{ margin: '8px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{rcCategory} &middot; {rcRuleType || 'Custom'}</p>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Custom Rule Name (optional)</label>
-                <input value={rcCustomRule} onChange={e => setRcCustomRule(e.target.value)} placeholder={rcRuleType || 'Enter custom rule name'} className="w-full" />
-                <p className="text-[10px] text-[var(--muted-foreground)] mt-1">Leave blank to use the selected rule type as name</p>
+              <div className="field">
+                <label>CUSTOM RULE NAME (OPTIONAL)</label>
+                <input value={rcCustomRule} onChange={e => setRcCustomRule(e.target.value)} placeholder={rcRuleType || 'Enter custom rule name'} className="box w-full" />
+                <p className="footnote" style={{ textAlign: 'left', marginTop: 8 }}>Leave blank to use the selected rule type as name</p>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Description / Notes</label>
-                <textarea value={rcDescription} onChange={e => setRcDescription(e.target.value)} placeholder="Describe when this rule applies and why it matters..." rows={3} className="w-full" />
+              <div className="field">
+                <label>DESCRIPTION / NOTES</label>
+                <textarea value={rcDescription} onChange={e => setRcDescription(e.target.value)} placeholder="Describe when this rule applies and why it matters..." rows={3} className="box w-full" style={{ height: 'auto', padding: '11px 14px' }} />
               </div>
             </div>
           )}
@@ -1349,35 +1339,36 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           {/* Step 3: Review */}
           {rcStep === 3 && (
             <div className="space-y-4">
-              <div className="bg-[var(--muted)] rounded-xl p-5">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">Review Your Rule</p>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">Category</span>
-                    <span className="font-medium">{rcCategory}</span>
+              <div className="inset" style={{ padding: '15px 18px' }}>
+                <p className="lbl b10" style={{ color: 'var(--amber)' }}>REVIEW YOUR RULE</p>
+                <div style={{ marginTop: 8 }}>
+                  <div className="mrow">
+                    <span className="lb" style={{ marginLeft: 0 }}>Category</span>
+                    <span className="val">{rcCategory}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">Rule Type</span>
-                    <span className="font-medium">{rcRuleType}</span>
+                  <div className="mrow">
+                    <span className="lb" style={{ marginLeft: 0 }}>Rule Type</span>
+                    <span className="val">{rcRuleType}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">Name</span>
-                    <span className="font-medium">{rcCustomRule || rcRuleType}</span>
+                  <div className="mrow">
+                    <span className="lb" style={{ marginLeft: 0 }}>Name</span>
+                    <span className="val">{rcCustomRule || rcRuleType}</span>
                   </div>
                   {rcDescription && (
-                    <div>
-                      <p className="text-[var(--muted-foreground)] text-sm mb-1">Description</p>
-                      <p className="text-sm bg-[var(--card)] rounded-lg p-3">{rcDescription}</p>
+                    <div style={{ marginTop: 14 }}>
+                      <p className="lbl">DESCRIPTION</p>
+                      <p style={{ margin: '9px 0 0', fontSize: 11.5, lineHeight: '17px', color: 'var(--muted-2)' }}>{rcDescription}</p>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle2 size={14} className="text-green-400" />
-                  <p className="text-sm font-bold text-green-400">Ready to Create</p>
+              <div className="inset" style={{ position: 'relative', padding: '13px 16px' }}>
+                <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: 'var(--green)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle size={14} style={{ color: 'var(--green)' }} />
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--green)' }}>Ready to Create</p>
                 </div>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p style={{ margin: '8px 0 0', fontSize: 11.5, color: 'var(--muted-2)' }}>
                   This rule will be added to {strategies.length > 0 ? `"${strategies[0].name}"` : 'a new rule set'}.
                 </p>
               </div>
@@ -1385,20 +1376,18 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border)]">
-            <button onClick={() => rcStep > 1 ? setRcStep((rcStep - 1) as RuleComposerStep) : setRuleComposerOpen(false)}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)] transition-colors">
+          <div className="flex justify-between mt-6 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={() => rcStep > 1 ? setRcStep((rcStep - 1) as RuleComposerStep) : setRuleComposerOpen(false)} className="btn-g">
               <ArrowLeft size={14} /> {rcStep === 1 ? 'Cancel' : 'Back'}
             </button>
             {rcStep < 3 ? (
               <button onClick={() => setRcStep((rcStep + 1) as RuleComposerStep)}
                 disabled={rcStep === 1 && !rcRuleType}
-                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
-                Continue <ChevronRight size={14} />
+                className="btn-a" style={rcStep === 1 && !rcRuleType ? { opacity: .5 } : undefined}>
+                Continue <CaretRight size={14} />
               </button>
             ) : (
-              <button onClick={saveRule}
-                className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg transition-colors">
+              <button onClick={saveRule} className="btn-a" style={{ background: 'var(--green)' }}>
                 <Plus size={14} /> Create Rule
               </button>
             )}
@@ -1412,12 +1401,9 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           {/* Main area (2/3) */}
           <div className="lg:col-span-2 space-y-5">
             {/* Step indicator */}
-            <div className="flex gap-2">
+            <div className="tabs" style={{ marginBottom: 0 }}>
               {[1, 2].map(s => (
-                <button key={s} onClick={() => s === 1 && setRsStep(1)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    rsStep === s ? 'bg-[var(--accent)] text-[var(--foreground)]' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-                  }`}>
+                <button key={s} onClick={() => s === 1 && setRsStep(1)} className={rsStep === s ? 'on' : undefined}>
                   {s === 1 ? 'Step 1: Template Identity' : 'Step 2: Select Rules'}
                 </button>
               ))}
@@ -1425,17 +1411,16 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
             {rsStep === 1 && (
               <div className="space-y-4">
-                <div>
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Template Name</label>
-                  <input value={rsName} onChange={e => setRsName(e.target.value)} placeholder="e.g. Drawdown Recovery Protocol" className="w-full" />
+                <div className="field">
+                  <label>TEMPLATE NAME</label>
+                  <input value={rsName} onChange={e => setRsName(e.target.value)} placeholder="e.g. Drawdown Recovery Protocol" className="box w-full" />
                 </div>
-                <div>
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Description</label>
-                  <textarea value={rsDescription} onChange={e => setRsDescription(e.target.value)} placeholder="Describe what this rule set is designed to do..." rows={4} className="w-full" />
+                <div className="field">
+                  <label>DESCRIPTION</label>
+                  <textarea value={rsDescription} onChange={e => setRsDescription(e.target.value)} placeholder="Describe what this rule set is designed to do..." rows={4} className="box w-full" style={{ height: 'auto', padding: '11px 14px' }} />
                 </div>
-                <button onClick={() => setRsStep(2)} disabled={!rsName.trim()}
-                  className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
-                  Next: Select Rules <ChevronRight size={14} />
+                <button onClick={() => setRsStep(2)} disabled={!rsName.trim()} className="btn-a" style={!rsName.trim() ? { opacity: .5 } : undefined}>
+                  Next: Select Rules <CaretRight size={14} />
                 </button>
               </div>
             )}
@@ -1444,11 +1429,11 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-                    <input value={rsSearch} onChange={e => setRsSearch(e.target.value)} placeholder="Search rules..." className="w-full pl-9" />
+                    <MagnifyingGlass size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
+                    <input value={rsSearch} onChange={e => setRsSearch(e.target.value)} placeholder="Search rules..." className="box w-full" style={{ paddingLeft: 34 }} />
                   </div>
-                  <button onClick={() => setRsSelectedRules(allRuleStrings)} className="px-3 py-2 text-xs bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg">Select All</button>
-                  <button onClick={() => setRsSelectedRules([])} className="px-3 py-2 text-xs bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg">Clear</button>
+                  <button onClick={() => setRsSelectedRules(allRuleStrings)} className="btn-g" style={{ height: 42, fontSize: 12 }}>Select All</button>
+                  <button onClick={() => setRsSelectedRules([])} className="btn-g" style={{ height: 42, fontSize: 12 }}>Clear</button>
                 </div>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {allRuleStrings
@@ -1457,25 +1442,17 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                       const selected = rsSelectedRules.includes(rule);
                       return (
                         <button key={rule} onClick={() => setRsSelectedRules(prev => selected ? prev.filter(r => r !== rule) : [...prev, rule])}
-                          className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
-                            selected ? 'border-[var(--accent)] bg-[var(--accent)]/10' : 'border-[var(--border)] bg-[var(--muted)] hover:border-[var(--accent)]/30'
-                          }`}>
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                            selected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--muted-foreground)]'
-                          }`}>
-                            {selected && <Check size={12} className="text-[var(--foreground)]" />}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium truncate">{rule}</p>
-                          </div>
-                          {selected && <span className="ml-auto text-[10px] font-semibold text-[var(--accent)] shrink-0">SELECTED</span>}
+                          className="inset" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left', padding: '11px 14px', borderColor: selected ? 'var(--amber)' : 'var(--line)' }}>
+                          <span style={{ width: 16, height: 16, flex: 'none', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${selected ? 'var(--amber)' : 'var(--muted-3)'}`, background: selected ? 'var(--amber)' : 'transparent' }}>
+                            {selected && <Check size={11} style={{ color: 'var(--ink)' }} />}
+                          </span>
+                          <span style={{ minWidth: 0, fontSize: 12, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{rule}</span>
+                          {selected && <span style={{ marginLeft: 'auto', flex: 'none', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: 'var(--amber)' }}>SELECTED</span>}
                         </button>
                       );
                     })}
                   {allRuleStrings.length === 0 && (
-                    <div className="py-8 text-center text-[var(--muted-foreground)] text-sm">
-                      No rules found. Create rules first using the Rule Composer.
-                    </div>
+                    <div className="empty-line">No rules found. Create rules first using the Rule Composer.</div>
                   )}
                 </div>
               </div>
@@ -1484,34 +1461,32 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
 
           {/* Right sidebar */}
           <div className="space-y-4">
-            <div className="bg-[var(--muted)] rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Selected Rules</p>
+            <div className="inset" style={{ padding: '15px 16px' }}>
+              <p className="lbl b10">SELECTED RULES</p>
               {rsSelectedRules.length === 0 ? (
-                <p className="text-xs text-[var(--muted-foreground)]">No rules selected yet.</p>
+                <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No rules selected yet.</p>
               ) : (
-                <div className="space-y-1.5">
+                <div style={{ marginTop: 8 }}>
                   {rsSelectedRules.map((r, i) => (
-                    <div key={i} className="flex items-center justify-between bg-[var(--card)] rounded-lg px-3 py-2">
-                      <p className="text-xs truncate mr-2">{r}</p>
-                      <button onClick={() => setRsSelectedRules(prev => prev.filter(x => x !== r))} className="shrink-0 text-[var(--muted-foreground)] hover:text-red-400"><X size={12} /></button>
+                    <div key={i} className="mrow">
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8 }}>{r}</span>
+                      <button onClick={() => setRsSelectedRules(prev => prev.filter(x => x !== r))} style={{ marginLeft: 'auto', flex: 'none', color: 'var(--muted-3)' }}><X size={12} /></button>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            <div className="bg-[var(--muted)] rounded-xl p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Quality Checklist</p>
-              <div className="space-y-2">
+            <div className="inset" style={{ padding: '15px 16px' }}>
+              <p className="lbl b10">QUALITY CHECKLIST</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
                 {[
                   { label: 'Template named', ok: !!rsName.trim() },
                   { label: 'At least 1 rule', ok: rsSelectedRules.length >= 1 },
                   { label: '3+ rules (recommended)', ok: rsSelectedRules.length >= 3 },
                 ].map((c, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${c.ok ? 'bg-green-500/20' : 'bg-[var(--card)]'}`}>
-                      {c.ok ? <Check size={10} className="text-green-400" /> : <Circle size={10} className="text-[var(--muted-foreground)]" />}
-                    </div>
-                    <span className={c.ok ? 'text-green-400' : 'text-[var(--muted-foreground)]'}>{c.label}</span>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 11.5 }}>
+                    {c.ok ? <Check size={12} style={{ color: 'var(--green)', flex: 'none' }} /> : <Circle size={12} style={{ color: 'var(--muted-3)', flex: 'none' }} />}
+                    <span style={{ color: c.ok ? 'var(--green)' : 'var(--muted-2)' }}>{c.label}</span>
                   </div>
                 ))}
               </div>
@@ -1520,19 +1495,17 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border)]">
-          <button onClick={() => rsStep === 1 ? setRuleSetComposerOpen(false) : setRsStep(1)}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">
+        <div className="flex justify-between mt-6 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+          <button onClick={() => rsStep === 1 ? setRuleSetComposerOpen(false) : setRsStep(1)} className="btn-g">
             <ArrowLeft size={14} /> {rsStep === 1 ? 'Cancel' : 'Back'}
           </button>
           {rsStep === 1 ? (
-            <button onClick={() => setRsStep(2)} disabled={!rsName.trim()}
-              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--foreground)] rounded-lg disabled:opacity-50">
-              Next <ChevronRight size={14} />
+            <button onClick={() => setRsStep(2)} disabled={!rsName.trim()} className="btn-a" style={!rsName.trim() ? { opacity: .5 } : undefined}>
+              Next <CaretRight size={14} />
             </button>
           ) : (
             <button onClick={saveRuleSet} disabled={!rsName.trim() || rsSelectedRules.length === 0}
-              className="flex items-center gap-1.5 px-5 py-2 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg disabled:opacity-50">
+              className="btn-a" style={(!rsName.trim() || rsSelectedRules.length === 0) ? { background: 'var(--green)', opacity: .5 } : { background: 'var(--green)' }}>
               <Plus size={14} /> Create Rule Set
             </button>
           )}
@@ -1543,45 +1516,47 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       <Modal isOpen={stratComposerOpen} onClose={() => setStratComposerOpen(false)} title="" size="xl">
         <div>
           {/* Header badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/20 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">
-            <Sparkles size={12} /> Template Composer
-          </div>
-          <h2 className="text-2xl font-bold mb-1">Create Strategy Template</h2>
-          <p className="text-sm text-[var(--muted-foreground)] mb-6">Design manual execution sequences with ordered text steps.</p>
+          <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
+            <Sparkle size={13} style={{ color: 'var(--amber)' }} /> Template Composer
+          </p>
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>Create Strategy Template</h3>
+          <p className="sub" style={{ margin: '10px 0 24px' }}>Design manual execution sequences with ordered text steps.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Left: form (3/5) */}
             <div className="lg:col-span-3 space-y-6">
               {/* Step 1: Template Identity */}
-              <div className="bg-[var(--card)] border border-[var(--accent)]/20 rounded-xl p-5">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">Step 1 &middot; Template Identity</p>
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+                <p className="lbl b10" style={{ color: 'var(--green)', marginBottom: 16 }}>STEP 1 &middot; TEMPLATE IDENTITY</p>
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Template Name</label>
-                    <input value={scName} onChange={e => setScName(e.target.value)} placeholder="e.g. Breakout Momentum Play" className="w-full" />
+                  <div className="field">
+                    <label>TEMPLATE NAME</label>
+                    <input value={scName} onChange={e => setScName(e.target.value)} placeholder="e.g. Breakout Momentum Play" className="box w-full" />
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Description (optional)</label>
-                    <textarea value={scDescription} onChange={e => setScDescription(e.target.value)} placeholder="Describe your strategy approach..." rows={3} className="w-full" />
+                  <div className="field">
+                    <label>DESCRIPTION (OPTIONAL)</label>
+                    <textarea value={scDescription} onChange={e => setScDescription(e.target.value)} placeholder="Describe your strategy approach..." rows={3} className="box w-full" style={{ height: 'auto', padding: '11px 14px' }} />
                   </div>
                 </div>
               </div>
 
               {/* Step 2: Build Strategy Steps */}
-              <div className="bg-[var(--card)] border border-[var(--accent)]/20 rounded-xl p-5">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-fuchsia-400 mb-4">Step 2 &middot; Build Strategy Steps</p>
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Ordered Execution List</p>
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[var(--accent)]/20 text-[var(--accent)]">{scSteps.length} Step{scSteps.length !== 1 ? 's' : ''}</span>
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10" style={{ color: 'var(--amber)', marginBottom: 16 }}>STEP 2 &middot; BUILD STRATEGY STEPS</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <p className="lbl">ORDERED EXECUTION LIST</p>
+                  <span className="chip" style={{ marginLeft: 'auto', height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--amber)' }}>{scSteps.length} STEP{scSteps.length !== 1 ? 'S' : ''}</span>
                 </div>
 
                 {/* Input + Add button */}
                 <div className="flex gap-2 mb-4">
                   <input value={scStepInput} onChange={e => setScStepInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addScStep(); } }}
-                    placeholder="Example: Wait for A+ setup confirmation before opening" className="flex-1" />
+                    placeholder="Example: Wait for A+ setup confirmation before opening" className="box flex-1" />
                   <button onClick={addScStep} disabled={!scStepInput.trim()}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-[var(--muted)] hover:bg-[var(--muted)]/80 border border-[var(--border)] rounded-lg text-sm font-medium transition-colors disabled:opacity-50 shrink-0">
+                    className="btn-g" style={!scStepInput.trim() ? { height: 42, flex: 'none', opacity: .5 } : { height: 42, flex: 'none' }}>
                     <Plus size={14} /> Add
                   </button>
                 </div>
@@ -1590,21 +1565,17 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                 {scSteps.length > 0 && (
                   <div className="space-y-2">
                     {scSteps.map((step, i) => (
-                      <div key={i} className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-3">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <div className="flex items-center gap-2">
-                            <div className="p-1 rounded bg-[var(--card)] cursor-grab">
-                              <BarChart3 size={12} className="text-[var(--muted-foreground)] rotate-90" />
-                            </div>
-                            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">Step {i + 1}</p>
-                          </div>
+                      <div key={i} className="inset" style={{ padding: '11px 14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                          <ChartBar size={12} style={{ color: 'var(--muted-3)', transform: 'rotate(90deg)', cursor: 'grab' }} />
+                          <p className="lbl">STEP {i + 1}</p>
                           <button onClick={() => setScSteps(prev => prev.filter((_, idx) => idx !== i))}
-                            className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors">
-                            Remove
+                            style={{ marginLeft: 'auto', flex: 'none', fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', color: 'var(--red)' }}>
+                            REMOVE
                           </button>
                         </div>
                         <textarea value={step} onChange={e => setScSteps(prev => prev.map((s, idx) => idx === i ? e.target.value : s))}
-                          rows={2} className="w-full text-sm mt-1" />
+                          rows={2} className="box w-full" style={{ height: 'auto', padding: '10px 12px', marginTop: 10, fontSize: 12 }} />
                       </div>
                     ))}
                   </div>
@@ -1615,32 +1586,31 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             {/* Right sidebar (2/5) */}
             <div className="lg:col-span-2 space-y-4">
               {/* Strategy Sequence Preview */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Strategy Sequence Preview</p>
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10">STRATEGY SEQUENCE PREVIEW</p>
                 {scSteps.length === 0 ? (
-                  <p className="text-xs text-[var(--muted-foreground)]">No steps added yet. Type a step and click Add.</p>
+                  <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No steps added yet. Type a step and click Add.</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="klist num">
                     {scSteps.map((step, i) => (
-                      <div key={i} className="bg-[var(--accent)]/10 border border-[var(--accent)]/20 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-0.5">Step {i + 1}</p>
-                        <p className="text-sm">{step}</p>
-                      </div>
+                      <div key={i}><b>{i + 1}</b><span>{step}</span></div>
                     ))}
                   </div>
                 )}
               </div>
 
               {/* Quality Checklist */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Quality Checklist</p>
-                <div className="space-y-2.5">
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10">QUALITY CHECKLIST</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
                   {[
                     { label: '1. Name by scenario, not by indicator.', ok: !!scName.trim() },
                     { label: '2. Keep each step action-oriented and unambiguous.', ok: scSteps.length > 0 },
                     { label: '3. Keep step order realistic for live execution.', ok: scSteps.length >= 2 },
                   ].map((c, i) => (
-                    <p key={i} className={`text-xs ${c.ok ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>{c.label}</p>
+                    <p key={i} style={{ margin: 0, fontSize: 11.5, lineHeight: '17px', color: c.ok ? 'var(--text)' : 'var(--muted-2)' }}>{c.label}</p>
                   ))}
                 </div>
               </div>
@@ -1648,11 +1618,10 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--border)]">
-            <button onClick={() => setStratComposerOpen(false)}
-              className="px-5 py-2.5 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+          <div className="flex justify-end gap-3 mt-6 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={() => setStratComposerOpen(false)} className="btn-g">Cancel</button>
             <button onClick={saveStratComposer} disabled={!scName.trim() || scSteps.length === 0}
-              className="px-5 py-2.5 text-sm bg-blue-500 hover:bg-blue-600 text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
+              className="btn-a" style={(!scName.trim() || scSteps.length === 0) ? { opacity: .5 } : undefined}>
               Create Strategy
             </button>
           </div>
@@ -1663,25 +1632,25 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
       <Modal isOpen={activationMixerOpen} onClose={() => setActivationMixerOpen(false)} title="" size="xl">
         <div>
           {/* Header badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/20 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">
-            <Zap size={12} /> Activation Mixer
-          </div>
-          <h2 className="text-2xl font-bold mb-1">Add Templates</h2>
-          <p className="text-sm text-[var(--muted-foreground)] mb-6">Select one or more templates, then set priorities per item or in bulk.</p>
+          <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
+            <Lightning size={13} style={{ color: 'var(--amber)' }} /> Activation Mixer
+          </p>
+          <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>Add Templates</h3>
+          <p className="sub" style={{ margin: '10px 0 24px' }}>Select one or more templates, then set priorities per item or in bulk.</p>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: template list (2/3) */}
             <div className="lg:col-span-2 space-y-4">
               {/* Search + bulk actions */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
                 <div className="flex items-center justify-end gap-2 mb-3">
                   <button onClick={() => { const visible = strategies.filter(s => !amSearch || s.name.toLowerCase().includes(amSearch.toLowerCase())); setAmSelected(visible.map(s => s.id)); }}
-                    className="px-3 py-1.5 text-xs bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg">Select Visible</button>
-                  <button onClick={() => setAmSelected([])} className="px-3 py-1.5 text-xs bg-[var(--muted)] hover:bg-[var(--muted)]/80 rounded-lg">Clear</button>
+                    className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}>Select Visible</button>
+                  <button onClick={() => setAmSelected([])} className="btn-g" style={{ height: 32, padding: '0 14px', fontSize: 12 }}>Clear</button>
                 </div>
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-                  <input value={amSearch} onChange={e => setAmSearch(e.target.value)} placeholder="Search templates by name or description..." className="w-full pl-9" />
+                  <MagnifyingGlass size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-3)' }} />
+                  <input value={amSearch} onChange={e => setAmSearch(e.target.value)} placeholder="Search templates by name or description..." className="box w-full" style={{ paddingLeft: 34 }} />
                 </div>
               </div>
 
@@ -1693,37 +1662,29 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     const selected = amSelected.includes(strategy.id);
                     const itemPriority = amItemPriorities[strategy.id] ?? 'P2';
                     return (
-                      <div key={strategy.id}
-                        className={`rounded-xl border p-4 transition-all ${
-                          selected ? 'border-[var(--accent)] bg-[var(--accent)]/5' : 'border-[var(--border)] bg-[var(--card)] hover:border-[var(--accent)]/30'
-                        }`}>
+                      <div key={strategy.id} className="inset" style={{ padding: '13px 16px', borderColor: selected ? 'var(--amber)' : 'var(--line)' }}>
                         <div className="flex items-start gap-3">
                           {/* Checkbox */}
                           <button onClick={() => setAmSelected(prev => selected ? prev.filter(id => id !== strategy.id) : [...prev, strategy.id])}
-                            className={`mt-1 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                              selected ? 'border-[var(--accent)] bg-[var(--accent)]' : 'border-[var(--muted-foreground)]'
-                            }`}>
-                            {selected && <Check size={12} className="text-[var(--foreground)]" />}
+                            style={{ marginTop: 3, width: 16, height: 16, flex: 'none', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${selected ? 'var(--amber)' : 'var(--muted-3)'}`, background: selected ? 'var(--amber)' : 'transparent' }}>
+                            {selected && <Check size={11} style={{ color: 'var(--ink)' }} />}
                           </button>
                           {/* Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <p className="text-sm font-bold">{strategy.name}</p>
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-fuchsia-400">RULESET</span>
-                              {selected && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400">ACTIVE</span>}
-                              {!selected && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--muted)] text-[var(--muted-foreground)]">SAVED</span>}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{strategy.name}</p>
+                              <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--amber)' }}>RULESET</span>
+                              {selected && <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--green)' }}>ACTIVE</span>}
+                              {!selected && <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9, fontWeight: 700, color: 'var(--muted-2)' }}>SAVED</span>}
                             </div>
-                            <p className="text-xs text-[var(--muted-foreground)] mb-2">{getStrategyDescription(strategy)}</p>
+                            <p className="sub" style={{ margin: '8px 0 0' }}>{getStrategyDescription(strategy)}</p>
                             {/* Per-item priority */}
-                            <div className="flex gap-1.5">
+                            <div className="flex gap-1.5" style={{ marginTop: 10 }}>
                               {(['P1', 'P2', 'P3'] as const).map(p => (
                                 <button key={p}
                                   onClick={() => setAmItemPriorities(prev => ({ ...prev, [strategy.id]: p }))}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors ${
-                                    itemPriority === p
-                                      ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]'
-                                      : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)] hover:border-[var(--accent)]/30'
-                                  }`}>{p}</button>
+                                  className={`chip${itemPriority === p ? ' on' : ''}`}
+                                  style={{ height: 22, padding: '0 11px', fontSize: 10, fontWeight: 700 }}>{p}</button>
                               ))}
                             </div>
                           </div>
@@ -1732,9 +1693,7 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
                     );
                   })}
                 {strategies.length === 0 && (
-                  <div className="py-12 text-center text-[var(--muted-foreground)] text-sm">
-                    No templates available. Create a rule set or strategy first.
-                  </div>
+                  <div className="empty-line">No templates available. Create a rule set or strategy first.</div>
                 )}
               </div>
             </div>
@@ -1742,51 +1701,51 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
             {/* Right sidebar (1/3) */}
             <div className="space-y-4">
               {/* Selection count */}
-              <div className="bg-[var(--accent)]/10 border border-[var(--accent)]/20 rounded-xl p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-1">Selection</p>
-                <p className="text-3xl font-bold mb-0.5">{amSelected.length}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">templates selected</p>
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10">SELECTION</p>
+                <p style={{ margin: '10px 0 0', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 26, lineHeight: '34px', color: 'var(--text)' }}>{amSelected.length}</p>
+                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>templates selected</p>
               </div>
 
               {/* Global Priority */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Global Priority</p>
-                <div className="flex gap-1.5 mb-3">
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10">GLOBAL PRIORITY</p>
+                <div className="flex gap-1.5" style={{ marginTop: 12, marginBottom: 14 }}>
                   {(['High', 'Medium', 'Low'] as ActivationPriority[]).map(p => (
                     <button key={p} onClick={() => setAmPriority(p)}
-                      className={`flex-1 py-2 rounded-lg text-xs font-medium border transition-all ${
-                        amPriority === p
-                          ? p === 'High' ? 'border-red-400 bg-red-500/10 text-red-400'
-                            : p === 'Medium' ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
-                            : 'border-blue-400 bg-blue-500/10 text-blue-400'
-                          : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'
-                      }`}>{p} priority</button>
+                      className="chip" style={{
+                        flex: 1, justifyContent: 'center', height: 30, padding: '0 8px', fontSize: 10.5, fontWeight: 700,
+                        borderColor: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--muted)') : 'var(--line)',
+                        color: amPriority === p ? (p === 'High' ? 'var(--red)' : p === 'Medium' ? 'var(--amber)' : 'var(--muted)') : 'var(--muted-2)',
+                      }}>{p} priority</button>
                   ))}
                 </div>
-                <button onClick={applyGlobalPriority}
-                  className="flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline">
-                  <ChevronDown size={12} /> Apply Global Priority To Selected
+                <button onClick={applyGlobalPriority} className="viewall" style={{ marginLeft: 0, fontSize: 12 }}>
+                  <CaretDown size={12} /> Apply Global Priority To Selected
                 </button>
               </div>
 
               {/* Selected Items */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Selected Items</p>
+              <div className="card" style={{ padding: '19px 22px 20px' }}>
+                <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+                <p className="lbl b10">SELECTED ITEMS</p>
                 {amSelected.length === 0 ? (
-                  <p className="text-xs text-[var(--muted-foreground)]">No templates selected.</p>
+                  <p style={{ margin: '12px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No templates selected.</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div style={{ marginTop: 8 }}>
                     {amSelected.map(id => {
                       const s = strategies.find(st => st.id === id);
                       if (!s) return null;
                       const p = amItemPriorities[id] ?? 'P2';
                       return (
-                        <div key={id} className="flex items-center justify-between bg-[var(--muted)] rounded-lg px-3 py-2.5">
-                          <div className="min-w-0 mr-2">
-                            <p className="text-xs font-bold truncate">{s.name}</p>
-                            <p className="text-[10px] text-[var(--muted-foreground)]">{getStrategyDescription(s)}</p>
+                        <div key={id} className="mrow">
+                          <div style={{ minWidth: 0, marginRight: 8 }}>
+                            <div style={{ fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</div>
+                            <div style={{ fontSize: 10, color: 'var(--muted-2)', marginTop: 3 }}>{getStrategyDescription(s)}</div>
                           </div>
-                          <span className="text-xs font-bold text-[var(--accent)] shrink-0">{p}</span>
+                          <span className="val" style={{ color: 'var(--amber)' }}>{p}</span>
                         </div>
                       );
                     })}
@@ -1797,12 +1756,11 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border)]">
-            <button onClick={() => setActivationMixerOpen(false)}
-              className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--muted)]">Cancel</button>
+          <div className="flex justify-between mt-6 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+            <button onClick={() => setActivationMixerOpen(false)} className="btn-g">Cancel</button>
             <button onClick={handleActivate} disabled={amSelected.length === 0}
-              className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-green-500 hover:bg-green-600 text-[var(--foreground)] rounded-lg transition-colors disabled:opacity-50">
-              <Zap size={14} /> Activate {amSelected.length > 0 ? `(${amSelected.length})` : ''}
+              className="btn-a" style={amSelected.length === 0 ? { background: 'var(--green)', opacity: .5 } : { background: 'var(--green)' }}>
+              <Lightning size={14} /> Activate {amSelected.length > 0 ? `(${amSelected.length})` : ''}
             </button>
           </div>
         </div>
@@ -1835,122 +1793,123 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
           return (
             <div>
               {/* Header badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent)]/20 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">
-                <Layers size={12} /> Active Ruleset
-              </div>
-              <h2 className="text-2xl font-bold mb-0.5">{strategy.name}</h2>
-              <p className="text-sm text-[var(--muted-foreground)] mb-6">{getStrategyDescription(strategy)}</p>
+              <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 14px', fontSize: 12, color: '#c3cdda' }}>
+                <Stack size={13} style={{ color: 'var(--amber)' }} /> Active Ruleset
+              </p>
+              <h3 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 24, lineHeight: '28px', margin: 0, color: 'var(--text)' }}>{strategy.name}</h3>
+              <p className="sub" style={{ margin: '10px 0 0' }}>{getStrategyDescription(strategy)}</p>
 
               {/* Progress bar */}
-              <div className="h-2 rounded-full bg-[var(--muted)] overflow-hidden mb-6">
-                <div className={`h-full rounded-full transition-all ${compliancePct >= 80 ? 'bg-green-400' : compliancePct >= 50 ? 'bg-fuchsia-400' : 'bg-red-400'}`} style={{ width: `${compliancePct}%` }} />
+              <div style={{ height: 2, margin: '20px 0 24px', background: 'var(--rail)', position: 'relative' }}>
+                <div className="transition-all duration-500" style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${compliancePct}%`, background: compliancePct >= 80 ? 'var(--green)' : compliancePct >= 50 ? 'var(--amber)' : 'var(--red)' }} />
               </div>
 
               {/* 4 Stat Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Compliance</p>
-                  <p className="text-3xl font-bold">{compliancePct}%</p>
+              <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', marginTop: 0, marginBottom: 24 }}>
+                <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+                  <span className="accent" style={{ background: 'var(--amber)' }} />
+                  <b>COMPLIANCE</b>
+                  <em style={{ color: 'var(--text)' }}>{compliancePct}%</em>
                 </div>
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Rules Met</p>
-                  <p className="text-3xl font-bold">{metRules}/{totalRules}</p>
+                <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+                  <span className="accent" style={{ background: 'var(--amber)' }} />
+                  <b>RULES MET</b>
+                  <em style={{ color: 'var(--text)' }}>{metRules}/{totalRules}</em>
                 </div>
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Violations</p>
-                  <p className="text-3xl font-bold">{violationCount}</p>
+                <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+                  <span className="accent" style={{ background: 'var(--red)' }} />
+                  <b>VIOLATIONS</b>
+                  <em style={{ color: 'var(--text)' }}>{violationCount}</em>
                 </div>
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-2">Health</p>
-                  <p className="text-3xl font-bold">{healthPct}%</p>
+                <div className="stat" style={{ height: 'auto', minHeight: 96 }}>
+                  <span className="accent" style={{ background: 'var(--green)' }} />
+                  <b>HEALTH</b>
+                  <em style={{ color: 'var(--text)' }}>{healthPct}%</em>
                 </div>
               </div>
 
               {/* Ruleset Priority */}
-              <div className="bg-[var(--accent)]/5 border border-[var(--accent)]/20 rounded-xl p-4 mb-6">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-3">Ruleset Priority</p>
-                <div className="flex gap-2">
+              <div className="card" style={{ padding: '19px 22px 20px', marginBottom: 24 }}>
+                <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+                <p className="lbl b10" style={{ color: 'var(--green)' }}>RULESET PRIORITY</p>
+                <div className="flex gap-2" style={{ marginTop: 12, flexWrap: 'wrap' }}>
                   {(['High', 'Medium', 'Low'] as const).map(p => (
-                    <button key={p}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
-                        p === 'Medium'
-                          ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]'
-                          : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'
-                      }`}>{p} priority</button>
+                    <button key={p} className={`chip${p === 'Medium' ? ' on' : ''}`}>{p} priority</button>
                   ))}
                 </div>
               </div>
 
               {/* Tracking Start */}
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 mb-6">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">Tracking Start</p>
-                <div className="flex items-center gap-3">
-                  <input type="datetime-local" defaultValue={format(new Date(strategy.createdAt), "yyyy-MM-dd'T'HH:mm")}
-                    className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm" />
-                  <button className="px-4 py-2 text-sm bg-[var(--accent)] text-[var(--foreground)] rounded-lg hover:bg-[var(--accent-hover)]">Save Start</button>
+              <div className="card" style={{ padding: '19px 22px 20px', marginBottom: 24 }}>
+                <span className="accent" style={{ width: 44, background: 'var(--amber)' }} />
+                <p className="lbl b10">TRACKING START</p>
+                <div className="flex items-center gap-3" style={{ marginTop: 12, flexWrap: 'wrap' }}>
+                  <input type="datetime-local" defaultValue={format(new Date(strategy.createdAt), "yyyy-MM-dd'T'HH:mm")} className="box" />
+                  <button className="btn-a">Save Start</button>
                 </div>
-                <p className="text-[10px] text-[var(--muted-foreground)] mt-2">Evidence and compliance are tracked from this timestamp forward.</p>
+                <p className="footnote" style={{ textAlign: 'left', marginTop: 12 }}>Evidence and compliance are tracked from this timestamp forward.</p>
               </div>
 
               {/* Per Rule Performance + Evidence Library */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              <div className="split" style={{ marginBottom: 24, gap: 20 }}>
                 {/* Per Rule Performance */}
-                <div className="bg-[var(--card)] border border-[var(--accent)]/20 rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-green-400 mb-4">Per Rule Performance</p>
-                  <div className="space-y-3">
+                <div className="card" style={{ padding: '19px 22px 20px' }}>
+                  <span className="accent" style={{ width: 44, background: 'var(--green)' }} />
+                  <p className="lbl b10" style={{ color: 'var(--green)' }}>PER RULE PERFORMANCE</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
                     {ruleBreakdown.map((rb, i) => {
                       const status = rb.compliance >= 80 ? 'ON TRACK' : rb.compliance >= 50 ? 'BUILDING' : 'AT RISK';
-                      const statusColor = status === 'ON TRACK' ? 'bg-green-500/20 text-green-400' : status === 'BUILDING' ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-red-500/20 text-red-400';
+                      const statusColor = status === 'ON TRACK' ? 'var(--green)' : status === 'BUILDING' ? 'var(--amber)' : 'var(--red)';
                       return (
-                        <div key={i} className="bg-[var(--muted)] rounded-xl p-3">
-                          <div className="flex items-center justify-between mb-1">
-                            <p className="text-sm font-bold">{rb.rule.length > 35 ? rb.rule.slice(0, 35) + '...' : rb.rule}</p>
-                            <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${statusColor}`}>{status}</span>
+                        <div key={i} className="inset" style={{ position: 'relative', padding: '13px 16px' }}>
+                          <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 30, height: 3, background: statusColor }} />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{rb.rule.length > 35 ? rb.rule.slice(0, 35) + '...' : rb.rule}</p>
+                            <span style={{ marginLeft: 'auto', flex: 'none', fontWeight: 700, fontSize: 9, letterSpacing: '.04em', color: statusColor }}>{status}</span>
                           </div>
-                          <p className="text-[10px] text-[var(--muted-foreground)] mb-2">
+                          <p style={{ margin: '8px 0 0', fontSize: 10.5, color: 'var(--muted-2)' }}>
                             {rb.compliance}% compliance &middot; {rb.violations} violations &middot; Last: {rb.lastHit}
                           </p>
-                          <div className="flex gap-1.5">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]">Evidence: {rb.total - rb.met}</span>
+                          <div className="flex gap-1.5" style={{ marginTop: 10, flexWrap: 'wrap' }}>
+                            <span className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9.5, color: 'var(--muted-2)' }}>Evidence: {rb.total - rb.met}</span>
                             {(['P1', 'P2', 'P3'] as const).map(p => (
-                              <span key={p} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                                p === 'P2' ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--foreground)]' : 'border-[var(--border)] bg-[var(--card)] text-[var(--muted-foreground)]'
-                              }`}>{p}</span>
+                              <span key={p} className={`chip${p === 'P2' ? ' on' : ''}`} style={{ height: 20, padding: '0 9px', fontSize: 9.5, fontWeight: 700 }}>{p}</span>
                             ))}
                           </div>
                         </div>
                       );
                     })}
                     {ruleBreakdown.length === 0 && (
-                      <p className="text-xs text-[var(--muted-foreground)]">No rules defined in this strategy.</p>
+                      <p style={{ margin: 0, fontSize: 11.5, color: 'var(--muted)' }}>No rules defined in this strategy.</p>
                     )}
                   </div>
                 </div>
 
                 {/* Evidence Library */}
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">Evidence Library</p>
+                <div className="card" style={{ padding: '19px 22px 20px' }}>
+                  <span className="accent" style={{ width: 44, background: 'var(--red)' }} />
+                  <p className="lbl b10">EVIDENCE LIBRARY</p>
                   {evidenceTrades.length === 0 ? (
-                    <p className="text-xs text-[var(--muted-foreground)]">No violations recorded. Clean compliance!</p>
+                    <p style={{ margin: '14px 0 0', fontSize: 11.5, color: 'var(--muted)' }}>No violations recorded. Clean compliance!</p>
                   ) : (
-                    <div className="space-y-3">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
                       {evidenceTrades.slice(0, 5).map(trade => {
                         const brokenRules = trade.ruleChecklist.filter(rc => rc.compliance === 'no').map(rc => rc.rule);
                         return (
-                          <div key={trade.id} className="bg-[var(--muted)] rounded-xl p-3">
-                            <div className="flex items-center justify-between mb-1">
-                              <p className="text-sm font-bold">{brokenRules[0] || 'Rule violation'}</p>
-                              <span className="text-[10px] text-[var(--muted-foreground)]">{format(new Date(trade.exitDate ?? trade.createdAt), 'MM/dd/yyyy')}</span>
+                          <div key={trade.id} className="inset" style={{ padding: '13px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{brokenRules[0] || 'Rule violation'}</p>
+                              <span style={{ marginLeft: 'auto', flex: 'none', fontSize: 10, color: 'var(--muted-2)' }}>{format(new Date(trade.exitDate ?? trade.createdAt), 'MM/dd/yyyy')}</span>
                             </div>
-                            <p className="text-xs text-[var(--muted-foreground)] mb-2">
+                            <p style={{ margin: '8px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>
                               {trade.coin} &middot; {trade.actualPnL !== null ? formatCurrency(trade.actualPnL) : 'Open'} &middot; {trade.strategy}
                             </p>
-                            <div className="flex gap-1.5">
+                            <div className="flex gap-1.5" style={{ marginTop: 10, flexWrap: 'wrap' }}>
                               {brokenRules.map((r, j) => (
-                                <span key={j} className="px-2 py-0.5 rounded-full text-[10px] bg-red-500/10 text-red-400 border border-red-500/20">{r.length > 20 ? r.slice(0, 20) + '...' : r}</span>
+                                <span key={j} className="chip" style={{ height: 20, padding: '0 9px', fontSize: 9.5, color: 'var(--red)', borderColor: 'rgba(255,77,94,.3)' }}>{r.length > 20 ? r.slice(0, 20) + '...' : r}</span>
                               ))}
                             </div>
-                            <p className="text-[10px] text-[var(--muted-foreground)] mt-1">Trade: {trade.id}</p>
+                            <p style={{ margin: '8px 0 0', fontSize: 10, color: 'var(--muted-3)' }}>Trade: {trade.id}</p>
                           </div>
                         );
                       })}
@@ -1960,13 +1919,11 @@ export default function Playbook({ strategies, trades, onAdd, onUpdate, onDelete
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
-                <button onClick={() => { setDetailsStrategyId(null); scrollToSection('Rules Library'); }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 text-sm bg-[var(--accent)] text-[var(--foreground)] rounded-lg hover:bg-[var(--accent-hover)]">
+              <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid var(--line)' }}>
+                <button onClick={() => { setDetailsStrategyId(null); scrollToSection('Rules Library'); }} className="btn-a">
                   Open Rules Library
                 </button>
-                <button onClick={() => setDetailsStrategyId(null)}
-                  className="px-5 py-2.5 text-sm border border-[var(--border)] rounded-lg hover:bg-[var(--muted)]">Close</button>
+                <button onClick={() => setDetailsStrategyId(null)} className="btn-g">Close</button>
               </div>
             </div>
           );

@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Mail, Check, Loader2 } from 'lucide-react';
+import { CircleNotch } from '@phosphor-icons/react';
 
 export default function NewsletterSignup() {
   const subscribe = useMutation(api.newsletter.subscribe);
@@ -30,39 +30,36 @@ export default function NewsletterSignup() {
 
   if (done) {
     return (
-      <div className="flex items-center gap-2 text-sm text-pink-400">
-        <Check size={16} /> You&apos;re in. Watch your inbox.
+      <div className="news">
+        <h5>NEWSLETTER</h5>
+        <p style={{ display: 'flex', alignItems: 'center', gap: '9px', color: 'var(--green)' }}>
+          <svg width="13" height="10" viewBox="0 0 13 10" fill="none" aria-hidden="true"><path d="M0 5 L4.5 10 L13 0" stroke="#24c88a" strokeWidth="1.8" /></svg>
+          You&apos;re in. Watch your inbox.
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="space-y-2">
-      <div className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Newsletter</div>
-      <p className="text-xs text-[var(--muted-foreground)]">
-        Weekly insights from the trading desk. No spam.
-      </p>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Mail size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@email.com"
-            className="w-full pl-7 pr-2 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-xs"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={busy}
-          className="px-3 py-2 bg-gradient-to-br from-pink-500 to-pink-700 text-white rounded-lg text-xs font-semibold disabled:opacity-50 flex items-center gap-1"
-        >
-          {busy ? <Loader2 size={12} className="animate-spin" /> : 'Subscribe'}
+    <div className="news">
+      <h5>NEWSLETTER</h5>
+      <p>Weekly insights from the trading desk. No spam.</p>
+      <form onSubmit={submit}>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@email.com"
+          aria-label="Email address"
+        />
+        <button type="submit" disabled={busy} style={{ opacity: busy ? 0.5 : 1 }}>
+          {busy ? <CircleNotch size={14} className="animate-spin" style={{ display: 'inline-block' }} /> : 'Subscribe'}
         </button>
-      </div>
-      {error && <p className="text-[10px] text-red-400">{error}</p>}
-    </form>
+      </form>
+      {error && (
+        <p style={{ marginTop: '9px', fontSize: '11.5px', color: 'var(--red)' }}>{error}</p>
+      )}
+    </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { CalendarClock, Filter, AlertTriangle, Globe2 } from 'lucide-react';
 
 type Impact = 'high' | 'medium' | 'low';
 
@@ -57,6 +56,13 @@ const IMPACT_META: Record<Impact, { label: string; dot: string; pill: string }> 
   low:    { label: 'Low',    dot: 'bg-slate-500',  pill: 'bg-slate-500/15 text-slate-400' },
 };
 
+// Presentation-only: ATLAS accent colours per impact level.
+const IMPACT_ACCENT: Record<Impact, string> = {
+  high:   'var(--red)',
+  medium: 'var(--amber)',
+  low:    'var(--muted-2)',
+};
+
 const ALL_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'NZD'];
 
 export default function EconomicCalendar() {
@@ -81,111 +87,110 @@ export default function EconomicCalendar() {
   }, [filtered]);
 
   return (
-    <div className="relative space-y-8">
-      <div className="hero-glow" />
-
+    <div style={{ position: 'relative' }}>
       {/* Hero */}
-      <header className="space-y-3 anim-fade-up">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-medium text-[var(--muted-foreground)]">
-          <CalendarClock size={12} /> Live macro feed
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--foreground)]">
-          Economic <span className="gradient-text">calendar</span>
-        </h1>
-        <p className="text-base text-[var(--muted-foreground)] max-w-xl">
+      <div className="phead">
+        <p className="eyebrow">Live macro feed</p>
+        <h2>Economic calendar</h2>
+        <p className="sub">
           Stay ahead of high-impact news that moves markets. Filter by currency, impact, and date.
         </p>
-      </header>
+      </div>
 
       {/* Filters */}
-      <div className="glass rounded-2xl p-4 space-y-3">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--muted-foreground)] font-semibold">
-          <Filter size={12} /> Impact
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          <FilterPill active={impactFilter === 'all'} onClick={() => setImpactFilter('all')}>All</FilterPill>
-          {(['high', 'medium', 'low'] as Impact[]).map(i => (
-            <FilterPill key={i} active={impactFilter === i} onClick={() => setImpactFilter(i)}>
-              <span className={`w-1.5 h-1.5 rounded-full ${IMPACT_META[i].dot}`} />
-              {IMPACT_META[i].label}
-            </FilterPill>
-          ))}
-        </div>
+      <div className="card" style={{ padding: '25px 28px 30px' }}>
+        <div className="filters">
+          <div>
+            <div className="hd">
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+                <path d="M0 6 L3 6 L5 0 L8 11 L11 4 L13 6 L16 6" stroke="#d99405" strokeWidth="1.3" />
+              </svg>
+              IMPACT
+            </div>
+            <div className="grp">
+              <FilterPill active={impactFilter === 'all'} onClick={() => setImpactFilter('all')}>All</FilterPill>
+              {(['high', 'medium', 'low'] as Impact[]).map(i => (
+                <FilterPill key={i} active={impactFilter === i} onClick={() => setImpactFilter(i)}>
+                  <i style={{ background: IMPACT_ACCENT[i] }} />
+                  {IMPACT_META[i].label}
+                </FilterPill>
+              ))}
+            </div>
+          </div>
 
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--muted-foreground)] font-semibold pt-2">
-          <Globe2 size={12} /> Currency
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          <FilterPill active={currencyFilter === 'all'} onClick={() => setCurrencyFilter('all')}>All</FilterPill>
-          {ALL_CURRENCIES.map(c => (
-            <FilterPill key={c} active={currencyFilter === c} onClick={() => setCurrencyFilter(c)}>
-              {c}
-            </FilterPill>
-          ))}
+          <div>
+            <div className="hd">
+              <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="7.8" stroke="#d99405" strokeWidth="1.3" />
+                <path d="M8.5 4v9M6 6.5h5M6 10.5h5" stroke="#d99405" strokeWidth="1.3" />
+              </svg>
+              CURRENCY
+            </div>
+            <div className="grp">
+              <FilterPill active={currencyFilter === 'all'} onClick={() => setCurrencyFilter('all')}>All</FilterPill>
+              {ALL_CURRENCIES.map(c => (
+                <FilterPill key={c} active={currencyFilter === c} onClick={() => setCurrencyFilter(c)}>
+                  {c}
+                </FilterPill>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Events grouped by day */}
       {grouped.length === 0 ? (
-        <div className="glass rounded-3xl p-12 text-center">
-          <CalendarClock size={32} className="mx-auto text-[var(--muted-foreground)] mb-3" />
-          <p className="text-[var(--foreground)] font-medium">No events match your filters</p>
+        <div className="card" style={{ marginTop: 34 }}>
+          <p className="empty-line">No events match your filters</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {grouped.map(([date, events], gi) => (
-            <div key={date} style={{ animationDelay: `${gi * 60}ms` }} className="anim-fade-up space-y-2">
-              <div className="flex items-center gap-2 px-1">
-                <h3 className="text-sm font-bold text-[var(--foreground)] uppercase tracking-wider">{formatDay(date)}</h3>
-                <span className="text-xs text-[var(--muted-foreground)]">{new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                <div className="flex-1 h-px bg-[var(--border)]" />
-                <span className="text-xs text-[var(--muted-foreground)]">{events.length} event{events.length === 1 ? '' : 's'}</span>
+        <div>
+          {grouped.map(([date, events]) => (
+            <div key={date} className="daygroup">
+              <div className="dh">
+                <b style={{ textTransform: 'uppercase' }}>{formatDay(date)}</b>
+                <span>{new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                <em>{events.length} event{events.length === 1 ? '' : 's'}</em>
               </div>
 
-              <div className="glass rounded-2xl divide-y divide-[var(--border)] overflow-hidden">
-                {events.map(ev => {
-                  const m = IMPACT_META[ev.impact];
-                  return (
-                    <div key={ev.id} className="grid grid-cols-[64px_1fr_auto] sm:grid-cols-[64px_1fr_auto_auto_auto] items-center gap-3 p-4 hover:bg-[var(--muted)]/30 transition-colors">
-                      {/* Time */}
-                      <div className="text-sm font-mono font-semibold text-[var(--foreground)]">{ev.time}</div>
-
-                      {/* Title + country */}
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-base">{ev.flag}</span>
-                          <span className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-[var(--muted)]/40 text-[var(--muted-foreground)]">{ev.currency}</span>
-                          <span className={`flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${m.pill}`}>
-                            {ev.impact === 'high' && <AlertTriangle size={10} />}
-                            {m.label}
-                          </span>
-                        </div>
-                        <div className="text-sm font-medium text-[var(--foreground)] truncate mt-1">{ev.title}</div>
-                      </div>
-
-                      {/* Forecast/previous/actual on wide screens */}
-                      <div className="hidden sm:block text-right">
-                        <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Forecast</div>
-                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.forecast ?? '—'}</div>
-                      </div>
-                      <div className="hidden sm:block text-right">
-                        <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Previous</div>
-                        <div className="text-sm font-semibold text-[var(--foreground)]">{ev.previous ?? '—'}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Actual</div>
-                        <div className={`text-sm font-bold ${ev.actual ? 'text-emerald-400' : 'text-[var(--muted-foreground)]'}`}>{ev.actual ?? '—'}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {events.map(ev => {
+                const m = IMPACT_META[ev.impact];
+                const col = IMPACT_ACCENT[ev.impact];
+                return (
+                  <div key={ev.id} className="ev" style={{ borderLeftColor: col }}>
+                    <span className="t">{ev.time}</span>
+                    <span className="evwho">
+                      <span className="cc">{ev.flag}</span>
+                      <span className="cur">{ev.currency}</span>
+                      <span className="imp" style={{ color: col, textTransform: 'uppercase' }}>
+                        <svg width="10" height="9" viewBox="0 0 10 9" fill="none" aria-hidden="true">
+                          <path d="M5 0 L10 9 H0 Z" fill="currentColor" />
+                        </svg>
+                        {m.label}
+                      </span>
+                    </span>
+                    <span className="col">
+                      <b>FORECAST</b>
+                      <em className={ev.forecast ? undefined : 'dash'}>{ev.forecast ?? '—'}</em>
+                    </span>
+                    <span className="col">
+                      <b>PREVIOUS</b>
+                      <em className={ev.previous ? undefined : 'dash'}>{ev.previous ?? '—'}</em>
+                    </span>
+                    <span className="col">
+                      <b>ACTUAL</b>
+                      <em className={ev.actual ? undefined : 'dash'}>{ev.actual ?? '—'}</em>
+                    </span>
+                    <span className="name">{ev.title}</span>
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>
       )}
 
-      <p className="text-xs text-[var(--muted-foreground)] text-center">
+      <p className="footnote">
         Sample data — live feed (ForexFactory / Trading Economics) integration coming soon.
       </p>
     </div>
@@ -194,14 +199,7 @@ export default function EconomicCalendar() {
 
 function FilterPill({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-        active
-          ? 'bg-gradient-to-br from-pink-500 to-pink-700 text-white shadow shadow-teal-500/30'
-          : 'bg-[var(--muted)]/40 text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-      }`}
-    >
+    <button type="button" onClick={onClick} className={active ? 'chip on' : 'chip'}>
       {children}
     </button>
   );

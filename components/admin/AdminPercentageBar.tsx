@@ -6,19 +6,21 @@ interface AdminPercentageBarProps {
 
 export default function AdminPercentageBar({ items }: AdminPercentageBarProps) {
   return (
-    <div className="space-y-3">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {items.map((item) => (
         <div key={item.label}>
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-[var(--foreground)] font-medium">{item.label}</span>
-            <span className="text-[var(--muted-foreground)]">
+          <div className="flex justify-between items-baseline" style={{ marginBottom: 8 }}>
+            <span style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{item.label}</span>
+            <span style={{ fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5, color: 'var(--text)' }}>
               {item.value} ({item.percentage}%)
             </span>
           </div>
-          <div className="h-2.5 rounded-full bg-[var(--muted)] overflow-hidden">
+          <div style={{ height: 2, background: 'var(--rail)', position: 'relative' }}>
             <div
-              className="h-full rounded-full transition-all"
-              style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
+              style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0,
+                width: `${item.percentage}%`, background: item.color,
+              }}
             />
           </div>
         </div>

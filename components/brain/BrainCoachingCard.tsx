@@ -2,71 +2,81 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Trophy, AlertTriangle, TrendingUp,
-  Flame, HeartPulse, ShieldAlert, Star, Zap, Sparkles,
-} from 'lucide-react';
+  Medal, Warning, TrendUp,
+  Fire, ShieldWarning, Star, Lightning, Sparkle,
+} from '@phosphor-icons/react';
+import { Heartbeat as HeartPulse } from '@phosphor-icons/react';
 import type { CoachingMessage, CoachingCategory } from '@/lib/types';
 
 // ─── Category Visual Config ────────────────────────────────────────
 
+/* ── ATLAS raw tokens (brain dimension is position:fixed — see BrainMiniWidget) ── */
+const T = {
+  panel2: '#0c1119',
+  line: '#182432',
+  text2: '#9fb0c2',
+  muted2: '#5c6b7e',
+  muted3: '#4a5867',
+};
+
 const CATEGORY_CONFIG: Record<CoachingCategory, {
-  icon: typeof Trophy;
+  icon: typeof Medal;
   color: string;
   glow: string;
   label: string;
 }> = {
   reinforcement: {
-    icon: Trophy,
-    color: '#34d399',
-    glow: 'rgba(52,211,153,0.2)',
+    icon: Medal,
+    color: '#24c88a',
+    glow: 'rgba(36,200,138,0.12)',
     label: 'Great execution',
   },
   encouragement: {
-    icon: TrendingUp,
-    color: '#60a5fa',
-    glow: 'rgba(96,165,250,0.2)',
+    icon: TrendUp,
+    color: '#24c88a',
+    glow: 'rgba(36,200,138,0.12)',
     label: 'Keep improving',
   },
   correction: {
-    icon: AlertTriangle,
-    color: '#f87171',
-    glow: 'rgba(248,113,113,0.2)',
+    icon: Warning,
+    color: '#ff4d5e',
+    glow: 'rgba(255,77,94,0.12)',
     label: 'Needs attention',
   },
   streak: {
-    icon: Flame,
-    color: '#fbbf24',
-    glow: 'rgba(251,191,36,0.2)',
+    icon: Fire,
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Streak bonus',
   },
   recovery: {
     icon: HeartPulse,
-    color: '#a78bfa',
-    glow: 'rgba(167,139,250,0.2)',
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Recovery mode',
   },
   anti_gaming: {
-    icon: ShieldAlert,
-    color: '#fb923c',
-    glow: 'rgba(251,146,60,0.2)',
+    icon: ShieldWarning,
+    color: '#ff4d5e',
+    glow: 'rgba(255,77,94,0.12)',
     label: 'Flagged',
   },
   transition: {
     icon: Star,
-    color: '#e879f9',
-    glow: 'rgba(232,121,249,0.25)',
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Stage transition',
   },
   comeback: {
-    icon: Zap,
-    color: '#38bdf8',
-    glow: 'rgba(56,189,248,0.2)',
+    icon: Lightning,
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Welcome back',
   },
   onboarding: {
-    icon: Sparkles,
-    color: '#a3e635',
-    glow: 'rgba(163,230,53,0.2)',
+    icon: Sparkle,
+    color: '#d99405',
+    glow: 'rgba(217,148,5,0.12)',
     label: 'Getting started',
   },
 };
@@ -105,30 +115,47 @@ function CoachingContent({ coaching }: { coaching: CoachingMessage }) {
 
   return (
     <div
-      className="flex items-start gap-3 px-4 py-3 rounded-xl backdrop-blur-md border max-w-xl mx-auto"
       style={{
-        background: 'rgba(5,5,16,0.7)',
-        borderColor: `${config.color}33`,
-        boxShadow: `0 0 20px ${config.glow}`,
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 14,
+        maxWidth: 576,
+        margin: '0 auto',
+        border: `1px solid ${T.line}`,
+        borderRadius: 2,
+        background: T.panel2,
+        padding: '13px 18px 15px',
       }}
     >
+      {/* category accent rule — ATLAS card accent */}
+      <span style={{ position: 'absolute', left: 0, top: -1, width: 44, height: 2.5, background: config.color }} />
+
       <div
-        className="flex-shrink-0 mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center"
-        style={{ background: `${config.color}15` }}
+        style={{
+          flex: 'none',
+          marginTop: 1,
+          width: 28,
+          height: 28,
+          borderRadius: 2,
+          border: `1px solid ${config.color}55`,
+          background: config.glow,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Icon size={16} style={{ color: config.color }} aria-hidden="true" />
+        <Icon size={14} style={{ color: config.color }} aria-hidden="true" />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: config.color }}>
-            {config.label}
-          </span>
-        </div>
-        <p className="text-sm text-white/85 leading-relaxed">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: 9.5, letterSpacing: '.04em', textTransform: 'uppercase', color: config.color }}>
+          {config.label}
+        </p>
+        <p style={{ margin: '7px 0 0', fontSize: 12.5, lineHeight: '19px', color: T.text2 }}>
           {coaching.message}
         </p>
-        <p className="text-[9px] text-white/25 mt-1.5 italic" aria-label="Disclaimer">
+        <p style={{ margin: '9px 0 0', fontSize: 10.5, lineHeight: '15px', color: T.muted3 }} aria-label="Disclaimer">
           {coaching.disclaimer}
         </p>
       </div>

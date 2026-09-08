@@ -1,367 +1,384 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import type { CSSProperties } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Search, ArrowRight, Star, TrendingUp, Clock, BookOpen, Mail, CheckCircle, Sparkles } from 'lucide-react';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
-import { BLOG_ARTICLES, POPULAR_SLUGS } from '@/lib/blog-articles';
+import { BLOG_ARTICLES, POPULAR_SLUGS, type BlogArticle } from '@/lib/blog-articles';
 
-const CATEGORY_GRADIENTS: Record<string, string> = {
-  'Psychology':       'from-violet-500 via-fuchsia-500 to-purple-500',
-  'Mistakes':         'from-rose-500 via-orange-500 to-red-500',
-  'Performance':      'from-pink-500 via-teal-500 to-fuchsia-500',
-  'Tools':            'from-fuchsia-500 via-blue-500 to-indigo-500',
-  'Comparison':       'from-amber-500 via-yellow-500 to-orange-500',
-  'Education':        'from-pink-500 via-emerald-500 to-green-500',
-  'default':          'from-pink-500 via-cyan-500 to-fuchsia-500',
-};
+const SIDE_PATHS = [
+  'M0 49 L5 60 L10 44 L15 60 L20 51 L25 50 L30 40 L40 44 L52 30 L64 34 L76 20 L88 24 L104 8',
+  'M0 94 L5 94 L10 104 L15 81 L20 97 L25 91 L34 78 L46 84 L58 62 L70 68 L82 44 L94 50 L104 26',
+  'M0 63 L5 53 L10 43 L15 50 L20 62 L25 61 L34 48 L46 52 L58 36 L70 40 L82 24 L94 28 L104 10',
+];
 
-function gradientFor(category: string): string {
-  return CATEGORY_GRADIENTS[category] ?? CATEGORY_GRADIENTS.default;
+function ClockIcon() {
+  return (
+    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+      <circle cx="4.5" cy="4.5" r="4" stroke="#5c6b7e" />
+      <path d="M4.5 2.4v2.4" stroke="#5c6b7e" />
+    </svg>
+  );
+}
+
+function ReadArrow() {
+  return (
+    <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
+      <path d="M3 0 L8 5 M8 5 L3 10 M8 5 H0" stroke="#d99405" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function ArticleCard({
+  article,
+  className,
+  style,
+}: {
+  article: BlogArticle;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  const cat = article.category.toUpperCase();
+  return (
+    <Link
+      className={className ? `art ${className}` : 'art'}
+      href={`/blog/${article.slug}`}
+      style={style}
+      data-category={article.category}
+    >
+      <div className="meta"><b>{cat}</b><span><ClockIcon />5 min</span></div>
+      <h3>{article.title}</h3>
+      {article.excerpt ? <p>{article.excerpt}</p> : null}
+      <span className="readlink">Read article<ReadArrow /></span>
+    </Link>
+  );
 }
 
 export default function BlogPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [catsExpanded, setCatsExpanded] = useState(false);
 
   const categories = useMemo(() => {
-    const set = new Set<string>(['All']);
-    BLOG_ARTICLES.forEach(a => set.add(a.category));
+    const set = new Set<string>();
+    BLOG_ARTICLES.forEach((a) => set.add(a.category));
     return Array.from(set);
   }, []);
 
-  const filtered = useMemo(() => {
-    let list = BLOG_ARTICLES;
-    if (activeCategory !== 'All') list = list.filter(a => a.category === activeCategory);
+  // Cards mount whenever they pass the search text — category no longer
+  // shrinks this list. Every mounted card carries data-category (see
+  // ArticleCard), and category filtering hides/reveals among these mounted
+  // cards by matching that attribute's value, case-insensitively, rather
+  // than by removing non-matching articles from the render tree.
+  const searchFiltered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter(a =>
-        a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [search, activeCategory]);
+    if (!q) return BLOG_ARTICLES;
+    return BLOG_ARTICLES.filter(
+      (a) => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q),
+    );
+  }, [search]);
+
+  // search + category combined — drives the existing "Showing X of Y" count
+  // above the grid (unchanged behavior) and the pagination math below.
+  const filtered = useMemo(() => {
+    if (activeCategory === 'All') return searchFiltered;
+    const target = activeCategory.toLowerCase();
+    return searchFiltered.filter((a) => a.category.toLowerCase() === target);
+  }, [searchFiltered, activeCategory]);
+
+  // each matching card's position within the active category — used to
+  // decide which 6-at-a-time window is visible, independent of which of
+  // the two columns it happens to render in
+  const categoryPos = useMemo(
+    () => new Map(filtered.map((a, i) => [a.slug, i])),
+    [filtered],
+  );
 
   const popular = POPULAR_SLUGS
-    .map(s => BLOG_ARTICLES.find(a => a.slug === s))
-    .filter(Boolean) as typeof BLOG_ARTICLES;
+    .map((s) => BLOG_ARTICLES.find((a) => a.slug === s))
+    .filter(Boolean) as BlogArticle[];
 
   const featured = popular[0];
   const secondary = popular.slice(1, 4);
   const trending = popular.slice(0, 5);
 
+  // pagination — cards stay in the DOM; only visibility toggles
+  const BATCH = 6;
+  const total = filtered.length;
+  const [visibleCount, setVisibleCount] = useState(BATCH);
+  // start of the most-recently-revealed batch; Infinity means "nothing to
+  // animate" so the first paint (and a fresh filter) never plays the reveal
+  const [revealFrom, setRevealFrom] = useState(Infinity);
+  const [fading, setFading] = useState(false);
+  const [indicatorGone, setIndicatorGone] = useState(false);
+
+  const allShown = visibleCount >= total;
+
+  // a new category or search resets pagination to the first 6 of that set.
+  // Adjusted during render (React's sanctioned pattern for "state derived
+  // from a changed prop") rather than in an effect, so there is no extra
+  // committed frame showing the old count before the reset applies.
+  const filterKey = `${activeCategory}|${search}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(BATCH);
+    setRevealFrom(Infinity);
+    setFading(false);
+    setIndicatorGone(false);
+  }
+
+  // "all shown" can happen either from clicking through or from a filter
+  // that already has 6 or fewer matches — either way, hold the completed
+  // message for 2s then fade it, rather than leaving it up indefinitely.
+  // (fading/indicatorGone only need resetting on a filter change, which the
+  // render-time block above already does — allShown can't flip back to
+  // false any other way, since total only changes when the filter does.)
+  useEffect(() => {
+    if (!allShown) return;
+    const t = setTimeout(() => setFading(true), 2000);
+    return () => clearTimeout(t);
+  }, [allShown]);
+
+  useEffect(() => {
+    if (!fading) return;
+    const t = setTimeout(() => setIndicatorGone(true), 500);
+    return () => clearTimeout(t);
+  }, [fading]);
+
+  function handleLoadMore() {
+    const next = Math.min(total, visibleCount + BATCH);
+    setRevealFrom(visibleCount);
+    setVisibleCount(next);
+  }
+
+  // colA/colB membership is fixed by position in the mounted (search-only)
+  // set, so switching categories never moves a card to the other column —
+  // only its visibility, via cardProps below, changes.
+  const indexed = searchFiltered.map((a, i) => ({ a, i }));
+  const colA = indexed.filter(({ i }) => i % 2 === 0);
+  const colB = indexed.filter(({ i }) => i % 2 === 1);
+
+  function cardProps(article: BlogArticle) {
+    const pos = categoryPos.get(article.slug);
+    const hidden = pos === undefined || pos >= visibleCount;
+    const revealing = !hidden && pos !== undefined && pos >= revealFrom;
+    return {
+      className: hidden ? 'is-hidden' : revealing ? 'is-revealing' : undefined,
+      style:
+        revealing && pos !== undefined
+          ? ({ ['--stagger' as string]: `${(pos - revealFrom) * 0.07}s` } as CSSProperties)
+          : undefined,
+    };
+  }
+
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <div className="atlas-site">
       <LandingNav />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-pink-500 opacity-[0.06] rounded-full blur-[140px]" />
+      <div className="phero" style={{ '--band': '380px', padding: '87px 0 0' } as CSSProperties}>
+        <div className="panelgrid" style={{ width: '520px' }}></div>
+        <div className="wrap">
+          <p className="kicker" style={{ color: '#fff', fontSize: '12.5px', marginBottom: '19px' }}>TRADING BLOG</p>
+          <div className="bo-mask" style={{ overflow: 'hidden', marginTop: '18px' }}>
+            <h1 className="bo-heading">Real research on<em style={{ fontWeight: 400 }}>trading psychology</em></h1>
+          </div>
+          <p className="sub bo-lead" style={{ marginTop: '41px' }}>Expert articles on mistake patterns, behavioral analytics, and data-driven performance improvement.</p>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 mb-4"
-          >
-            <span className="neon-eyebrow text-[11px] font-bold tracking-[0.2em] uppercase">
-              Trading Blog
-            </span>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight"
-          >
-            Real research on{' '}
-            <span className="neon-headline">trading psychology</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-4 text-base text-[var(--muted-foreground)] max-w-2xl mx-auto"
-          >
-            Expert articles on mistake patterns, behavioral analytics, and data-driven performance improvement.
-          </motion.p>
-        </div>
-      </section>
+      </div>
 
-      {/* Featured + Secondary */}
+      {/* featured */}
       {featured && (
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              {/* Featured large card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="lg:col-span-2 lg:row-span-2"
-              >
-                <Link
-                  href={`/blog/${featured.slug}`}
-                  className="group relative block rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-pink-500/40 transition-all h-full"
-                >
-                  <ArticleCover article={featured} large />
-                  <div className="p-5 sm:p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400">
-                        <Star size={10} className="fill-amber-400" /> Featured
-                      </span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400">
-                        {featured.category}
-                      </span>
-                      <span className="text-[10px] text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={10} /> 8 min read</span>
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight group-hover:text-pink-400 transition-colors">{featured.title}</h2>
-                    <p className="mt-3 text-sm text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">{featured.excerpt}</p>
-                    <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-pink-400 group-hover:gap-2.5 transition-all">
-                      Read article <ArrowRight size={14} />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+        <div className="wrap" style={{ marginTop: '67px' }}>
+          <hr className="inset-rule bo-divider" />
+          <div className="feat bo-feat">
+            <div>
+              <Link href={`/blog/${featured.slug}`}>
+                <div className="thumb" style={{ height: '300px' }}>
+                  <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }}></span>
+                  <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }}></span>
+                  <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }}></span>
+                  <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }}></span>
+                  <span className="kicker bo-kicker" style={{ left: '50%', transform: 'translateX(-50%)', top: '19px', whiteSpace: 'nowrap' }}>{featured.category.toUpperCase()}</span>
+                  <span className="badge bo-badge">FEATURED</span>
+                  <svg viewBox="0 0 724 254" preserveAspectRatio="none" style={{ position: 'absolute', left: '18px', top: '28px', width: '724px', maxWidth: 'calc(100% - 36px)', height: '254px' }} fill="none">
+                    <defs><linearGradient id="bf1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#d99405" stopOpacity=".22" /><stop offset="1" stopColor="#d99405" stopOpacity="0" /></linearGradient></defs>
+                    <path className="bo-area" d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48 L724 254 Z" fill="url(#bf1)" />
+                    <path className="bo-line" d="M0 254 L34 240 L69 239 L103 221 L138 201 L172 208 L207 186 L241 190 L276 168 L310 174 L345 150 L379 158 L414 132 L448 140 L483 112 L517 122 L552 96 L586 104 L621 74 L655 84 L690 52 L724 48" stroke="#d99405" strokeWidth="1.8" />
+                    <circle className="bo-dot" cx="724" cy="48" r="4.5" fill="#d99405" />
+                  </svg>
+                  <span className="slug bo-slug">/{featured.slug}</span>
+                </div>
+                <div className="meta bo-meta"><b>{featured.category.toUpperCase()}</b><span><ClockIcon />8 min read</span></div>
+                <div className="bo-mask" style={{ overflow: 'hidden', marginTop: '14px' }}>
+                  <h2 className="bo-title">{featured.title}</h2>
+                </div>
+                <p className="dek bo-dek">{featured.excerpt}</p>
+                <span className="readlink bo-readlink">Read article<ReadArrow /></span>
+              </Link>
+            </div>
 
-              {/* Secondary stack */}
+            <div className="side3">
               {secondary.map((a, i) => (
-                <motion.div
+                <Link
                   key={a.slug}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}
+                  href={`/blog/${a.slug}`}
+                  className="bo-side"
+                  style={{
+                    ...(i === 2 ? { borderTop: '1px solid var(--line)', paddingTop: '24px' } : {}),
+                    ['--bo-delay' as string]: `${1.3 + i * 0.18}s`,
+                    ['--bo-chart-delay' as string]: `${1.55 + i * 0.18}s`,
+                  } as CSSProperties}
                 >
-                  <Link
-                    href={`/blog/${a.slug}`}
-                    className="group flex items-stretch gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-pink-500/30 transition-all h-full"
-                  >
-                    <div className="w-24 sm:w-28 shrink-0">
-                      <ArticleCover article={a} compact />
-                    </div>
-                    <div className="flex-1 min-w-0 p-3">
-                      <div className="text-[9px] font-bold uppercase tracking-widest text-pink-400 mb-1">{a.category}</div>
-                      <h3 className="text-sm font-bold leading-tight line-clamp-2 group-hover:text-pink-400 transition-colors">{a.title}</h3>
-                      <div className="mt-1.5 flex items-center gap-2 text-[10px] text-[var(--muted-foreground)]">
-                        <Clock size={9} /> 5 min read
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
+                  <div className="thumb" style={i === 2 ? { height: '110px' } : undefined}>
+                    <svg
+                      viewBox={i === 2 ? '0 0 104 64' : '0 0 104 104'}
+                      preserveAspectRatio="none"
+                      style={{ position: 'absolute', left: '18px', top: '28px', width: '104px', height: i === 2 ? '64px' : '104px' }}
+                      fill="none"
+                    >
+                      <path d={`${SIDE_PATHS[i]} ${i === 2 ? 'L104 64 L0 64 Z' : 'L104 104 L0 104 Z'}`} fill="#d99405" fillOpacity=".12" />
+                      <path className="bo-side-line" d={SIDE_PATHS[i]} stroke="#d99405" strokeWidth="1.8" />
+                    </svg>
+                  </div>
+                  <div><b>{a.category.toUpperCase()}</b><h4>{a.title}</h4><span>5 min read</span></div>
+                </Link>
               ))}
             </div>
           </div>
-        </section>
+        </div>
       )}
 
-      {/* Filters */}
-      <section className="py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-            <div className="flex flex-col md:flex-row md:items-center gap-3">
-              <div className="relative flex-1">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search articles..."
-                  className="w-full pl-9 pr-3 py-2.5 bg-black/30 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-pink-500/50 transition-colors"
-                />
-              </div>
-              <p className="text-xs text-[var(--muted-foreground)] tabular-nums">
-                Showing <span className="font-bold text-[var(--foreground)]">{filtered.length}</span> of {BLOG_ARTICLES.length}
-              </p>
+      {/* browse */}
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '158px', paddingTop: '75px' }}>
+        <div className="wrap">
+          <hr className="inset-rule" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '35px', flexWrap: 'wrap' }}>
+            <div className="searchbar" style={{ flex: 1 }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="5.2" stroke="#5c6b7e" strokeWidth="1.5" /><path d="M10 10 L14 14" stroke="#5c6b7e" strokeWidth="1.5" /></svg>
+              <input
+                type="search"
+                placeholder="Search articles..."
+                aria-label="Search articles"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {categories.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setActiveCategory(c)}
-                  className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${
-                    activeCategory === c
-                      ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-slate-900'
-                      : 'bg-black/30 text-[var(--muted-foreground)] hover:bg-black/50 hover:text-[var(--foreground)]'
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
+            <p className="count">Showing <b>{filtered.length} of {BLOG_ARTICLES.length}</b></p>
+          </div>
+          <div className="chips">
+            <button className={activeCategory === 'All' ? 'on' : undefined} onClick={() => setActiveCategory('All')}>All</button>
+            {categories.map((c) => (
+              <button key={c} className={activeCategory === c ? 'on' : undefined} onClick={() => setActiveCategory(c)}>{c}</button>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Main grid + sidebar */}
-      <section className="pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
-            {/* Article grid */}
-            <div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {filtered.map((a, i) => (
-                  <ArticleCard key={a.slug} article={a} idx={i} />
-                ))}
-              </div>
-              {filtered.length === 0 && (
-                <p className="text-center text-sm text-[var(--muted-foreground)] py-12">
-                  No articles match your filters.
-                </p>
+      {/* articles */}
+      <div style={{ borderTop: '1px solid var(--line)', marginTop: '67px', paddingTop: '55px', paddingBottom: '80px' }}>
+        <div className="wrap">
+          <hr className="inset-rule" />
+
+          {/* mobile-only: the sidebar category list can sit far below the
+              fold on small screens, so the same filtering stays reachable
+              here as a horizontal scrollable pill row */}
+          <div className="cats-mobile">
+            <button type="button" className={activeCategory === 'All' ? 'on' : undefined} onClick={() => setActiveCategory('All')}>All</button>
+            {categories.map((c) => (
+              <button key={c} type="button" className={activeCategory === c ? 'on' : undefined} onClick={() => setActiveCategory(c)}>{c}</button>
+            ))}
+          </div>
+
+          {/* .artwrap is the whole two-column row — main content and the
+              sidebar are direct siblings here, sharing one flex row, so
+              they start at the same top edge and the sidebar never gets
+              pushed onto its own row by the grid's auto-placement. */}
+          <div className="artwrap">
+            <div className="artmain">
+              {total === 0 ? (
+                <div className="artempty">No articles in this category yet.</div>
+              ) : (
+                <>
+                  <div className="artgrid">
+                    <div className="artcol" id="artcolA">
+                      {colA.map(({ a }) => <ArticleCard key={a.slug} article={a} {...cardProps(a)} />)}
+                    </div>
+                    <div className="artcol" id="artcolB">
+                      {colB.map(({ a }) => <ArticleCard key={a.slug} article={a} {...cardProps(a)} />)}
+                    </div>
+                  </div>
+
+                  <div className="loadmore-row">
+                    {!indicatorGone && (
+                      <p className={`loadmore-count${fading ? ' is-fading' : ''}`}>
+                        {allShown
+                          ? (activeCategory !== 'All'
+                              ? `All ${total} ${activeCategory} articles loaded`
+                              : 'All articles loaded')
+                          : `Showing ${visibleCount} of ${total} articles${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className={`loadmore-btn${allShown ? ' is-done' : ''}`}
+                      onClick={handleLoadMore}
+                    >
+                      Load More Articles <span className="loadmore-arrow">→</span>
+                    </button>
+                  </div>
+                </>
               )}
             </div>
 
-            {/* Sidebar */}
-            <aside className="space-y-5 lg:sticky lg:top-20 self-start">
-              {/* Trending */}
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp size={14} className="text-amber-400" />
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">Trending now</h3>
-                </div>
-                <div className="space-y-3">
-                  {trending.map((a, i) => (
-                    <Link
-                      key={a.slug}
-                      href={`/blog/${a.slug}`}
-                      className="group flex items-start gap-2.5"
-                    >
-                      <span className="text-lg font-bold tabular-nums bg-gradient-to-br from-orange-400 to-amber-400 bg-clip-text text-transparent shrink-0 leading-none">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <span className="text-xs leading-snug line-clamp-2 group-hover:text-pink-400 transition-colors">{a.title}</span>
-                    </Link>
-                  ))}
-                </div>
+            <div className="blogside">
+              <h4>TRENDING NOW</h4>
+              <div className="trend">
+                {trending.map((a) => (
+                  <Link key={a.slug} href={`/blog/${a.slug}`}>{a.title}</Link>
+                ))}
               </div>
-
-              {/* Categories */}
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <BookOpen size={14} className="text-pink-400" />
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--foreground)]">By Category</h3>
-                </div>
-                <div className="space-y-2">
-                  {categories.filter(c => c !== 'All').map(c => {
-                    const count = BLOG_ARTICLES.filter(a => a.category === c).length;
-                    return (
-                      <button
-                        key={c}
-                        onClick={() => setActiveCategory(c)}
-                        className={`w-full flex items-center justify-between gap-2 text-xs px-3 py-2 rounded-lg transition-colors ${
-                          activeCategory === c ? 'bg-pink-500/15 text-pink-300' : 'text-[var(--muted-foreground)] hover:bg-black/30 hover:text-[var(--foreground)]'
-                        }`}
-                      >
-                        <span className="font-medium truncate">{c}</span>
-                        <span className="text-[10px] tabular-nums opacity-70 shrink-0">{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="cats">
+                <h4>BY CATEGORY</h4>
+                <a
+                  role="button"
+                  tabIndex={0}
+                  className={activeCategory === 'All' ? 'on' : undefined}
+                  onClick={() => setActiveCategory('All')}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory('All'); } }}
+                >All<span>{BLOG_ARTICLES.length}</span></a>
+                {categories.map((c, i) => (
+                  <a
+                    key={c}
+                    role="button"
+                    tabIndex={0}
+                    // "All" is always item 1, so category index 4 is item 6
+                    // — everything after that is hidden until expanded
+                    className={[
+                      activeCategory === c ? 'on' : '',
+                      !catsExpanded && i >= 5 ? 'is-hidden' : '',
+                    ].filter(Boolean).join(' ') || undefined}
+                    onClick={() => setActiveCategory(c)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveCategory(c); } }}
+                  >{c}<span>{BLOG_ARTICLES.filter((a) => a.category === c).length}</span></a>
+                ))}
+                {categories.length > 5 && (
+                  <button
+                    type="button"
+                    className="cats-toggle"
+                    onClick={() => setCatsExpanded((v) => !v)}
+                  >
+                    {catsExpanded ? 'Show less ↑' : 'Show more categories ↓'}
+                  </button>
+                )}
               </div>
-
-              {/* Newsletter */}
-              <div className="relative rounded-2xl border border-pink-500/30 bg-gradient-to-br from-pink-500/10 via-emerald-500/5 to-fuchsia-500/10 p-5 overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-pink-400/10 blur-2xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={14} className="text-pink-400" />
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-pink-300">Weekly digest</h3>
-                  </div>
-                  <p className="text-xs text-[var(--muted-foreground)] leading-relaxed mb-3">
-                    One email per week. Best new article + a hand-picked dataset insight from the platform.
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/40 border border-[var(--border)] text-xs">
-                      <Mail size={12} className="text-[var(--muted-foreground)]" />
-                      <span className="text-[var(--muted-foreground)]">your@email.com</span>
-                    </div>
-                    <button className="w-full px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 transition-colors">
-                      Subscribe
-                    </button>
-                  </div>
-                  <div className="mt-3 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
-                    <CheckCircle size={10} className="text-pink-400" /> No spam · Unsubscribe anytime
-                  </div>
-                </div>
-              </div>
-            </aside>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
 
       <Footer />
     </div>
-  );
-}
-
-function ArticleCover({ article, large, compact }: {
-  article: { slug: string; title: string; category: string };
-  large?: boolean; compact?: boolean;
-}) {
-  const grad = gradientFor(article.category);
-  const h = large ? 'aspect-[16/8]' : compact ? 'h-full' : 'aspect-[16/9]';
-  return (
-    <div className={`relative ${h} bg-gradient-to-br ${grad} overflow-hidden`}>
-      {/* Grid backdrop */}
-      <div className="absolute inset-0 opacity-[0.08]" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)',
-        backgroundSize: large ? '40px 40px' : '20px 20px',
-      }} />
-      {/* Glow */}
-      <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-      {/* Decoration: chart-like svg */}
-      <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 200 100" preserveAspectRatio="none">
-        <polyline fill="none" stroke="white" strokeWidth="1.5" points="0,80 25,72 50,75 75,60 100,65 125,48 150,52 175,32 200,28" />
-      </svg>
-      {/* Title block — only on large/non-compact */}
-      {!compact && (
-        <div className="absolute top-3 left-3">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-white/90 bg-black/30 px-2 py-0.5 rounded backdrop-blur-sm">
-            {article.category}
-          </span>
-        </div>
-      )}
-      {/* Slug-derived monogram */}
-      {!compact && (
-        <div className="absolute bottom-3 right-3 text-white/40 font-mono text-[10px]">/{article.slug.slice(0, 24)}</div>
-      )}
-    </div>
-  );
-}
-
-function ArticleCard({ article, idx }: {
-  article: { slug: string; title: string; excerpt: string; category: string };
-  idx: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.35, delay: Math.min(idx * 0.03, 0.3) }}
-    >
-      <Link
-        href={`/blog/${article.slug}`}
-        className="group block rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-pink-500/30 transition-colors h-full"
-      >
-        <ArticleCover article={article} />
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-400">
-              {article.category}
-            </span>
-            <span className="text-[9px] text-[var(--muted-foreground)] flex items-center gap-1"><Clock size={9} /> 5 min</span>
-          </div>
-          <h3 className="text-sm font-bold leading-tight line-clamp-2 group-hover:text-pink-400 transition-colors">{article.title}</h3>
-          <p className="mt-2 text-xs text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">{article.excerpt}</p>
-          <div className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-pink-400 group-hover:gap-2 transition-all">
-            Read article <ArrowRight size={12} />
-          </div>
-        </div>
-      </Link>
-    </motion.div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp } from 'lucide-react';
+import { TrendUp } from '@phosphor-icons/react';
 import { useAdminNeuroScoreTrends } from '@/hooks/useAdminStore';
 import { STAGE_COLORS, STAGE_ORDER } from '@/lib/stage-config';
 import type { Stage } from '@/lib/types';
@@ -31,16 +31,16 @@ export default function TrendsPage() {
   // ─── Loading skeleton ──────────────────────────────────────────────
   if (data === undefined) {
     return (
-      <div className="space-y-6 max-w-5xl animate-pulse">
-        <div className="h-6 w-48 bg-[var(--muted)] rounded" />
-        <div className="h-8 w-64 bg-[var(--muted)] rounded" />
-        <div className="flex gap-3">
-          <div className="h-20 flex-1 bg-[var(--muted)] rounded-xl" />
-          <div className="h-20 flex-1 bg-[var(--muted)] rounded-xl" />
-          <div className="h-20 flex-1 bg-[var(--muted)] rounded-xl" />
+      <div className="animate-pulse" style={{ maxWidth: 1060, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ height: 24, width: 190, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div style={{ height: 34, width: 260, background: 'var(--panel-2)', borderRadius: 2 }} />
+        <div className="split-3">
+          <div style={{ height: 88, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+          <div style={{ height: 88, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+          <div style={{ height: 88, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
         </div>
-        <div className="h-72 bg-[var(--muted)] rounded-xl" />
-        <div className="h-48 bg-[var(--muted)] rounded-xl" />
+        <div style={{ height: 288, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
+        <div style={{ height: 192, background: 'var(--panel-2)', border: '1px solid var(--line)', borderRadius: 2 }} />
       </div>
     );
   }
@@ -50,13 +50,17 @@ export default function TrendsPage() {
   // ─── Empty state ───────────────────────────────────────────────────
   if (trends.length === 0) {
     return (
-      <div className="space-y-6 max-w-5xl">
+      <div style={{ maxWidth: 1060 }}>
         <Header />
         <RangeSelector selectedDays={selectedDays} onSelect={setSelectedDays} />
-        <div className="text-center py-16 text-[var(--muted-foreground)]">
-          <TrendingUp size={40} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No snapshot data available for this period.</p>
-          <p className="text-xs mt-1">Daily snapshots are created at midnight UTC. Check back after the first snapshot runs.</p>
+        <div className="blank" style={{ marginTop: 24, padding: '52px 28px' }}>
+          <span className="corner" style={{ left: -1, top: -1, borderRight: 0, borderBottom: 0 }} />
+          <span className="corner" style={{ right: -1, bottom: -1, borderLeft: 0, borderTop: 0 }} />
+          <div className="badge" style={{ border: '1px solid rgba(217,148,5,.4)', background: 'var(--panel-2)' }}>
+            <TrendUp size={22} style={{ color: 'var(--amber)' }} />
+          </div>
+          <h4>No snapshot data</h4>
+          <p>Daily snapshots are created at midnight UTC. Check back after the first snapshot runs.</p>
         </div>
       </div>
     );
@@ -68,12 +72,12 @@ export default function TrendsPage() {
   const scoreDrift = latest.avgScore - earliest.avgScore;
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div style={{ maxWidth: 1060 }}>
       <Header />
       <RangeSelector selectedDays={selectedDays} onSelect={setSelectedDays} />
 
       {/* Summary stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="split-3" style={{ marginTop: 24 }}>
         <StatCard label="Avg Score (latest)" value={String(latest.avgScore)} />
         <StatCard label="Median Score (latest)" value={String(latest.medianScore)} />
         <StatCard
@@ -84,30 +88,32 @@ export default function TrendsPage() {
       </div>
 
       {/* Score trend chart */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-        <p className="text-sm font-semibold text-[var(--foreground)] mb-4">Score Trends</p>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Score Trends</h3>
+        <p className="sub" style={{ marginBottom: 22 }}>Average and median Neuro Score across all tracked users</p>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={trends} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
             <XAxis
               dataKey="date"
               tickFormatter={shortDate}
-              stroke="var(--muted-foreground)"
-              fontSize={11}
-              tick={{ fill: 'var(--muted-foreground)' }}
+              stroke="#182432"
+              fontSize={10}
+              tick={{ fill: '#5c6b7e' }}
             />
             <YAxis
-              stroke="var(--muted-foreground)"
-              fontSize={11}
-              tick={{ fill: 'var(--muted-foreground)' }}
+              stroke="#182432"
+              fontSize={10}
+              tick={{ fill: '#5c6b7e' }}
               domain={['dataMin - 20', 'dataMax + 20']}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'var(--card)',
-                border: '1px solid var(--border)',
-                borderRadius: 8,
-                color: 'var(--foreground)',
+                backgroundColor: '#0c1119',
+                border: '1px solid #182432',
+                borderRadius: 2,
+                color: '#edf2f7',
                 fontSize: 12,
               }}
               labelFormatter={shortDate}
@@ -117,7 +123,7 @@ export default function TrendsPage() {
               type="monotone"
               dataKey="avgScore"
               name="Avg Score"
-              stroke="hsl(220, 70%, 55%)"
+              stroke="#d99405"
               strokeWidth={2}
               dot={false}
             />
@@ -125,7 +131,7 @@ export default function TrendsPage() {
               type="monotone"
               dataKey="medianScore"
               name="Median Score"
-              stroke="hsl(45, 80%, 55%)"
+              stroke="#d99405"
               strokeWidth={2}
               dot={false}
             />
@@ -134,29 +140,31 @@ export default function TrendsPage() {
       </div>
 
       {/* Daily delta chart */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-        <p className="text-sm font-semibold text-[var(--foreground)] mb-4">Avg Daily Delta</p>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--green)' }} />
+        <h3>Avg Daily Delta</h3>
+        <p className="sub" style={{ marginBottom: 22 }}>Mean score change applied per day</p>
         <ResponsiveContainer width="100%" height={180}>
           <LineChart data={trends} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
             <XAxis
               dataKey="date"
               tickFormatter={shortDate}
-              stroke="var(--muted-foreground)"
-              fontSize={11}
-              tick={{ fill: 'var(--muted-foreground)' }}
+              stroke="#182432"
+              fontSize={10}
+              tick={{ fill: '#5c6b7e' }}
             />
             <YAxis
-              stroke="var(--muted-foreground)"
-              fontSize={11}
-              tick={{ fill: 'var(--muted-foreground)' }}
+              stroke="#182432"
+              fontSize={10}
+              tick={{ fill: '#5c6b7e' }}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'var(--card)',
-                border: '1px solid var(--border)',
-                borderRadius: 8,
-                color: 'var(--foreground)',
+                backgroundColor: '#0c1119',
+                border: '1px solid #182432',
+                borderRadius: 2,
+                color: '#edf2f7',
                 fontSize: 12,
               }}
               labelFormatter={shortDate}
@@ -165,7 +173,7 @@ export default function TrendsPage() {
               type="monotone"
               dataKey="avgDelta"
               name="Avg Delta"
-              stroke="hsl(142, 60%, 55%)"
+              stroke="#24c88a"
               strokeWidth={2}
               dot={false}
             />
@@ -174,46 +182,39 @@ export default function TrendsPage() {
       </div>
 
       {/* Stage distribution — latest snapshot */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-5 py-4">
-        <p className="text-sm font-semibold text-[var(--foreground)] mb-3">
-          Stage Distribution
-          <span className="text-[var(--muted-foreground)] font-normal ml-1.5">(latest: {shortDate(latest.date)})</span>
-        </p>
-        <div className="space-y-2">
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Stage Distribution</h3>
+        <p className="sub">Latest snapshot: {shortDate(latest.date)}</p>
+        <div style={{ marginTop: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>
           {STAGE_ORDER.map((stage) => {
             const count = latest.stageCounts[stage] ?? 0;
             const pct = latest.totalUsers > 0 ? (count / latest.totalUsers) * 100 : 0;
-            const color = STAGE_COLORS[stage as Stage]?.accent ?? 'var(--muted-foreground)';
+            const color = STAGE_COLORS[stage as Stage]?.accent ?? 'var(--muted)';
             return (
-              <div key={stage} className="flex items-center gap-3 text-sm">
-                <span
-                  className="w-16 text-xs font-semibold capitalize"
-                  style={{ color }}
-                >
-                  {stage}
-                </span>
-                <div className="flex-1 h-5 bg-[var(--muted)]/30 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${Math.max(pct, 1)}%`, backgroundColor: color, opacity: 0.7 }}
-                  />
+              <div key={stage}>
+                <div className="flex items-baseline" style={{ gap: 12, marginBottom: 8 }}>
+                  <span className="capitalize" style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.03em', color }}>
+                    {stage}
+                  </span>
+                  <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 12.5, color: 'var(--text)' }}>
+                    {count}
+                  </span>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)', width: 52, textAlign: 'right' }}>
+                    {pct.toFixed(1)}%
+                  </span>
                 </div>
-                <span className="w-10 text-right text-xs tabular-nums text-[var(--muted-foreground)]">
-                  {count}
-                </span>
-                <span className="w-12 text-right text-xs tabular-nums text-[var(--muted-foreground)]">
-                  {pct.toFixed(1)}%
-                </span>
+                <div style={{ height: 2, background: 'var(--rail)', position: 'relative' }}>
+                  <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${Math.max(pct, 1)}%`, background: color }} />
+                </div>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] mt-2">
-          {latest.totalUsers} users tracked
-        </p>
+        <p className="note" style={{ marginTop: 22 }}>{latest.totalUsers} users tracked</p>
       </div>
 
-      <p className="text-xs text-[var(--muted-foreground)]">
+      <p className="footnote">
         Trends computed from daily snapshots (midnight UTC). Data updates via Convex real-time subscriptions.
       </p>
     </div>
@@ -224,12 +225,13 @@ export default function TrendsPage() {
 
 function Header() {
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-1">
-        <TrendingUp size={20} className="text-[var(--accent)]" />
-        <h1 className="text-xl font-bold text-[var(--foreground)]">Score Trends</h1>
-      </div>
-      <p className="text-sm text-[var(--muted-foreground)]">
+    <div className="phead" style={{ marginBottom: 24 }}>
+      <p className="eyebrow" style={{ margin: '0 0 12px' }}>
+        <TrendUp size={13} style={{ color: 'var(--amber)' }} />
+        Neuro monitoring
+      </p>
+      <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Score Trends</h2>
+      <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>
         Monitor Neuro Score distributions over time to detect systemic issues.
       </p>
     </div>
@@ -238,16 +240,12 @@ function Header() {
 
 function RangeSelector({ selectedDays, onSelect }: { selectedDays: number; onSelect: (d: number) => void }) {
   return (
-    <div className="flex gap-1.5">
+    <div className="flex flex-wrap" style={{ gap: 8 }}>
       {RANGES.map((r) => (
         <button
           key={r.days}
           onClick={() => onSelect(r.days)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-            selectedDays === r.days
-              ? 'bg-[var(--accent)] text-white'
-              : 'bg-[var(--muted)]/40 text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-          }`}
+          className={selectedDays === r.days ? 'chip on' : 'chip'}
         >
           {r.label}
         </button>
@@ -257,10 +255,12 @@ function RangeSelector({ selectedDays, onSelect }: { selectedDays: number; onSel
 }
 
 function StatCard({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
+  const tone = valueClass === 'text-green-400' ? 'var(--green)' : valueClass === 'text-red-400' ? 'var(--red)' : 'var(--text)';
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
-      <p className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)] mb-1">{label}</p>
-      <p className={`text-lg font-bold tabular-nums ${valueClass ?? 'text-[var(--foreground)]'}`}>{value}</p>
+    <div className="stat" style={{ height: 'auto', minHeight: 88 }}>
+      <span className="accent" style={{ background: tone }} />
+      <b style={{ textTransform: 'uppercase' }}>{label}</b>
+      <em style={{ fontSize: 24, lineHeight: '32px', color: tone }}>{value}</em>
     </div>
   );
 }

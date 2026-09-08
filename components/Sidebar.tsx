@@ -1,13 +1,14 @@
-﻿'use client';
+'use client';
 
 import { TabId, TimeRange } from '@/lib/types';
 import {
-  LayoutDashboard, BookOpen, Map, List,
-  BarChart3, Brain, Sparkles, FileText, Sun, Moon,
-  Download, Upload, Plus, Menu, X, Target, Scale, Newspaper, RefreshCw, Orbit, Trophy, Wrench, GraduationCap, CalendarDays, MessagesSquare, Headphones, TrendingUp, Gift, Gamepad2, Activity, CalendarClock, Globe, Radio, Plug,
-  ChevronLeft, Settings, CreditCard, LogOut, Users, Bell, HelpCircle, Check,
-} from 'lucide-react';
-import { cn, SUPPORTED_CURRENCIES, navNeonActive } from '@/lib/utils';
+  SquaresFour, BookOpen, MapTrifold,
+  ChartBar, Brain, Sparkle, FileText, Sun, Moon,
+  DownloadSimple, UploadSimple, Plus, Target, Newspaper, ArrowsClockwise, Trophy, Wrench, GraduationCap, CalendarDots, Chats, Headphones, TrendUp, Calendar, Globe, Radio, Plug,
+  CaretLeft, Gear, CreditCard, Users, Check,
+} from '@phosphor-icons/react';
+import { ListBullets as List, Scales as Scale, Planet as Orbit, Gift, GameController as Gamepad2, SignOut as LogOut, Bell, Question as HelpCircle, Pulse as Activity } from '@phosphor-icons/react';
+import { cn, SUPPORTED_CURRENCIES } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { UserButton, useUser, useClerk } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
@@ -39,27 +40,25 @@ interface SidebarProps {
 const TIME_RANGES: TimeRange[] = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 const mainTabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'dashboard',   label: 'Dashboard',           icon: <LayoutDashboard size={20} /> },
-  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendingUp size={20} /> },
-  { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={20} /> },
-  { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={20} /> },
-  { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={20} /> },
-  { id: 'journal',     label: 'Journal & Analytics', icon: <List size={20} /> },
-  { id: 'coaching',    label: 'Call a Coach',        icon: <Headphones size={20} /> },
-  { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={20} /> },
-  { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={20} /> },
-  { id: 'indicators',  label: 'Indicators',          icon: <Activity size={20} /> },
-  { id: 'economic',    label: 'Economic Calendar',   icon: <CalendarClock size={20} /> },
-  { id: 'world',       label: 'World Monitoring',    icon: <Globe size={20} /> },
-  { id: 'articles',    label: 'Articles',            icon: <BookOpen size={20} /> },
-  { id: 'community',   label: 'Community',           icon: <MessagesSquare size={20} /> },
-  { id: 'events',      label: 'Events',              icon: <CalendarDays size={20} /> },
-  { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={20} /> },
-  { id: 'news',        label: 'News',                icon: <Newspaper size={20} /> },
-  { id: 'tools',       label: 'Tools',               icon: <Wrench size={20} /> },
+  { id: 'dashboard',   label: 'Dashboard',           icon: <SquaresFour size={16} /> },
+  { id: 'strategies',  label: 'Trading Strategies',  icon: <TrendUp size={16} /> },
+  { id: 'signals',     label: 'Trading Signals',     icon: <Radio size={16} /> },
+  { id: 'brokers',     label: 'Connect Broker',      icon: <Plug size={16} /> },
+  { id: 'courses',     label: 'Trading Courses',     icon: <GraduationCap size={16} /> },
+  { id: 'journal',     label: 'Journal & Analytics', icon: <List size={16} /> },
+  { id: 'coaching',    label: 'Call a Coach',        icon: <Headphones size={16} /> },
+  { id: 'rewards',     label: 'Rewards & Bonuses',   icon: <Gift size={16} /> },
+  { id: 'games',       label: 'Trading Games',       icon: <Gamepad2 size={16} /> },
+  { id: 'indicators',  label: 'Indicators',          icon: <Activity size={16} /> },
+  { id: 'economic',    label: 'Economic Calendar',   icon: <Calendar size={16} /> },
+  { id: 'world',       label: 'World Monitoring',    icon: <Globe size={16} /> },
+  { id: 'articles',    label: 'Articles',            icon: <BookOpen size={16} /> },
+  { id: 'community',   label: 'Community',           icon: <Chats size={16} /> },
+  { id: 'events',      label: 'Events',              icon: <CalendarDots size={16} /> },
+  { id: 'leaderboard', label: 'Leaderboard',         icon: <Trophy size={16} /> },
+  { id: 'news',        label: 'News',                icon: <Newspaper size={16} /> },
+  { id: 'tools',       label: 'Tools',               icon: <Wrench size={16} /> },
 ];
-
-const bottomTabs: TabId[] = ['dashboard', 'journal', 'community', 'news'];
 
 export default function Sidebar({
   activeTab, onTabChange, isDark, onThemeToggle, onExport, onImport, onAddTrade, onReseedDemo, onTeamMode, hasTeam,
@@ -71,7 +70,6 @@ export default function Sidebar({
   const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
   const { isFree, canAccessTab } = useSubscription();
   const allowedTabs = mainTabs.filter(t => canAccessTab(t.id));
-  const allowedBottomTabs = bottomTabs.filter(id => canAccessTab(id));
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
@@ -102,287 +100,220 @@ export default function Sidebar({
   };
 
   return (
-    <div className="h-dvh flex overflow-hidden">
-      {/* Desktop Sidebar */}
-      <aside className={cn(
-        'hidden md:flex flex-col shrink-0 border-r border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl transition-all duration-300 relative',
-        collapsed ? 'w-[68px]' : 'w-[220px]'
-      )}>
-        {/* Subtle ambient glow */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-pink-500/10 to-transparent" />
-        {/* Logo */}
-        <div className="shrink-0 h-14 flex items-center gap-2.5 px-4 border-b border-[var(--border)]">
-          <BrainMascot size={28} className="shrink-0" />
+    <div style={{ ['--side' as string]: collapsed ? '68px' : '240px' } as React.CSSProperties}>
+      {/* ============================= SIDEBAR ============================= */}
+      <aside className={cn('side', mobileMenuOpen && 'open')}>
+        <a className="brand" onClick={() => handleTabChange('dashboard')} style={{ cursor: 'pointer' }} aria-label="Atlas dashboard">
+          <BrainMascot size={22} className="shrink-0" />
           {!collapsed && (
-            <h1 className="neon-headline text-base font-bold truncate">
-              Tradia
-            </h1>
+            <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, letterSpacing: '.02em', color: 'var(--text)' }}>
+              Atlas
+            </span>
           )}
-        </div>
+        </a>
 
-        {/* Nav items */}
-        <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-          {allowedTabs.map((tab, idx) => (
-            <button
+        <nav className="nav" aria-label="Dashboard sections">
+          {allowedTabs.map(tab => (
+            <a
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={cn(
-                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-all relative',
-                collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5',
-                activeTab === tab.id
-                  // Active item: cycling neon tint + left-edge accent bar (pink → green → orange by position)
-                  ? cn(
-                      'text-[var(--foreground)] shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:rounded-r-full',
-                      navNeonActive(idx),
-                    )
-                  : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]/60 hover:text-[var(--foreground)]'
-              )}
+              role="button"
+              tabIndex={0}
+              onClick={() => handleTabChange(tab.id)}
+              className={cn(activeTab === tab.id && 'on')}
+              style={{ cursor: 'pointer' }}
               title={collapsed ? tab.label : undefined}
             >
-              {tab.icon}
-              {!collapsed && <span className="truncate">{tab.label}</span>}
-            </button>
+              <span className="ic">{tab.icon}</span>
+              {!collapsed && <span className="lb">{tab.label}</span>}
+            </a>
           ))}
 
-          {/* Utilities section divider */}
-          <div className="pt-4 pb-1">
-            {!collapsed && (
-              <span className="px-3 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)]/60">
-                Utilities
-              </span>
-            )}
-          </div>
+          {!collapsed && <h5>UTILITIES</h5>}
+          {collapsed && <h5 style={{ height: 1, margin: '24px 0 8px', padding: 0 }} />}
 
           {isFree && (
-            <button
+            <a
+              role="button"
+              tabIndex={0}
               onClick={() => setPricingOpen(true)}
-              className={cn(
-                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-                collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-              )}
+              style={{ cursor: 'pointer' }}
               title={collapsed ? 'Subscription' : undefined}
             >
-              <CreditCard size={20} />
-              {!collapsed && <span>Subscription</span>}
-            </button>
+              <span className="ic"><CreditCard size={16} /></span>
+              {!collapsed && <span className="lb">Subscription</span>}
+            </a>
           )}
 
-          <button
-            onClick={onImport}
-            className={cn(
-              'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-              collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-            )}
-            title={collapsed ? 'Import' : undefined}
-          >
-            <Upload size={20} />
-            {!collapsed && <span>Imports</span>}
-          </button>
+          <a role="button" tabIndex={0} onClick={onImport} style={{ cursor: 'pointer' }} title={collapsed ? 'Imports' : undefined}>
+            <span className="ic"><UploadSimple size={16} /></span>
+            {!collapsed && <span className="lb">Imports</span>}
+          </a>
 
-          <button
-            onClick={onExport}
-            className={cn(
-              'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-              collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-            )}
-            title={collapsed ? 'Export' : undefined}
-          >
-            <Download size={20} />
-            {!collapsed && <span>Export</span>}
-          </button>
+          <a role="button" tabIndex={0} onClick={onExport} style={{ cursor: 'pointer' }} title={collapsed ? 'Export' : undefined}>
+            <span className="ic"><DownloadSimple size={16} /></span>
+            {!collapsed && <span className="lb">Export</span>}
+          </a>
 
           {isAdmin && (
-            <Link
-              href="/admin"
-              className={cn(
-                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-                collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-              )}
-              title={collapsed ? 'Admin' : undefined}
-            >
-              <Settings size={20} />
-              {!collapsed && <span>Admin</span>}
+            <Link href="/admin" title={collapsed ? 'Admin' : undefined}>
+              <span className="ic"><Gear size={16} /></span>
+              {!collapsed && <span className="lb">Admin</span>}
             </Link>
           )}
 
           {onReseedDemo && (
-            <button
-              onClick={onReseedDemo}
-              className={cn(
-                'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-                collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-              )}
-              title={collapsed ? 'Reset Demo' : undefined}
-            >
-              <RefreshCw size={20} />
-              {!collapsed && <span>Reset Demo</span>}
-            </button>
+            <a role="button" tabIndex={0} onClick={onReseedDemo} style={{ cursor: 'pointer' }} title={collapsed ? 'Reset Demo' : undefined}>
+              <span className="ic"><ArrowsClockwise size={16} /></span>
+              {!collapsed && <span className="lb">Reset Demo</span>}
+            </a>
           )}
         </nav>
 
-        {/* Bottom area */}
-        <div className="shrink-0 border-t border-[var(--border)] p-2 space-y-1">
-          <button
-            onClick={onThemeToggle}
-            className={cn(
-              'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-              collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2'
-            )}
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            {!collapsed && <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>}
-          </button>
-          <button
-            onClick={() => signOut({ redirectUrl: '/sign-in' })}
-            className={cn(
-              'w-full flex items-center gap-3 rounded-xl text-sm font-medium transition-colors text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-              collapsed ? 'justify-center px-2 py-2' : 'px-3 py-2'
-            )}
-          >
-            <LogOut size={18} />
-            {!collapsed && <span>Logout</span>}
-          </button>
-
-          {/* Collapse toggle */}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-full flex items-center justify-center py-1.5 rounded-lg text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
-          >
-            <ChevronLeft size={16} className={cn('transition-transform', collapsed && 'rotate-180')} />
-          </button>
+        <div className="foot">
+          <a role="button" tabIndex={0} onClick={onThemeToggle} style={{ cursor: 'pointer' }}>
+            <span className="ic">{isDark ? <Sun size={16} /> : <Moon size={16} />}</span>
+            {!collapsed && <span className="lb">{isDark ? 'Light Mode' : 'Dark Mode'}</span>}
+          </a>
+          <a role="button" tabIndex={0} onClick={() => signOut({ redirectUrl: '/sign-in' })} style={{ cursor: 'pointer' }}>
+            <span className="ic"><LogOut size={16} /></span>
+            {!collapsed && <span className="lb">Logout</span>}
+          </a>
         </div>
+
+        <button
+          className="collapse"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          <CaretLeft size={12} style={{ color: '#7f8ea3', transform: collapsed ? 'rotate(180deg)' : undefined }} />
+        </button>
       </aside>
 
-      {/* Main content column */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Top bar */}
-        <header className="shrink-0 z-40 border-b border-[var(--border)] bg-[var(--card)]">
-          <div className="px-4 sm:px-6 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {/* Mobile logo */}
-              <div className="md:hidden flex items-center gap-2">
-                <BrainMascot size={24} className="shrink-0" />
-                <span className="neon-headline text-sm font-bold">
-                  Tradia
-                </span>
-              </div>
-              {/* Desktop: page title */}
-              <h2 className="hidden md:block text-sm font-semibold text-[var(--foreground)]">
-                {mainTabs.find(t => t.id === activeTab)?.label ?? 'Dashboard'}
-              </h2>
+      <div
+        className={cn('scrim', mobileMenuOpen && 'on')}
+        onClick={() => setMobileMenuOpen(false)}
+      />
 
-              {/* Time range pills */}
-              <div className="hidden sm:flex items-center border border-[var(--border)] rounded-lg overflow-hidden">
-                {TIME_RANGES.map(r => (
-                  <button
-                    key={r}
-                    onClick={() => onTimeRangeChange(r)}
-                    className={cn(
-                      'px-2.5 py-1 text-[11px] font-semibold transition-colors',
-                      timeRange === r
-                        ? 'bg-[var(--accent)] text-white'
-                        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]'
-                    )}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
+      {/* ============================= MAIN ============================= */}
+      <main className="main">
+        {/* ---------- topbar ---------- */}
+        <header className="top">
+          <button className="burger" aria-label="Menu" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <span />
+          </button>
+          <h1>{mainTabs.find(t => t.id === activeTab)?.label ?? 'Dashboard'}</h1>
+
+          {/* Dashboard-only: this range picker drives the dashboard's metrics.
+              Every other tab has its own filtering (or none), so on those the
+              control was inert chrome. .top .right{margin-left:auto} keeps the
+              topbar's right cluster in place when this isn't rendered. */}
+          {activeTab === 'dashboard' && (
+            <div className="range">
+              {TIME_RANGES.map(r => (
+                <button
+                  key={r}
+                  onClick={() => onTimeRangeChange(r)}
+                  className={cn(timeRange === r && 'on')}
+                >
+                  {r}
+                </button>
+              ))}
             </div>
+          )}
 
-            <div className="flex items-center gap-2">
-              {/* Sync badge */}
-              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-[10px] font-semibold text-green-400 uppercase tracking-wide">Synced</span>
-                {lastSyncedAt && (
-                  <span className="text-[10px] text-green-400/60">
-                    {new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
-              </div>
-
-              <button
-                onClick={onAddTrade}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 shadow-[0_0_30px_-4px_rgba(251,146,60,0.6)] rounded-lg text-sm font-semibold transition-all"
-              >
-                <Plus size={16} />
-                <span className="hidden sm:inline">Add Trade</span>
-              </button>
-              {hasTeam && onTeamMode && (
-                <button
-                  onClick={onTeamMode}
-                  className="flex items-center gap-1.5 px-3 py-1.5 border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10 rounded-lg text-xs font-bold transition-colors"
-                >
-                  <Users size={14} />
-                  TEAM
-                </button>
+          <div className="right">
+            {/* 1. SYNCED */}
+            <span className="synced">
+              <svg width="6" height="9" viewBox="0 0 6 9" fill="none" aria-hidden="true">
+                <path d="M4 0 L0 5 H3 L2 9 L6 4 H3 L4 0 Z" fill="#24c88a" />
+              </svg>
+              SYNCED
+              {lastSyncedAt && (
+                <span style={{ fontWeight: 400, color: 'var(--muted-2)' }}>
+                  {new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               )}
+            </span>
 
-              {/* Help button */}
-              <div ref={helpRef} className="relative">
-                <button
-                  onClick={() => { setHelpOpen(!helpOpen); setNotificationsOpen(false); }}
-                  className="p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-                  title="Help"
-                >
-                  <HelpCircle size={18} />
-                </button>
+            {/* 2. Add Trade */}
+            <button className="addtrade" onClick={onAddTrade}>
+              <Plus size={11} weight="bold" />
+              Add Trade
+            </button>
+
+            {hasTeam && onTeamMode && (
+              <button className="chip" onClick={onTeamMode} style={{ marginLeft: 12 }}>
+                <Users size={12} />
+                TEAM
+              </button>
+            )}
+
+            {/* 3. Help */}
+            <div ref={helpRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <button
+                className="help"
+                onClick={() => { setHelpOpen(!helpOpen); setNotificationsOpen(false); }}
+                title="Help"
+              >
+                ?
+              </button>
                 {helpOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-72 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xl z-50 p-4 space-y-3">
-                    <h3 className="text-sm font-bold">Help & Resources</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <BookOpen size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">Getting Started</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">Learn the basics of Tradia</p>
+                  <div
+                    className="absolute right-0 top-full mt-2 w-72 z-50"
+                    style={{ border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel-2)', padding: 16 }}
+                  >
+                    <p className="lbl b10">HELP &amp; RESOURCES</p>
+                    <div style={{ marginTop: 12 }}>
+                      {[
+                        { icon: <BookOpen size={14} />, title: 'Getting Started', desc: 'Learn the basics of Atlas' },
+                        { icon: <Target size={14} />, title: 'Keyboard Shortcuts', desc: 'Speed up your workflow' },
+                        { icon: <Brain size={14} />, title: 'AI Coach Guide', desc: 'How Brain analyzes your trades' },
+                      ].map(item => (
+                        <div
+                          key={item.title}
+                          className="inset"
+                          style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginTop: 8, padding: '10px 12px', cursor: 'pointer' }}
+                        >
+                          <span style={{ flex: 'none', marginTop: 2, color: 'var(--amber)' }}>{item.icon}</span>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{item.title}</p>
+                            <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{item.desc}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <Target size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">Keyboard Shortcuts</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">Speed up your workflow</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-[var(--muted)] cursor-pointer">
-                        <Brain size={16} className="text-[var(--accent)] mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">AI Coach Guide</p>
-                          <p className="text-[11px] text-[var(--muted-foreground)]">How Brain analyzes your trades</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                    <div className="pt-2 border-t border-[var(--border)]">
-                      <p className="text-[11px] text-[var(--muted-foreground)]">Need more help? Contact support@tradia.app</p>
-                    </div>
+                    <p style={{ margin: '14px 0 0', paddingTop: 12, borderTop: '1px solid var(--line)', fontSize: 11, color: 'var(--muted-2)' }}>
+                      Need more help? Contact support@atlas.app
+                    </p>
                   </div>
                 )}
               </div>
 
-              {/* Notification bell */}
-              <div ref={notifRef} className="relative">
+              {/* 4. Notification bell */}
+              <div ref={notifRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <button
                   onClick={() => { setNotificationsOpen(!notificationsOpen); setHelpOpen(false); }}
-                  className="relative p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                  style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
                   title="Notifications"
                 >
-                  <Bell size={18} />
+                  <Bell size={16} className="bell" color="#7f8ea3" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center px-1 text-[9px] font-bold text-white bg-red-500 rounded-full">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </button>
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-xl z-50 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-                      <h3 className="text-sm font-bold">Notifications</h3>
+                  <div
+                    className="absolute right-0 top-full mt-2 w-80 z-50 overflow-hidden"
+                    style={{ border: '1px solid var(--line-2)', borderRadius: 2, background: 'var(--panel-2)' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid var(--line)' }}>
+                      <p className="lbl b10">NOTIFICATIONS</p>
                       {unreadCount > 0 && (
                         <button
                           onClick={() => markAllRead()}
-                          className="text-[11px] font-medium text-[var(--accent)] hover:underline"
+                          style={{ marginLeft: 'auto', fontWeight: 700, fontSize: 11, color: 'var(--amber)' }}
                         >
                           Mark all read
                         </button>
@@ -390,23 +321,24 @@ export default function Sidebar({
                     </div>
                     <div className="max-h-80 overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <p className="text-sm text-[var(--muted-foreground)] text-center py-8">No notifications yet</p>
+                        <p className="empty-line" style={{ padding: '28px 0' }}>No notifications yet</p>
                       ) : (
                         notifications.map(n => (
                           <button
                             key={n._id}
                             onClick={() => { if (!n.read) markOneRead({ notificationId: n._id }); }}
-                            className={cn(
-                              'w-full text-left px-4 py-3 border-b border-[var(--border)]/50 hover:bg-[var(--muted)]/30 transition-colors',
-                              !n.read && 'bg-[var(--accent)]/5'
-                            )}
+                            style={{
+                              display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px',
+                              borderBottom: '1px solid var(--hair)',
+                              background: n.read ? 'none' : 'rgba(217,148,5,.06)',
+                            }}
                           >
-                            <div className="flex items-start gap-2">
-                              {!n.read && <div className="w-2 h-2 rounded-full bg-[var(--accent)] mt-1.5 shrink-0" />}
-                              <div className={cn('flex-1 min-w-0', n.read && 'ml-4')}>
-                                <p className="text-sm font-medium truncate">{n.title}</p>
-                                <p className="text-[11px] text-[var(--muted-foreground)] line-clamp-2">{n.message}</p>
-                                <p className="text-[10px] text-[var(--muted-foreground)]/60 mt-1">
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                              {!n.read && <span style={{ flex: 'none', width: 6, height: 6, borderRadius: 1, marginTop: 5, background: 'var(--amber)' }} />}
+                              <div style={{ flex: 1, minWidth: 0, marginLeft: n.read ? 14 : 0 }}>
+                                <p className="truncate" style={{ margin: 0, fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{n.title}</p>
+                                <p className="line-clamp-2" style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>{n.message}</p>
+                                <p style={{ margin: '5px 0 0', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-3)' }}>
                                   {new Date(n.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </p>
                               </div>
@@ -419,104 +351,27 @@ export default function Sidebar({
                 )}
               </div>
 
-              <SubscriptionBadge />
+              {/* 5. Plan chip */}
+              <span className="plan" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <SubscriptionBadge />
+              </span>
+
+              {/* 6. Profile link */}
               {user?.id && (
-                <Link
-                  href={`/u/${user.username ?? user.id}`}
-                  title="View your public profile"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors text-[var(--foreground)]"
-                >
+                <Link className="who" href={`/u/${user.username ?? user.id}`} title="View your public profile">
                   My profile
                 </Link>
               )}
-              <UserButton afterSignOutUrl="/sign-in" />
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors"
-              >
-                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-              </button>
+
+              {/* 7. Avatar */}
+              <span style={{ marginLeft: 13, display: 'flex', alignItems: 'center' }}>
+                <UserButton afterSignOutUrl="/sign-in" />
+              </span>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Mobile slide-down menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 top-14 z-50">
-            <div className="absolute inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
-            <div className="relative bg-[var(--card)] border-b border-[var(--border)] shadow-xl">
-              <div className="p-3 grid grid-cols-4 gap-2">
-                {allowedTabs.map((tab, idx) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleTabChange(tab.id)}
-                    className={cn(
-                      'flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-medium transition-colors',
-                      activeTab === tab.id
-                        ? cn('text-[var(--foreground)]', navNeonActive(idx))
-                        : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)]'
-                    )}
-                  >
-                    {tab.icon}
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto">
-          {children}
-        </div>
-
-        {/* Mobile bottom nav */}
-        <nav className="md:hidden shrink-0 z-40 border-t border-[var(--border)] bg-[var(--card)] safe-bottom">
-          <div className="flex items-stretch">
-            {allowedBottomTabs.map(tabId => {
-              const tab = mainTabs.find(t => t.id === tabId)!;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={cn(
-                    'flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 text-[10px] font-medium transition-colors min-h-[56px]',
-                    activeTab === tab.id
-                      ? 'text-[var(--accent)]'
-                      : 'text-[var(--muted-foreground)]'
-                  )}
-                >
-                  <div className={cn(
-                    'p-1 rounded-lg transition-colors',
-                    activeTab === tab.id && 'bg-[var(--accent)]/15'
-                  )}>
-                    {tab.icon}
-                  </div>
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={cn(
-                'flex-1 flex flex-col items-center gap-0.5 py-2 pt-2.5 text-[10px] font-medium transition-colors min-h-[56px]',
-                !allowedBottomTabs.includes(activeTab)
-                  ? 'text-[var(--accent)]'
-                  : 'text-[var(--muted-foreground)]'
-              )}
-            >
-              <div className={cn(
-                'p-1 rounded-lg transition-colors',
-                !allowedBottomTabs.includes(activeTab) && 'bg-[var(--accent)]/15'
-              )}>
-                <Menu size={20} />
-              </div>
-              <span>More</span>
-            </button>
-          </div>
-        </nav>
-      </div>
+        {children}
+      </main>
 
       {/* Pricing modal */}
       <PricingPlans open={pricingOpen} onClose={() => setPricingOpen(false)} />

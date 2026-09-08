@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import {
-  X, ShieldAlert, ShieldCheck, Activity, User as UserIcon,
-  TrendingUp, TrendingDown, BookOpen, Map, Brain, AlertTriangle,
-  Zap, Sparkles, Target, FileText, CreditCard, Crown,
-  ChevronDown, ChevronRight,
-} from 'lucide-react';
+  X, ShieldWarning, ShieldCheck, User as UserIcon,
+  TrendUp, TrendDown, BookOpen, MapTrifold, Brain, Warning,
+  Lightning, Sparkle, Target, FileText, CreditCard, Crown,
+  CaretDown, CaretRight,
+} from '@phosphor-icons/react';
+import { Pulse as Activity } from '@phosphor-icons/react';
 import {
   useAdminUserDetail,
   useAdminUserSubscription,
@@ -34,31 +35,33 @@ export default function AdminUserDetail({
   const [tab, setTab] = useState<TabId>('overview');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+    <div className="atlas-dash fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,.7)' }} onClick={onClose}>
       <div
-        className="bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col animate-in"
+        className="w-full max-w-4xl max-h-[90vh] flex flex-col"
+        style={{ background: '#080d14', border: '1px solid var(--line-2)', borderRadius: 2, position: 'relative' }}
         onClick={(e) => e.stopPropagation()}
       >
+        <span className="accent" style={{ position: 'absolute', left: 0, top: -1, width: 120, height: 3, background: 'var(--amber)' }} />
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
-            <h3 className="text-sm font-bold text-[var(--foreground)]">User Detail</h3>
+        <div
+          className="flex items-center justify-between shrink-0"
+          style={{ padding: '16px 22px', borderBottom: '1px solid var(--line)' }}
+        >
+          <div className="flex items-center min-w-0" style={{ gap: 14 }}>
+            <h3 style={{ margin: 0, fontFamily: 'var(--display)', fontWeight: 700, fontSize: 15, color: 'var(--text)' }}>User Detail</h3>
             {detail && (
-              <span className="font-mono text-[10px] text-[var(--muted-foreground)] truncate">
+              <span className="truncate" style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--muted-2)' }}>
                 {detail.userId}
               </span>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] shrink-0"
-          >
+          <button onClick={onClose} className="shrink-0" style={{ color: 'var(--muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[var(--border)] shrink-0">
+        <div className="tabs line shrink-0" style={{ marginBottom: 0, padding: '0 12px' }}>
           <TabButton active={tab === 'overview'} onClick={() => setTab('overview')} icon={<UserIcon size={14} />} label="Overview" />
           <TabButton active={tab === 'activity'} onClick={() => setTab('activity')} icon={<Activity size={14} />} label="Activity" />
         </div>
@@ -67,7 +70,7 @@ export default function AdminUserDetail({
         <div className="flex-1 overflow-y-auto">
           {tab === 'overview' && (
             !detail ? (
-              <div className="p-6 text-center text-sm text-[var(--muted-foreground)] animate-pulse">Loading…</div>
+              <p className="empty-line animate-pulse">Loading…</p>
             ) : (
               <OverviewPanel
                 userId={userId}
@@ -92,11 +95,8 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2.5 text-xs font-medium border-b-2 transition-colors flex items-center gap-2 ${
-        active
-          ? 'border-[var(--accent)] text-[var(--foreground)]'
-          : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-      }`}
+      className={`flex items-center ${active ? 'on' : ''}`}
+      style={{ gap: 8 }}
     >
       {icon}
       {label}
@@ -162,29 +162,30 @@ function OverviewPanel({
   };
 
   return (
-    <div className="p-4 space-y-3 max-w-md mx-auto">
+    <div className="max-w-md mx-auto" style={{ padding: '20px 22px 28px' }}>
       <Row label="Signed Up" value={detail.signedUp ? new Date(detail.signedUp).toLocaleDateString() : '—'} />
       <Row label="Capital" value={`${detail.currency} ${detail.initialCapital.toLocaleString()}`} />
 
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-[var(--muted-foreground)]">Status</span>
+      <div className="mrow">
+        <span className="ic" />
+        <span className="lb" style={{ marginLeft: 0 }}>Status</span>
         {detail.isBanned ? (
-          <span className="flex items-center gap-1.5 text-amber-400">
-            <ShieldAlert size={14} /> Banned
+          <span className="chip" style={{ marginLeft: 'auto', height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--amber)' }}>
+            <ShieldWarning size={12} /> Banned
           </span>
         ) : (
-          <span className="flex items-center gap-1.5 text-[var(--green)]">
-            <ShieldCheck size={14} /> Active
+          <span className="chip" style={{ marginLeft: 'auto', height: 22, padding: '0 10px', fontSize: 10.5, color: 'var(--green)' }}>
+            <ShieldCheck size={12} /> Active
           </span>
         )}
       </div>
       {detail.isBanned && detail.bannedReason && (
-        <div className="text-xs text-[var(--muted-foreground)] bg-amber-500/5 px-3 py-2 rounded-lg">
+        <div className="warn" style={{ marginTop: 14 }}>
           Reason: {detail.bannedReason}
         </div>
       )}
 
-      <div className="border-t border-[var(--border)] pt-3 space-y-3">
+      <div style={{ marginTop: 20, paddingTop: 4, borderTop: '1px solid var(--line)' }}>
         <Row label="Total Trades" value={String(detail.tradeCount)} />
         <Row label="Open / Closed" value={`${detail.openTrades} / ${detail.closedTrades}`} />
         <Row
@@ -197,15 +198,20 @@ function OverviewPanel({
         <Row label="Reflections" value={String(detail.reflectionCount)} />
       </div>
 
-      <div className="border-t border-[var(--border)] pt-3 space-y-3">
+      <div style={{ marginTop: 20, paddingTop: 4, borderTop: '1px solid var(--line)' }}>
         <Row label="Current Plan" value={subscription?.planId ?? 'free'} />
         <Row label="Sub Status" value={subscription?.status ?? 'free'} />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center" style={{ gap: 10, marginTop: 16 }}>
           <select
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
-            className="flex-1 px-2 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-xs text-[var(--foreground)]"
+            className="flex-1 min-w-0"
+            style={{
+              height: 36, padding: '0 12px', borderRadius: 2,
+              border: '1px solid var(--line)', background: 'var(--panel-2)',
+              fontSize: 12.5, color: 'var(--text)', outline: 'none',
+            }}
           >
             <option value="">Select plan...</option>
             <option value="free">Free</option>
@@ -216,42 +222,55 @@ function OverviewPanel({
           <button
             onClick={handleOverridePlan}
             disabled={busy || !selectedPlan}
-            className="px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-medium disabled:opacity-50 transition-colors"
+            className="btn-a"
+            style={{ height: 36, flex: 'none', opacity: busy || !selectedPlan ? 0.5 : 1 }}
           >
             Override
           </button>
         </div>
       </div>
 
-      <div className="border-t border-[var(--border)] pt-3 space-y-2">
+      <div style={{ marginTop: 20, paddingTop: 18, borderTop: '1px solid var(--line)' }}>
         {detail.isBanned ? (
           <button
             onClick={handleUnban}
             disabled={busy}
-            className="w-full py-2 rounded-lg bg-[var(--green)]/10 text-[var(--green)] text-xs font-medium hover:bg-[var(--green)]/20 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center"
+            style={{
+              height: 38, borderRadius: 2, border: '1px solid rgba(36,200,138,.35)',
+              background: '#0b1712', fontWeight: 700, fontSize: 12.5,
+              color: 'var(--green)', opacity: busy ? 0.5 : 1,
+            }}
           >
             Unban User
           </button>
         ) : showBanInput ? (
-          <div className="space-y-2">
+          <div className="field">
             <input
               type="text"
               placeholder="Ban reason..."
               value={banReason}
               onChange={(e) => setBanReason(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--input-bg)] text-xs text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]"
+              className="w-full"
+              style={{
+                height: 38, padding: '0 14px', borderRadius: 2,
+                border: '1px solid var(--line)', background: 'var(--panel-2)',
+                fontSize: 12.5, color: 'var(--text)', outline: 'none',
+              }}
             />
-            <div className="flex gap-2">
+            <div className="flex" style={{ gap: 10, marginTop: 10 }}>
               <button
                 onClick={handleBan}
                 disabled={busy || !banReason.trim()}
-                className="flex-1 py-2 rounded-lg bg-amber-500 text-slate-900 text-xs font-semibold disabled:opacity-50 transition-colors hover:bg-amber-400"
+                className="btn-a flex-1"
+                style={{ height: 38, opacity: busy || !banReason.trim() ? 0.5 : 1 }}
               >
                 Confirm Ban
               </button>
               <button
                 onClick={() => { setShowBanInput(false); setBanReason(''); }}
-                className="flex-1 py-2 rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] text-xs font-medium hover:bg-[var(--muted)] transition-colors"
+                className="btn-g flex-1"
+                style={{ height: 38 }}
               >
                 Cancel
               </button>
@@ -261,19 +280,32 @@ function OverviewPanel({
           <button
             onClick={() => setShowBanInput(true)}
             disabled={busy}
-            className="w-full py-2 rounded-lg border border-amber-500/30 text-amber-300 text-xs font-medium hover:bg-amber-500/10 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center"
+            style={{
+              height: 38, borderRadius: 2, border: '1px solid #3a2a12',
+              background: '#14100a', fontWeight: 700, fontSize: 12.5,
+              color: 'var(--amber)', opacity: busy ? 0.5 : 1,
+            }}
           >
             Ban User
           </button>
         )}
       </div>
 
-      <div className="border-t border-amber-500/20 pt-3">
-        <p className="text-[10px] font-medium text-amber-300 mb-2 uppercase tracking-wide">Danger Zone</p>
+      <div style={{ marginTop: 20, paddingTop: 18, borderTop: '1px solid #3a1218' }}>
+        <div className="flex items-center" style={{ gap: 8, marginBottom: 12 }}>
+          <Warning size={13} style={{ color: 'var(--red)' }} />
+          <p className="lbl" style={{ margin: 0, color: 'var(--red)' }}>DANGER ZONE</p>
+        </div>
         <button
           onClick={handleReset}
           disabled={busy}
-          className="w-full py-2 rounded-lg border border-[var(--red)]/30 text-[var(--red)] text-xs font-medium hover:bg-[var(--red)]/10 transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center"
+          style={{
+            height: 38, borderRadius: 2, border: '1px solid #3a1218',
+            background: '#160a0d', fontWeight: 700, fontSize: 12.5,
+            color: 'var(--red)', opacity: busy ? 0.5 : 1,
+          }}
         >
           Reset All User Data
         </button>
@@ -283,10 +315,15 @@ function OverviewPanel({
 }
 
 function Row({ label, value, mono, valueClass }: { label: string; value: string; mono?: boolean; valueClass?: string }) {
+  const tone =
+    valueClass === 'text-[var(--green)]' ? 'var(--green)'
+    : valueClass === 'text-[var(--red)]' ? 'var(--red)'
+    : 'var(--text)';
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-[var(--muted-foreground)]">{label}</span>
-      <span className={`font-medium ${mono ? 'text-xs' : ''} ${valueClass ?? 'text-[var(--foreground)]'}`}>
+    <div className="mrow">
+      <span className="ic" />
+      <span className="lb" style={{ marginLeft: 0 }}>{label}</span>
+      <span className="val" style={{ color: tone, fontSize: mono ? 11.5 : undefined }}>
         {value}
       </span>
     </div>
@@ -298,28 +335,28 @@ function Row({ label, value, mono, valueClass }: { label: string; value: string;
 type EventStyle = { icon: typeof Activity; tint: string; label: string };
 
 const EVENT_STYLES: Record<string, EventStyle> = {
-  trade_logged:             { icon: TrendingUp,     tint: 'text-cyan-400 bg-cyan-500/10',         label: 'Trade logged' },
-  trade_closed:             { icon: TrendingDown,   tint: 'text-emerald-400 bg-emerald-500/10',   label: 'Trade closed' },
-  strategy_created:         { icon: BookOpen,       tint: 'text-pink-400 bg-pink-500/10',         label: 'Strategy' },
-  checklist_created:        { icon: Map,            tint: 'text-orange-400 bg-orange-500/10',     label: 'Checklist' },
-  journal_entry:            { icon: FileText,       tint: 'text-purple-400 bg-purple-500/10',     label: 'Journal' },
-  monthly_goal:             { icon: Target,         tint: 'text-amber-400 bg-amber-500/10',       label: 'Goal' },
-  trigger_entry:            { icon: Zap,            tint: 'text-rose-400 bg-rose-500/10',         label: 'Trigger' },
-  daily_reflection:         { icon: Sparkles,       tint: 'text-violet-400 bg-violet-500/10',     label: 'Reflection' },
-  weekly_review:            { icon: Sparkles,       tint: 'text-fuchsia-400 bg-fuchsia-500/10',   label: 'Review' },
-  rule_break:               { icon: AlertTriangle,  tint: 'text-red-400 bg-red-500/10',           label: 'Rule break' },
-  circuit_breaker:          { icon: AlertTriangle,  tint: 'text-red-400 bg-red-500/10',           label: 'Circuit breaker' },
-  circuit_breaker_override: { icon: AlertTriangle,  tint: 'text-amber-400 bg-amber-500/10',       label: 'CB override' },
-  score_event:              { icon: Brain,          tint: 'text-blue-400 bg-blue-500/10',         label: 'Brain score' },
-  anti_gaming_flag:         { icon: ShieldAlert,    tint: 'text-red-400 bg-red-500/10',           label: 'Anti-gaming' },
-  subscription_created:     { icon: CreditCard,     tint: 'text-emerald-400 bg-emerald-500/10',   label: 'Subscription' },
-  subscription_change:      { icon: CreditCard,     tint: 'text-emerald-400 bg-emerald-500/10',   label: 'Sub change' },
-  signup:                   { icon: UserIcon,       tint: 'text-cyan-400 bg-cyan-500/10',         label: 'Signup' },
+  trade_logged:             { icon: TrendUp,        tint: 'var(--amber)',   label: 'Trade logged' },
+  trade_closed:             { icon: TrendDown,      tint: 'var(--green)',  label: 'Trade closed' },
+  strategy_created:         { icon: BookOpen,       tint: 'var(--amber)',   label: 'Strategy' },
+  checklist_created:        { icon: MapTrifold,     tint: 'var(--amber)',  label: 'Checklist' },
+  journal_entry:            { icon: FileText,       tint: 'var(--amber)',   label: 'Journal' },
+  monthly_goal:             { icon: Target,         tint: 'var(--amber)',  label: 'Goal' },
+  trigger_entry:            { icon: Lightning,      tint: 'var(--amber)',  label: 'Trigger' },
+  daily_reflection:         { icon: Sparkle,        tint: 'var(--amber)',   label: 'Reflection' },
+  weekly_review:            { icon: Sparkle,        tint: 'var(--amber)',   label: 'Review' },
+  rule_break:               { icon: Warning,        tint: 'var(--red)',    label: 'Rule break' },
+  circuit_breaker:          { icon: Warning,        tint: 'var(--red)',    label: 'Circuit breaker' },
+  circuit_breaker_override: { icon: Warning,        tint: 'var(--amber)',  label: 'CB override' },
+  score_event:              { icon: Brain,          tint: 'var(--amber)',  label: 'Brain score' },
+  anti_gaming_flag:         { icon: ShieldWarning,  tint: 'var(--red)',    label: 'Anti-gaming' },
+  subscription_created:     { icon: CreditCard,     tint: 'var(--green)',  label: 'Subscription' },
+  subscription_change:      { icon: CreditCard,     tint: 'var(--green)',  label: 'Sub change' },
+  signup:                   { icon: UserIcon,       tint: 'var(--amber)',   label: 'Signup' },
 };
 
 function styleFor(type: string): EventStyle {
-  if (type.startsWith('admin:')) return { icon: Crown, tint: 'text-amber-400 bg-amber-500/10', label: 'Admin action' };
-  return EVENT_STYLES[type] ?? { icon: Activity, tint: 'text-slate-400 bg-slate-500/10', label: type };
+  if (type.startsWith('admin:')) return { icon: Crown, tint: 'var(--amber)', label: 'Admin action' };
+  return EVENT_STYLES[type] ?? { icon: Activity, tint: 'var(--muted)', label: type };
 }
 
 function formatTimeAgo(iso: string) {
@@ -363,10 +400,10 @@ function ActivityPanel({ userId }: { userId: string }) {
     setFilters((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
 
   return (
-    <div className="p-4 space-y-4">
+    <div style={{ padding: '20px 22px 28px' }}>
       {/* Lifetime stat strip — what's on file across all tables */}
       {counts && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6" style={{ gap: 8 }}>
           <StatCell label="Trades"      value={counts.trades} />
           <StatCell label="Strategies"  value={counts.strategies} />
           <StatCell label="Reflections" value={counts.dailyReflections} />
@@ -382,14 +419,10 @@ function ActivityPanel({ userId }: { userId: string }) {
       )}
 
       {/* Filter chips */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap" style={{ gap: 8, marginTop: 18 }}>
         <button
           onClick={() => setFilters([])}
-          className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
-            filters.length === 0
-              ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/10'
-              : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-          }`}
+          className={filters.length === 0 ? 'chip on' : 'chip'}
         >
           All
         </button>
@@ -399,11 +432,7 @@ function ActivityPanel({ userId }: { userId: string }) {
             <button
               key={c.type}
               onClick={() => toggle(c.type)}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${
-                active
-                  ? 'border-[var(--accent)] text-[var(--accent)] bg-[var(--accent)]/10'
-                  : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
+              className={active ? 'chip on' : 'chip'}
             >
               {c.label}
             </button>
@@ -413,11 +442,11 @@ function ActivityPanel({ userId }: { userId: string }) {
 
       {/* Timeline */}
       {!data ? (
-        <div className="text-center text-sm text-[var(--muted-foreground)] animate-pulse py-12">Loading activity…</div>
+        <p className="empty-line animate-pulse">Loading activity…</p>
       ) : events.length === 0 ? (
-        <div className="text-center text-sm text-[var(--muted-foreground)] py-12">No activity matches the current filter.</div>
+        <p className="empty-line">No activity matches the current filter.</p>
       ) : (
-        <ul className="space-y-1.5">
+        <ul style={{ listStyle: 'none', margin: '18px 0 0', padding: 0 }}>
           {events.map((e) => (
             <TimelineRow key={e.id} event={e} />
           ))}
@@ -429,9 +458,14 @@ function ActivityPanel({ userId }: { userId: string }) {
 
 function StatCell({ label, value, tone = 'normal' }: { label: string; value: number; tone?: 'normal' | 'red' }) {
   return (
-    <div className={`rounded-lg border px-2.5 py-2 ${tone === 'red' ? 'border-red-500/30 bg-red-500/5' : 'border-[var(--border)] bg-[var(--muted)]/30'}`}>
-      <div className="text-[9px] uppercase tracking-wide text-[var(--muted-foreground)]">{label}</div>
-      <div className={`text-base font-bold ${tone === 'red' ? 'text-red-400' : 'text-[var(--foreground)]'}`}>{value}</div>
+    <div
+      className="inset"
+      style={{ padding: '10px 12px', borderColor: tone === 'red' ? '#3a1218' : undefined }}
+    >
+      <p className="lbl" style={{ textTransform: 'uppercase' }}>{label}</p>
+      <div style={{ marginTop: 6, fontFamily: 'var(--mono)', fontWeight: 500, fontSize: 16, lineHeight: '20px', color: tone === 'red' ? 'var(--red)' : 'var(--text)' }}>
+        {value}
+      </div>
     </div>
   );
 }
@@ -451,33 +485,37 @@ function TimelineRow({ event }: { event: TimelineEvent }) {
   const hasMeta = event.meta && Object.keys(event.meta).length > 0;
 
   return (
-    <li className="rounded-lg border border-[var(--border)] bg-[var(--muted)]/20 hover:bg-[var(--muted)]/40 transition-colors">
+    <li style={{ border: '1px solid var(--line)', borderRadius: 2, background: 'var(--panel-2)', marginBottom: 8 }}>
       <button
         onClick={() => hasMeta && setOpen((v) => !v)}
         disabled={!hasMeta}
-        className="w-full flex items-start gap-3 p-2.5 text-left"
+        className="w-full flex items-start text-left"
+        style={{ gap: 12, padding: '10px 12px' }}
       >
-        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${style.tint}`}>
-          <Icon size={14} />
+        <div
+          className="flex items-center justify-center shrink-0"
+          style={{ width: 26, height: 26, borderRadius: 2, border: `1px solid ${style.tint}`, background: 'var(--panel)' }}
+        >
+          <Icon size={13} style={{ color: style.tint }} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">{style.label}</span>
-            <span className="text-[10px] text-[var(--muted-foreground)]">{formatTimeAgo(event.timestamp)}</span>
-            <span className="text-[10px] text-[var(--muted-foreground)] font-mono">
+          <div className="flex items-baseline flex-wrap" style={{ gap: 10 }}>
+            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--muted-2)' }}>{style.label}</span>
+            <span style={{ fontSize: 10.5, color: 'var(--muted-2)' }}>{formatTimeAgo(event.timestamp)}</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted-3)' }}>
               {new Date(event.timestamp).toLocaleString()}
             </span>
           </div>
-          <div className="text-sm text-[var(--foreground)] truncate">{event.summary}</div>
+          <div className="truncate" style={{ marginTop: 3, fontSize: 12.5, color: 'var(--text)' }}>{event.summary}</div>
         </div>
         {hasMeta && (
-          <span className="text-[var(--muted-foreground)] shrink-0 mt-1">
-            {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          <span className="shrink-0" style={{ marginTop: 4, color: 'var(--muted-3)' }}>
+            {open ? <CaretDown size={14} /> : <CaretRight size={14} />}
           </span>
         )}
       </button>
       {open && hasMeta && (
-        <pre className="px-3 pb-3 pt-0 text-[10px] text-[var(--muted-foreground)] font-mono overflow-x-auto">
+        <pre className="overflow-x-auto" style={{ padding: '0 12px 12px', fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--muted)' }}>
 {JSON.stringify(event.meta, null, 2)}
         </pre>
       )}

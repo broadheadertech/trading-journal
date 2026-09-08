@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
-import { X, Loader2, BarChart3 } from 'lucide-react';
+import { X, CircleNotch, ChartBar } from '@phosphor-icons/react';
 
 export interface ProfileSocials {
   x: string;
@@ -91,114 +91,141 @@ export default function EditProfileModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="atlas-dash fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(3,6,10,.78)' }}
+      onClick={onClose}
+    >
       <form
         onSubmit={handleSubmit}
         onClick={e => e.stopPropagation()}
-        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
+        className="modal relative w-full max-w-md max-h-[90vh] overflow-y-auto"
+        style={{ padding: 0, textAlign: 'left' }}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--card)]">
-          <h2 className="text-lg font-bold text-[var(--foreground)]">Edit profile</h2>
-          <button type="button" onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
-            <X size={18} className="text-[var(--muted-foreground)]" />
+        <span className="accent" style={{ width: 90 }} />
+        <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
+        <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
+
+        <div
+          className="sticky top-0 z-10 flex items-center justify-between"
+          style={{ padding: '20px 24px', borderBottom: '1px solid var(--line)', background: '#080d14' }}
+        >
+          <h2 style={{ fontSize: 20, lineHeight: '22px' }}>Edit profile</h2>
+          <button type="button" onClick={onClose} style={{ display: 'flex', color: 'var(--muted-2)' }}>
+            <X size={18} />
           </button>
         </div>
 
-        <div className="p-5 space-y-4">
-          <label className="block">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">
-              Username
-            </div>
-            <div className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-black/20 px-3 py-2">
-              <span className="text-sm text-[var(--muted-foreground)] select-none">tradia.app/u/</span>
+        <div style={{ padding: '22px 24px 26px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="field">
+            <label htmlFor="profile-username">USERNAME</label>
+            <div className="box" style={{ gap: 6 }}>
+              <span style={{ fontSize: 13, color: 'var(--muted-2)', userSelect: 'none' }}>atlas.app/u/</span>
               <input
+                id="profile-username"
                 value={username}
                 onChange={e => setUsernameValue(e.target.value)}
                 placeholder="your_handle"
                 maxLength={24}
                 pattern="[a-zA-Z0-9_-]{3,24}"
-                className="flex-1 bg-transparent border-none outline-none text-sm font-mono text-[var(--foreground)]"
+                style={{
+                  flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none',
+                  fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--text)',
+                }}
               />
             </div>
-            <div className="text-[10px] text-[var(--muted-foreground)] mt-1.5 leading-relaxed">
+            <p style={{ margin: '9px 0 0', fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>
               3–24 characters · letters, numbers, underscores, hyphens. Leave blank to fall back to your Clerk username.
-            </div>
-          </label>
+            </p>
+          </div>
 
-          <label className="block">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-1.5">
-              Bio
-            </div>
+          <div className="field">
+            <label htmlFor="profile-bio">BIO</label>
             <textarea
+              id="profile-bio"
               value={bio}
               onChange={e => setBioValue(e.target.value)}
               rows={3}
               maxLength={280}
               placeholder="What you trade, how long you've been at it, your edge…"
-              className="w-full rounded-xl border border-[var(--border)] bg-black/20 px-3 py-2 text-sm leading-relaxed outline-none"
+              className="box w-full"
+              style={{ height: 'auto', minHeight: 74, display: 'block', padding: '11px 16px', lineHeight: '19px', resize: 'vertical' }}
             />
-            <div className="text-[10px] text-[var(--muted-foreground)] text-right mt-1">{bio.length}/280</div>
-          </label>
+            <p style={{ margin: '7px 0 0', fontSize: 10.5, textAlign: 'right', color: 'var(--muted-2)', fontFamily: 'var(--mono)' }}>
+              {bio.length}/280
+            </p>
+          </div>
 
           {/* Share overall stats toggle */}
           <button
             type="button"
             onClick={() => setShareStats(v => !v)}
-            className="w-full flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-black/20 px-3 py-2.5 text-left"
+            className="inset"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, width: '100%', textAlign: 'left', padding: '13px 16px' }}
           >
-            <div className="flex items-start gap-2.5 min-w-0">
-              <BarChart3 size={16} className="text-pink-400 shrink-0 mt-0.5" />
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-[var(--foreground)]">Share overall stats publicly</div>
-                <div className="text-[10px] text-[var(--muted-foreground)] leading-relaxed">
+            <span style={{ display: 'flex', alignItems: 'flex-start', gap: 10, minWidth: 0 }}>
+              <ChartBar size={15} style={{ color: shareStats ? 'var(--amber)' : 'var(--muted-2)', flex: 'none', marginTop: 2 }} />
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: 'block', fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>Share overall stats publicly</span>
+                <span style={{ display: 'block', marginTop: 5, fontSize: 10.5, lineHeight: '16px', color: 'var(--muted-2)' }}>
                   Shows your total wins/losses and net P&amp;L on your profile. Individual private trades are never exposed.
-                </div>
-              </div>
-            </div>
-            <span className={`relative inline-block w-10 h-5 rounded-full shrink-0 transition-colors ${shareStats ? 'bg-pink-500' : 'bg-[var(--muted)]'}`}>
-              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${shareStats ? 'translate-x-5' : ''}`} />
+                </span>
+              </span>
+            </span>
+            <span
+              style={{
+                position: 'relative', flex: 'none', width: 34, height: 16, borderRadius: 2,
+                border: `1px solid ${shareStats ? 'var(--amber)' : 'var(--line)'}`,
+                background: shareStats ? 'var(--amber)' : 'var(--rail)',
+                transition: 'background .15s,border-color .15s',
+              }}
+            >
+              <span
+                style={{
+                  position: 'absolute', top: 2, left: shareStats ? 20 : 2, width: 10, height: 10, borderRadius: 1,
+                  background: shareStats ? 'var(--ink)' : 'var(--muted-2)', transition: 'left .15s',
+                }}
+              />
             </span>
           </button>
 
           {/* Socials */}
-          <div className="space-y-2">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Social links <span className="font-normal normal-case tracking-normal">· optional, shown only if filled</span>
+          <div className="field">
+            <label>
+              SOCIAL LINKS <span style={{ fontWeight: 400, letterSpacing: 0, textTransform: 'none' }}>· optional, shown only if filled</span>
+            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {SOCIAL_FIELDS.map(f => (
+                <label key={f.key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ width: 80, flex: 'none', fontSize: 11, color: 'var(--muted-2)' }}>{f.label}</span>
+                  <input
+                    value={socials[f.key]}
+                    onChange={e => updateSocial(f.key, e.target.value)}
+                    placeholder={f.placeholder}
+                    maxLength={200}
+                    className="box"
+                    style={{ flex: 1, minWidth: 0, height: 34, fontFamily: 'var(--mono)', fontSize: 11.5 }}
+                  />
+                </label>
+              ))}
             </div>
-            {SOCIAL_FIELDS.map(f => (
-              <label key={f.key} className="flex items-center gap-2">
-                <span className="text-[11px] text-[var(--muted-foreground)] w-20 shrink-0">{f.label}</span>
-                <input
-                  value={socials[f.key]}
-                  onChange={e => updateSocial(f.key, e.target.value)}
-                  placeholder={f.placeholder}
-                  maxLength={200}
-                  className="flex-1 min-w-0 rounded-lg border border-[var(--border)] bg-black/20 px-2.5 py-1.5 text-xs font-mono text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)]/50"
-                />
-              </label>
-            ))}
           </div>
 
           {error && (
-            <div className="text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
+            <div
+              className="warn"
+              style={{ marginTop: 0, borderColor: 'rgba(255,77,94,.4)', background: 'rgba(255,77,94,.07)', color: 'var(--red)', fontSize: 12 }}
+            >
               {error}
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-2 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-            >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, paddingTop: 4, borderTop: '1px solid var(--line)', marginTop: 2 }}>
+            <button type="button" onClick={onClose} className="btn-g" style={{ marginTop: 16 }}>
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-slate-900 bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-300 hover:to-amber-300 transition-all disabled:opacity-50"
-            >
-              {submitting && <Loader2 size={14} className="animate-spin" />}
+            <button type="submit" disabled={submitting} className="btn-a disabled:opacity-50" style={{ marginTop: 16 }}>
+              {submitting && <CircleNotch size={14} className="animate-spin" />}
               Save
             </button>
           </div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Image from 'next/image';
 
@@ -15,15 +15,15 @@ export default function BrainMascot({ size = 32, glow = false, beat = false, cla
       {glow && (
         <div
           className={`absolute rounded-full blur-2xl ${beat ? 'animate-[heartbeat_1.4s_ease-in-out_infinite]' : 'animate-pulse'}`}
-          style={{ width: size * 1.8, height: size * 1.8, background: 'radial-gradient(circle, rgba(255,46,179,0.55), rgba(255,46,179,0.20) 60%, transparent 80%)' }}
+          style={{ width: size * 1.8, height: size * 1.8, background: 'radial-gradient(circle, rgba(217,148,5,0.55), rgba(217,148,5,0.20) 60%, transparent 80%)' }}
         />
       )}
       <Image
-        src="/tradia-logo.png"
-        alt="Tradia"
+        src="/atlas-icon.svg"
+        alt="Atlas"
         width={size}
         height={size}
-        className={`relative rounded-lg ${beat ? 'animate-[heartbeat_1.4s_ease-in-out_infinite]' : ''}`}
+        className={`relative ${beat ? 'animate-[heartbeat_1.4s_ease-in-out_infinite]' : ''}`}
         priority
       />
       <style jsx>{`

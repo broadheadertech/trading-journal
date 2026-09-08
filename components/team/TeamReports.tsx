@@ -1,8 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, Layers, Users, ShieldCheck, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ChartBar, Stack, Users, ShieldCheck, Plus } from '@phosphor-icons/react';
+
+// shared ATLAS input chrome (markup-level styling only)
+const inputBox: React.CSSProperties = {
+  width: '100%', height: 42, padding: '0 14px', borderRadius: 2,
+  border: '1px solid var(--line)', background: 'var(--panel-2)',
+  fontSize: 13, color: 'var(--text)', outline: 'none',
+};
 
 interface MemberStat {
   userId: string;
@@ -22,8 +28,8 @@ interface TeamReportsProps {
 type ReportType = 'team-performance' | 'cohort-analysis' | 'member-audit' | 'compliance-summary';
 
 const reportTypes: { id: ReportType; label: string; icon: React.ReactNode }[] = [
-  { id: 'team-performance', label: 'Team Performance', icon: <BarChart3 size={18} /> },
-  { id: 'cohort-analysis', label: 'Cohort Analysis', icon: <Layers size={18} /> },
+  { id: 'team-performance', label: 'Team Performance', icon: <ChartBar size={18} /> },
+  { id: 'cohort-analysis', label: 'Cohort Analysis', icon: <Stack size={18} /> },
   { id: 'member-audit', label: 'Member Audit', icon: <Users size={18} /> },
   { id: 'compliance-summary', label: 'Compliance Summary', icon: <ShieldCheck size={18} /> },
 ];
@@ -59,111 +65,120 @@ export default function TeamReports({ workspaceId, memberStats }: TeamReportsPro
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold">Reports</h2>
-        <p className="text-sm text-[var(--muted-foreground)]">Generate and download team reports</p>
+      <div className="phead" style={{ marginBottom: 24 }}>
+        <p className="eyebrow" style={{ margin: '0 0 12px' }}>Exports</p>
+        <h2 style={{ fontSize: 34, lineHeight: '38px' }}>Reports</h2>
+        <p className="sub" style={{ marginTop: 14, fontSize: 14.5 }}>Generate and download team reports</p>
       </div>
 
       {/* Report type cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {reportTypes.map(rt => (
           <button
             key={rt.id}
             onClick={() => setSelectedType(rt.id)}
-            className={cn(
-              'flex items-center gap-3 p-4 rounded-xl border transition-colors text-left',
-              selectedType === rt.id
-                ? 'bg-[var(--accent)]/10 border-[var(--accent)]/40 text-[var(--accent)]'
-                : 'bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--muted)]'
-            )}
+            className="stat flex flex-col items-start text-left"
+            style={{
+              height: 'auto', paddingBottom: 20,
+              borderColor: selectedType === rt.id ? 'var(--amber)' : 'var(--line)',
+            }}
           >
-            <span className={selectedType === rt.id ? 'text-[var(--accent)]' : 'text-[var(--muted-foreground)]'}>
+            <span className="accent" style={{ background: selectedType === rt.id ? 'var(--amber)' : 'var(--line-2)' }} />
+            <span style={{ color: selectedType === rt.id ? 'var(--amber)' : 'var(--muted-3)' }}>
               {rt.icon}
             </span>
-            <span className="text-sm font-medium">{rt.label}</span>
+            <b style={{ marginTop: 12, color: selectedType === rt.id ? 'var(--amber)' : 'var(--muted-2)' }}>
+              {rt.label.toUpperCase()}
+            </b>
           </button>
         ))}
       </div>
 
       {/* Generate form */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <h3 className="font-bold mb-4">Generate Report</h3>
-        <div className="flex items-end gap-4 flex-wrap">
-          <div>
-            <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">Type</label>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <h3>Generate Report</h3>
+        <p className="sub">Pick a type, range and cohort scope</p>
+        <div className="flex items-end gap-4 flex-wrap" style={{ marginTop: 20 }}>
+          <div className="field">
+            <label>TYPE</label>
             <select
               value={selectedType}
               onChange={e => setSelectedType(e.target.value as ReportType)}
-              className="px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none min-w-[180px]"
+              style={{ ...inputBox, width: 'auto', minWidth: 190, cursor: 'pointer' }}
             >
               {reportTypes.map(rt => (
                 <option key={rt.id} value={rt.id}>{rt.label}</option>
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">From</label>
+          <div className="field">
+            <label>FROM</label>
             <input
               type="date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
-              className="px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none"
+              style={{ ...inputBox, width: 'auto' }}
             />
           </div>
-          <div>
-            <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">To</label>
+          <div className="field">
+            <label>TO</label>
             <input
               type="date"
               value={toDate}
               onChange={e => setToDate(e.target.value)}
-              className="px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none"
+              style={{ ...inputBox, width: 'auto' }}
             />
           </div>
-          <div>
-            <label className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-1.5 block">Cohort (optional)</label>
+          <div className="field">
+            <label>COHORT (OPTIONAL)</label>
             <select
               value={cohortFilter}
               onChange={e => setCohortFilter(e.target.value)}
-              className="px-3 py-2.5 bg-[var(--muted)] border border-[var(--border)] rounded-lg text-sm outline-none min-w-[120px]"
+              style={{ ...inputBox, width: 'auto', minWidth: 130, cursor: 'pointer' }}
             >
               <option value="all">All</option>
             </select>
           </div>
-          <button
-            onClick={handleGenerate}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white rounded-lg text-sm font-semibold transition-colors"
-          >
-            <Plus size={16} />
+          <button onClick={handleGenerate} className="btn-a" style={{ height: 42 }}>
+            <Plus size={14} />
             Generate
           </button>
         </div>
       </div>
 
       {/* Generated reports list */}
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
-        <h3 className="font-bold mb-4">Generated Reports</h3>
+      <div className="card" style={{ marginTop: 24 }}>
+        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
+        <div className="cardhead">
+          <div>
+            <h3>Generated Reports</h3>
+            <p className="sub">This session&apos;s exports</p>
+          </div>
+          <span className="chip" style={{ marginLeft: 'auto', height: 26, padding: '0 10px', fontSize: 11 }}>
+            {generatedReports.length}
+          </span>
+        </div>
         {generatedReports.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)] text-center py-8">
+          <p className="empty-line" style={{ padding: '34px 0 8px' }}>
             No reports generated yet. Use the form above to create one.
           </p>
         ) : (
-          <div className="space-y-2">
+          <div style={{ marginTop: 18 }}>
             {generatedReports.map(report => (
-              <div key={report.id} className="flex items-center justify-between py-3 px-4 rounded-lg border border-[var(--border)] hover:bg-[var(--muted)]/50">
-                <div className="flex items-center gap-3">
-                  <BarChart3 size={16} className="text-[var(--accent)]" />
-                  <div>
-                    <p className="text-sm font-medium">
-                      {reportTypes.find(r => r.id === report.type)?.label}
-                    </p>
-                    <p className="text-[11px] text-[var(--muted-foreground)]">
-                      {new Date(report.from).toLocaleDateString()} - {new Date(report.to).toLocaleDateString()}
-                    </p>
-                  </div>
+              <div key={report.id} className="mrow">
+                <ChartBar size={15} className="ic" style={{ color: 'var(--amber)' }} />
+                <div className="lb" style={{ marginLeft: 16 }}>
+                  <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: 'var(--text)' }}>
+                    {reportTypes.find(r => r.id === report.type)?.label}
+                  </p>
+                  <p style={{ margin: '3px 0 0', fontSize: 11, color: 'var(--muted-2)' }}>
+                    {new Date(report.from).toLocaleDateString()} - {new Date(report.to).toLocaleDateString()}
+                  </p>
                 </div>
-                <span className="text-[11px] text-[var(--muted-foreground)]">
+                <span className="val" style={{ fontSize: 11, color: 'var(--muted-2)' }}>
                   {new Date(report.generatedAt).toLocaleString()}
                 </span>
               </div>

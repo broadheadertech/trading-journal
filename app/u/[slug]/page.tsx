@@ -7,14 +7,103 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  Radio, BookOpen, TrendingUp, ArrowLeft, Pencil, Loader2, Lock, Globe,
-  UserPlus, UserCheck, Twitter, Instagram, Youtube, Send, Music2, X,
-} from 'lucide-react';
+  Radio, BookOpen, TrendUp as TrendingUp, Pencil, CircleNotch as Loader2, Lock, Globe,
+  UserPlus, UserCheck, YoutubeLogo as Youtube, PaperPlaneTilt as Send, X,
+} from '@phosphor-icons/react';
+import { TwitterLogo as Twitter, InstagramLogo as Instagram, MusicNotes as Music2 } from '@phosphor-icons/react';
 import EditProfileModal from '@/components/EditProfileModal';
 import SignalSocialBar from '@/components/SignalSocialBar';
 import SignalRationale from '@/components/SignalRationale';
 
 type TabKey = 'trades' | 'signals' | 'articles';
+
+// ATLAS page chrome for the public profile. Presentation only.
+const PROFILE_CSS = `
+.pp-top{border-bottom:1px solid var(--line)}
+.pp-top-in{height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pp-link{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--atlas-muted)}
+.pp-link:hover{color:var(--text)}
+.pp-chip{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border:1px solid var(--line-2);border-radius:2px;font-size:12px;font-weight:700;color:var(--text)}
+.pp-chip:hover{border-color:var(--rule-soft)}
+.pp-shell{padding:44px 0 96px}
+.pp-hero{padding:28px 32px 0}
+.pp-id{display:flex;gap:22px;align-items:flex-start}
+.pp-avatar{width:78px;height:78px;border-radius:3px;object-fit:cover;border:1px solid var(--line-2);flex:none}
+.pp-avatar-fb{width:78px;height:78px;border-radius:3px;border:1px solid var(--amber);background:rgba(217,148,5,.1);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:30px;color:var(--amber);flex:none}
+.pp-name{font-family:var(--display);font-weight:600;font-size:30px;line-height:34px;color:var(--text);margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-handle{font-family:var(--mono);font-size:12.5px;color:var(--muted-2);margin:8px 0 0}
+.pp-bio{margin:15px 0 0;font-size:14px;line-height:22px;color:var(--atlas-muted);white-space:pre-line}
+.pp-follow{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 16px;border-radius:2px;font-weight:700;font-size:12px;flex:none}
+.pp-follow.is-following{border:1px solid var(--line-2);color:var(--text)}
+.pp-follow.is-following:hover{border-color:var(--red);color:var(--red)}
+.pp-follow.is-not{background:var(--amber);color:var(--ink)}
+.pp-follow.is-not:hover{background:#f0a409}
+.pp-follow:disabled{opacity:.5}
+.pp-socials{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.pp-social{width:32px;height:32px;border:1px solid var(--line);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--atlas-muted)}
+.pp-social:hover{color:var(--amber);border-color:var(--amber-dim)}
+.pp-hint{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:7px 12px;border:1px solid rgba(217,148,5,.28);background:rgba(217,148,5,.07);border-radius:2px;font-size:12px;color:var(--amber)}
+.pp-hint button{font-weight:700;text-decoration:underline}
+.pp-lanes{display:grid;grid-template-columns:repeat(3,1fr);margin-top:30px;border-top:1px solid var(--line)}
+.pp-lane{padding:20px 24px 24px}
+.pp-lane + .pp-lane{border-left:1px solid var(--line)}
+.pp-lane-hd{display:flex;align-items:center;gap:8px;font-family:var(--micro);font-size:10px;letter-spacing:.06em;color:var(--muted-2);margin-bottom:14px}
+.pp-lane-hd i{width:5px;height:5px;flex:none}
+.pp-muted{font-size:12.5px;line-height:19px;color:var(--muted-2);text-align:left}
+.pp-wl{display:flex;align-items:baseline;gap:9px;font-family:var(--mono)}
+.pp-wl b{font-weight:400;font-size:26px;line-height:1}
+.pp-wl b i{font-style:normal;font-size:11px;color:var(--muted-2);margin-left:2px}
+.pp-wl .sep{color:var(--muted-2)}
+.pp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px;font-size:12px;color:var(--atlas-muted)}
+.pp-row b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--text)}
+.pp-count{text-align:left}
+.pp-count b{display:block;font-family:var(--mono);font-weight:400;font-size:24px;line-height:1;color:var(--text)}
+.pp-count span{display:block;font-family:var(--micro);font-size:9.5px;letter-spacing:.06em;color:var(--muted-2);margin-top:7px}
+.pp-count:hover b{color:var(--amber)}
+.pp-tabs{display:flex;margin-top:48px;border-bottom:1px solid var(--line)}
+.pp-tab{display:inline-flex;align-items:center;gap:9px;padding:0 20px;height:50px;font-size:13.5px;font-weight:700;color:var(--atlas-muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.pp-tab:hover{color:var(--text)}
+.pp-tab.is-on{color:var(--text);border-bottom-color:var(--amber)}
+.pp-tab em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+.pp-body{margin-top:30px}
+.pp-empty{border:1px dashed var(--line-2);border-radius:3px;padding:56px 24px;text-align:center;font-size:13.5px;line-height:21px;color:var(--atlas-muted)}
+.pp-loading{padding:48px 0;text-align:center;color:var(--amber)}
+.pp-list{display:flex;flex-direction:column;gap:12px}
+.pp-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pp-item{border:1px solid var(--line);border-radius:3px;background:var(--card);padding:17px 20px;display:block}
+.pp-item:hover{border-color:var(--line-2)}
+.pp-summary{border:1px solid var(--line);border-radius:3px;background:var(--card);padding:12px 20px;font-family:var(--mono);font-size:11.5px;color:var(--muted-2)}
+.pp-sym{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--text)}
+.pp-tag{display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:2px;font-family:var(--micro);font-size:9px;letter-spacing:.05em;text-transform:uppercase}
+.pp-tag.up{background:rgba(36,200,138,.12);color:var(--green)}
+.pp-tag.down{background:rgba(243,36,56,.12);color:var(--red)}
+.pp-tag.flat{background:rgba(124,140,160,.12);color:var(--atlas-muted)}
+.pp-strat{font-family:var(--micro);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-2)}
+.pp-pnl{font-family:var(--mono);font-size:14px;font-weight:500}
+.pp-meta{font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-top:8px}
+.pp-note{margin:12px 0 0;font-size:13px;line-height:20px;color:var(--atlas-muted)}
+.pp-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pp-clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pp-art-title{font-family:var(--display);font-weight:600;font-size:18px;line-height:22px;color:var(--text);margin:0}
+.pp-art-meta{display:flex;align-items:center;gap:9px;margin-top:12px;font-family:var(--micro);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2)}
+.pp-modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72)}
+.pp-modal-in{width:100%;max-width:380px;max-height:80vh;display:flex;flex-direction:column;border:1px solid var(--line-2);border-radius:3px;background:var(--card)}
+.pp-modal-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--line);flex:none}
+.pp-modal-hd h2{font-family:var(--display);font-weight:600;font-size:16px;margin:0;text-transform:capitalize;color:var(--text)}
+.pp-modal-body{overflow-y:auto;padding:8px}
+.pp-urow{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:2px}
+.pp-urow:hover{background:rgba(217,148,5,.06)}
+.pp-uav{width:34px;height:34px;border-radius:2px;object-fit:cover;border:1px solid var(--line);flex:none}
+.pp-uav-fb{width:34px;height:34px;border-radius:2px;border:1px solid var(--amber);background:rgba(217,148,5,.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--amber);flex:none}
+.pp-center{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+@media(max-width:860px){
+  .pp-lanes{grid-template-columns:1fr}
+  .pp-lane + .pp-lane{border-left:0;border-top:1px solid var(--line)}
+  .pp-grid2{grid-template-columns:1fr}
+  .pp-hero{padding:22px 20px 0}
+  .pp-id{flex-wrap:wrap}
+}
+`;
 
 export default function PublicProfilePage() {
   const router = useRouter();
@@ -64,70 +153,71 @@ export default function PublicProfilePage() {
   // Loading / not-found states.
   if (profile === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <Loader2 size={28} className="text-pink-400 animate-spin" />
+      <div className="atlas-site">
+        <style>{PROFILE_CSS}</style>
+        <div className="pp-center">
+          <Loader2 size={26} className="animate-spin" style={{ color: 'var(--amber)' }} />
+        </div>
       </div>
     );
   }
 
   if (profile === null) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--background)] px-4 text-center">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">No such profile</h1>
-        <p className="text-sm text-[var(--muted-foreground)] mb-6">
-          No Tradia user matches <span className="font-mono">/u/{slug}</span>.
-        </p>
-        <button
-          onClick={() => router.push('/app')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
-        >
-          <ArrowLeft size={14} /> Back to the app
-        </button>
+      <div className="atlas-site">
+        <style>{PROFILE_CSS}</style>
+        <div className="pp-center">
+          <p className="eyebrow" style={{ margin: '0 0 14px' }}>404 — NOT FOUND</p>
+          <h1 style={{ fontFamily: 'var(--display)', fontWeight: 600, fontSize: '34px', lineHeight: '38px', color: 'var(--text)', margin: 0 }}>
+            No such profile
+          </h1>
+          <p className="lede" style={{ marginTop: '14px' }}>
+            No Atlas user matches <span style={{ fontFamily: 'var(--mono)', color: 'var(--text-3)' }}>/u/{slug}</span>.
+          </p>
+          <button onClick={() => router.push('/app')} className="btn btn-ghost" style={{ marginTop: '30px' }}>
+            <svg width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true"><path d="M12 4.5 H0 M0 4.5 L5 0 M0 4.5 L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+            Back to the app
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <div className="atlas-site" style={{ minHeight: '100vh' }}>
+      <style>{PROFILE_CSS}</style>
+
       {/* Top bar — link back into the app or to landing */}
-      <header className="border-b border-[var(--border)]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href={currentUser ? '/app' : '/'} className="inline-flex items-center gap-2 text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors">
-            <ArrowLeft size={14} /> {currentUser ? 'Back to app' : 'Tradia home'}
+      <header className="pp-top">
+        <div className="wrap pp-top-in">
+          <Link href={currentUser ? '/app' : '/'} className="pp-link">
+            <svg width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true"><path d="M12 4.5 H0 M0 4.5 L5 0 M0 4.5 L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+            {currentUser ? 'Back to app' : 'Atlas home'}
           </Link>
           {isOwnProfile && (
-            <button
-              onClick={() => setEditing(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
-            >
+            <button onClick={() => setEditing(true)} className="pp-chip">
               <Pencil size={12} /> Edit profile
             </button>
           )}
         </div>
       </header>
 
-      {/* Hero card */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
-          <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+      <div className="wrap pp-shell" style={{ maxWidth: 'min(1040px, calc(100% - 40px))' }}>
+        {/* Hero card */}
+        <div className="card-solid pp-hero">
+          <div className="pp-id">
             {profile.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={profile.avatarUrl}
-                alt={displayName}
-                className="w-20 h-20 rounded-full object-cover border border-[var(--border)] shrink-0"
-              />
+              <img src={profile.avatarUrl} alt={displayName} className="pp-avatar" />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-2xl font-bold text-white shrink-0">
-                {displayName.slice(0, 1).toUpperCase()}
-              </div>
+              <div className="pp-avatar-fb">{displayName.slice(0, 1).toUpperCase()}</div>
             )}
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h1 className="text-2xl font-bold text-[var(--foreground)] truncate">{displayName}</h1>
-                  <div className="text-sm text-[var(--muted-foreground)] truncate">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px' }}>
+                <div style={{ minWidth: 0 }}>
+                  <h1 className="pp-name">{displayName}</h1>
+                  <div className="pp-handle">
                     @{displayHandle}
                     {profile.memberSince && (
                       <span> · since {new Date(profile.memberSince).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
@@ -137,88 +227,80 @@ export default function PublicProfilePage() {
                 {!isOwnProfile && currentUser && <FollowButton targetUserId={profile.userId} />}
               </div>
 
-              {profile.bio && (
-                <p className="text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed whitespace-pre-line">
-                  {profile.bio}
-                </p>
-              )}
+              {profile.bio && <p className="pp-bio">{profile.bio}</p>}
 
               <SocialRow socials={profile.socials} />
 
               {isOwnProfile && !profile.username && (
-                <div className="mt-3 text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 inline-flex items-center gap-2">
+                <div className="pp-hint">
                   Pick a custom username so your profile gets a pretty URL.
-                  <button onClick={() => setEditing(true)} className="underline font-semibold">
-                    Set it now
-                  </button>
+                  <button onClick={() => setEditing(true)}>Set it now</button>
                 </div>
               )}
             </div>
           </div>
 
           {/* Performance + social lanes */}
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="pp-lanes">
             {/* Trading */}
-            <StatLane label="Trading" accent="emerald">
+            <StatLane label="TRADING" accent="var(--green)">
               {stats?.trading ? (
                 <>
                   <WinLoss wins={stats.trading.wins} losses={stats.trading.losses} />
                   <LaneRow
                     left={`${stats.trading.winRate}% win`}
                     right={`${stats.trading.totalPnL >= 0 ? '+' : ''}$${stats.trading.totalPnL.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-                    rightClass={stats.trading.totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400'}
+                    rightColor={stats.trading.totalPnL >= 0 ? 'var(--green)' : 'var(--red)'}
                   />
                 </>
               ) : isOwnProfile ? (
-                <button onClick={() => setEditing(true)} className="text-xs text-[var(--muted-foreground)] hover:text-pink-300 text-left leading-relaxed">
+                <button onClick={() => setEditing(true)} className="pp-muted">
                   Private — enable “Share overall stats” to show W/L and net P&amp;L here.
                 </button>
               ) : (
-                <div className="text-xs text-[var(--muted-foreground)]">Not shared publicly.</div>
+                <div className="pp-muted">Not shared publicly.</div>
               )}
             </StatLane>
 
             {/* Signals */}
-            <StatLane label="Signals" accent="pink">
+            <StatLane label="SIGNALS" accent="var(--amber)">
               {stats && stats.signals.total > 0 ? (
                 <>
                   <WinLoss wins={stats.signals.wins} losses={stats.signals.losses} />
                   <LaneRow
                     left={`${stats.signals.hitRate}% hit`}
                     right={`${stats.signals.totalR >= 0 ? '+' : ''}${stats.signals.totalR}R`}
-                    rightClass={stats.signals.totalR >= 0 ? 'text-emerald-400' : 'text-red-400'}
+                    rightColor={stats.signals.totalR >= 0 ? 'var(--green)' : 'var(--red)'}
                   />
                   <LaneRow
                     left="net pips"
                     right={`${stats.signals.totalPips >= 0 ? '+' : ''}${stats.signals.totalPips.toLocaleString()} pips`}
-                    rightClass={stats.signals.totalPips >= 0 ? 'text-emerald-400' : 'text-red-400'}
+                    rightColor={stats.signals.totalPips >= 0 ? 'var(--green)' : 'var(--red)'}
                   />
                 </>
               ) : (
-                <div className="text-xs text-[var(--muted-foreground)]">No signals yet.</div>
+                <div className="pp-muted">No signals yet.</div>
               )}
             </StatLane>
 
             {/* Social */}
-            <StatLane label="Social" accent="sky">
-              <div className="flex items-baseline gap-5">
-                <button onClick={() => setFollowList('followers')} className="text-left hover:opacity-75 transition-opacity">
-                  <div className="text-xl font-extrabold tabular-nums">{followCounts?.followers ?? 0}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Followers</div>
+            <StatLane label="SOCIAL" accent="var(--amber)">
+              <div style={{ display: 'flex', gap: '34px' }}>
+                <button onClick={() => setFollowList('followers')} className="pp-count">
+                  <b>{followCounts?.followers ?? 0}</b>
+                  <span>FOLLOWERS</span>
                 </button>
-                <button onClick={() => setFollowList('following')} className="text-left hover:opacity-75 transition-opacity">
-                  <div className="text-xl font-extrabold tabular-nums">{followCounts?.following ?? 0}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">Following</div>
+                <button onClick={() => setFollowList('following')} className="pp-count">
+                  <b>{followCounts?.following ?? 0}</b>
+                  <span>FOLLOWING</span>
                 </button>
               </div>
             </StatLane>
           </div>
         </div>
-      </section>
 
-      {/* Tabs */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center gap-1 border-b border-[var(--border)]">
+        {/* Tabs */}
+        <div className="pp-tabs">
           {([
             { key: 'trades', label: 'Public trades', icon: <TrendingUp size={14} />, count: tradeStats.totalPublic },
             { key: 'signals', label: 'Signals', icon: <Radio size={14} />, count: signals?.length ?? 0 },
@@ -227,32 +309,28 @@ export default function PublicProfilePage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                tab === t.key
-                  ? 'border-pink-400 text-[var(--foreground)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
+              className={`pp-tab${tab === t.key ? ' is-on' : ''}`}
             >
               {t.icon}
               {t.label}
-              <span className="text-[10px] opacity-60 tabular-nums">{t.count}</span>
+              <em>{t.count}</em>
             </button>
           ))}
         </div>
-      </section>
 
-      {/* Tab body */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        {tab === 'trades' && (
-          <PublicTradesPanel trades={publicTrades} isOwnProfile={isOwnProfile} winRate={tradeStats.winRate} closed={tradeStats.closed} />
-        )}
-        {tab === 'signals' && (
-          <SignalsPanel signals={signals} />
-        )}
-        {tab === 'articles' && (
-          <ArticlesPanel articles={articles} />
-        )}
-      </main>
+        {/* Tab body */}
+        <div className="pp-body">
+          {tab === 'trades' && (
+            <PublicTradesPanel trades={publicTrades} isOwnProfile={isOwnProfile} winRate={tradeStats.winRate} closed={tradeStats.closed} />
+          )}
+          {tab === 'signals' && (
+            <SignalsPanel signals={signals} />
+          )}
+          {tab === 'articles' && (
+            <ArticlesPanel articles={articles} />
+          )}
+        </div>
+      </div>
 
       {editing && (
         <EditProfileModal
@@ -282,49 +360,52 @@ export default function PublicProfilePage() {
 
 type PublicTrade = NonNullable<ReturnType<typeof useQuery<typeof api.trades.listPublicByUser>>>[number];
 
+function PanelLoading() {
+  return <div className="pp-loading"><Loader2 size={20} className="animate-spin" style={{ display: 'inline-block' }} /></div>;
+}
+
 function PublicTradesPanel({ trades, isOwnProfile, winRate, closed }: { trades: PublicTrade[] | undefined; isOwnProfile: boolean; winRate: number; closed: number }) {
   if (trades === undefined) {
-    return <div className="text-center text-sm text-[var(--muted-foreground)] py-10"><Loader2 size={20} className="animate-spin inline" /></div>;
+    return <PanelLoading />;
   }
   if (trades.length === 0) {
     return (
-      <div className="text-center py-12 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50">
-        <p className="text-sm text-[var(--muted-foreground)]">
-          {isOwnProfile
-            ? 'No public trades yet. Open the trades log and toggle a trade to public to share it here.'
-            : 'This trader hasn\'t shared any trades publicly yet.'}
-        </p>
+      <div className="pp-empty">
+        {isOwnProfile
+          ? 'No public trades yet. Open the trades log and toggle a trade to public to share it here.'
+          : 'This trader hasn\'t shared any trades publicly yet.'}
       </div>
     );
   }
   return (
-    <div className="space-y-3">
+    <div className="pp-list">
       {closed > 0 && (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 flex items-center justify-between text-xs">
-          <span className="text-[var(--muted-foreground)]">{closed} closed · {winRate}% win-rate (from public trades)</span>
-        </div>
+        <div className="pp-summary">{closed} closed · {winRate}% win-rate (from public trades)</div>
       )}
       {trades.map(t => (
-        <div key={t._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-sm font-bold">{t.coin}</span>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${t.direction === 'short' ? 'bg-red-500/15 text-red-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+        <div key={t._id} className="pp-item">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+              <span className="pp-sym">{t.coin}</span>
+              <span className={`pp-tag ${t.direction === 'short' ? 'down' : 'up'}`}>
                 {t.direction ?? 'long'}
               </span>
-              {t.strategy && <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">· {t.strategy}</span>}
+              {t.strategy && <span className="pp-strat">· {t.strategy}</span>}
             </div>
-            <div className={`text-sm font-bold tabular-nums ${(t.actualPnL ?? 0) > 0 ? 'text-emerald-400' : (t.actualPnL ?? 0) < 0 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}>
+            <div
+              className="pp-pnl"
+              style={{ color: (t.actualPnL ?? 0) > 0 ? 'var(--green)' : (t.actualPnL ?? 0) < 0 ? 'var(--red)' : 'var(--muted-2)' }}
+            >
               {t.actualPnL !== null
                 ? `${t.actualPnL >= 0 ? '+' : ''}$${t.actualPnL.toFixed(2)}`
                 : 'Open'}
             </div>
           </div>
-          <div className="text-[11px] text-[var(--muted-foreground)] mt-1 tabular-nums">
+          <div className="pp-meta">
             {t.entryPrice} → {t.exitPrice ?? '—'} · {new Date(t.entryDate).toLocaleDateString()}
           </div>
           {(t.lessonNotes || t.reasoning) && (
-            <p className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3">
+            <p className="pp-note pp-clamp">
               {t.lessonNotes || t.reasoning}
             </p>
           )}
@@ -338,34 +419,25 @@ type ProfileSignal = NonNullable<ReturnType<typeof useQuery<typeof api.signals.b
 
 function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
   if (signals === undefined) {
-    return <div className="text-center text-sm text-[var(--muted-foreground)] py-10"><Loader2 size={20} className="animate-spin inline" /></div>;
+    return <PanelLoading />;
   }
   if (signals.length === 0) {
-    return (
-      <div className="text-center py-12 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50">
-        <p className="text-sm text-[var(--muted-foreground)]">No signals posted yet.</p>
-      </div>
-    );
+    return <div className="pp-empty">No signals posted yet.</div>;
   }
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="pp-grid2">
       {signals.map(s => (
-        <div key={s._id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col">
-          <div className="p-4 flex-1">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <div className="font-mono font-bold">{s.symbol}</div>
-              <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                s.status === 'won' ? 'bg-emerald-500/15 text-emerald-300' :
-                s.status === 'lost' ? 'bg-red-500/15 text-red-300' :
-                s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
-                'bg-[var(--muted)]/30 text-[var(--muted-foreground)]'
-              }`}>{s.status}</span>
+        <div key={s._id} className="pp-item" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '17px 20px', flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              <div className="pp-sym">{s.symbol}</div>
+              <span className={`pp-tag ${s.status === 'won' || s.status === 'active' ? 'up' : s.status === 'lost' ? 'down' : 'flat'}`}>{s.status}</span>
             </div>
-            <div className="text-[11px] text-[var(--muted-foreground)] tabular-nums">
+            <div className="pp-meta">
               {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} target{s.takeProfits.length > 1 ? 's' : ''}
             </div>
             {s.rationale && (
-              <SignalRationale text={s.rationale} symbol={s.symbol} className="text-xs text-[var(--muted-foreground)] mt-2 leading-relaxed line-clamp-3 block" />
+              <SignalRationale text={s.rationale} symbol={s.symbol} className="pp-note pp-clamp" />
             )}
           </div>
           <SignalSocialBar signalId={s._id} />
@@ -379,27 +451,23 @@ type ProfileArticle = NonNullable<ReturnType<typeof useQuery<typeof api.articles
 
 function ArticlesPanel({ articles }: { articles: ProfileArticle[] | undefined }) {
   if (articles === undefined) {
-    return <div className="text-center text-sm text-[var(--muted-foreground)] py-10"><Loader2 size={20} className="animate-spin inline" /></div>;
+    return <PanelLoading />;
   }
   if (articles.length === 0) {
-    return (
-      <div className="text-center py-12 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50">
-        <p className="text-sm text-[var(--muted-foreground)]">No published articles yet.</p>
-      </div>
-    );
+    return <div className="pp-empty">No published articles yet.</div>;
   }
   return (
-    <div className="space-y-3">
+    <div className="pp-list">
       {articles.map(a => (
-        <Link key={a._id} href={`/blog/${a.slug}`} className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:border-pink-500/30 transition-colors">
-          <h3 className="text-base font-bold text-[var(--foreground)]">{a.title}</h3>
-          <p className="text-xs text-[var(--muted-foreground)] mt-1 line-clamp-2">{a.excerpt}</p>
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider mt-2 flex items-center gap-2">
+        <Link key={a._id} href={`/blog/${a.slug}`} className="pp-item">
+          <h3 className="pp-art-title">{a.title}</h3>
+          <p className="pp-note pp-clamp2" style={{ marginTop: '9px' }}>{a.excerpt}</p>
+          <div className="pp-art-meta">
             <span>{a.category}</span>
             <span>·</span>
             <span>{new Date(a.publishedAt ?? a.createdAt).toLocaleDateString()}</span>
             <span>·</span>
-            <span className="inline-flex items-center gap-1">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
               {a.accessTier === 'public' ? <Globe size={10} /> : <Lock size={10} />}
               {a.accessTier}
             </span>
@@ -433,11 +501,7 @@ function FollowButton({ targetUserId }: { targetUserId: string }) {
     <button
       onClick={toggle}
       disabled={busy || following === undefined}
-      className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all disabled:opacity-50 ${
-        isFollowing
-          ? 'border border-[var(--border)] text-[var(--foreground)] hover:border-red-500/40 hover:text-red-300'
-          : 'text-slate-900 bg-gradient-to-r from-pink-400 to-fuchsia-400 hover:from-pink-300 hover:to-fuchsia-300'
-      }`}
+      className={`pp-follow ${isFollowing ? 'is-following' : 'is-not'}`}
     >
       {isFollowing ? <><UserCheck size={13} /> Following</> : <><UserPlus size={13} /> Follow</>}
     </button>
@@ -462,7 +526,7 @@ function SocialRow({ socials }: { socials: ProfileSocialLinks }) {
 
   if (links.length === 0) return null;
   return (
-    <div className="flex items-center gap-2 mt-3">
+    <div className="pp-socials">
       {links.map(({ url, Icon, label }) => (
         <a
           key={label}
@@ -470,7 +534,7 @@ function SocialRow({ socials }: { socials: ProfileSocialLinks }) {
           target="_blank"
           rel="noopener noreferrer"
           title={label}
-          className="w-8 h-8 rounded-lg border border-[var(--border)] bg-[var(--background)] flex items-center justify-center text-[var(--muted-foreground)] hover:text-pink-300 hover:border-pink-500/30 transition-colors"
+          className="pp-social"
         >
           <Icon size={15} />
         </a>
@@ -479,13 +543,12 @@ function SocialRow({ socials }: { socials: ProfileSocialLinks }) {
   );
 }
 
-function StatLane({ label, accent, children }: { label: string; accent: 'emerald' | 'pink' | 'sky'; children: React.ReactNode }) {
-  const dot = accent === 'emerald' ? 'bg-emerald-400' : accent === 'pink' ? 'bg-pink-400' : 'bg-sky-400';
+function StatLane({ label, accent, children }: { label: string; accent: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--background)]/40 p-3.5">
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">{label}</span>
+    <div className="pp-lane">
+      <div className="pp-lane-hd">
+        <i style={{ background: accent }} />
+        {label}
       </div>
       {children}
     </div>
@@ -494,23 +557,19 @@ function StatLane({ label, accent, children }: { label: string; accent: 'emerald
 
 function WinLoss({ wins, losses }: { wins: number; losses: number }) {
   return (
-    <div className="flex items-baseline gap-2">
-      <span className="text-xl font-extrabold tabular-nums text-emerald-400">
-        {wins}<span className="text-xs font-semibold text-[var(--muted-foreground)]">W</span>
-      </span>
-      <span className="text-[var(--muted-foreground)]">/</span>
-      <span className="text-xl font-extrabold tabular-nums text-red-400">
-        {losses}<span className="text-xs font-semibold text-[var(--muted-foreground)]">L</span>
-      </span>
+    <div className="pp-wl">
+      <b style={{ color: 'var(--green)' }}>{wins}<i>W</i></b>
+      <span className="sep">/</span>
+      <b style={{ color: 'var(--red)' }}>{losses}<i>L</i></b>
     </div>
   );
 }
 
-function LaneRow({ left, right, rightClass }: { left: string; right: string; rightClass?: string }) {
+function LaneRow({ left, right, rightColor }: { left: string; right: string; rightColor?: string }) {
   return (
-    <div className="flex items-center justify-between mt-1.5 text-xs">
-      <span className="text-[var(--muted-foreground)]">{left}</span>
-      <span className={`font-bold tabular-nums ${rightClass ?? ''}`}>{right}</span>
+    <div className="pp-row">
+      <span>{left}</span>
+      <b style={rightColor ? { color: rightColor } : undefined}>{right}</b>
     </div>
   );
 }
@@ -521,43 +580,33 @@ function FollowListModal({ kind, userId, onClose }: { kind: 'followers' | 'follo
   const users = kind === 'followers' ? followers : following;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
-      <div
-        onClick={e => e.stopPropagation()}
-        className="w-full max-w-sm max-h-[80vh] flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
-      >
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] shrink-0">
-          <h2 className="text-sm font-bold capitalize">{kind}</h2>
-          <button onClick={onClose} className="p-1 rounded hover:bg-[var(--muted)]/50 transition-colors">
-            <X size={16} className="text-[var(--muted-foreground)]" />
+    <div className="pp-modal" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} className="pp-modal-in">
+        <div className="pp-modal-hd">
+          <h2>{kind}</h2>
+          <button onClick={onClose} style={{ color: 'var(--atlas-muted)', display: 'inline-flex' }} aria-label="Close">
+            <X size={16} />
           </button>
         </div>
-        <div className="overflow-y-auto p-2">
+        <div className="pp-modal-body">
           {users === undefined ? (
-            <div className="text-center py-8"><Loader2 size={18} className="animate-spin inline text-pink-400" /></div>
+            <div className="pp-loading"><Loader2 size={18} className="animate-spin" style={{ display: 'inline-block' }} /></div>
           ) : users.length === 0 ? (
-            <div className="text-center py-8 text-sm text-[var(--muted-foreground)]">
+            <div style={{ textAlign: 'center', padding: '32px 0', fontSize: '13px', color: 'var(--muted-2)' }}>
               {kind === 'followers' ? 'No followers yet.' : 'Not following anyone yet.'}
             </div>
           ) : (
             users.map(u => (
-              <Link
-                key={u.userId}
-                href={`/u/${u.handle}`}
-                onClick={onClose}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--muted)]/40 transition-colors"
-              >
+              <Link key={u.userId} href={`/u/${u.handle}`} onClick={onClose} className="pp-urow">
                 {u.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={u.avatarUrl} alt={u.displayName} className="w-9 h-9 rounded-full object-cover border border-[var(--border)] shrink-0" />
+                  <img src={u.avatarUrl} alt={u.displayName} className="pp-uav" />
                 ) : (
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
-                    {u.displayName.slice(0, 1).toUpperCase()}
-                  </div>
+                  <div className="pp-uav-fb">{u.displayName.slice(0, 1).toUpperCase()}</div>
                 )}
-                <div className="min-w-0">
-                  <div className="text-sm font-semibold text-[var(--foreground)] truncate">{u.displayName}</div>
-                  <div className="text-[11px] text-[var(--muted-foreground)] truncate">@{u.handle}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.displayName}</div>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--muted-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>@{u.handle}</div>
                 </div>
               </Link>
             ))
