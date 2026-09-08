@@ -122,65 +122,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 }
 
 /* ============================= HOME / HERO ============================= */
-<<<<<<< HEAD
-.hero{position:relative;padding:109px 0 60px;min-height:772px}
-.hero::before{content:"";position:absolute;left:0;right:0;top:0;height:712px;
-  background:linear-gradient(180deg,rgba(10,20,32,.9) 0%,rgba(5,8,13,0) 100%);pointer-events:none}
-.hero .wrap{z-index:1}
-.hero-eyebrow{font-size:13px;color:rgba(255,255,255,.78);margin:0 0 16px}
-.hero h1{font-family:var(--display);font-weight:400;font-size:58px;line-height:63px;margin:0;color:var(--text);letter-spacing:-.01em}
-.hero h1 em{font-style:normal;font-weight:300;color:var(--amber);display:block}
-.hero-copy{margin:45px 0 0;font-size:17px;line-height:29px;color:var(--atlas-muted);max-width:600px}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
-.hero-checks{display:grid;grid-template-columns:300px 1fr;gap:13px 0;margin-top:40px;max-width:620px}
-.hero-check{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted-4)}
-.hero-check svg{width:11px;height:9px;flex:none}
-/* 658px is the badge's y in the Figma frame, but it resolves against .wrap,
-   which already sits below .hero's 109px padding-top — so it landed at 767px
-   and its 52px pill crossed the hairline into .sec01. Subtract the padding.
-   Nudged further right/down (right:34->18, top:549->595) from that Figma
-   spot — the globe now sitting in .hero-map reads noticeably larger than
-   whatever occupied that space in the original design, so the badge was
-   overlapping its lower-left curve. */
-/* same chip design as the chart's JOURNALED panel and the world map's stat */
-.hero-badge{position:absolute;right:6px;top:595px;
-  width:269px;height:43px;border-radius:2px;
-  background:linear-gradient(135deg,#10396e 0%,#00090f 58%)}
-.hero-badge b{position:absolute;left:25px;top:20px;font-family:var(--mono);font-weight:400;font-size:15px;letter-spacing:.02em;color:var(--text)}
-.hero-badge span{position:absolute;left:25px;top:6px;font-weight:500;font-size:9px;letter-spacing:.02em;color:#8598b1}
-/* The map fills the hero's right side edge to edge. It bleeds up by the
-   navbar's 88px so it reaches the very top of the page — the nav is opaque
-   and sits at z-index 60, so the overlap never shows. Height comes from the
-   hero, not from the map's own ratio.
-
-   pointer-events was none — the globe (components/originkit/ui/hero-24/
-   globe.tsx) already implements full drag-to-rotate and hover-to-pause
-   (handleMouseDown/handleMouseMove, stopOnHover), it was just never able
-   to receive the mouse events that would drive it. cursor:grab signals
-   the affordance up front; the canvas itself has no cursor styling of its
-   own, so this is the only place to set it. */
-.hero-map{position:absolute;top:-88px;bottom:0;right:0;width:58%;
-  overflow:hidden;cursor:grab}
-.hero-map:active{cursor:grabbing}
-@media(min-width:1181px){
-  /* nav (88px) + hero = exactly one viewport, so the map spans navbar top to
-     hero bottom; min-height keeps the copy from overflowing on short screens */
-  .hero{height:calc(100vh - 88px)}
-  /* .hero-badge used to be hidden here because AtlasWorldMap carried its own
-     duplicate "128,326+ TRADERS WORLDWIDE" chip baked into the SVG — now
-     that the hero-map holds the Globe component instead (no chip of its
-     own), the standalone badge stays visible at every width, at its
-     original absolute position (right:34px / top:549px, relative to .wrap). */
-}
-@media(max-width:1180px){
-  .hero-map{display:none}
-  .hero-badge{position:static;margin-top:34px}
-}
-@media(max-width:680px){
-  .hero{padding-top:60px;min-height:0}
-  .hero h1{font-size:38px;line-height:44px}
-  .hero-checks{grid-template-columns:1fr}
-=======
 /* Centred vertical stack: copy block on top, globe stage below it, with two
    float cards overlapping the globe's edges. Height is no longer pinned —
    the old min-height:772px + `height:calc(100vh - 88px)` pair existed to make
@@ -266,7 +207,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @media(max-width:480px){
   .hero-content{max-width:90%}
   .hero-beam{display:none}
->>>>>>> 328174d (adjusted globe 3d hero structure from flat to underneath style)
 }
 
 /* ---- hero load-in: camera-focus reveal ----
@@ -276,11 +216,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
    of the headline in one parent animation would force them to sync, which
    the two-speed "resolve" effect depends on NOT happening. */
 @media (prefers-reduced-motion:no-preference){
-<<<<<<< HEAD
-  .hero-eyebrow,.hero h1,.hero-copy,.hero-actions,.hero-checks,.hero-badge{
-=======
   .hero-eyebrow,.hero h1,.hero-copy,.hero-actions,.hero-checks,.float-card{
->>>>>>> 328174d (adjusted globe 3d hero structure from flat to underneath style)
     opacity:0;filter:blur(8px);transform:translateY(6px) scale(.995);
     animation:heroFocusIn .95s cubic-bezier(.22,1,.36,1) forwards;
   }
@@ -289,11 +225,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero-copy{animation-delay:.52s}
   .hero-actions{animation-delay:.70s}
   .hero-checks{animation-delay:.86s}
-<<<<<<< HEAD
-  /* trust-stat badge — now visible (and animated in) at every width, since
-     the hero-map no longer carries its own duplicate stat chip */
-  .hero-badge{animation-duration:.8s;animation-delay:1.05s}
-=======
   /* Float cards land last, after the globe below them has settled. The
      stat card keeps the .hero-badge delay it already had; the proof card
      follows one beat later. Animating the cards (not .hero-badge itself)
@@ -301,7 +232,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .float-card{animation-duration:.8s}
   .float-card-top{animation-delay:1.05s}
   .float-card-bottom{animation-delay:1.20s}
->>>>>>> 328174d (adjusted globe 3d hero structure from flat to underneath style)
   .hero h1 em{
     opacity:0;filter:blur(10px);transform:none;
     animation:heroFocusInAmber .8s cubic-bezier(.22,1,.36,1) .58s forwards;
