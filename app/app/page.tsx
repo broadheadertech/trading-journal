@@ -11,6 +11,7 @@ import { filterTradesByTimeRange } from '@/lib/utils';
 import { useSubscription } from '@/hooks/useSubscription';
 import { getRequiredTier } from '@/lib/features';
 import UpgradePrompt from '@/components/UpgradePrompt';
+import QrPaymentStatusBanner from '@/components/QrPaymentStatusBanner';
 import BrainMascot from '@/components/BrainMascot';
 import OnboardingWizard from '@/components/OnboardingWizard';
 import { useTrades, useStrategies, useChecklists, useJournal, useGoals, useProfile } from '@/hooks/useStore';
@@ -453,6 +454,7 @@ function AppContent() {
         lastSyncedAt={lastSyncedAt}
       >
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 sm:py-6">
+          <QrPaymentStatusBanner />
           {activeTab === 'dashboard' && (
             <Dashboard
               trades={filteredTrades}

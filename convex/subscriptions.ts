@@ -35,7 +35,7 @@ export const getUserSubscription = query({
       return {
         userId,
         stripeCustomerId: existing?.stripeCustomerId ?? "",
-        paymentProvider: existing?.paymentProvider as "stripe" | "paymongo" | undefined,
+        paymentProvider: existing?.paymentProvider as "stripe" | "paymongo" | "qr" | undefined,
         planId: "elite",
         status: "active" as const,
         createdAt: existing?.createdAt ?? now,
@@ -108,7 +108,7 @@ export const upsertSubscription = mutation({
     stripeSubscriptionId: v.optional(v.string()),
     paymongoCustomerId: v.optional(v.string()),
     paymongoSubscriptionId: v.optional(v.string()),
-    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"))),
+    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"), v.literal("qr"))),
     planId: v.string(),
     status: subscriptionStatus,
     interval: v.optional(v.union(v.literal("month"), v.literal("year"))),

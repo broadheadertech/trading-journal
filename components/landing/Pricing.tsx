@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Check, ArrowRight, Zap, Users, Star, Target } from 'lucide-react';
+import { Check, ArrowRight, Zap, Users, Star, Target, QrCode } from 'lucide-react';
 import AtmosphericBackground from './AtmosphericBackground';
 
 type Plan = {
@@ -110,6 +110,18 @@ export default function Pricing() {
           <span className="flex items-center gap-1.5"><Check size={12} className="text-pink-400" /> Cancel anytime</span>
           <span className="opacity-30">·</span>
           <span className="flex items-center gap-1.5"><Check size={12} className="text-pink-400" /> Full access during trial</span>
+        </div>
+
+        {/* Manual QR payment — GCash / Maya / bank QRPH / crypto. Users complete it
+            after signing in (upload proof + reference ID), so route them to sign-up. */}
+        <div className="mt-4 flex items-center justify-center">
+          <Link
+            href="/sign-up"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-[var(--foreground)] border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
+          >
+            <QrCode size={14} className="text-pink-400" />
+            Prefer GCash / crypto? Pay via QR
+          </Link>
         </div>
       </div>
     </section>

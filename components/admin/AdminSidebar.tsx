@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, CreditCard, Settings, Brain, ShieldAlert, SlidersHorizontal, Microscope, TrendingUp, GraduationCap, CalendarDays, MessagesSquare, Headphones, BookOpen } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Settings, Brain, ShieldAlert, SlidersHorizontal, Microscope, TrendingUp, GraduationCap, CalendarDays, MessagesSquare, Headphones, BookOpen, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import BrainMascot from '@/components/BrainMascot';
 
@@ -20,6 +20,7 @@ const navItems = [
   { href: '/admin/coaches',   label: 'Coaches',   icon: Headphones },
   { href: '/admin/articles',  label: 'Articles',  icon: BookOpen },
   { href: '/admin/revenue', label: 'Revenue & Billing', icon: CreditCard },
+  { href: '/admin/payments', label: 'QR Payments', icon: QrCode },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
