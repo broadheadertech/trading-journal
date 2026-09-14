@@ -155,48 +155,13 @@
   .brand img { height: 38px !important; }
   .burger { margin-left: 8px; width: 44px; height: 44px; }
 
+  /* Pairs with the 64px bar above — the panel starts where the nav ends.
+     Everything else about the panel (accordion groups, 44px tap targets,
+     stacked CTAs) now lives unscoped in atlas.css next to the other .mnav
+     rules, because the burger opens this from 1080px down and rules kept
+     here only reached 768px: at tablet widths the panel rendered with no
+     accordion styling and 300x150 fallback-sized chevrons. */
   .mnav { inset: 64px 0 0; padding: 8px 0 64px; }
-  .mnav > .wrap > a,
-  .macc-body a {
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    padding: 0;
-    font-size: 15px;
-  }
-
-  .macc { border-bottom: 1px solid var(--line); }
-  .macc-head {
-    width: 100%;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    color: var(--text);
-    cursor: pointer;
-  }
-  .macc-head .chev { width: 10px; height: 6px; flex: none; transition: transform .18s ease; }
-  .macc.open .macc-head .chev { transform: rotate(180deg); }
-  .macc-body { padding: 0 0 8px 12px; }
-  .macc-body a { border-bottom: 0; color: var(--atlas-muted); }
-
-  .mnav .mnav-cta { flex-direction: column; gap: 10px; margin-top: 20px; }
-  /* `display:flex` is load-bearing: .btn is inline-block, so
-     justify-content alone does nothing and the label stays left-aligned
-     in a now-full-width button. */
-  .mnav .mnav-cta .btn {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    min-height: 46px;
-  }
 
   /* ===============================================================
      §3  HERO

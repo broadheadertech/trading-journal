@@ -125,7 +125,37 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
    769-1080px tablet range. */
 .mnav .mnav-cta .btn-ghost{color:#fff}
 .mnav .mnav-cta .btn-amber{color:var(--ink)}
-.mnav .mnav-cta{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* ---- mobile panel: accordion groups + CTA stack ----
+   Same not-width-scoped reasoning as the colours above, and for the same
+   reason these were broken: the panel is reachable from 1080px down, but
+   these rules originally sat in the 768px sheet, so every width between
+   769 and 1080 rendered the panel unstyled. The chevron was the loud
+   symptom — LandingNav's <svg class="chev"> carries only a viewBox and no
+   width/height attributes, and the sizing that constrains it elsewhere is
+   `.nav-link .chev`, which a .macc-head button does not match. An SVG with
+   no intrinsic size and no CSS size falls back to the CSS default 300x150,
+   so the arrows rendered enormous and shoved the whole panel apart. */
+.macc{border-bottom:1px solid var(--line)}
+.macc-head{width:100%;min-height:48px;display:flex;align-items:center;
+  justify-content:space-between;padding:0;background:none;border:0;
+  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--text);cursor:pointer}
+.macc-head .chev{width:10px;height:6px;flex:none;transition:transform .18s ease}
+.macc.open .macc-head .chev{transform:rotate(180deg)}
+.macc-body{padding:0 0 8px 12px}
+.macc-body a{border-bottom:0;color:var(--atlas-muted)}
+/* 44px minimum tap target on every panel link */
+.mnav > .wrap > a,.macc-body a{min-height:44px;display:flex;align-items:center;padding:0;font-size:15px}
+
+/* full-width stacked CTAs. display:flex is load-bearing: .btn is
+   inline-block, so justify-content alone leaves the label left-aligned. */
+.mnav .mnav-cta{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.mnav .mnav-cta .btn{display:flex;width:100%;align-items:center;
+  justify-content:center;min-height:46px}
+
+@media (prefers-reduced-motion:reduce){
+  .macc-head .chev{transition:none}
+}
 
 @media(max-width:1280px){.nav-links{left:290px;gap:0}.nav-link{padding:12px 8px;font-size:13px}}
 @media(max-width:1080px){
