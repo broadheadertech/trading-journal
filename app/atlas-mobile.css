@@ -200,21 +200,23 @@
 
   /* ===============================================================
      §3  HERO
-     The column/order restructure already lives in atlas.css:196-237.
-     What this block adds: a smaller globe box, and full-width stacked
-     CTAs. The globe's own arc count is reduced in GlobeRoutes.tsx —
-     CSS cannot reach it.
+     The hero now ships the centred "globe below text" structure natively
+     (.hero-content + .hero-globe-stage + .float-card-*), and atlas.css
+     already sizes it for this breakpoint: stage 340px, globe container
+     280px, glow 320px, float cards pulled to an 8px inset.
+
+     So this block no longer restructures anything — the .hero-map /
+     .hero-map::before / .hero-badge rules that used to live here were
+     written against the OLD two-column hero and are gone. .hero-badge in
+     particular is now a static child of .float-card-top; re-pinning it
+     from here would drag the trust stat out of its card.
+
+     What remains is only what the hero CSS does not cover: type scale and
+     full-width stacked CTAs.
      =============================================================== */
 
   .hero { padding-top: 84px; padding-bottom: 32px; }
   .hero h1 { font-size: 36px; line-height: 41px; }
-
-  /* 280px reads as an illustration accompanying the copy rather than a
-     dominant element. Fixed px, never viewport-relative: a vh-based
-     globe grows on tablets in landscape and re-creates the problem. */
-  .hero-map { height: 280px; }
-  .hero-map::before { width: 260px; height: 260px; }
-  .hero-badge { bottom: 40px; }
 
   .hero-actions { flex-direction: column; gap: 10px; align-items: stretch; margin-top: 26px; }
   /* display:flex for the same reason as the panel buttons below */
