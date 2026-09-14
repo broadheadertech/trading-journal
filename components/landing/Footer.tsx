@@ -15,7 +15,7 @@ export default function Footer() {
                   actually delivering this file to the browser, even with
                   loading="eager" set; a direct request removes every one
                   of those moving parts */}
-              <img src="/atlasnewlogofooter.png" alt="Atlas" style={{ display: 'block', height: '42px', width: 'auto' }} />
+              <img src="/atlasnewslogo1banner.png" alt="Atlas" style={{ display: 'block', height: '42px', width: 'auto' }} />
             </Link>
             <p>Find the trading mistakes costing you thousands &mdash; and prove you fixed them.</p>
             <div className="news">

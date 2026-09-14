@@ -113,6 +113,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .mnav h4{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text);margin:26px 0 10px}
 .mnav a{display:block;padding:11px 0;font-size:15px;color:var(--atlas-muted);border-bottom:1px solid var(--line)}
 .mnav a.is-active{color:var(--amber)}
+/* The two CTAs at the foot of the panel are <a>, so `.mnav a` above — which is
+   (0,1,1), a class plus an element — outranks .btn-amber / .btn-ghost at
+   (0,1,0) and repainted both in the muted link colour. On the amber fill that
+   left "Start Free Trial" as pale blue on orange, barely legible. Restated
+   here at (0,3,0) so each button keeps its own foreground.
+
+   Deliberately NOT width-scoped: .mnav is display:none until the burger opens
+   it, and the burger exists from 1080px down, so scoping this to the 768px
+   mobile sheet would leave the same unreadable buttons across the whole
+   769-1080px tablet range. */
+.mnav .mnav-cta .btn-ghost{color:#fff}
+.mnav .mnav-cta .btn-amber{color:var(--ink)}
 .mnav .mnav-cta{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
 
 @media(max-width:1280px){.nav-links{left:290px;gap:0}.nav-link{padding:12px 8px;font-size:13px}}
@@ -161,6 +173,31 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-map{position:absolute;top:-88px;bottom:0;right:0;width:58%;
   overflow:hidden;cursor:grab}
 .hero-map:active{cursor:grabbing}
+
+/* The hero copy column sits at z-index:1 over .hero-map, and its box spans
+   the full 1240px .wrap — so it blankets the globe even though its text only
+   occupies the left half. Everything to the right is empty space that was
+   still swallowing every pointer event: measured with elementFromPoint at
+   1440px, the element under the globe's own centre was `div.wrap`, and under
+   its upper area `h1`. That silently disabled the globe's drag-to-rotate
+   (despite .hero-map advertising cursor:grab) and would equally block the
+   endpoint hover below.
+
+   Letting the container pass events through while its actual children keep
+   theirs restores both, without moving anything in the stacking order. */
+.hero .wrap{pointer-events:none}
+.hero .wrap > *{pointer-events:auto}
+
+/* ---- globe route endpoints: planted flag pins ----
+   The flags themselves are WebGL geometry inside the canvas, not DOM. The only
+   markup involved is a hidden block of <svg> flag art that the component
+   rasterises into textures once on mount — clipped to a zero-size box so it
+   can never contribute to layout or be picked up by a screen reader. */
+.globe-wrap{position:relative;width:100%;height:100%}
+.globe-flag-src{
+  position:absolute;width:0;height:0;overflow:hidden;
+  opacity:0;pointer-events:none
+}
 @media(min-width:1181px){
   /* nav (88px) + hero = exactly one viewport, so the map spans navbar top to
      hero bottom; min-height keeps the copy from overflowing on short screens */
@@ -179,6 +216,61 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero{padding-top:60px;min-height:0}
   .hero h1{font-size:38px;line-height:44px}
   .hero-checks{grid-template-columns:1fr}
+}
+
+/* ---- mobile hero: centred copy stacked above the globe ----
+   Same DOM as desktop — .wrap and .hero-map just become flex items and swap
+   into a column via `order`, so nothing is duplicated for mobile. Placed
+   after the 1180px block on purpose: `.hero-map{display:none}` there has
+   identical specificity, so this needs source order to win and bring the
+   globe back at phone widths.
+
+   Naming note: the design called for a separate globe "stage" + "container"
+   + "glow" element and two floating cards. This hero has one .hero-map (it
+   plays both stage and container), no glow element (faked below with a
+   pseudo-element so no markup changes), and exactly one card — .hero-badge.
+   There is no second testimonial card and no corner light beams to hide. */
+@media(max-width:768px){
+  .hero{
+    display:flex;flex-direction:column;
+    height:auto;min-height:auto;padding-bottom:40px;
+  }
+
+  /* static so .hero-badge below resolves against .hero, not this rail —
+     nothing else in the hero is absolutely positioned against .wrap */
+  .hero>.wrap{
+    order:1;position:static;
+    text-align:center;max-width:90%;margin:0 auto;padding:32px 20px 0;
+  }
+  .hero-copy{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  /* single centred column across the whole phone range, not just <=680 */
+  .hero-checks{grid-template-columns:minmax(0,1fr);justify-items:center;max-width:none}
+  .hero-check{justify-content:center}
+
+  .hero-map{
+    order:2;display:block;
+    position:relative;top:auto;right:auto;bottom:auto;left:auto;
+    width:100%;height:340px;margin-top:8px;
+  }
+  /* the glow, as a pseudo-element rather than a new div */
+  .hero-map::before{
+    content:"";position:absolute;left:50%;top:50%;
+    width:320px;height:320px;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,rgba(217,148,5,.12) 0%,transparent 70%);
+    z-index:0;pointer-events:none;
+  }
+
+  /* The one floating card, centred against the globe's lower edge.
+     Centred with auto margins, NOT translateX(-50%): .hero-badge is part of
+     the hero entrance reveal, whose heroFocusIn keyframes animate `transform`
+     with fill-mode forwards — an animated property beats a normal declaration
+     in the cascade, so a transform here is silently dropped and the card
+     overhangs the right edge (adds ~74px of horizontal page scroll at 390px). */
+  .hero-badge{
+    position:absolute;left:0;right:0;top:auto;bottom:56px;
+    margin:0 auto;z-index:4;
+  }
 }
 
 /* ---- hero load-in: camera-focus reveal ----
