@@ -424,6 +424,17 @@ export default function GlobeRoutes() {
   const [isMobile] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
   );
+  /* The hero has two different globe treatments, and `scale` has to match the
+     one in play: globe.tsx derives apparent size from scale alone (radius =
+     multiplier, cameraDistance = 2.5 / multiplier), independent of the box.
+     9.5 was chosen for the centred stack's 380px container, where 8 filled
+     only ~68% of the box. The restored desktop hero gives the globe the full
+     right-hand column instead (835x900 at 1440px), and 9.5 there overflows and
+     crops the sphere — 8 is the value that frames it in that column. Same
+     lazy-read reasoning as isMobile above. */
+  const [isWideHero] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1181px)').matches
+  );
   /** Hidden <svg> source block the flag textures are rasterised from. */
   const flagSrcRef = useRef<HTMLDivElement | null>(null);
 
@@ -678,8 +689,9 @@ export default function GlobeRoutes() {
            and is completely independent of the container box. At scale 8 the
            sphere covered only ~68% of its container width (measured: 258px of
            a 380px box), which is why enlarging the CSS box alone still read as
-           a small globe floating in dead space. 9.5 fills ~90% instead. */
-        scale={9.5}
+           a small globe floating in dead space. 9.5 fills ~90% instead — but
+           only for the centred stack's small box; see isWideHero above. */
+        scale={isWideHero ? 8 : 9.5}
         stopOnHover
         initialLatitude={23}
         initialLongitude={-23}

@@ -233,6 +233,61 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-beam-2{bottom:15%;left:6%;width:140px;height:2px;
   background:linear-gradient(90deg,rgba(217,148,5,.5),transparent);transform:rotate(-22deg)}
 
+/* ============ desktop: the original two-column hero, restored ============
+   Copy left, globe occupying the right 58% and bleeding up behind the nav —
+   the layout this section had before the centred-stack rework. Done purely
+   as overrides on the current DOM, with no markup change, so the centred
+   stack above remains exactly as-is at every narrower width.
+
+   1181px is the old design's own breakpoint: below it the previous hero hid
+   the globe entirely, so restoring it lower would cost tablets the globe
+   they currently have. Everything under 1181px keeps the centred stack. */
+@media(min-width:1181px){
+  /* the old pairing — min-height and a viewport-tall box existed to make the
+     copy column and the edge-to-edge globe agree on one height. overflow
+     must go back to visible or the globe's -88px bleed gets clipped. */
+  .hero{height:calc(100vh - 88px);min-height:772px;padding:109px 0 60px;overflow:visible}
+
+  /* .hero-content takes over .wrap's old job: the centred 1240px rail, with
+     the copy left-aligned inside it. */
+  .hero-content{width:1240px;max-width:calc(100% - 40px);margin:0 auto;
+    text-align:left;padding:0}
+  /* The rail spans the full width, so its empty right half sits over the
+     globe and would swallow every pointer event — this is what previously
+     killed drag-to-rotate. Container transparent, children not. */
+  .hero-content{pointer-events:none}
+  .hero-content > *{pointer-events:auto}
+
+  .hero-copy{margin:45px 0 0;max-width:600px}
+  .hero-actions{justify-content:flex-start;gap:14px;margin-top:38px}
+  .hero-checks{grid-template-columns:300px 1fr;justify-content:start;
+    gap:13px 0;margin:40px 0 0;max-width:620px}
+
+  /* globe back to the hero's right half, full-bleed to the edge */
+  .hero-globe-stage{position:absolute;top:-88px;right:0;bottom:0;left:auto;
+    width:58%;max-width:none;height:auto;margin:0;overflow:hidden;
+    z-index:0;cursor:grab}
+  .hero-globe-stage:active{cursor:grabbing}
+  .hero-globe-container{position:absolute;inset:0;width:auto;height:auto;
+    transform:none;z-index:2}
+  /* the radial wash belongs to the centred treatment only */
+  .hero-globe-glow{display:none}
+
+  /* ---- the trust stat, back to its original blue chip ----
+     .float-card-top is a child of the stage, and the stage starts 88px above
+     the hero, so the old hero-relative top:595px is 683px here. */
+  .float-card{background:none;border:0;box-shadow:none;padding:0}
+  .float-card-top{top:683px;right:6px;left:auto;z-index:6}
+  .hero-badge{position:relative;width:269px;height:43px;border-radius:2px;
+    background:linear-gradient(135deg,#10396e 0%,#00090f 58%)}
+  .hero-badge b{position:absolute;left:25px;top:20px}
+  .hero-badge span{position:absolute;left:25px;top:6px;margin-top:0}
+
+  /* Neither of these existed in the hero being restored. They are hidden
+     rather than deleted so the centred stack below 1181px keeps both. */
+  .float-card-bottom,.hero-beam{display:none}
+}
+
 /* ---- globe route endpoints: planted flag pins ----
    GlobeRoutes renders these two, so they are kept from the mobile/flag-pin
    work while the hero structure above comes from the incoming branch. The
