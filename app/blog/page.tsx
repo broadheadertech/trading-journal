@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import LandingNav from '@/components/landing/LandingNav';
 import Footer from '@/components/landing/Footer';
@@ -55,6 +55,22 @@ function ArticleCard({
   );
 }
 
+/* How many category pills the mobile row shows before collapsing. Matches the
+   sidebar's own threshold (the `i >= 5` test further down), so the two lists
+   agree on what "collapsed" means. */
+const MOBILE_PILLS = 5;
+
+/* matchMedia as an external store, so the phone check has a server snapshot
+   instead of causing a hydration mismatch, and stays live across a rotate. */
+const MOBILE_MQ = '(max-width: 768px)';
+const subscribeMobile = (onChange: () => void) => {
+  const mq = window.matchMedia(MOBILE_MQ);
+  mq.addEventListener('change', onChange);
+  return () => mq.removeEventListener('change', onChange);
+};
+const getMobile = () => window.matchMedia(MOBILE_MQ).matches;
+const getMobileServer = () => false;
+
 export default function BlogPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -104,7 +120,15 @@ export default function BlogPage() {
   const trending = popular.slice(0, 5);
 
   // pagination — cards stay in the DOM; only visibility toggles
-  const BATCH = 6;
+  //
+  // 4 per batch on phones: at mobile card height six cards is a longer initial
+  // scroll than the same six in desktop's 2-column grid. Read through
+  // useSyncExternalStore rather than a bare matchMedia call during render —
+  // visibleCount decides the .is-hidden class on every card, so a raw
+  // render-time read would have the server emit 6 and the client 4 with
+  // nothing to reconcile them. useSyncExternalStore has a server snapshot for
+  // exactly this, and it also keeps the value live across a rotate/resize.
+  const BATCH = useSyncExternalStore(subscribeMobile, getMobile, getMobileServer) ? 4 : 6;
   const total = filtered.length;
   const [visibleCount, setVisibleCount] = useState(BATCH);
   // start of the most-recently-revealed batch; Infinity means "nothing to
@@ -112,6 +136,18 @@ export default function BlogPage() {
   const [revealFrom, setRevealFrom] = useState(Infinity);
   const [fading, setFading] = useState(false);
   const [indicatorGone, setIndicatorGone] = useState(false);
+
+  // BATCH flips 6 -> 4 once the client confirms the media query. Reset the
+  // count the same render-time way the filter reset below does, rather than in
+  // an effect — an effect here is a cascading render, and eslint's
+  // react-hooks/set-state-in-effect rejects it. Must sit after the useState
+  // calls above: setRevealFrom would otherwise be referenced in its own TDZ.
+  const [prevBatch, setPrevBatch] = useState(BATCH);
+  if (BATCH !== prevBatch) {
+    setPrevBatch(BATCH);
+    setVisibleCount(BATCH);
+    setRevealFrom(Infinity);
+  }
 
   const allShown = visibleCount >= total;
 
@@ -283,12 +319,28 @@ export default function BlogPage() {
 
           {/* mobile-only: the sidebar category list can sit far below the
               fold on small screens, so the same filtering stays reachable
-              here as a horizontal scrollable pill row */}
+              here as a horizontal scrollable pill row.
+
+              The row honours the same `catsExpanded` collapse as the
+              sidebar. It did not before, and with 80 categories that made
+              the collapsed row 11,621px wide — about 11.6 metres of
+              horizontal swiping to reach the last pill, which is worse
+              than the sidebar list it exists to shortcut. The currently
+              active category is always included even when collapsed, so
+              a filter chosen from the sidebar never vanishes from the row. */}
           <div className="cats-mobile">
             <button type="button" className={activeCategory === 'All' ? 'on' : undefined} onClick={() => setActiveCategory('All')}>All</button>
-            {categories.map((c) => (
+            {(catsExpanded
+              ? categories
+              : categories.filter((c, i) => i < MOBILE_PILLS || c === activeCategory)
+            ).map((c) => (
               <button key={c} type="button" className={activeCategory === c ? 'on' : undefined} onClick={() => setActiveCategory(c)}>{c}</button>
             ))}
+            {categories.length > MOBILE_PILLS && (
+              <button type="button" className="cats-more" onClick={() => setCatsExpanded((v) => !v)}>
+                {catsExpanded ? 'Less' : `+${categories.length - MOBILE_PILLS} more`}
+              </button>
+            )}
           </div>
 
           {/* .artwrap is the whole two-column row — main content and the

@@ -1,0 +1,413 @@
+/* =====================================================================
+   ATLAS — mobile pass
+   ---------------------------------------------------------------------
+   EVERY rule in this file lives inside a max-width media query. Nothing
+   here can reach desktop. That is the whole contract of this sheet, and
+   it is why it exists instead of the rules being scattered across
+   atlas.css / atlas-pages.css / atlas-demo.css / atlas-blog-pricing.css /
+   atlas-routes.css.
+
+   Imported LAST in app/layout.tsx on purpose. Many rules below override
+   existing mobile rules of identical specificity (the other sheets stop
+   at 820px/1080px and leave 390px phones on a tablet layout), so they
+   need source order to win. A later sheet buys that without inflating
+   selectors with !important.
+
+   NOTE ON GUTTERS: `.wrap` is `width:1240px;max-width:calc(100% - 40px)`
+   (atlas.css:54), so it already carries a 20px gutter per side at every
+   width. Do NOT add horizontal padding to `.wrap` here — it stacks on
+   top of the existing gutter and pushes fixed-width children further
+   past the right edge. Measured: doing so took horizontal overflow at
+   390px from 32px to 52px.
+   ===================================================================== */
+
+@media (max-width: 768px) {
+
+  /* ===============================================================
+     §1  GLOBAL — type scale, vertical rhythm, grid collapse
+     =============================================================== */
+
+  /* --- 1a. body copy down ~12%. -------------------------------------
+     The desktop base is already 14px (.atlas-site, atlas.css:44), so
+     the win is not in the base — it is in the handful of selectors
+     that opt UP to 16-17px. Those are what make a narrow column read
+     long. Headlines are deliberately left alone. */
+  .hero-copy          { font-size: 15px;   line-height: 24px; }
+  .lede, .lede-lg     { font-size: 14.5px; line-height: 23px; }
+  .atlas-site .sub,
+  .atlas-site .phero .sub { font-size: 14.5px; line-height: 23px; }
+  .atlas-site .body   { font-size: 13.5px; line-height: 22px; }
+  .atlas-site .copy p { font-size: 13.5px; line-height: 22px; }
+
+  /* --- 1b. vertical rhythm, roughly halved. -------------------------
+     This is the single biggest lever against scroll fatigue. The
+     homepage bands carry 71-143px padding-top PLUS 49-158px margin-top
+     at every width — no existing breakpoint touches either. */
+  .sec01 { padding-top: 36px; }
+  .sec02 { padding-top: 36px; margin-top: 48px; }
+  .sec03 { padding-top: 40px; }
+  .sec04 { padding-top: 36px; margin-top: 28px; }
+  .sec05 { padding-top: 36px; margin-top: 48px; }
+  .sec06 { padding-top: 40px; }
+  .sec07 { padding: 38px 0 30px; margin-top: 40px; }
+  .sec08 { padding-top: 28px; }
+  .sec09 { padding-top: 38px; margin-top: 24px; }
+  .sec10 { padding-top: 38px; margin-top: 32px; }
+
+  /* the large decorative margin-tops on inner blocks, same treatment */
+  .sec01 .grid   { margin-top: 34px; }
+  .chartcard     { margin-top: 26px; height: 220px; }
+  .statrow       { margin-top: 24px; }
+  .method        { margin-top: 44px; }
+  .hiw           { margin-top: 40px; gap: 20px; }
+  .numbers       { margin-top: 26px; }
+  .tools         { margin-top: 36px; }
+  .step          { padding-top: 28px; }
+  .tool          { padding: 22px 0 28px; }
+  .num           { padding: 18px 16px 22px; }
+  .solve         { margin-top: 32px; }
+
+  .cta    { padding: 36px 0 40px; height: auto; margin-top: 36px; }
+  .footer { padding-top: 40px; }
+
+  /* sub-page bands (atlas-pages.css) — 141px / 96px+104px, never
+     reduced below 820px */
+  .atlas-site .phero { padding-top: 72px; }
+  .atlas-site .pcta  { padding: 40px 0 44px; }
+
+  /* --- 1c. every multi-column grid becomes one column. --------------
+     Exceptions, deliberately left alone: two-cell "marker + content"
+     grids (`.plan li`, `.timeline`, `.rel`) which are icon+text rows,
+     not layout columns; and `.heat` (a 28-cell heatmap), handled by
+     horizontal scroll in §6 instead. */
+  .sechead, .sec01 .grid, .statrow, .steps, .hiw, .tools,
+  .failgrid, .exprow, .pricehead, .plans,
+  .atlas-site .bounds, .atlas-site .numbered, .atlas-site .scope,
+  .atlas-site .bprin, .atlas-site .brokgrid, .atlas-site .howsteps,
+  .atlas-site .markets, .atlas-site .conns, .atlas-site .principles,
+  .atlas-site .bignums, .atlas-site .channels, .atlas-site .tiers,
+  .atlas-site .side3, .atlas-site .artgrid, .atlas-site .feat,
+  .atlas-site .cmp, .atlas-site .kpis, .atlas-site .mini3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Grid and flex children default to min-width:auto, so a child wider
+     than the track (a 180px sparkline next to 40px-margin KPIs) refuses
+     to shrink and punches out of the viewport instead. This is the
+     actual cause of the pre-existing 32px overflow in sec01. */
+  .sec01 .grid > *, .failgrid > *, .exprow > *, .hiw > *, .tools > *,
+  .atlas-site .artwrap > *, .atlas-site .drow > * { min-width: 0; }
+
+  /* --- 1c-bis. the two deliberate exceptions to "one column". ---------
+     Single column is the right default for prose cards, but it is the
+     WRONG answer for short label+figure content: forcing it there just
+     trades horizontal space for scroll. Measured on the homepage at
+     390px, one column put the footer at 1407px — the second-tallest
+     block on the page, above the hero. Both of these are compact list
+     content, the same reasoning the brief applies to the hero's
+     4-item feature checklist. */
+  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .num:nth-child(odd) { border-left: 0; }
+
+  .footcols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+  .foot-brand { grid-column: 1 / -1; }
+  .footbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .footbar nav { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+
+  .edge { flex-wrap: wrap; gap: 12px 0; }
+  .edge .kpi { margin-right: 28px; }
+  .edge .spark { margin-left: 0; width: 100%; max-width: 180px; }
+  .leakcard { padding: 22px 20px 26px; }
+  .minicard { padding: 16px 18px; }
+  .sidecards { gap: 20px; }
+  .disc { gap: 16px; }
+
+  /* --- 1d. media inside cards never dominates a narrow card. -------- */
+  .card img, .card svg, .panel svg, .atlas-site .bound svg,
+  .atlas-site .np svg { max-width: 100%; height: auto; }
+  .hiw .panel { height: 150px; }
+  .dial { width: 54px; height: 54px; }
+
+  /* Entrance animations still fire — only travel distance is trimmed,
+     never `animation:none`. Large translations feel jarring in a narrow
+     column where they cover a bigger fraction of the viewport. */
+
+  /* ===============================================================
+     §2  NAVIGATION — burger panel
+     The burger already exists at <=1080px (atlas.css:119). Added here:
+     the CTA stays out of the panel as the standing conversion action,
+     the three hover dropdowns become accordions, 44px tap targets.
+     =============================================================== */
+
+  /* "Start Free Trial" stays in the collapsed bar. atlas.css's 1080px
+     block hides it; this sheet loads later, so this wins. */
+  .nav-cta {
+    display: inline-flex;
+    height: 36px;
+    padding: 0 14px;
+    margin-left: 0;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .nav-cta svg { display: none; }
+
+  .nav, .nav-in { height: 64px; }
+  .brand img { height: 38px !important; }
+  .burger { margin-left: 8px; width: 44px; height: 44px; }
+
+  /* Pairs with the 64px bar above — the panel starts where the nav ends.
+     Everything else about the panel (accordion groups, 44px tap targets,
+     stacked CTAs) now lives unscoped in atlas.css next to the other .mnav
+     rules, because the burger opens this from 1080px down and rules kept
+     here only reached 768px: at tablet widths the panel rendered with no
+     accordion styling and 300x150 fallback-sized chevrons. */
+  .mnav { inset: 64px 0 0; padding: 8px 0 64px; }
+
+  /* ===============================================================
+     §3  HERO
+     The hero now ships the centred "globe below text" structure natively
+     (.hero-content + .hero-globe-stage + .float-card-*), and atlas.css
+     already sizes it for this breakpoint: stage 340px, globe container
+     280px, glow 320px, float cards pulled to an 8px inset.
+
+     So this block no longer restructures anything — the .hero-map /
+     .hero-map::before / .hero-badge rules that used to live here were
+     written against the OLD two-column hero and are gone. .hero-badge in
+     particular is now a static child of .float-card-top; re-pinning it
+     from here would drag the trust stat out of its card.
+
+     What remains is only what the hero CSS does not cover: type scale and
+     full-width stacked CTAs.
+     =============================================================== */
+
+  .hero { padding-top: 84px; padding-bottom: 32px; }
+  .hero h1 { font-size: 36px; line-height: 41px; }
+
+  .hero-actions { flex-direction: column; gap: 10px; align-items: stretch; margin-top: 26px; }
+  /* display:flex for the same reason as the panel buttons below */
+  .hero-actions .btn {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  /* ===============================================================
+     §4  "Why Most Traders Fail" + "Solve All Five"
+     =============================================================== */
+
+  .failrow { height: 40px; gap: 18px; }          /* 56px -> 40px, ~30% */
+  .failrow h4 { font-size: 16px; line-height: 19px; }
+  .sec07 h2 { font-size: 30px; line-height: 34px; }
+  .solve { padding: 18px 20px 22px; }
+  .solve h3 { font-size: 20px; line-height: 23px; }
+
+  /* ===============================================================
+     §5  Three-step process cards (Connect / Discover / Build)
+     atlas.css:1494-1502 already flattens rotateY and pins rotateX to
+     8deg at this breakpoint. Remaining work: height and badge depth.
+     =============================================================== */
+
+  .hiw3d-card { min-height: 0; }
+  .hiw3d-panel { height: auto; min-height: 0; }
+  /* badge sits nearly flush; 18px of translateZ reads as detached once
+     the card is only ~350px wide */
+  .hiw3d-badge { transform: translateZ(6px); }
+  .hiw3d-face1, .hiw3d-face2, .hiw3d-face3 { transform: translateZ(6px); }
+
+  /* ===============================================================
+     §6  Demo page
+     atlas-demo.css:816-822 already stacks `.drow`, softens the scene
+     tilt and pulls the breakout cards to an 8px inset. Confirmed
+     applied. Remaining: the mockup's internal type is sized for a wide
+     desktop panel and is unreadable at mobile card width.
+     =============================================================== */
+
+  /* --- 6a. copy first, mockup second. ------------------------------
+     `.drow.flip` puts the scene FIRST in the DOM (demo/page.tsx:95) so
+     that desktop's reversed 2-column grid reads correctly. Once the
+     grid collapses, that DOM order leaks through and half the rows show
+     the mockup before the copy that explains it. `order` normalises
+     both variants without touching the desktop grid. */
+  .atlas-site .drow { display: flex; flex-direction: column; }
+  .atlas-site .drow > .copy { order: 1; }
+  .atlas-site .drow > .fstage,
+  .atlas-site .drow > .dash-stage { order: 2; }
+
+  /* the 110px inter-row margin is an inline style on each .drow, so
+     !important is the only lever — 4 rows x 110px is ~440px of scroll */
+  .atlas-site .drow { margin-top: 48px !important; }
+
+  /* --- 6b. breakout cards stop overlapping the mockup. --------------
+     On desktop these hang outside the frame (left:-18px / right:-16px).
+     The existing 768px block pulls them to an 8px INSET, which at
+     350px card width lands them squarely on top of the mockup's own
+     content — measured: the "BIGGEST LEAK" card covers the verdict
+     headline row. Confirmed applied, and it is the wrong fix at this
+     width. Taking them out of the overlay entirely and flowing them
+     under the mockup keeps the information and removes the collision.
+     --z is zeroed so the fCard keyframe's translateZ(var(--z)) flattens
+     with them; the scale-in entrance still plays. */
+  .atlas-site .fscene { display: flex; flex-direction: column; gap: 10px; }
+  .atlas-site .fcard {
+    position: static;
+    width: auto;
+    --z: 0px;
+    box-shadow: none;
+  }
+
+  /* `.fstatus` is absolutely pinned to the title bar's right edge and
+     collides with the centred fake URL once the frame is ~350px wide.
+     The URL is pure chrome; the status chip carries the live state, so
+     the URL is the one that goes. */
+  .atlas-site .fscene .win .bar span { display: none; }
+
+  .atlas-site .win { font-size: 11px; }
+  .atlas-site .kpis .k b { font-size: 18px; line-height: 24px; }
+  .atlas-site .kpis .k span { font-size: 9px; }
+  .atlas-site .emo, .atlas-site .sym, .atlas-site .rule-row { font-size: 11px; }
+  .atlas-site .fcard { font-size: 10px; }
+  .atlas-site .fcard-pill { font-size: 9px; }
+
+  /* 28 heatmap cells cannot be single-column and cannot fit 350px.
+     Scroll it rather than squash it to sub-pixel columns. */
+  .atlas-site .heat {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ===============================================================
+     §7  Blog
+     atlas-blog-pricing.css:732-769 already stacks `.artwrap`, unsticks
+     the sidebar and reveals the `.cats-mobile` pill row. The Load More
+     batch size is a JS constant — reduced in app/blog/page.tsx.
+     =============================================================== */
+
+  .atlas-site .loadmore-btn { width: 100%; justify-content: center; min-height: 46px; }
+  .atlas-site .loadmore-row { margin-top: 24px; }
+  /* the pill row's expand/collapse control, distinguished from a category */
+  .atlas-site .cats-mobile .cats-more { color: var(--amber); white-space: nowrap; }
+
+  /* §12 — "Index Draw" featured card. The 724x254 chart keeps its
+     aspect ratio at full mobile width and towers over the card. */
+  .atlas-site .feat .thumb { height: 160px; }
+  .atlas-site .feat .thumb svg { width: 100%; height: 100%; }
+  .atlas-site .side3 > a { grid-template-columns: 110px minmax(0, 1fr); }
+
+  /* ===============================================================
+     §8  Pricing
+     =============================================================== */
+
+  /* --- 8a. BUGFIX: the Pro card was invisible on mobile. --------------
+     Pre-existing, and independent of anything in this pass. Both pricing
+     surfaces arm their card entrance by flipping play-state:
+
+       atlas.css:520              .sec09.is-in .plans .plan        -> running
+       atlas-blog-pricing.css:923 .atlas-site .plans.is-in .plan   -> running
+
+     Each sheet then has a <=767px block that swaps the Pro card's lift
+     from proLift to the shorter proLiftSm (atlas.css:584, and
+     atlas-blog-pricing.css:966). Those blocks re-declare the whole
+     `animation` SHORTHAND, which resets animation-play-state back to its
+     `paused` value — and they sit at identical specificity but LATER in
+     the file than the arming rules above. So below 767px the Pro card's
+     cardRise never started: it stayed at the keyframe's 0% forever, which
+     is opacity 0. Core and Elite were unaffected because no mobile block
+     re-declares their animation. Measured on /pricing at 390px: Pro
+     opacity 0, play-state "paused, paused"; Core and Elite opacity 1,
+     "running".
+
+     Re-asserting the longhand is enough — it beats both blocks on
+     specificity (4 and 5 classes vs 3 and 4) and on source order. */
+  .sec09.is-in .plans .plan.pro,
+  .atlas-site .plans.is-in .plan.pro { animation-play-state: running; }
+
+  .plans { display: flex; flex-direction: column; gap: 18px; }
+  /* Recommended plan first on mobile: on desktop it is centre-stage,
+     but in a vertical stack it would otherwise be buried below Core. */
+  .plan     { order: 2; width: 100%; }
+  .plan.pro { order: 1; }
+  /* No lift override here on purpose. `proLiftSm` already lands the card at
+     translateY(-4px) — the reduced value asked for — and because it animates
+     `transform` with fill-mode `both`, a plain `transform:none` declaration
+     would lose to it in the cascade anyway and do nothing. -4px in an 18px-gap
+     vertical stack does not collide with its neighbours. */
+
+  /* ===============================================================
+     §9  Security — "Perimeter Lock"
+     `.bounds` is collapsed to one column in §1c. The perimeter trace
+     SVG is viewBox-based and scales with its card: no change needed,
+     as specified.
+
+     There is NO decrypt / character-scramble headline on this page, or
+     anywhere in the repo — a search for decrypt|scramble across app/
+     and components/ returns nothing. SecurityAnimated.tsx only drives
+     the perimeter trace and shield draw. So there is no width
+     calculation that font-size scaling could break.
+     =============================================================== */
+
+  .atlas-site .bound { padding: 22px 20px 26px; }
+  .atlas-site .phero h1 { overflow-wrap: break-word; }
+
+  /* ===============================================================
+     §10  Contact — "Open Channel"
+     =============================================================== */
+
+  /* The dashed connector web links cards that are no longer side by
+     side. In a single column the computed diagonals read as broken. */
+  .atlas-site .web-svg { display: none; }
+  .atlas-site .channel { margin-top: 0 !important; }
+  .atlas-site .channels { gap: 14px; }
+  /* "What we can help with" is already the first `.scope > div` in the DOM
+     (app/contact/page.tsx:122), so collapsing the 2-column grid in §1c
+     already puts the actionable half on top. No reorder needed. */
+
+  /* ===============================================================
+     §11  Testimonials — 3D flip carousel
+     Swipe handling is added in Testimonials.tsx; angles here.
+     =============================================================== */
+
+  .quote-deck, .byline-deck { perspective: 1400px; }
+
+  /* ===============================================================
+     §13  About — "Proof Stamp"
+     `.numbered` is single column via §1c. The 3.2x stamp overshoots
+     its row at mobile width and overlaps the item above.
+     =============================================================== */
+
+  .atlas-site .aboutPrinciples .n { transform: scale(2.2) rotate(-8deg); }
+  .atlas-site .np { padding-bottom: 4px; }
+}
+
+/* ---------------------------------------------------------------------
+   Keyframe overrides. A keyframe cannot be redefined from inside a
+   ruleset, so these sit at top level, each in its own media query.
+   Re-declaring a @keyframes name later in the cascade replaces it
+   wholesale, which is why these must come after the sheets above.
+   --------------------------------------------------------------------- */
+
+/* §4 — counter-weight lift on the "Solve All Five" card: 26px -> 16px
+   and the scale dropped, so the entrance stays subtle in a narrow
+   column. Name must match the rule in atlas.css:908-913. */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  @keyframes solveLift {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* §11 — flip angles reduced ~40% (35deg -> 21deg). Steep rotation in
+     a narrow card is disorienting on a small screen. */
+  @keyframes flipOut {
+    from { opacity: 1; transform: rotateX(0) translateY(0); }
+    to   { opacity: 0; transform: rotateX(-21deg) translateY(-6px); }
+  }
+  @keyframes flipIn {
+    from { opacity: 0; transform: rotateX(21deg) translateY(6px); }
+    to   { opacity: 1; transform: rotateX(0) translateY(0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .macc-head .chev { transition: none; }
+}

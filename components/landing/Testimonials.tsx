@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const REVIEWS = [
   {
@@ -71,6 +71,27 @@ export default function Testimonials() {
   const slideClass = (i: number) =>
     i === active ? ' is-active' : i === leaving ? ' is-leaving' : '';
 
+  /* Touch advance. Mobile users expect to swipe a carousel, and the arrows
+     and dots were the only way through it. Pointer events rather than touch
+     events so a pen or trackpad drag works too; `touch-action:pan-y` on the
+     deck lets the page keep scrolling vertically while we claim horizontal. */
+  const swipeX = useRef<number | null>(null);
+  const SWIPE_MIN = 40; // px — below this a swipe is really a tap or a scroll
+  const swipe = {
+    onPointerDown: (e: React.PointerEvent) => { swipeX.current = e.clientX; },
+    onPointerUp: (e: React.PointerEvent) => {
+      const start = swipeX.current;
+      swipeX.current = null;
+      if (start === null) return;
+      const dx = e.clientX - start;
+      if (Math.abs(dx) < SWIPE_MIN) return;
+      const n = REVIEWS.length;
+      goTo(dx < 0 ? (active + 1) % n : (active - 1 + n) % n);
+    },
+    onPointerCancel: () => { swipeX.current = null; },
+    style: { touchAction: 'pan-y' as const },
+  };
+
   return (
     <div className="sec10">
       <div className="wrap">
@@ -84,6 +105,7 @@ export default function Testimonials() {
           className="quote-deck"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
+          {...swipe}
         >
           {REVIEWS.map((r, i) => (
             <p key={r.name} className={`quote quote-slide${slideClass(i)}`} aria-hidden={i !== active}>
@@ -99,6 +121,7 @@ export default function Testimonials() {
             className="byline-deck"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
+            {...swipe}
           >
             {REVIEWS.map((r, i) => (
               <div key={r.name} className={`byline-slide${slideClass(i)}`} aria-hidden={i !== active}>

@@ -113,7 +113,49 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .mnav h4{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--text);margin:26px 0 10px}
 .mnav a{display:block;padding:11px 0;font-size:15px;color:var(--atlas-muted);border-bottom:1px solid var(--line)}
 .mnav a.is-active{color:var(--amber)}
-.mnav .mnav-cta{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+/* The two CTAs at the foot of the panel are <a>, so `.mnav a` above — which is
+   (0,1,1), a class plus an element — outranks .btn-amber / .btn-ghost at
+   (0,1,0) and repainted both in the muted link colour. On the amber fill that
+   left "Start Free Trial" as pale blue on orange, barely legible. Restated
+   here at (0,3,0) so each button keeps its own foreground.
+
+   Deliberately NOT width-scoped: .mnav is display:none until the burger opens
+   it, and the burger exists from 1080px down, so scoping this to the 768px
+   mobile sheet would leave the same unreadable buttons across the whole
+   769-1080px tablet range. */
+.mnav .mnav-cta .btn-ghost{color:#fff}
+.mnav .mnav-cta .btn-amber{color:var(--ink)}
+
+/* ---- mobile panel: accordion groups + CTA stack ----
+   Same not-width-scoped reasoning as the colours above, and for the same
+   reason these were broken: the panel is reachable from 1080px down, but
+   these rules originally sat in the 768px sheet, so every width between
+   769 and 1080 rendered the panel unstyled. The chevron was the loud
+   symptom — LandingNav's <svg class="chev"> carries only a viewBox and no
+   width/height attributes, and the sizing that constrains it elsewhere is
+   `.nav-link .chev`, which a .macc-head button does not match. An SVG with
+   no intrinsic size and no CSS size falls back to the CSS default 300x150,
+   so the arrows rendered enormous and shoved the whole panel apart. */
+.macc{border-bottom:1px solid var(--line)}
+.macc-head{width:100%;min-height:48px;display:flex;align-items:center;
+  justify-content:space-between;padding:0;background:none;border:0;
+  font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--text);cursor:pointer}
+.macc-head .chev{width:10px;height:6px;flex:none;transition:transform .18s ease}
+.macc.open .macc-head .chev{transform:rotate(180deg)}
+.macc-body{padding:0 0 8px 12px}
+.macc-body a{border-bottom:0;color:var(--atlas-muted)}
+/* 44px minimum tap target on every panel link */
+.mnav > .wrap > a,.macc-body a{min-height:44px;display:flex;align-items:center;padding:0;font-size:15px}
+
+/* full-width stacked CTAs. display:flex is load-bearing: .btn is
+   inline-block, so justify-content alone leaves the label left-aligned. */
+.mnav .mnav-cta{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.mnav .mnav-cta .btn{display:flex;width:100%;align-items:center;
+  justify-content:center;min-height:46px}
+
+@media (prefers-reduced-motion:reduce){
+  .macc-head .chev{transition:none}
+}
 
 @media(max-width:1280px){.nav-links{left:290px;gap:0}.nav-link{padding:12px 8px;font-size:13px}}
 @media(max-width:1080px){
@@ -191,6 +233,74 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-beam-2{bottom:15%;left:6%;width:140px;height:2px;
   background:linear-gradient(90deg,rgba(217,148,5,.5),transparent);transform:rotate(-22deg)}
 
+/* ============ desktop: the original two-column hero, restored ============
+   Copy left, globe occupying the right 58% and bleeding up behind the nav —
+   the layout this section had before the centred-stack rework. Done purely
+   as overrides on the current DOM, with no markup change, so the centred
+   stack above remains exactly as-is at every narrower width.
+
+   1181px is the old design's own breakpoint: below it the previous hero hid
+   the globe entirely, so restoring it lower would cost tablets the globe
+   they currently have. Everything under 1181px keeps the centred stack. */
+@media(min-width:1181px){
+  /* the old pairing — min-height and a viewport-tall box existed to make the
+     copy column and the edge-to-edge globe agree on one height. overflow
+     must go back to visible or the globe's -88px bleed gets clipped. */
+  .hero{height:calc(100vh - 88px);min-height:772px;padding:109px 0 60px;overflow:visible}
+
+  /* .hero-content takes over .wrap's old job: the centred 1240px rail, with
+     the copy left-aligned inside it. */
+  .hero-content{width:1240px;max-width:calc(100% - 40px);margin:0 auto;
+    text-align:left;padding:0}
+  /* The rail spans the full width, so its empty right half sits over the
+     globe and would swallow every pointer event — this is what previously
+     killed drag-to-rotate. Container transparent, children not. */
+  .hero-content{pointer-events:none}
+  .hero-content > *{pointer-events:auto}
+
+  .hero-copy{margin:45px 0 0;max-width:600px}
+  .hero-actions{justify-content:flex-start;gap:14px;margin-top:38px}
+  .hero-checks{grid-template-columns:300px 1fr;justify-content:start;
+    gap:13px 0;margin:40px 0 0;max-width:620px}
+
+  /* globe back to the hero's right half, full-bleed to the edge */
+  .hero-globe-stage{position:absolute;top:-88px;right:0;bottom:0;left:auto;
+    width:58%;max-width:none;height:auto;margin:0;overflow:hidden;
+    z-index:0;cursor:grab}
+  .hero-globe-stage:active{cursor:grabbing}
+  .hero-globe-container{position:absolute;inset:0;width:auto;height:auto;
+    transform:none;z-index:2}
+  /* the radial wash belongs to the centred treatment only */
+  .hero-globe-glow{display:none}
+
+  /* ---- the trust stat, back to its original blue chip ----
+     .float-card-top is a child of the stage, and the stage starts 88px above
+     the hero, so the old hero-relative top:595px is 683px here. */
+  .float-card{background:none;border:0;box-shadow:none;padding:0}
+  .float-card-top{top:683px;right:6px;left:auto;z-index:6}
+  .hero-badge{position:relative;width:269px;height:43px;border-radius:2px;
+    background:linear-gradient(135deg,#10396e 0%,#00090f 58%)}
+  .hero-badge b{position:absolute;left:25px;top:20px}
+  .hero-badge span{position:absolute;left:25px;top:6px;margin-top:0}
+
+  /* Neither of these existed in the hero being restored. They are hidden
+     rather than deleted so the centred stack below 1181px keeps both. */
+  .float-card-bottom,.hero-beam{display:none}
+}
+
+/* ---- globe route endpoints: planted flag pins ----
+   GlobeRoutes renders these two, so they are kept from the mobile/flag-pin
+   work while the hero structure above comes from the incoming branch. The
+   flags themselves are WebGL geometry inside the canvas, not DOM — the only
+   markup involved is a hidden block of <svg> flag art the component rasterises
+   into textures once on mount, clipped to a zero-size box so it can never
+   contribute to layout or be picked up by a screen reader. */
+.globe-wrap{position:relative;width:100%;height:100%}
+.globe-flag-src{
+  position:absolute;width:0;height:0;overflow:hidden;
+  opacity:0;pointer-events:none
+}
+
 /* Globe scaled down but still the dominant element; cards hug its rim. */
 @media(max-width:768px){
   .hero-globe-stage{height:340px}
@@ -208,6 +318,16 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .hero-content{max-width:90%}
   .hero-beam{display:none}
 }
+
+/* The previous mobile-hero block lived here: it rebuilt the old two-column
+   hero (.wrap + .hero-map) into a centred column with `order`, faked the globe
+   glow with a ::before, and re-pinned .hero-badge to .hero. All of it is
+   obsolete now that the hero ships that structure natively as .hero-content +
+   .hero-globe-stage/.hero-globe-glow + .float-card-* (see above). Removed
+   rather than left inert: .hero-badge now lives INSIDE .float-card-top and is
+   position:static, so the old absolute `bottom:56px` rule — later in the file,
+   therefore winning — would have torn the trust stat out of its card and
+   pinned it to the hero on every phone. */
 
 /* ---- hero load-in: camera-focus reveal ----
    Fires once on mount (no scroll trigger, no repeat) — plain animation-delay

@@ -15,6 +15,10 @@ import "./atlas-routes.css";
 // ATLAS dashboard design system, scoped under .atlas-dash. Must load after
 // atlas.css — 30 class names are shared between the two sheets.
 import "./atlas-dashboard.css";
+// Mobile pass. Every rule inside is wrapped in a max-width media query, and it
+// loads last so it wins source-order ties against the mobile blocks already in
+// the sheets above. Desktop is untouched by construction.
+import "./atlas-mobile.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
