@@ -486,12 +486,35 @@ export default function Globe({
         const loadWorldData = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch(
-                    "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/50m/physical/ne_50m_land.json"
-                );
-                if (!response.ok) throw new Error("Failed to load land data");
-                const landFeatures = await response.json();
+                /* Vendored to public/geo and fetched same-origin. This used to
+                   pull ne_50m_land.json straight from raw.githubusercontent.com
+                   on every page load, which made the entire globe depend on
+                   GitHub being reachable from each visitor's browser at view
+                   time - a rate-limit (raw.githubusercontent throttles by IP),
+                   a network that blocks github, or a host CSP whose connect-src
+                   omits it all replaced the globe with the error panel below.
+                   The vendored copy is also 2.76MB -> 1.01MB (267KB gzipped vs
+                   616KB): coordinates are rounded to 2dp, which is ~0.03px at
+                   this globe's rendered size, so the outline is unchanged. */
+                const landFeatures = await fetch("/geo/ne_50m_land.json")
+                    .then((r) => {
+                        if (!r.ok) throw new Error("Failed to load land data");
+                        return r.json();
+                    })
+                    .catch(() => null);
                 if (cancelled) return; // this invocation's renderer/canvas are already disposed
+                if (!landFeatures) {
+                    /* Degrade to the wireframe sphere instead of an error
+                       panel. The ocean sphere, graticule and anything a caller
+                       parented onto globeGroup (the hero's route arcs and flag
+                       pins) are already in the scene, so losing the landmass
+                       layer costs detail, not the whole visual. */
+                    renderer.render(scene, camera);
+                    canvas.style.opacity = "1";
+                    canvas.style.visibility = "visible";
+                    setIsLoading(false);
+                    return;
+                }
 
                 while (continentOutlineGroup.children.length > 0) {
                     continentOutlineGroup.remove(

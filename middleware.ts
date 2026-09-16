@@ -22,6 +22,13 @@ const isPublicRoute = createRouteMatcher([
   '/u/(.*)',           // public profile pages
   '/api/stripe/webhook',
   '/originkit-preview', // throwaway Originkit component preview
+  /* Static land geometry for the landing-page globe. It needs an explicit
+     entry because the matcher below excludes static extensions with
+     `js(?!on)` — that negative lookahead deliberately keeps .json requests
+     flowing through this middleware, so without this the asset is treated
+     as a protected route and auth.protect() 404s it for logged-out
+     visitors, i.e. everyone the landing page is for. */
+  '/geo/(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
