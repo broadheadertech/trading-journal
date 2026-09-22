@@ -1,0 +1,92 @@
+/* ============================================================================
+   ATLAS — LIGHT THEME
+   ----------------------------------------------------------------------------
+   The Atlas rebrand shipped dark-only: every colour token is defined under
+   `:root` (atlas.css, marketing/shared) and `.atlas-dash` (atlas-dashboard.css,
+   the authenticated app / admin / coach shells). The theme toggle in the app
+   Sidebar sets `document.documentElement.className = 'light'` (app/app/page.tsx),
+   but nothing responded to it — so light mode did nothing.
+
+   This file supplies the light palette. Both override selectors outrank the
+   base definitions by specificity, so ordering is not relied upon:
+     • html.light            (0,1,1) beats :root         (0,1,0)
+     • html.light .atlas-dash (0,2,1) beats .atlas-dash  (0,1,0)
+
+   Only colour tokens are redefined; geometry (--side/--top) and font tokens are
+   left to inherit from the dark definitions. Accents (amber/green/red) are
+   darkened a step so they keep legible contrast on light surfaces.
+   ========================================================================== */
+
+html.light {
+  color-scheme: light;
+
+  /* surfaces */
+  --bg: #f4f7fb;
+  --bg-cta: #eef3f9;
+  --bg-fail: #f6f8fb;
+  --bg-footer: #e9eef4;
+  --card: #ffffff;
+  --card-2: #f5f8fc;
+  --card-pro: #f0f5fb;
+
+  /* lines / structure */
+  --line: #dbe2ec;
+  --line-2: #c6d1de;
+  --grid: #e7edf4;
+  --rail: #eef2f7;
+  --rule-soft: #b6c2d1;
+
+  /* accents (darkened a step for light-surface contrast) */
+  --amber: #b07a04;
+  --amber-dim: #a5822f;
+  --red: #dc2f42;
+  --red-solid: #c81f31;
+  --green: #0f9c68;
+  --ink: #0a0a0a;
+
+  /* text hierarchy (inverted: dark ink on light) */
+  --text: #0f1824;
+  --text-2: #2c3e52;
+  --text-3: #54667a;
+
+  /* muted greys */
+  --atlas-muted: #5c6b7e;
+  --muted-2: #78889b;
+  --muted-3: #93a1b0;
+  --muted-4: #aab6c4;
+}
+
+/* Dashboard shell (app / admin / coach) — atlas-dashboard.css scopes its tokens
+   to `.atlas-dash`, so they need their own light override. */
+html.light .atlas-dash {
+  --bg: #f4f7fb;
+  --panel: #ffffff;
+  --panel-2: #f5f8fc;
+  --grid: #e7edf4;
+  --hair: #eef2f7;
+
+  --line: #dbe2ec;
+  --line-2: #c6d1de;
+  --rail: #eef2f7;
+
+  --amber: #b07a04;
+  --green: #0f9c68;
+  --red: #dc2f42;
+  --ink: #0a0a0a;
+
+  --text: #0f1824;
+  --text-2: #48596b;
+  --muted: #5c6b7e;
+  --muted-2: #78889b;
+  --muted-3: #93a1b0;
+  --muted-4: #b0bcca;
+}
+
+/* Native form controls (date/time pickers, scrollbars) follow the theme. The
+   dashboard CSS pins these to color-scheme:dark unconditionally, so re-assert. */
+html.light input[type="date"],
+html.light input[type="time"],
+html.light input[type="datetime-local"],
+html.light input[type="month"] {
+  color-scheme: light;
+}
