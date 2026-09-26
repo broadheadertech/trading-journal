@@ -941,7 +941,7 @@ export default defineSchema({
     stripeSubscriptionId: v.optional(v.string()),
     paymongoCustomerId: v.optional(v.string()),
     paymongoSubscriptionId: v.optional(v.string()),
-    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"))),
+    paymentProvider: v.optional(v.union(v.literal("stripe"), v.literal("paymongo"), v.literal("qr"))),
     planId: v.string(),
     status: v.union(
       v.literal("active"),
@@ -960,5 +960,45 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_stripe_customer", ["stripeCustomerId"])
+    .index("by_status", ["status"]),
+
+  // ─── Manual QR payments ────────────────────────────────────────────
+  // Admin-configured QR codes (GCash / Maya / QRPH bank / crypto wallet) that
+  // users scan to pay. The admin uploads the QR image once; users just scan it.
+  qrPaymentMethods: defineTable({
+    label: v.string(),                    // "GCash", "USDT (TRC-20)", "QRPH / InstaPay"
+    qrImageUrl: v.string(),               // uploaded QR image (Convex storage URL)
+    instructions: v.optional(v.string()), // free text: steps, account name, notes
+    accountDetails: v.optional(v.string()), // copyable wallet address / account number
+    currency: v.optional(v.string()),     // "PHP" | "USD" | "USDT" — informational
+    isActive: v.boolean(),
+    sortOrder: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  }).index("by_active", ["isActive"]),
+
+  // One row per user payment-proof submission. Admin reviews the screenshot +
+  // reference ID by hand, then approves (activates the sub) or rejects.
+  qrPaymentSubmissions: defineTable({
+    userId: v.string(),
+    userName: v.optional(v.string()),
+    userEmail: v.optional(v.string()),
+    planId: v.string(),
+    planName: v.optional(v.string()),
+    interval: v.union(v.literal("month"), v.literal("year")),
+    methodId: v.optional(v.id("qrPaymentMethods")),
+    methodLabel: v.optional(v.string()),
+    amount: v.optional(v.number()),
+    currency: v.optional(v.string()),
+    referenceId: v.string(),              // txn ref / on-chain hash entered by user
+    screenshotUrl: v.string(),            // uploaded proof screenshot
+    note: v.optional(v.string()),         // optional user note
+    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
+    reviewNote: v.optional(v.string()),   // admin note (esp. on reject)
+    reviewedBy: v.optional(v.string()),
+    reviewedAt: v.optional(v.string()),
+    createdAt: v.string(),
+  })
+    .index("by_user", ["userId"])
     .index("by_status", ["status"]),
 });

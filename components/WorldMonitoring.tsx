@@ -191,7 +191,13 @@ function Card({ m, idx }: { m: MonitorLink; idx: number }) {
   const Icon = m.icon;
   const accent = TAG_ACCENT[m.tag] ?? '#d99405';
   return (
-    <div className="domain" style={{ animationDelay: `${idx * 60}ms` }}>
+    <a
+      href={m.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="domain"
+      style={{ animationDelay: `${idx * 60}ms`, textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+    >
       <span
         className="ic"
         style={{
@@ -207,6 +213,6 @@ function Card({ m, idx }: { m: MonitorLink; idx: number }) {
       <p className="kick" style={{ color: accent, textTransform: 'uppercase' }}>{m.tag}</p>
       <h4>{m.title}</h4>
       <p>{m.desc}</p>
-    </div>
+    </a>
   );
 }

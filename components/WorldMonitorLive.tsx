@@ -161,10 +161,13 @@ export default function WorldMonitorLive() {
             <Section title="TOP HEADLINES" icon={<Newspaper size={13} color="#d99405" />}>
               <div className="card" style={{ padding: '6px 22px 10px' }}>
                 {data.news.map((n, i) => (
-                  <div
+                  <a
                     key={i}
+                    href={n.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="mrow"
-                    style={{ alignItems: 'flex-start', gap: 16, padding: '13px 0' }}
+                    style={{ alignItems: 'flex-start', gap: 16, padding: '13px 0', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                   >
                     <span
                       style={{
@@ -232,7 +235,7 @@ export default function WorldMonitorLive() {
                         {n.title}
                       </span>
                     </span>
-                  </div>
+                  </a>
                 ))}
               </div>
             </Section>
@@ -243,8 +246,11 @@ export default function WorldMonitorLive() {
             <Section title="LATEST VIDEO COVERAGE" icon={<PlayCircle size={13} color="#ff4d5e" />}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
                 {data.videos.slice(0, 12).map(v => (
-                  <div
+                  <a
                     key={v.videoId}
+                    href={v.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       border: '1px solid var(--line)',
                       borderRadius: 2,
@@ -252,15 +258,30 @@ export default function WorldMonitorLive() {
                       overflow: 'hidden',
                       display: 'flex',
                       flexDirection: 'column',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      cursor: 'pointer',
                     }}
                   >
-                    <div style={{ height: 110, background: '#070c13', overflow: 'hidden', flex: 'none' }}>
+                    <div style={{ position: 'relative', height: 110, background: '#070c13', overflow: 'hidden', flex: 'none' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={v.thumbnail}
                         alt={v.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                       />
+                      <span
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'rgba(0,0,0,.22)',
+                        }}
+                      >
+                        <PlayCircle size={36} color="#fff" weight="fill" />
+                      </span>
                     </div>
                     <h5
                       style={{
@@ -293,7 +314,7 @@ export default function WorldMonitorLive() {
                       <span style={{ fontWeight: 700, color: '#c0ccda' }}>{v.source}</span>
                       <span>· {timeAgo(new Date(v.publishedAt).getTime())}</span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </Section>

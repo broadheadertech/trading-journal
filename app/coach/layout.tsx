@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Headphones, User, Calendar, ChatText as MessageSquare, CurrencyDollar as DollarSign, ArrowLeft } from '@phosphor-icons/react';
 import BrainMascot from '@/components/BrainMascot';
+import { ToastProvider } from '@/components/ui/Toast';
 
 const NAV = [
   { href: '/coach',           label: 'Profile',     icon: User },
@@ -33,6 +34,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
   }
 
   return (
+    <ToastProvider>
     <div className="atlas-dash" style={{ minHeight: '100dvh', display: 'flex', background: 'var(--bg)' }}>
       <aside
         className="side"
@@ -71,5 +73,6 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
         {children}
       </main>
     </div>
+    </ToastProvider>
   );
 }
