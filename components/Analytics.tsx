@@ -24,9 +24,15 @@ interface AnalyticsProps {
 
 export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps) {
   const { formatCurrency } = useCurrency();
-  const [calMonth, setCalMonth] = useState(new Date());
+  /* null = follow the data. The calendar used to open on new Date(), so a
+     trader who has not traded this month landed on a grid of "No activity"
+     and had to work out that they needed to page backwards. Holding null
+     until the user actually pages means the default tracks the data as it
+     loads, with no effect and no snap-back after they navigate. */
+  const [calMonth, setCalMonth] = useState<Date | null>(null);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [showMetrics, setShowMetrics] = useState(false);
+  const [howToOpen, setHowToOpen] = useState(false);
 
   // Trades are already filtered by the universal top-bar time range
   const windowedTrades = trades;
@@ -192,10 +198,28 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
     };
   }, [windowedTrades, initialCapital, formatCurrency]);
 
+  /** Newest month that actually contains a closed trade. */
+  const latestActiveMonth = useMemo(() => {
+    let newest: Date | null = null;
+    trades.forEach(t => {
+      if (t.isOpen || t.actualPnL === null) return;
+      const d = new Date(t.exitDate ?? t.entryDate);
+      if (!newest || d > newest) newest = d;
+    });
+    return newest ? startOfMonth(newest) : null;
+  }, [trades]);
+
+  /* Memoised: the new Date() fallback would otherwise mint a fresh object on
+     every render and invalidate the calendar useMemo below each time. */
+  const activeMonth = useMemo(
+    () => calMonth ?? latestActiveMonth ?? new Date(),
+    [calMonth, latestActiveMonth],
+  );
+
   // ─── Calendar data ────────────────────────────────────────────────────────
   const calendarData = useMemo(() => {
-    const start = startOfMonth(calMonth);
-    const end = endOfMonth(calMonth);
+    const start = startOfMonth(activeMonth);
+    const end = endOfMonth(activeMonth);
     const days = eachDayOfInterval({ start, end });
     const closed = trades.filter(t => !t.isOpen && t.actualPnL !== null);
 
@@ -219,13 +243,21 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
       dayMap.set(k, v);
     });
 
-    const monthPnL = Array.from(dayMap.values()).reduce((s, v) => s + v.pnl, 0);
-    const monthTrades = Array.from(dayMap.values()).reduce((s, v) => s + v.trades, 0);
-    const monthWins = Array.from(dayMap.values()).reduce((s, v) => s + v.tradeList.filter(t => t.actualPnL! > 0).length, 0);
+    /* Scope the totals to the days actually on screen. dayMap is built from
+       every closed trade, not just this month, so summing it labelled the
+       whole account as "MONTH NET" — an empty September grid sat directly
+       above "MONTH NET +$2,042.58 / 81 trades", which flatly contradicted
+       each other. */
+    const monthDays = days
+      .map(d => dayMap.get(format(d, "yyyy-MM-dd")))
+      .filter((v): v is NonNullable<typeof v> => !!v);
+    const monthPnL = monthDays.reduce((s, v) => s + v.pnl, 0);
+    const monthTrades = monthDays.reduce((s, v) => s + v.trades, 0);
+    const monthWins = monthDays.reduce((s, v) => s + v.tradeList.filter(t => t.actualPnL! > 0).length, 0);
     const monthWR = monthTrades > 0 ? Math.round((monthWins / monthTrades) * 100) : 0;
 
     return { days, dayMap, monthPnL, monthTrades, monthWR, start };
-  }, [trades, calMonth]);
+  }, [trades, activeMonth]);
 
   const selectedDayData = selectedDay ? calendarData.dayMap.get(selectedDay) : null;
 
@@ -262,18 +294,33 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
         <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
         <div className="cardhead">
           <div>
-            <h4>How to Use</h4>
+            <button
+              onClick={() => setHowToOpen(o => !o)}
+              aria-expanded={howToOpen}
+              style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              <h4>How to Use</h4>
+              <ChevronRight
+                size={13}
+                style={{ color: 'var(--muted-2)', transform: howToOpen ? 'rotate(90deg)' : 'none', transition: 'transform .18s ease' }}
+              />
+            </button>
             <p className="sub sm">Work top-down; change one thing at a time.</p>
           </div>
           <button onClick={() => setShowMetrics(true)} className="viewall">
             <BarChart3 size={14} /> 50+ Metrics <ArrowRight size={12} />
           </button>
         </div>
-        <div className="klist num" style={{ marginTop: 14 }}>
-          <div><b>1</b><span>Validate net and drawdown first.</span></div>
-          <div><b>2</b><span>Check symbol/session/duration drivers.</span></div>
-          <div><b>3</b><span>Execute one top action for 5-7 sessions.</span></div>
-        </div>
+        {/* Collapsed by default. This is a screen a trader opens daily, and
+            three lines of unchanging instructions were pushing ~300px of the
+            actual numbers below the fold every single visit. */}
+        {howToOpen && (
+          <div className="klist num" style={{ marginTop: 14 }}>
+            <div><b>1</b><span>Validate net and drawdown first.</span></div>
+            <div><b>2</b><span>Check symbol/session/duration drivers.</span></div>
+            <div><b>3</b><span>Execute one top action for 5-7 sessions.</span></div>
+          </div>
+        )}
       </div>
 
       {/* ── Outcome Snapshot + Action Priority ── */}
@@ -349,7 +396,7 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
           { label: 'Trades', icon: <Activity size={16} />, value: String(m.closed.length), sub: `Sample in range`, color: 'text-[var(--text)]', accent: 'var(--amber)' },
           { label: 'Win Rate', icon: <Target size={16} />, value: `${m.winRate.toFixed(1)}%`, sub: `${m.wins} wins / ${m.losses} losses`, color: m.winRate >= 50 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--amber)' },
           { label: 'Profit Factor', icon: <BarChart3 size={16} />, value: m.profitFactor === Infinity ? '∞' : m.profitFactor.toFixed(2), sub: `Avg win ${fmtPnl(m.avgWin)} / avg loss ${fmtPnl(m.avgLoss)}`, color: m.profitFactor >= 1 ? 'text-[var(--green)]' : 'text-[var(--red)]', accent: 'var(--amber)' },
-          { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-[var(--red)]', accent: 'var(--red)' },
+          { label: 'Max Drawdown', icon: <TrendingDown size={16} />, value: fmtPnl(-m.maxDD), sub: <span className={pnlColor(-m.maxDDPercent)}>{m.maxDDPercent.toFixed(1)}%</span>, color: 'text-[var(--red)]', accent: 'var(--red)' },
           { label: 'Avg Hold', icon: <Clock size={16} />, value: m.holdLabel, sub: 'Execution tempo', color: 'text-[var(--text)]', accent: 'var(--amber)' },
         ].map(card => (
           <div key={card.label} className="stat" style={{ height: 'auto', minHeight: 104 }}>
@@ -413,11 +460,13 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
             <p className="lbl">SESSION SIGNAL</p>
             <div className="mrow" style={{ marginTop: 10 }}>
               <span className="lb" style={{ marginLeft: 0 }}>Best · {m.bestSession?.label}</span>
-              <span className="val" style={{ color: 'var(--green)' }}>{fmtPnl(m.bestSession?.pnl ?? 0)}</span>
+              <span className="val" style={{ color: (m.bestSession?.pnl ?? 0) >= 0 ? 'var(--green)' : 'var(--red)' }}>{fmtPnl(m.bestSession?.pnl ?? 0)}</span>
             </div>
             <div className="mrow">
               <span className="lb" style={{ marginLeft: 0 }}>Worst · {m.worstSession?.label}</span>
-              <span className="val" style={{ color: 'var(--red)' }}>{fmtPnl(m.worstSession?.pnl ?? 0)}</span>
+              {/* by value, not by rank: the worst session is often still
+                  profitable, and painting a gain red reads as a loss */}
+              <span className="val" style={{ color: (m.worstSession?.pnl ?? 0) >= 0 ? 'var(--green)' : 'var(--red)' }}>{fmtPnl(m.worstSession?.pnl ?? 0)}</span>
             </div>
           </div>
         </div>
@@ -688,12 +737,12 @@ export default function Analytics({ trades, initialCapital = 0 }: AnalyticsProps
             </div>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button onClick={() => setCalMonth(subMonths(calMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronLeft size={16} /></button>
+            <button onClick={() => setCalMonth(subMonths(activeMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronLeft size={16} /></button>
             <div style={{ textAlign: 'right' }}>
               <p className="lbl">ACTIVE MONTH</p>
-              <p style={{ margin: '5px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{format(calMonth, 'MMMM yyyy')}</p>
+              <p style={{ margin: '5px 0 0', fontWeight: 700, fontSize: 12.5, color: 'var(--text)' }}>{format(activeMonth, 'MMMM yyyy')}</p>
             </div>
-            <button onClick={() => setCalMonth(addMonths(calMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronRight size={16} /></button>
+            <button onClick={() => setCalMonth(addMonths(activeMonth, 1))} className="btn-g" style={{ height: 30, width: 30, padding: 0 }}><ChevronRight size={16} /></button>
           </div>
         </div>
 
