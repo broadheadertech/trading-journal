@@ -137,6 +137,13 @@ function ProviderCard({ p, accent }: { p: Provider; accent: string }) {
         {tierLabel} · {p.followers} follower{p.followers === 1 ? '' : 's'}
       </p>
 
+      {/* Scope tag. The Top Analysts panel sits directly beside this one and
+          shows the SAME people with different figures, because it blends
+          closed trades with signals while this card counts signals alone —
+          e.g. a poster reading 1/1 here and 46/36 there. Without saying which
+          basis each number uses, the two panels look like they disagree. */}
+      <span style={{ display: 'inline-flex', alignItems: 'center', height: 17, padding: '0 7px', marginTop: 12, borderRadius: 2, border: '1px solid var(--line)', fontWeight: 700, fontSize: 8.5, letterSpacing: '.06em', color: 'var(--muted-2)', whiteSpace: 'nowrap' }}>SIGNALS ONLY</span>
+
       {/* Win-rate showcase */}
       <div className="big">
         <b style={{ color: rateColor(p.hitRate) }}>{p.hitRate}%</b>

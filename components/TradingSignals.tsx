@@ -172,8 +172,11 @@ export default function TradingSignals() {
 
       <div className="split-2u">
         <div>
-          <p style={{ margin: '0 0 22px', fontWeight: 700, fontSize: 10, color: 'var(--muted-2)', letterSpacing: '.04em' }}>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 10, color: 'var(--muted-2)', letterSpacing: '.04em' }}>
             SIGNAL PROVIDERS
+          </p>
+          <p style={{ margin: '10px 0 22px', fontSize: 11.5, color: 'var(--muted-2)' }}>
+            Ranked on posted signals only.
           </p>
           <div style={{ borderTop: '1px solid var(--line-2)', paddingTop: 28 }}>
             <SignalProviders />
@@ -185,7 +188,7 @@ export default function TradingSignals() {
             <Award size={12} style={{ color: 'var(--amber)' }} /> TOP ANALYSTS
           </p>
           <p style={{ margin: '10px 0 22px', fontSize: 11.5, color: 'var(--muted-2)' }}>
-            50%+ win-rate across their trades and signals.
+            Ranked on closed trades and signals combined, so these figures differ from Signal Providers. 50%+ win-rate only.
           </p>
           <div style={{ borderTop: '1px solid var(--line-2)', paddingTop: 28 }}>
             <TopAnalysts limit={10} />
