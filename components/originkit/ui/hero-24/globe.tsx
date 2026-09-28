@@ -20,6 +20,7 @@ import {
     CanvasTexture,
 } from "three";
 import { geoEquirectangular, geoPath } from "d3-geo";
+import { detectWebGLSupport } from "@/lib/webgl";
 
 type Rgba = { r: number; g: number; b: number; a: number };
 
@@ -298,7 +299,33 @@ export default function Globe({
         camera.position.set(0, 0, cameraDistance);
         camera.lookAt(0, 0, 0);
 
-        const renderer = new WebGLRenderer({ antialias: true, alpha: true });
+        /* Ask the browser for a context ourselves first (see lib/webgl.ts).
+           Constructing a WebGLRenderer without one does not merely throw —
+           three console.errors its own diagnostics first, and Next surfaces
+           every one of those as a separate error overlay page in dev. Probing
+           means three is never reached when support is absent, so the page
+           stays quiet rather than reporting a problem the visitor cannot act
+           on. */
+        if (!detectWebGLSupport()) return;
+
+        /* new WebGLRenderer() THROWS when the browser cannot hand out a
+           context — hardware acceleration switched off, a blocklisted or
+           virtualised GPU, a headless/remote session, or simply too many live
+           contexts on the page. Unguarded, that exception escapes the effect
+           and takes the whole route down with a runtime error overlay, which
+           is a hard crash of the landing page over a decorative element.
+           Caught here so the page renders without the globe instead. */
+        let renderer: WebGLRenderer;
+        try {
+            renderer = new WebGLRenderer({ antialias: true, alpha: true });
+        } catch {
+            /* Bail out leaving the container empty. Deliberately no setState:
+               the component already returns this same <div> either way, so
+               doing nothing keeps the markup identical between server and
+               client (no hydration mismatch) and avoids a cascading render in
+               the effect. The section around it is unaffected. */
+            return;
+        }
         renderer.setSize(containerWidth, containerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.outputColorSpace = "srgb";

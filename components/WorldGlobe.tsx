@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { subscribeWebGL, getWebGLSnapshot, getWebGLServerSnapshot } from '@/lib/webgl';
 import dynamic from 'next/dynamic';
 import { Buildings as Building2, Money as Banknote, TrendUp as TrendingUp, Anchor, CurrencyDollar as DollarSign } from '@phosphor-icons/react';
 
@@ -104,6 +105,11 @@ export default function WorldGlobe() {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<unknown>(null);
   const [size, setSize] = useState({ w: 800, h: 600 });
+  /* react-globe.gl builds a three.js WebGLRenderer the moment it mounts, and
+     that constructor THROWS where no context can be created — taking the whole
+     /app route down with a runtime error overlay. It is a third-party render,
+     so there is nothing to try/catch: the only fix is not to mount it. */
+  const webglOk = useSyncExternalStore(subscribeWebGL, getWebGLSnapshot, getWebGLServerSnapshot);
   const [active, setActive] = useState<Record<LayerId, boolean>>(() => ({
     stockExchanges: true,
     financialCenters: true,
@@ -189,6 +195,26 @@ export default function WorldGlobe() {
           overflow: 'hidden',
         }}
       >
+        {!webglOk ? (
+          /* Unlike the decorative hero globe, this map IS the feature, so say
+             what happened and what fixes it rather than rendering nothing. */
+          <div
+            style={{
+              position: 'absolute', inset: 0, display: 'flex',
+              flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 8, textAlign: 'center', padding: 24,
+            }}
+          >
+            <div style={{ fontWeight: 700, fontSize: 14, color: '#c0ccda' }}>
+              3D globe unavailable
+            </div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: '#7f8ea3', maxWidth: 380 }}>
+              This browser could not create a WebGL context. Enabling graphics
+              acceleration in your browser settings restores the globe — the layer
+              filters above still work.
+            </div>
+          </div>
+        ) : (
         <Globe
           ref={globeRef as never}
           width={size.w}
@@ -222,6 +248,7 @@ export default function WorldGlobe() {
           arcDashGap={0.15}
           arcDashAnimateTime={2400}
         />
+        )}
 
         {/* Legend pill */}
         <div
