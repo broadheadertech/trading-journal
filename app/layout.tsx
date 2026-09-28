@@ -19,6 +19,9 @@ import "./atlas-dashboard.css";
 // loads last so it wins source-order ties against the mobile blocks already in
 // the sheets above. Desktop is untouched by construction.
 import "./atlas-mobile.css";
+// ATLAS light theme — html.light overrides for every colour token. Loaded last
+// so it has the final say on theming. See app/atlas-light.css.
+import "./atlas-light.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

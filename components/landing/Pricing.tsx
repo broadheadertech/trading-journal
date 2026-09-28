@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
+import Link from 'next/link';
 
 type Cycle = 'monthly' | 'annual';
 
@@ -45,7 +45,9 @@ const ELITE_FEATURES = [
 
 function Check({ stroke }: { stroke: string }) {
   return (
-    <svg width="11.5" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke={stroke} strokeWidth="1.6" /></svg>
+    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" aria-hidden="true">
+      <path d="M1 5.5 5 9.5 13 1" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -129,6 +131,14 @@ export default function Pricing() {
           <div><i></i>No credit card required</div>
           <div><i></i>Cancel anytime</div>
           <div><i></i>Full access during trial</div>
+        </div>
+
+        {/* Manual QR payment — GCash / Maya / bank QRPH / crypto. Users complete it
+            after signing in (upload proof + reference ID), so route them to sign-up. */}
+        <div style={{ textAlign: 'center', marginTop: '22px' }}>
+          <Link className="buy" href="/sign-up" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            Prefer GCash / crypto? Pay via QR
+          </Link>
         </div>
       </div>
     </div>

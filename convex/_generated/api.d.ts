@@ -42,6 +42,7 @@ import type * as mtConnections from "../mtConnections.js";
 import type * as newsletter from "../newsletter.js";
 import type * as notifications from "../notifications.js";
 import type * as profile from "../profile.js";
+import type * as qrPayments from "../qrPayments.js";
 import type * as reflections from "../reflections.js";
 import type * as ruleBreaks from "../ruleBreaks.js";
 import type * as scoreEvents from "../scoreEvents.js";
@@ -97,6 +98,7 @@ declare const fullApi: ApiFromModules<{
   newsletter: typeof newsletter;
   notifications: typeof notifications;
   profile: typeof profile;
+  qrPayments: typeof qrPayments;
   reflections: typeof reflections;
   ruleBreaks: typeof ruleBreaks;
   scoreEvents: typeof scoreEvents;

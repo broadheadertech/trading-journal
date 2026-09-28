@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, ShieldWarning } from '@phosphor-icons/react';
 import AdminSidebar from './AdminSidebar';
 import BrainMascot from '@/components/BrainMascot';
+import { ToastProvider } from '@/components/ui/Toast';
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useUser();
@@ -45,6 +46,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
+    <ToastProvider>
     <div className="atlas-dash h-dvh flex" style={{ background: 'var(--bg)' }}>
       <AdminSidebar />
 
@@ -93,5 +95,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </main>
       </div>
     </div>
+    </ToastProvider>
   );
 }
