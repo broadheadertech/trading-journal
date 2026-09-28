@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Plug, Copy, Check, ArrowsClockwise, Power, ArrowSquareOut, DownloadSimple, ShieldCheck, Warning, CaretDown, CaretUp } from '@phosphor-icons/react';
+import { Plug, Copy, Check, ArrowsClockwise, Power, ArrowSquareOut, DownloadSimple, ShieldCheck, Warning, CaretDown, CaretUp, Eye, EyeSlash } from '@phosphor-icons/react';
 
 const WEBHOOK_PATH = '/api/mt5-sync';
 
@@ -33,7 +33,15 @@ export default function MTConnect() {
   const [brokerName, setBrokerName] = useState('VT Markets');
   const [mtAccountNumber, setMtAccountNumber] = useState('');
   const [mtServer, setMtServer] = useState('VTMarkets-Live');
-  const [showInstructions, setShowInstructions] = useState(true);
+  /* null = follow the connection state. Someone still setting up wants the
+     steps open; someone already connected is here to copy a token or check
+     last-sync, and does not want to scroll past five steps to do it. */
+  const [showInstructions, setShowInstructions] = useState<boolean | null>(null);
+  /* The sync token authenticates writes into this account's journal, so it
+     is masked until asked for. It used to sit in plaintext on a dashboard
+     people screen-share and screenshot — anyone who read it could POST
+     fabricated trades into the journal. Copy still copies the real value. */
+  const [showToken, setShowToken] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [confirmRegen, setConfirmRegen] = useState(false);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
@@ -41,6 +49,7 @@ export default function MTConnect() {
   const webhookUrl = getWebhookUrl();
   const isConnected = conn !== null && conn !== undefined && conn.isActive;
   const isLoading = conn === undefined;
+  const instructionsOpen = showInstructions ?? !isConnected;
 
   function copy(value: string, field: string) {
     void navigator.clipboard.writeText(value);
@@ -149,8 +158,18 @@ export default function MTConnect() {
           <div className="field" style={{ marginTop: 26 }}>
             <label>YOUR SYNC TOKEN</label>
             <div className="codebox" style={{ marginTop: 0 }}>
-              <code style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--mono)' }}>{conn?.syncToken}</code>
-              <button onClick={() => copy(conn!.syncToken, 'token')} className="chip" style={{ marginLeft: 12, height: 24, gap: 6 }}>
+              <code style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--mono)' }}>
+                {showToken ? conn?.syncToken : '•'.repeat(Math.min(conn?.syncToken?.length ?? 24, 40))}
+              </code>
+              <button
+                onClick={() => setShowToken(v => !v)}
+                className="chip"
+                style={{ marginLeft: 12, height: 24, gap: 6 }}
+                aria-label={showToken ? 'Hide sync token' : 'Reveal sync token'}
+              >
+                {showToken ? <><EyeSlash size={11} /> Hide</> : <><Eye size={11} /> Reveal</>}
+              </button>
+              <button onClick={() => copy(conn!.syncToken, 'token')} className="chip" style={{ marginLeft: 8, height: 24, gap: 6 }}>
                 {copiedField === 'token' ? <><Check size={11} /> Copied</> : <><Copy size={11} /> Copy</>}
               </button>
             </div>
@@ -199,17 +218,17 @@ export default function MTConnect() {
       {/* Install instructions */}
       <div className="card" style={{ marginTop: 48, padding: '22px 28px 30px' }}>
         <button
-          onClick={() => setShowInstructions(v => !v)}
+          onClick={() => setShowInstructions(!instructionsOpen)}
           style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left' }}
         >
           <DownloadSimple size={16} style={{ color: 'var(--amber)' }} />
           <h3 style={{ fontSize: 17 }}>Install instructions (MetaTrader 5)</h3>
-          {showInstructions
+          {instructionsOpen
             ? <CaretUp size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />
             : <CaretDown size={14} style={{ marginLeft: 'auto', color: 'var(--muted)' }} />}
         </button>
 
-        {showInstructions && (
+        {instructionsOpen && (
           <>
             <p className="sub" style={{ fontSize: 13, color: 'var(--muted)' }}>
               One-time setup. Takes about 5 minutes. The EA only reads your trade data — it cannot place trades.
@@ -217,27 +236,35 @@ export default function MTConnect() {
 
             <div className="steps">
               <Step n={1} title="Download the EA">
+                {/* The .ex5 button was removed: no atlas-sync.ex5 is shipped in
+                    public/, so it 404'd on every click. MT5 compiles the .ex5
+                    itself in step 3, which is the supported path anyway. */}
                 <div className="btns">
                   <a href="/atlas-sync.mq5" download className="sm amber">
                     <DownloadSimple size={12} /> Download atlas-sync.mq5
                   </a>
-                  <a href="/atlas-sync.ex5" download className="sm ghost">
-                    <DownloadSimple size={12} /> atlas-sync.ex5
-                  </a>
-                  <span className="hint">(if compiled)</span>
                 </div>
                 <p>
-                  Most users want the <strong style={{ color: 'var(--amber)' }}>.mq5</strong> source. Drop it in MT5&apos;s <code>MQL5/Experts</code> folder, then in MT5 right-click <code>atlas-sync</code> in Navigator → <strong>Modify</strong> → <strong>Compile (F7)</strong>. MT5 will produce the <code>.ex5</code> automatically. The <code>.ex5</code> button above is for cases where the developer pre-compiled and uploaded it.
+                  This is the EA source. You will place it in MT5 next, then compile it — MT5 produces the runnable <code>.ex5</code> for you.
                 </p>
               </Step>
 
-              <Step n={2} title="Open MT5's data folder">
+              {/* Used to say "drop atlas-sync.ex5 here" while step 1 had already
+                  said to drop the .mq5 there and compile it — two different files,
+                  two different instructions, for the same folder. */}
+              <Step n={2} title="Put it in MT5's Experts folder">
                 <p>
-                  In MT5: <code style={{ color: 'var(--amber)' }}>File → Open Data Folder</code>, then go into <code style={{ color: 'var(--amber)' }}>MQL5 → Experts</code>. Drop <code>atlas-sync.ex5</code> in this folder.
+                  In MT5: <code style={{ color: 'var(--amber)' }}>File → Open Data Folder</code>, then go into <code style={{ color: 'var(--amber)' }}>MQL5 → Experts</code>. Drop the downloaded <code>atlas-sync.mq5</code> there.
                 </p>
               </Step>
 
-              <Step n={3} title="Allow the webhook URL">
+              <Step n={3} title="Compile it">
+                <p>
+                  Back in MT5, right-click <code>atlas-sync</code> in the Navigator panel → <strong>Modify</strong> → <strong>Compile (F7)</strong>. MT5 writes the <code>atlas-sync.ex5</code> next to the source; that compiled file is what actually runs.
+                </p>
+              </Step>
+
+              <Step n={4} title="Allow the webhook URL">
                 <p>
                   In MT5: <code style={{ color: 'var(--amber)' }}>Tools → Options → Expert Advisors</code>. Tick <strong>&quot;Allow WebRequest for listed URL&quot;</strong> and add this URL:
                 </p>
@@ -249,20 +276,25 @@ export default function MTConnect() {
                 </div>
               </Step>
 
-              <Step n={4} title="Restart MT5">
+              <Step n={5} title="Restart MT5">
                 <p>
                   Close MT5 fully and reopen it. You should see <code>atlas-sync</code> in the Navigator panel under <code style={{ color: 'var(--amber)' }}>Expert Advisors</code>.
                 </p>
               </Step>
 
-              <Step n={5} title="Attach to a chart + paste token">
+              <Step n={6} title="Attach to a chart + paste token">
                 <p>
                   Open any chart (any symbol). Drag <code>atlas-sync</code> from Navigator onto it. In the EA&apos;s <strong>&quot;Inputs&quot;</strong> tab, paste your token:
                 </p>
                 {isConnected && (
                   <div className="codebox">
-                    <code style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--mono)' }}>{conn?.syncToken}</code>
-                    <button onClick={() => copy(conn!.syncToken, 'token2')} className="chip" style={{ marginLeft: 12, height: 24, gap: 6 }}>
+                    <code style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--mono)' }}>
+                      {showToken ? conn?.syncToken : '•'.repeat(Math.min(conn?.syncToken?.length ?? 24, 40))}
+                    </code>
+                    <button onClick={() => setShowToken(v => !v)} className="chip" style={{ marginLeft: 12, height: 24, gap: 6 }}>
+                      {showToken ? <EyeSlash size={11} /> : <Eye size={11} />}
+                    </button>
+                    <button onClick={() => copy(conn!.syncToken, 'token2')} className="chip" style={{ marginLeft: 8, height: 24, gap: 6 }}>
                       {copiedField === 'token2' ? <Check size={11} /> : <Copy size={11} />}
                     </button>
                   </div>
