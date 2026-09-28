@@ -8,6 +8,7 @@ import {
   Chats as MessagesSquare, ArrowLeft, Plus, PencilSimple as Edit2, Trash as Trash2, Gear as Settings,
   CaretUp as ChevronUp, CaretDown as ChevronDown, Lock, ChatCircle as MessageCircle, Image as ImageIcon,
   CircleNotch as Loader2, UploadSimple as Upload, PaperPlaneTilt as Send,
+  MagnifyingGlass, X,
 } from '@phosphor-icons/react';
 import { PushPin as Pin } from '@phosphor-icons/react';
 import { useToast } from '@/components/ui/Toast';
@@ -55,14 +56,43 @@ export default function Community() {
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [sort, setSort] = useState<SortMode>('hot');
   const [showNew, setShowNew] = useState(false);
+  const [query, setQuery] = useState('');
 
-  const categories = useQuery(api.forum.listCategories) ?? [];
-  const posts = useQuery(api.forum.listPosts, {
-    categoryId: activeCategoryId ?? undefined,
-    sort,
-  }) ?? [];
+  /* Convex returns undefined while a query is in flight. Collapsing that to []
+     with ?? meant the list could not tell "still loading" from "there is
+     nothing here" — so every visit flashed the "No posts yet — Be the first to
+     start the conversation" empty state before the posts arrived, which reads
+     as an empty forum. Keep the raw result and derive both states from it. */
+  /* One unfiltered fetch, then filter in the client. listPosts already
+     .collect()s the whole table for the no-category case, so this does not
+     widen the worst-case read — and it buys three things the per-category
+     round-trip could not: a real post count beside every category, instant
+     switching with no refetch flash, and title/body search. If the forum ever
+     outgrows a full collect, this and the server query need paging together. */
+  const categoriesResult = useQuery(api.forum.listCategories);
+  const postsResult = useQuery(api.forum.listPosts, { sort });
+  const categories = categoriesResult ?? [];
+  /* memoised so the `?? []` fallback does not mint a new array each render and
+     invalidate every useMemo below it */
+  const allPosts = useMemo(() => postsResult ?? [], [postsResult]);
+  const postsLoading = postsResult === undefined;
+
+  const countByCategory = useMemo(() => {
+    const m = new Map<string, number>();
+    allPosts.forEach(p => m.set(p.categoryId, (m.get(p.categoryId) ?? 0) + 1));
+    return m;
+  }, [allPosts]);
+
+  const posts = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allPosts.filter(p =>
+      (!activeCategoryId || p.categoryId === activeCategoryId) &&
+      (!q || p.title?.toLowerCase().includes(q) || p.body?.toLowerCase().includes(q)),
+    );
+  }, [allPosts, activeCategoryId, query]);
 
   const postIds = useMemo(() => posts.map((p: any) => p.id), [posts]);
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
   const myVotes = useQuery(api.forum.myVotesForPosts, { postIds }) ?? {};
   const vote = useMutation(api.forum.vote);
 
@@ -90,12 +120,34 @@ export default function Community() {
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
         {/* Categories sidebar */}
         <div className="listnav">
+          {/* Search across the loaded posts. .listnav .search has been styled in
+              atlas-dashboard.css all along with no input wired to it, so the
+              forum had no way to find an old thread. Client-side over the same
+              rows the list already holds — no extra query. */}
+          <label className="search" style={{ cursor: 'text' }}>
+            <MagnifyingGlass size={14} style={{ flex: 'none' }} />
+            <input
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search posts…"
+              aria-label="Search posts"
+              style={{ flex: 1, minWidth: 0, background: 'none', border: 0, outline: 'none', font: 'inherit', color: 'var(--text)', padding: 0 }}
+            />
+            {query && (
+              <button onClick={() => setQuery('')} aria-label="Clear search" style={{ background: 'none', cursor: 'pointer', color: 'var(--muted-2)', display: 'flex' }}>
+                <X size={12} />
+              </button>
+            )}
+          </label>
+
+          <h6>CATEGORIES</h6>
           <a
             onClick={() => setActiveCategoryId(null)}
             className={activeCategoryId === null ? 'on' : undefined}
             style={{ cursor: 'pointer' }}
           >
             All Posts
+            <em>{postsLoading ? '' : allPosts.length}</em>
           </a>
           {categories.map((c: any) => (
             <a
@@ -103,12 +155,17 @@ export default function Community() {
               onClick={() => setActiveCategoryId(c.id)}
               className={activeCategoryId === c.id ? 'on' : undefined}
               style={{ cursor: 'pointer' }}
+              /* each category carries a description that was never rendered
+                 anywhere; as a tooltip it costs no layout */
+              title={c.description || undefined}
             >
               {c.color && <i style={{ background: c.color }} />}
               {c.name}
+              {/* how busy each category is, before clicking into it */}
+              <em>{postsLoading ? '' : (countByCategory.get(c.id) ?? 0)}</em>
             </a>
           ))}
-          {categories.length === 0 && (
+          {categoriesResult !== undefined && categories.length === 0 && (
             <p style={{ margin: '4px 14px', fontSize: 12, color: 'var(--muted-2)' }}>No categories yet.</p>
           )}
         </div>
@@ -126,9 +183,30 @@ export default function Community() {
                 {s}
               </button>
             ))}
+
+            {/* Which slice of the forum is on screen. The sidebar highlights the
+                active category, but the list itself gave no confirmation that it
+                had been filtered — so a quiet category looked like a quiet forum. */}
+            <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10, fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
+              {postsLoading
+                ? 'loading…'
+                : `${posts.length} post${posts.length === 1 ? '' : 's'}${activeCategory ? ' in ' + activeCategory.name : ''}`}
+              {activeCategory && !postsLoading && (
+                <button
+                  onClick={() => setActiveCategoryId(null)}
+                  style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700 }}
+                >
+                  Clear
+                </button>
+              )}
+            </span>
           </div>
 
-          {posts.length === 0 ? (
+          {postsLoading ? (
+            <div className="blank" style={{ minHeight: 300, color: 'var(--amber)' }}>
+              <Loader2 size={22} className="animate-spin" />
+            </div>
+          ) : posts.length === 0 ? (
             <div className="blank" style={{ minHeight: 300 }}>
               <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
               <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
@@ -137,8 +215,44 @@ export default function Community() {
               <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
                 <MessagesSquare size={24} style={{ color: 'var(--amber)' }} />
               </span>
-              <h4>No posts yet</h4>
-              <p>Be the first to start the conversation.</p>
+              {/* an empty category is not an empty forum, and telling someone to
+                  "be the first" when they have simply filtered themselves into a
+                  quiet corner sends them to the wrong conclusion */}
+              {/* Three different reasons the list can be empty, and they call for
+                  three different messages. Telling someone whose search missed
+                  to "be the first to start the conversation" is the same mistake
+                  as telling it to someone who just filtered into a quiet
+                  category — the forum is not empty, their view is. */}
+              {query.trim() ? (
+                <>
+                  <h4>No posts match “{query.trim()}”</h4>
+                  <p>
+                    <button
+                      onClick={() => setQuery('')}
+                      style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, textDecoration: 'underline' }}
+                    >
+                      Clear search
+                    </button>
+                  </p>
+                </>
+              ) : activeCategory ? (
+                <>
+                  <h4>No posts in {activeCategory.name} yet</h4>
+                  <p>
+                    <button
+                      onClick={() => setActiveCategoryId(null)}
+                      style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, textDecoration: 'underline' }}
+                    >
+                      View all posts
+                    </button>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h4>No posts yet</h4>
+                  <p>Be the first to start the conversation.</p>
+                </>
+              )}
             </div>
           ) : (
             posts.map((p: any) => {
@@ -148,11 +262,10 @@ export default function Community() {
                 <div
                   key={p.id}
                   className="post"
-                  style={{
-                    height: 'auto',
-                    padding: '16px 20px',
-                    borderLeftColor: cat?.color ?? 'var(--amber)',
-                  }}
+                  /* height/padding used to be overridden here because .post
+                     hardcoded a 104px row; the stylesheet now sizes to content,
+                     so only the per-category rail colour stays inline */
+                  style={{ borderLeftColor: cat?.color ?? 'var(--amber)' }}
                 >
                   {/* Vote column */}
                   <div className="vote">
@@ -176,25 +289,43 @@ export default function Community() {
                     style={{ minWidth: 0, cursor: 'pointer' }}
                     onClick={() => { setActivePostId(p.id); setView('detail'); }}
                   >
-                    <div className="meta">
+                    {/* Category sits on its own line as a colour dot + name.
+                        It used to lead the meta row as a pill pinned to a
+                        104px min-width — that width existed purely so "by
+                        <author>" would start at the same x on every row, i.e.
+                        a fixed gap was paying for alignment. Lifting it out
+                        removes both the gap and the alignment problem, and
+                        lets the title become the first thing read. */}
+                    <div className="toprow">
                       {cat && (
                         <span className="cat" style={{ color: cat.color ?? 'var(--amber)' }}>
+                          <i style={{ background: cat.color ?? 'var(--amber)' }} />
                           {cat.name}
                         </span>
                       )}
-                      <span>by <strong>{p.authorName}</strong></span>
-                      <TierBadge tier={p.authorTier} />
-                      <span>·</span>
-                      <span>{timeAgo(p.createdAt)}</span>
-                      {p.isPinned && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--amber)' }}><Pin size={11} /> Pinned</span>}
-                      {p.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={11} /> Locked</span>}
+                      {p.isPinned && <span className="flag on"><Pin size={10} /> Pinned</span>}
+                      {p.isLocked && <span className="flag"><Lock size={10} /> Locked</span>}
                     </div>
+
                     <h5>{p.title}</h5>
                     <p className="body line-clamp-2">{p.body}</p>
+
+                    {/* Author and engagement collapsed into one line — they were
+                        two rows saying very little, which is what made every
+                        card tall and mostly empty. */}
                     <div className="foot">
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><MessageCircle size={12} /> {p.commentCount} comments</span>
+                      <span className="who">
+                        {p.authorName}
+                        <TierBadge tier={p.authorTier} />
+                      </span>
+                      <span>{timeAgo(p.createdAt)}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                        <MessageCircle size={12} /> {p.commentCount}
+                      </span>
                       {p.images && p.images.length > 0 && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ImageIcon size={12} /> {p.images.length}</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                          <ImageIcon size={12} /> {p.images.length}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -318,6 +449,10 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
   const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
 
   const post = useQuery(api.forum.getPost, { id: postId });
+  /* Same query the list already subscribes to, so this resolves from cache —
+     it is here only to name/colour the post's category in the context rail,
+     which the detail view previously dropped entirely. */
+  const detailCategories = useQuery(api.forum.listCategories) ?? [];
   const comments = useQuery(api.forum.listComments, { postId }) ?? [];
   const myPostVotes = useQuery(api.forum.myVotesForPosts, { postIds: [postId] }) ?? {};
   const commentIds = useMemo(() => comments.map((c: any) => c.id), [comments]);
@@ -420,32 +555,34 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
     setReplyParent(null);
   };
 
+  const postCat = detailCategories.find((c) => c.id === post.categoryId);
+
   return (
-    <div className="space-y-4">
+    /* Two columns, matching the list view's sidebar+content shape so the two
+       screens read as one section. Capping the reading column alone fixed the
+       alignment but dumped ~570px of empty space down the right of a wide
+       screen; the rail turns that into the post's context, which the detail
+       view was not showing at all (category, score, comment count, state). */
+    <div>
       <button onClick={onBack} className="doclink" style={{ marginTop: 0 }}>
         <ArrowLeft size={14} /> Back to Community
       </button>
 
+      <div
+        className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-6 items-start"
+        style={{ maxWidth: 1180, marginTop: 14 }}
+      >
+      <div className="space-y-4">
+
       <div className="card">
         <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
-        <div className="flex items-start gap-4">
-          <div className="vote" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: 'var(--muted)', flex: 'none' }}>
-            <button
-              onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === 1 ? 0 : 1 })}
-              style={{ display: 'flex', color: myVote === 1 ? 'var(--amber)' : 'inherit' }}
-            >
-              <ChevronUp size={18} />
-            </button>
-            <b style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{post.score}</b>
-            <button
-              onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === -1 ? 0 : -1 })}
-              style={{ display: 'flex', color: myVote === -1 ? 'var(--red)' : 'inherit' }}
-            >
-              <ChevronDown size={18} />
-            </button>
-          </div>
-
-          <div className="flex-1 min-w-0">
+        {/* The vote control used to be a left rail, which pushed all the post's
+            content in by ~56px while the comments card below started at its own
+            padding edge — two stacked cards with two different left margins.
+            It now sits inline in the action row at the bottom, so the title,
+            body and comments all share one edge. */}
+        <div>
+          <div className="min-w-0">
             <div className="meta" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', fontSize: 11.5, color: 'var(--muted-2)', marginBottom: 10 }}>
               <span>by <strong style={{ color: 'var(--text)', fontWeight: 700 }}>{post.authorName}</strong></span>
               <TierBadge tier={post.authorTier} />
@@ -455,19 +592,56 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
               {post.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Lock size={11} /> Locked</span>}
             </div>
             <h3 style={{ marginBottom: 12 }}>{post.title}</h3>
-            <p className="whitespace-pre-wrap mb-4" style={{ maxWidth: 680, fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
+            {/* the 680px cap moved up to the column; the body now fills it */}
+            <p className="whitespace-pre-wrap mb-4" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
 
             {post.images && post.images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-                {post.images.map((url: string, i: number) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={url} alt="" className="w-full h-40 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
-                ))}
-              </div>
+              post.images.length === 1 ? (
+                /* A lone image is the post's subject, not a thumbnail. The
+                   shared grid put it in a third-width cell at a fixed h-40 with
+                   object-cover, which cropped a wide banner down to a strip and
+                   stranded two empty columns beside it. object-contain on a
+                   capped height shows the whole thing at the column's width. */
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={post.images[0]}
+                  alt=""
+                  className="mb-4"
+                  style={{ display: 'block', width: '100%', maxHeight: 420, objectFit: 'contain',
+                           background: '#0a0f17', border: '1px solid var(--line)', borderRadius: 2 }}
+                />
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                  {post.images.map((url: string, i: number) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={i} src={url} alt="" className="w-full h-40 object-cover" style={{ border: '1px solid var(--line)', borderRadius: 2 }} />
+                  ))}
+                </div>
+              )
             )}
 
-            {/* Mod actions */}
-            <div className="flex items-center gap-2 pt-3" style={{ borderTop: '1px solid var(--line)' }}>
+            {/* Vote + mod actions */}
+            <div className="flex items-center gap-2 pt-3 flex-wrap" style={{ borderTop: '1px solid var(--line)' }}>
+              <div
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginRight: 6,
+                         border: '1px solid var(--line)', borderRadius: 2, padding: '0 8px', height: 28, color: 'var(--muted)' }}
+              >
+                <button
+                  onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === 1 ? 0 : 1 })}
+                  aria-label="Upvote"
+                  style={{ display: 'flex', color: myVote === 1 ? 'var(--amber)' : 'inherit' }}
+                >
+                  <ChevronUp size={15} />
+                </button>
+                <b style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13, color: 'var(--text)', minWidth: 14, textAlign: 'center' }}>{post.score}</b>
+                <button
+                  onClick={() => vote({ targetType: 'post', targetId: postId, value: myVote === -1 ? 0 : -1 })}
+                  aria-label="Downvote"
+                  style={{ display: 'flex', color: myVote === -1 ? 'var(--red)' : 'inherit' }}
+                >
+                  <ChevronDown size={15} />
+                </button>
+              </div>
               {isAdmin && (
                 <>
                   <button onClick={() => togglePin({ id: postId })} className="chip">
@@ -542,6 +716,57 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
           {renderComments('root', 0)}
         </div>
       </div>
+      </div>
+
+      {/* Context rail — everything the detail view knew but never showed */}
+      {/* .card, not .listnav: .listnav is the nav-list chrome (16px/18px gutter,
+          styles keyed to <a>), so beside the post card's 28px/19px it sat on a
+          different internal grid — the two boxes are side by side, and their
+          contents started at different insets and 1px off vertically. .card is
+          what every other box on this screen uses, and .lbl is its caption. */}
+      <aside className="card">
+        <p className="lbl">POST DETAILS</p>
+        <dl style={{ margin: '14px 0 0', display: 'flex', flexDirection: 'column', gap: 13 }}>
+          {postCat && (
+            <DetailRow label="Category">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: postCat.color ?? 'var(--amber)', fontWeight: 700 }}>
+                <i style={{ width: 7, height: 7, borderRadius: 1, background: postCat.color ?? 'var(--amber)', display: 'inline-block' }} />
+                {postCat.name}
+              </span>
+            </DetailRow>
+          )}
+          <DetailRow label="Author">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+              {post.authorName}
+              <TierBadge tier={post.authorTier} />
+            </span>
+          </DetailRow>
+          <DetailRow label="Posted">{new Date(post.createdAt).toLocaleDateString()}</DetailRow>
+          <DetailRow label="Score">{post.score}</DetailRow>
+          <DetailRow label="Comments">{post.commentCount}</DetailRow>
+          {(post.isPinned || post.isLocked) && (
+            <DetailRow label="State">
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                {post.isPinned && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--amber)' }}><Pin size={11} /> Pinned</span>}
+                {post.isLocked && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><Lock size={11} /> Locked</span>}
+              </span>
+            </DetailRow>
+          )}
+        </dl>
+      </aside>
+      </div>
+    </div>
+  );
+}
+
+/** One label/value row in the post context rail. */
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
+      <dt style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.04em', color: 'var(--muted-2)', textTransform: 'uppercase', flex: 'none' }}>
+        {label}
+      </dt>
+      <dd style={{ margin: 0, fontSize: 12.5, color: 'var(--text-2)', textAlign: 'right', minWidth: 0 }}>{children}</dd>
     </div>
   );
 }
