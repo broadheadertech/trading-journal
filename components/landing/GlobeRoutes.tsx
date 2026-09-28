@@ -23,7 +23,7 @@
    dims/hides the far side correctly (confirmed visually), which is the
    bulk of what a per-pixel view-angle falloff would add anyway. */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import {
   CatmullRomCurve3,
   Color,
@@ -45,6 +45,33 @@ import {
 } from 'three';
 import Globe from '@/components/originkit/ui/hero-24/globe';
 import { FlagArt, type FlagCode } from '@/components/landing/atlasFlagIcons';
+import { subscribeWebGL, getWebGLSnapshot, getWebGLServerSnapshot } from '@/lib/webgl';
+
+/**
+ * Static stand-in for the globe, drawn in the same amber wireframe language as
+ * the real scene (graticule rings, no landmass dots) so the hero still reads as
+ * a globe on machines without WebGL. Pure SVG — no canvas, no context, no
+ * three.js — and aria-hidden, since it carries no information the copy does not.
+ */
+function GlobeFallback() {
+  const ring = { fill: 'none', stroke: GLOBE_LINE_COLOR, strokeWidth: 0.6, opacity: 0.32 } as const;
+  return (
+    <div className="globe-wrap" aria-hidden="true">
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%', display: 'block' }}>
+        <circle cx="100" cy="100" r="76" {...ring} opacity={0.55} />
+        {/* parallels */}
+        {[-52, -30, 0, 30, 52].map(dy => (
+          <ellipse key={`p${dy}`} cx="100" cy={100 + dy} rx={Math.sqrt(Math.max(76 * 76 - dy * dy, 0))} ry={9} {...ring} />
+        ))}
+        {/* meridians */}
+        {[76, 54, 28].map(rx => (
+          <ellipse key={`m${rx}`} cx="100" cy="100" rx={rx} ry={76} {...ring} />
+        ))}
+        <line x1="100" y1="24" x2="100" y2="176" {...ring} />
+      </svg>
+    </div>
+  );
+}
 
 /* The globe's own dot/outline/grid color, verbatim (see the dots/
    outlineColor/graticuleColor props passed to <Globe> below) — routes use
@@ -667,6 +694,14 @@ export default function GlobeRoutes() {
       });
     });
   }, []);
+
+  /* Where the browser cannot hand out a WebGL context the scene never mounts,
+     and the hero was simply left with an empty column — correct, but it reads
+     as a missing element rather than an unsupported one. A wireframe stand-in
+     keeps the composition intact for those visitors. Read through
+     useSyncExternalStore so the server and the first client render agree. */
+  const webglOk = useSyncExternalStore(subscribeWebGL, getWebGLSnapshot, getWebGLServerSnapshot);
+  if (!webglOk) return <GlobeFallback />;
 
   return (
     <div className="globe-wrap">
