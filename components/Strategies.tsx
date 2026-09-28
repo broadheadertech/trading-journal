@@ -188,19 +188,36 @@ export default function Strategies() {
       </div>
 
       {/* Sub-tab strip */}
-      <div className="tabs line">
-        {STRATEGIES.map(s => (
+      {/* overflow-x because seven tabs do not fit a narrow panel; without it
+          the strip wrapped into a ragged second row that read as two groups */}
+      <div className="tabs line" style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+        {STRATEGIES.map(s => {
+          const TabIcon = s.icon;
+          return (
           <button
             key={s.id}
             onClick={() => setActive(s.id)}
+            title={s.summary}
             className={active === s.id ? 'on' : undefined}
-            // The reference renders the active strategy tab as a solid amber
-            // block (it overrides the `.tabs.line` underline-only rule inline).
-            style={active === s.id ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 } : undefined}
+            // flex:none keeps each tab its natural width inside the new
+            // horizontal scroller; the amber block is the reference styling
+            // for the active tab (it overrides .tabs.line's underline rule).
+            style={{
+              flex: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 7,
+              ...(active === s.id ? { background: 'var(--amber)', color: 'var(--ink)', borderRadius: 2 } : {}),
+            }}
           >
+            {/* the icon already exists per strategy but was only visible after
+                selecting the tab, so the strip was seven look-alike labels.
+                StrategyDef.icon only accepts size/className, hence no style. */}
+            <TabIcon size={13} />
             {s.title}
           </button>
-        ))}
+          );
+        })}
       </div>
 
       {/* Active strategy content */}
@@ -225,9 +242,13 @@ function StrategyContent({ strategy }: { strategy: StrategyDef }) {
         <p style={{ margin: '20px 0 0', fontSize: 14.5, color: 'var(--muted)', maxWidth: 760 }}>
           {strategy.summary}
         </p>
+        {/* depth of the playbook, before committing to reading it */}
+        <p style={{ margin: '14px 0 0', fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
+          {strategy.keyConcepts.length} concepts · {strategy.rules.length} rules
+        </p>
       </div>
 
-      <div className="split" style={{ marginTop: 70 }}>
+      <div className="split" style={{ marginTop: 40 }}>
         {/* Key concepts */}
         <div>
           <h4 style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>

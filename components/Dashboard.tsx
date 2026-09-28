@@ -385,7 +385,14 @@ export default function Dashboard({
                 transform="rotate(-90 60 60)"
               />
             </svg>
-            <span className="v">{metrics.execScore}</span>
+            {/* The score is 0-10 (see the WR/PF/Net weights above), but the
+                dial rendered a bare number — there was no way to tell whether
+                a 9 was excellent or nearly the floor. The /10 makes the scale
+                explicit, matching how Analytics already renders "77/100". */}
+            <span className="v">
+              {metrics.execScore}
+              <i style={{ fontStyle: 'normal', fontSize: 15, color: 'var(--muted-2)', marginLeft: 1 }}>/10</i>
+            </span>
           </div>
           {/* Label stays amber per .score .ttl — the ring stroke already carries
               the score colour. Tinting both made the whole card read as an alarm. */}
@@ -396,11 +403,11 @@ export default function Dashboard({
 
       {/* stat strip */}
       <div className="stats">
-        <div className="stat">
-          <span className="accent" style={{ background: 'var(--green)' }} />
-          <b>NET P&L</b>
-          <em style={{ color: c(metrics.totalPnL) }}>{fmtPnl(metrics.totalPnL)}</em>
-        </div>
+        {/* NET P&L used to lead this strip as well, directly beneath the hero
+            card that already shows the same figure three times larger. Two
+            identical numbers stacked on top of each other read as though they
+            might be different measures. The hero keeps it; this strip now
+            carries only what the hero does not. */}
         <div className="stat">
           <span className="accent" style={{ background: 'var(--amber)' }} />
           <b>TOTAL TRADES</b>

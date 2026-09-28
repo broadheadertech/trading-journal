@@ -9,6 +9,7 @@ import { api } from '@/convex/_generated/api';
 import {
   Radio, BookOpen, TrendUp as TrendingUp, Pencil, CircleNotch as Loader2, Lock, Globe,
   UserPlus, UserCheck, YoutubeLogo as Youtube, PaperPlaneTilt as Send, X,
+  CaretDown,
 } from '@phosphor-icons/react';
 import { TwitterLogo as Twitter, InstagramLogo as Instagram, MusicNotes as Music2 } from '@phosphor-icons/react';
 import EditProfileModal from '@/components/EditProfileModal';
@@ -69,7 +70,11 @@ const PROFILE_CSS = `
 .pp-empty{border:1px dashed var(--line-2);border-radius:3px;padding:56px 24px;text-align:center;font-size:13.5px;line-height:21px;color:var(--atlas-muted)}
 .pp-loading{padding:48px 0;text-align:center;color:var(--amber)}
 .pp-list{display:flex;flex-direction:column;gap:12px}
-.pp-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+/* align-items:start, because grid rows are equal-height by default: opening
+   one card's comments panel stretched its row-sibling to match and left a
+   tall dead gap above that card's social bar. Each card now sizes to its own
+   content. */
+.pp-grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:start}
 .pp-item{border:1px solid var(--line);border-radius:3px;background:var(--card);padding:17px 20px;display:block}
 .pp-item:hover{border-color:var(--line-2)}
 .pp-summary{border:1px solid var(--line);border-radius:3px;background:var(--card);padding:12px 20px;font-family:var(--mono);font-size:11.5px;color:var(--muted-2)}
@@ -96,7 +101,66 @@ const PROFILE_CSS = `
 .pp-uav{width:34px;height:34px;border-radius:2px;object-fit:cover;border:1px solid var(--line);flex:none}
 .pp-uav-fb{width:34px;height:34px;border-radius:2px;border:1px solid var(--amber);background:rgba(217,148,5,.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--amber);flex:none}
 .pp-center{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+/* ── signals toolbar ── */
+.pp-sigbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.pp-fgroup{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.pp-fchip{height:30px;padding:0 12px;font-family:var(--micro);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);background:transparent;cursor:pointer}
+.pp-fchip + .pp-fchip{border-left:1px solid var(--line)}
+.pp-fchip:hover{color:var(--text)}
+.pp-fchip.is-on{background:rgba(217,148,5,.12);color:var(--amber)}
+.pp-fchip em{font-style:normal;font-family:var(--mono);font-size:10px;margin-left:6px;opacity:.7}
+/* globals.css:263 puts width:100% on every select, which stretched these
+   across the toolbar and pushed it to four rows. */
+.pp-sel{width:auto;flex:none;height:30px;padding:0 9px;border:1px solid var(--line);border-radius:2px;background:var(--card);color:var(--text);font-size:11.5px;cursor:pointer}
+.pp-sel:hover{border-color:var(--line-2)}
+.pp-sigcount{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+.pp-dir{display:inline-flex;align-items:center;height:16px;padding:0 6px;border-radius:2px;font-family:var(--micro);font-size:9px;letter-spacing:.05em;flex:none}
+.pp-dir.long{background:rgba(36,200,138,.12);color:var(--green)}
+.pp-dir.short{background:rgba(243,36,56,.12);color:var(--red)}
+.pp-when{font-family:var(--mono);font-size:11px;color:var(--muted-2)}
+.pp-more{display:block;width:100%;margin-top:14px;height:40px;border:1px solid var(--line-2);border-radius:2px;background:transparent;color:var(--text);font-weight:700;font-size:12.5px;cursor:pointer}
+.pp-more:hover{border-color:var(--amber);color:var(--amber)}
+.pp-clear{margin-top:10px;font-weight:700;color:var(--amber);text-decoration:underline;cursor:pointer}
+/* ── signal card ──
+   A 2-up grid of near-identical cards is scanned, not read, so the card is
+   ordered by what a visitor is actually looking for: what it was, how it
+   went, then the levels. The status rail down the left edge lets won/lost be
+   read from the whole column at once without parsing any text. */
+.pp-sigcard{position:relative;overflow:hidden;padding:0;display:flex;flex-direction:column}
+.pp-sigcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--line-2)}
+.pp-sigcard.won::before{background:var(--green)}
+.pp-sigcard.lost::before{background:var(--red)}
+.pp-sigcard.open::before{background:var(--amber)}
+.pp-sigmain{padding:15px 20px 16px;flex:1}
+.pp-sigtop{display:flex;align-items:center;gap:9px}
+.pp-sigtop .pp-tag{margin-left:auto;flex:none}
+.pp-sigres{display:flex;align-items:baseline;gap:10px;margin-top:11px}
+.pp-sigres b{font-family:var(--mono);font-weight:500;font-size:19px;line-height:1}
+.pp-sigres b i{font-style:normal;font-size:10px;color:var(--muted-2);margin-left:4px;letter-spacing:.02em}
+.pp-sigr{font-family:var(--mono);font-size:12px;color:var(--atlas-muted)}
+.pp-sigpending{font-family:var(--mono);font-size:13px;color:var(--muted-2)}
+.pp-sigres .pp-when{margin-left:auto;flex:none}
+.pp-sigcard .pp-meta{margin-top:9px}
+.pp-sigwhy{margin-top:2px}
+/* SignalRationale renders a <span>, so once the clamp is lifted the See less
+   control flowed inline right after the last word. :not(.pp-clamp) is load-
+   bearing — a plain .pp-sigwhy .pp-note rule would outrank .pp-clamp and
+   replace display:-webkit-box, killing the line clamp in the collapsed state. */
+.pp-sigwhy .pp-note:not(.pp-clamp){display:block}
+.pp-seemore{display:inline-flex;align-items:center;gap:5px;margin-top:9px;background:none;font-size:11.5px;font-weight:700;color:var(--amber);cursor:pointer}
+.pp-seemore:hover{text-decoration:underline}
+.pp-seemore svg{transition:transform .18s ease}
+.pp-seemore svg.is-up{transform:rotate(180deg)}
+@media(prefers-reduced-motion:reduce){.pp-seemore svg{transition:none}}
+/* SignalSocialBar styles its like/comment buttons with .chip, but .chip is
+   nested under .atlas-dash in atlas-dashboard.css and this page is not in
+   that scope — so the bar rendered as bare text with the count and the word
+   "comments" run together. Restated here for the profile card. */
+.pp-item .chip{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border:1px solid var(--line);border-radius:2px;background:transparent;color:var(--atlas-muted);font-size:11.5px;cursor:pointer}
+.pp-item .chip:hover{border-color:var(--line-2);color:var(--text)}
+.pp-item .chip.on{background:rgba(217,148,5,.12);border-color:rgba(217,148,5,.4);color:var(--amber)}
 @media(max-width:860px){
+  .pp-sigcount{margin-left:0;width:100%}
   .pp-lanes{grid-template-columns:1fr}
   .pp-lane + .pp-lane{border-left:0;border-top:1px solid var(--line)}
   .pp-grid2{grid-template-columns:1fr}
@@ -417,32 +481,279 @@ function PublicTradesPanel({ trades, isOwnProfile, winRate, closed }: { trades: 
 
 type ProfileSignal = NonNullable<ReturnType<typeof useQuery<typeof api.signals.byPoster>>>[number];
 
+/* 12 at a time, not all of them. Beyond the scroll length, every card mounts
+   its own SignalSocialBar, and that opens a live Convex subscription
+   (getSignalSummary) per signal — a 100-signal profile was opening 100
+   concurrent subscriptions on load. */
+const SIG_BATCH = 12;
+
+/* Roughly the character count that fills the 3 lines .pp-clamp allows at this
+   card width, so the toggle appears only when there is actually something
+   hidden. Deliberately a text-length test rather than measuring scrollHeight
+   against clientHeight: measuring needs a layout effect that writes state,
+   which is a cascading render (and the rule react-hooks/set-state-in-effect
+   rejects it). The cost of the approximation is a "See more" that occasionally
+   reveals only a word or two. */
+const RATIONALE_CLAMP_CHARS = 190;
+
+type SigStatusFilter = 'all' | 'won' | 'lost' | 'open';
+type SigSort = 'new' | 'old' | 'best';
+
+const PIPS_RE = /([+-]?\d[\d,]*(?:\.\d+)?)\s*pips/i;
+
+/** Pips live only inside the rationale sentence — there is no column for them
+ *  on the signals table — so the card lifts the number out and shows it as a
+ *  field instead of leaving it buried at the end of a paragraph. */
+function extractPips(text: string): number | null {
+  const m = text.match(PIPS_RE);
+  if (!m) return null;
+  const n = Number(m[1].replace(/,/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+
+/** True when the rationale carries nothing the card is not already showing.
+ *  Imported provider history reads "XAUUSD buy — imported provider history
+ *  (2026-05-28), +2200 pips." — every part of which is now its own field, so
+ *  rendering it as well just repeats the symbol, direction and date and makes
+ *  the boilerplate the largest thing on the card. A hand-written rationale
+ *  survives this test and still renders. */
+function isRedundantRationale(text: string, symbol: string): boolean {
+  const esc = symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const left = text
+    .replace(new RegExp(esc, 'gi'), '')
+    .replace(/imported provider history/gi, '')
+    .replace(/\b(buy|sell|long|short)\b/gi, '')
+    .replace(/\d{4}-\d{2}-\d{2}/g, '')
+    .replace(PIPS_RE, '')
+    .replace(/[\s—–\-,.:;()]+/g, '');
+  return left.length === 0;
+}
+
 function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
-  if (signals === undefined) {
-    return <PanelLoading />;
+  const [status, setStatus] = useState<SigStatusFilter>('all');
+  const [symbol, setSymbol] = useState('all');
+  const [direction, setDirection] = useState<'all' | 'long' | 'short'>('all');
+  const [sort, setSort] = useState<SigSort>('new');
+  const [visible, setVisible] = useState(SIG_BATCH);
+
+  const all = useMemo(() => signals ?? [], [signals]);
+  const symbols = useMemo(
+    () => Array.from(new Set(all.map(s => s.symbol))).sort(),
+    [all],
+  );
+  const counts = useMemo(() => ({
+    all: all.length,
+    won: all.filter(s => s.status === 'won').length,
+    lost: all.filter(s => s.status === 'lost').length,
+    open: all.filter(s => s.status === 'active' || s.status === 'pending').length,
+  }), [all]);
+
+  const filtered = useMemo(() => {
+    let out = all;
+    if (status === 'won') out = out.filter(s => s.status === 'won');
+    else if (status === 'lost') out = out.filter(s => s.status === 'lost');
+    else if (status === 'open') out = out.filter(s => s.status === 'active' || s.status === 'pending');
+    if (symbol !== 'all') out = out.filter(s => s.symbol === symbol);
+    if (direction !== 'all') out = out.filter(s => s.direction === direction);
+
+    const sorted = [...out];
+    if (sort === 'old') sorted.sort((a, b) => +new Date(a.postedAt) - +new Date(b.postedAt));
+    else if (sort === 'best') sorted.sort((a, b) => (b.actualR ?? -Infinity) - (a.actualR ?? -Infinity));
+    else sorted.sort((a, b) => +new Date(b.postedAt) - +new Date(a.postedAt));
+    return sorted;
+  }, [all, status, symbol, direction, sort]);
+
+  /* Reset paging whenever the result set changes, the render-time way React
+     sanctions for state derived from changed inputs — an effect here would be
+     a cascading render and would briefly show the old offset. */
+  const filterKey = status + '|' + symbol + '|' + direction + '|' + sort;
+  const [prevKey, setPrevKey] = useState(filterKey);
+  if (filterKey !== prevKey) {
+    setPrevKey(filterKey);
+    setVisible(SIG_BATCH);
   }
-  if (signals.length === 0) {
-    return <div className="pp-empty">No signals posted yet.</div>;
-  }
+
+  if (signals === undefined) return <PanelLoading />;
+  if (all.length === 0) return <div className="pp-empty">No signals posted yet.</div>;
+
+  const shown = filtered.slice(0, visible);
+  const statusTabs: { key: SigStatusFilter; label: string; n: number }[] = [
+    { key: 'all', label: 'All', n: counts.all },
+    { key: 'won', label: 'Won', n: counts.won },
+    { key: 'lost', label: 'Lost', n: counts.lost },
+    { key: 'open', label: 'Open', n: counts.open },
+  ];
+
   return (
-    <div className="pp-grid2">
-      {signals.map(s => (
-        <div key={s._id} className="pp-item" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '17px 20px', flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-              <div className="pp-sym">{s.symbol}</div>
-              <span className={`pp-tag ${s.status === 'won' || s.status === 'active' ? 'up' : s.status === 'lost' ? 'down' : 'flat'}`}>{s.status}</span>
-            </div>
-            <div className="pp-meta">
-              {s.direction.toUpperCase()} · entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} target{s.takeProfits.length > 1 ? 's' : ''}
-            </div>
-            {s.rationale && (
-              <SignalRationale text={s.rationale} symbol={s.symbol} className="pp-note pp-clamp" />
+    <>
+      <div className="pp-sigbar">
+        <div className="pp-fgroup" role="group" aria-label="Filter by result">
+          {statusTabs.map(t => (
+            <button
+              key={t.key}
+              type="button"
+              className={t.key === status ? 'pp-fchip is-on' : 'pp-fchip'}
+              aria-pressed={status === t.key}
+              onClick={() => setStatus(t.key)}
+            >
+              {t.label}<em>{t.n}</em>
+            </button>
+          ))}
+        </div>
+
+        {/* only worth showing when the poster actually trades more than one */}
+        {symbols.length > 1 && (
+          <select
+            className="pp-sel"
+            value={symbol}
+            onChange={e => setSymbol(e.target.value)}
+            aria-label="Filter by symbol"
+          >
+            <option value="all">All symbols</option>
+            {symbols.map(sym => <option key={sym} value={sym}>{sym}</option>)}
+          </select>
+        )}
+
+        <div className="pp-fgroup" role="group" aria-label="Filter by direction">
+          {(['all', 'long', 'short'] as const).map(d => (
+            <button
+              key={d}
+              type="button"
+              className={d === direction ? 'pp-fchip is-on' : 'pp-fchip'}
+              aria-pressed={direction === d}
+              onClick={() => setDirection(d)}
+            >
+              {d === 'all' ? 'Both' : d}
+            </button>
+          ))}
+        </div>
+
+        <select
+          className="pp-sel"
+          value={sort}
+          onChange={e => setSort(e.target.value as SigSort)}
+          aria-label="Sort signals"
+        >
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+          <option value="best">Best R first</option>
+        </select>
+
+        <span className="pp-sigcount">
+          {filtered.length === all.length
+            ? all.length + ' signals'
+            : filtered.length + ' of ' + all.length}
+        </span>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="pp-empty">
+          No signals match these filters.
+          <br />
+          <button
+            type="button"
+            className="pp-clear"
+            onClick={() => { setStatus('all'); setSymbol('all'); setDirection('all'); }}
+          >
+            Clear filters
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="pp-grid2">
+            {shown.map(s => <SignalCard key={s._id} s={s} />)}
+          </div>
+
+          {visible < filtered.length && (
+            <button
+              type="button"
+              className="pp-more"
+              onClick={() => setVisible(v => v + SIG_BATCH)}
+            >
+              Load {Math.min(SIG_BATCH, filtered.length - visible)} more
+              <span style={{ color: 'var(--muted-2)', fontWeight: 400 }}> · {filtered.length - visible} left</span>
+            </button>
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+/** One signal. Its own component so the expanded/collapsed state of a long
+ *  rationale belongs to the card that owns it — keeping it in the panel would
+ *  mean a shared map keyed by id and would re-render all twelve cards on every
+ *  toggle. */
+function SignalCard({ s }: { s: ProfileSignal }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const outcome = s.status === 'won' ? 'won' : s.status === 'lost' ? 'lost' : 'open';
+  const pips = s.rationale ? extractPips(s.rationale) : null;
+  const showRationale = !!s.rationale && !isRedundantRationale(s.rationale, s.symbol);
+  const isLong = showRationale && s.rationale.length > RATIONALE_CLAMP_CHARS;
+  const hasResult = pips !== null || typeof s.actualR === 'number';
+  const tone = outcome === 'won' ? 'var(--green)' : outcome === 'lost' ? 'var(--red)' : 'var(--atlas-muted)';
+
+  return (
+    <div className={'pp-item pp-sigcard ' + outcome}>
+      <div className="pp-sigmain">
+        {/* line 1 — what the signal is */}
+        <div className="pp-sigtop">
+          <span className="pp-sym">{s.symbol}</span>
+          <span className={'pp-dir ' + s.direction}>{s.direction.toUpperCase()}</span>
+          <span className={`pp-tag ${outcome === 'won' ? 'up' : outcome === 'lost' ? 'down' : 'flat'}`}>{s.status}</span>
+        </div>
+
+        {/* line 2 — how it went. The single thing a visitor is scanning for,
+            so it gets the largest type on the card. */}
+        <div className="pp-sigres">
+          {hasResult ? (
+            <>
+              {pips !== null && (
+                <b style={{ color: tone }}>
+                  {pips > 0 ? '+' : ''}{pips.toLocaleString()}
+                  <i>pips</i>
+                </b>
+              )}
+              {typeof s.actualR === 'number' && (
+                <span className="pp-sigr" style={pips === null ? { color: tone, fontSize: '15px' } : undefined}>
+                  {s.actualR >= 0 ? '+' : ''}{s.actualR}R
+                </span>
+              )}
+            </>
+          ) : (
+            <b className="pp-sigpending">Awaiting result</b>
+          )}
+          <span className="pp-when">{new Date(s.postedAt).toLocaleDateString()}</span>
+        </div>
+
+        {/* line 3 — the levels, for anyone who wants to check the call */}
+        <div className="pp-meta">
+          entry {s.entryLow}{s.entryHigh !== s.entryLow ? `–${s.entryHigh}` : ''} · SL {s.stopLoss} · {s.takeProfits.length} target{s.takeProfits.length > 1 ? 's' : ''}
+        </div>
+
+        {showRationale && (
+          <div className="pp-sigwhy">
+            <SignalRationale
+              text={s.rationale}
+              symbol={s.symbol}
+              className={expanded ? 'pp-note' : 'pp-note pp-clamp'}
+            />
+            {isLong && (
+              <button
+                type="button"
+                className="pp-seemore"
+                aria-expanded={expanded}
+                onClick={() => setExpanded(v => !v)}
+              >
+                {expanded ? 'See less' : 'See more'}
+                <CaretDown size={11} weight="bold" className={expanded ? 'is-up' : undefined} />
+              </button>
             )}
           </div>
-          <SignalSocialBar signalId={s._id} />
-        </div>
-      ))}
+        )}
+      </div>
+      <SignalSocialBar signalId={s._id} />
     </div>
   );
 }

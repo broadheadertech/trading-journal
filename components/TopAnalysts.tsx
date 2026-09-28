@@ -103,6 +103,11 @@ function AnalystRow({ a, rank, accent }: { a: Analyst; rank: number; accent: str
         </div>
       </div>
 
+      {/* Scope tag — see the matching note in SignalProviders.tsx. These
+          figures blend closed trades with signals, so they legitimately
+          differ from the signals-only card for the same person. */}
+      <span style={{ display: 'inline-flex', alignItems: 'center', height: 17, padding: '0 7px', marginTop: 12, borderRadius: 2, border: '1px solid var(--line)', fontWeight: 700, fontSize: 8.5, letterSpacing: '.06em', color: 'var(--muted-2)', whiteSpace: 'nowrap' }}>TRADES + SIGNALS</span>
+
       {/* Stats */}
       <div className="row3">
         <div>

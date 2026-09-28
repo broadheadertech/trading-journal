@@ -63,7 +63,7 @@ export default function LandingNav() {
                 2172x724 (ratio 3.00) while the asset is 1983x793 (ratio 2.50), so
                 the logo was laid out 156px wide and then snapped to 130px on load
                 — a visible shift in the header on every cold page view. */}
-            <Image src="/atlasnewslogo1banner.png" alt="Atlas" width={1983} height={793} style={{ height: '52px', width: 'auto' }} priority />
+            <Image src="/atlas-wordmark-2026.png" alt="Atlas" width={445} height={67} style={{ height: '24px', width: 'auto' }} priority />
           </Link>
 
           <nav className="nav-links" aria-label="Primary">
