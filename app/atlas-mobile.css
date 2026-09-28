@@ -152,7 +152,10 @@
   .nav-cta svg { display: none; }
 
   .nav, .nav-in { height: 64px; }
-  .brand img { height: 38px !important; }
+  /* The wordmark is ~6.6:1, far wider per unit height than the old
+     emblem+wordmark banner at 2.5:1. At the previous 38px it would render
+     252px wide and leave no room for the CTA and burger in a 350px bar. */
+  .brand img { height: 17px !important; }
   .burger { margin-left: 8px; width: 44px; height: 44px; }
 
   /* Pairs with the 64px bar above — the panel starts where the nav ends.
