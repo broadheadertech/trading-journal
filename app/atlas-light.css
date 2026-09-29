@@ -36,13 +36,17 @@ html.light {
   --rail: #eef2f7;
   --rule-soft: #b6c2d1;
 
-  /* accents (darkened a step for light-surface contrast) */
-  --amber: #b07a04;
+  /* Accents, darkened for light-surface contrast. The first pass at these was a
+   step lighter (--amber #b07a04, --green #0f9c68, --red #dc2f42, --muted-2
+   #78889b) and every one of them measured 3.3–3.7:1 against --bg / --panel —
+   under the 4.5:1 AA floor at the 10–13px sizes the app actually uses them at.
+   These values all clear 4.5:1 on both #f4f7fb and #ffffff. */
+  --amber: #94660a;
   --amber-dim: #a5822f;
-  --red: #dc2f42;
-  --red-solid: #c81f31;
-  --green: #0f9c68;
-  --ink: #0a0a0a;
+  --red: #c8202f;
+  --red-solid: #b31a2a;
+  --green: #0b7d53;
+  --ink: #ffffff; /* text on an amber fill — see note below */
 
   /* text hierarchy (inverted: dark ink on light) */
   --text: #0f1824;
@@ -51,7 +55,7 @@ html.light {
 
   /* muted greys */
   --atlas-muted: #5c6b7e;
-  --muted-2: #78889b;
+  --muted-2: #5f7086;
   --muted-3: #93a1b0;
   --muted-4: #aab6c4;
 }
@@ -69,17 +73,47 @@ html.light .atlas-dash {
   --line-2: #c6d1de;
   --rail: #eef2f7;
 
-  --amber: #b07a04;
-  --green: #0f9c68;
-  --red: #dc2f42;
-  --ink: #0a0a0a;
+  --amber: #94660a;
+  --green: #0b7d53;
+  --red: #c8202f;
+  --ink: #ffffff; /* text on an amber fill — see note below */
 
   --text: #0f1824;
   --text-2: #48596b;
   --muted: #5c6b7e;
-  --muted-2: #78889b;
+  --muted-2: #5f7086;
   --muted-3: #93a1b0;
   --muted-4: #b0bcca;
+
+  /* Body copy that atlas-dashboard.css used to hardcode. On white panels the
+     dark values measured 1.5–2.6:1; these are the light-theme equivalents,
+     all at or above 4.5:1 on --panel (#ffffff) and --bg (#f4f7fb). */
+  --copy: #2c3e52;
+  --copy-alt: #2c3e52;
+  --copy-hi: #0f1824;
+  --copy-3: #54667a;
+  --link-soft: #1d6a99;
+  --teal: #0a7d6a;
+  /* Active list-nav pill: a dark amber wash inverted to a pale amber tint. */
+  --pill-bg: #ebf8f1;
+  --amber-wash: #fdf3dc;
+
+  /* Community feed surfaces. The dark values (#0A0F18 composer, #080D16 card,
+     #131E2C / #0E1622 rules, #8DA0B2 body) are the redesign spec; these are
+     the same stack inverted — card slightly brighter than the page so the
+     feed still reads as a column of cards, and the body copy at 5.4:1. */
+  --cf-composer-bg: #ffffff;
+  --cf-composer-line: #dbe2ec;
+  --cf-card-bg: #ffffff;
+  --cf-card-line: #e0e7f0;
+  --cf-card-rule: #eef2f7;
+  --cf-card-body: #5c6b7e;
+  --cf-chip-line: #cfd8e4;
+  /* letterbox behind post images — a light plate, since the card is white */
+  --cf-shot-bg: #eef2f7;
+  /* The pill text needs to clear 4.5:1 on that tint, which --amber (#b07a04)
+     does not (3.38:1) — so the pill gets its own, darker amber. */
+  --amber-wash-ink: #6f4d02;
 }
 
 /* Native form controls (date/time pickers, scrollbars) follow the theme. The
@@ -89,4 +123,15 @@ html.light input[type="time"],
 html.light input[type="datetime-local"],
 html.light input[type="month"] {
   color-scheme: light;
+}
+
+/* Community feed category colours. They come from the forumCategories rows,
+   so there is no fixed set to hand-pick light values for — and as authored
+   they are chosen against a near-black card. Mixed toward black they keep
+   their hue and clear 4.5:1 on a white card at 10.5px. The tints stay as
+   they are: they are backgrounds, not text. */
+html.light .cfeed .cf-chip.on,
+html.light .cfeed .cf-card .cf-av,
+html.light .cfeed .cf-card .cf-who .cf-meta .cf-catname {
+  color: color-mix(in srgb, var(--cat) 62%, #000);
 }

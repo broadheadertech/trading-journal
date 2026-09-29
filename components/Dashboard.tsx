@@ -282,7 +282,7 @@ export default function Dashboard({
   // ATLAS tokens, not the old Tailwind hexes. The empty state scores 0, so the
   // pre-rebrand #ef4444 painted the whole Execution Score card alarm-red on a
   // brand-new account.
-  const scoreColor = metrics.execScore >= 7 ? '#24c88a' : metrics.execScore >= 4 ? '#d99405' : '#ff4d5e';
+  const scoreColor = metrics.execScore >= 7 ? 'var(--green)' : metrics.execScore >= 4 ? 'var(--amber)' : 'var(--red)';
   const circumference = 2 * Math.PI * 54;
   const strokeDashoffset = circumference - (metrics.execScore / 10) * circumference;
 
@@ -294,8 +294,12 @@ export default function Dashboard({
   };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
-  const GREEN = '#24c88a';
-  const RED = '#ff4d5e';
+  // Theme tokens, not literals. The hexes below were the DARK palette, so on
+  // html.light they kept painting #24c88a / #ff4d5e onto white panels — 2.16:1
+  // and 3.24:1 measured, both under the 4.5:1 AA floor. atlas-light.css
+  // darkens --green / --red a step; a literal cannot follow the theme.
+  const GREEN = 'var(--green)';
+  const RED = 'var(--red)';
   const c = (v: number) => (v > 0 ? GREEN : v < 0 ? RED : 'var(--muted)');
   // Money figures are always green when non-negative and red when negative —
   // never amber. Unlike c(), zero counts as positive here, because these
@@ -519,7 +523,7 @@ export default function Dashboard({
                       >
                         {count > 0 ? (
                           <>
-                            <span style={{ fontFamily: 'var(--mono)', color: c(pnl) }}>{fmtPnl(pnl)}</span>
+                            <span style={{ fontFamily: 'var(--mono)' }}>{fmtPnl(pnl)}</span>
                             <small style={{ marginLeft: 6, fontSize: 10, color: 'var(--muted-2)' }}>{count}</small>
                           </>
                         ) : '–'}

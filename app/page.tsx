@@ -24,9 +24,10 @@ export default function LandingPage() {
       <DashboardPreview />
       <EfficiencySection />
       {/* entrance-animation triggers — render nothing, add no markup */}
-      <ScrollReveal selector=".leakcard" />
+      <ScrollReveal selector=".cap-bento" />
       <ScrollReveal selector=".sec02" />
       <ScrollReveal selector=".sec03" threshold={0.2} />
+      <ScrollReveal selector=".sec05" threshold={0.2} />
       <ScrollReveal selector=".sec07" threshold={0.2} />
       <ScrollReveal selector=".sec09" threshold={0.2} />
       <StatCountUp />

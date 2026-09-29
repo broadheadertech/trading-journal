@@ -84,7 +84,14 @@
     --line:#182432; --line-2:#24344a; --rail:#141e2a;
     --amber:#d99405; --green:#24c88a; --red:#ff4d5e;
     --ink:#0a0a0a;
-    --text:#edf2f7; --text-2:#9fb0c2; --muted:#7f8ea3; --muted-2:#5c6b7e; --muted-3:#4a5867; --muted-4:#3a4a5c;
+    --text:#edf2f7; --text-2:#9fb0c2; --muted:#7f8ea3; --muted-2:#70819a; --muted-3:#4a5867; --muted-4:#3a4a5c;
+    /* Body-copy greys + the active-pill wash. These were hardcoded hexes in
+       ~18 rules, so they stayed pale on the light theme white panels (#c0ccda
+       on #f4f7fb measured 1.52:1 — below the 4.5:1 AA floor, i.e. invisible).
+       Tokenised so html.light can restate them; dark values are unchanged. */
+    --copy:#c0ccda; --copy-alt:#c3cdda; --copy-hi:#d0e5ff; --copy-3:#919eaf;
+    --link-soft:#668298; --teal:#33edc8;
+    --amber-wash:#2a1f0a; --amber-wash-ink:#d99405; --pill-bg:#0f2018;
     --display:'Archivo',system-ui,sans-serif;
     --body:'Inter',system-ui,sans-serif;
     --mono:'Geist Mono',ui-monospace,monospace;
@@ -99,7 +106,7 @@
 
   /* ============================= SHARED PAGE PATTERNS ============================= */
   .phead{margin-bottom:34px}
-  .phead .eyebrow{margin:0 0 22px;font-size:12px;color:#c3cdda;display:flex;align-items:center;gap:8px}
+  .phead .eyebrow{margin:0 0 22px;font-size:12px;color:var(--copy-alt);display:flex;align-items:center;gap:8px}
   .phead h2{font-family:var(--display);font-weight:700;font-size:46px;line-height:50px;margin:0;color:var(--text)}
   .phead .sub{margin:22px 0 0;font-size:16.5px;line-height:26px;color:var(--muted);max-width:680px}
   .phead .actions{position:absolute;right:0;top:0;display:flex;gap:16px}
@@ -145,7 +152,7 @@
   /* rule / concept lists */
   .klist{margin-top:20px;border-top:1px solid var(--line-2)}
   .klist div{display:grid;grid-template-columns:4px 1fr;gap:14px;align-items:start;padding:11px 0;border-bottom:1px solid var(--hair);
-    font-size:13.5px;line-height:18px;color:#c0ccda}
+    font-size:13.5px;line-height:18px;color:var(--copy)}
   .klist div i{width:4px;height:4px;background:var(--amber);margin-top:7px}
   .klist.num div{grid-template-columns:22px 1fr;gap:0}
   .klist.num div b{font-family:var(--display);font-weight:700;font-size:12px;color:var(--amber)}
@@ -215,14 +222,14 @@
   .step .btns{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
   .step .btns .sm{height:32px;padding:0 16px;border-radius:2px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:8px}
   .step .btns .sm.amber{background:var(--amber);color:var(--ink)}
-  .step .btns .sm.ghost{border:1px solid var(--line-2);color:#c0ccda}
+  .step .btns .sm.ghost{border:1px solid var(--line-2);color:var(--copy)}
   .step .btns .hint{font-size:11.5px;color:var(--muted-2)}
   .codebox{height:36px;margin-top:14px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);
-    display:flex;align-items:center;padding:0 16px;font-size:12.5px;color:#c0ccda}
+    display:flex;align-items:center;padding:0 16px;font-size:12.5px;color:var(--copy)}
   .warn{display:flex;gap:16px;margin-top:26px;border:1px solid #3a2a12;border-radius:2px;background:#14100a;padding:16px 20px;
     font-size:12.5px;line-height:20px;color:var(--muted)}
   .warn b{color:var(--amber);font-weight:700}
-  .doclink{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-size:12.5px;color:#668298}
+  .doclink{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-size:12.5px;color:var(--link-soft)}
 
   /* ---- courses ---- */
   .course{width:380px;max-width:100%;border:1px solid var(--line);border-radius:2px;background:var(--panel);position:relative;overflow:hidden}
@@ -233,7 +240,7 @@
   .course .body{padding:36px 24px 24px}
   .course h4{font-family:var(--display);font-weight:700;font-size:22px;line-height:24px;margin:0}
   .course .foot{display:flex;align-items:center;margin-top:26px;padding-top:26px;border-top:1px solid var(--line);font-size:13px}
-  .course .foot .life{color:#33edc8}
+  .course .foot .life{color:var(--teal)}
   .course .foot .go{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;color:var(--amber)}
 
   /* ---- rewards ---- */
@@ -254,7 +261,7 @@
   .reward > p:not(.st){margin-bottom:auto}
   .earn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
   .earn div{height:38px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:flex;align-items:center;
-    gap:14px;padding:0 14px;font-size:12.5px;color:#c0ccda}
+    gap:14px;padding:0 14px;font-size:12.5px;color:var(--copy)}
   .earn div b{margin-left:auto;font-weight:700;font-size:12.5px;color:var(--amber)}
   @media(max-width:900px){.earn{grid-template-columns:1fr}}
 
@@ -272,9 +279,9 @@
   /* ---- economic calendar ---- */
   .filters{display:flex;flex-direction:column;gap:24px}
   .filters .grp{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .filters .hd{display:flex;align-items:center;gap:12px;font-weight:700;font-size:10px;color:#919eaf;letter-spacing:.04em;margin-bottom:14px}
+  .filters .hd{display:flex;align-items:center;gap:12px;font-weight:700;font-size:10px;color:var(--copy-3);letter-spacing:.04em;margin-bottom:14px}
   .chip{height:30px;padding:0 14px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);display:inline-flex;
-    align-items:center;gap:9px;font-size:12px;color:#c0ccda}
+    align-items:center;gap:9px;font-size:12px;color:var(--copy)}
   .chip.on{background:var(--amber);border-color:var(--amber);color:var(--ink)}
   .chip i{width:7px;height:7px;border-radius:1px}
   .daygroup{margin-top:34px}
@@ -297,7 +304,7 @@
   .ev .evwho{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:400;font-size:13px;margin-left:0}
   .ev .evwho .cc{font-weight:700;font-size:10.5px;color:var(--muted-2)}
   .ev .evwho .cur{height:18px;padding:0 10px;border:1px solid var(--line-2);border-radius:2px;background:var(--panel-2);
-    display:inline-flex;align-items:center;font-weight:700;font-size:9.5px;color:#c0ccda}
+    display:inline-flex;align-items:center;font-weight:700;font-size:9.5px;color:var(--copy)}
   .ev .evwho .imp{height:18px;padding:0 10px;border:1px solid currentColor;border-radius:2px;display:inline-flex;align-items:center;gap:6px;
     font-weight:700;font-size:9px;opacity:.9}
   .ev .name{grid-column:2;font-family:var(--display);font-weight:700;font-size:15px;margin-top:4px}
@@ -313,8 +320,8 @@
   /* ---- world monitoring ---- */
   .mapcard{height:560px;position:relative;overflow:hidden}
   .layers{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-  .layers b{font-weight:700;font-size:10px;color:#d0e5ff;letter-spacing:.04em;margin-right:36px}
-  .layers span{display:inline-flex;align-items:center;gap:12px;font-size:12px;color:#c0ccda}
+  .layers b{font-weight:700;font-size:10px;color:var(--copy-hi);letter-spacing:.04em;margin-right:36px}
+  .layers span{display:inline-flex;align-items:center;gap:12px;font-size:12px;color:var(--copy)}
   .layers span i{width:8px;height:8px;border-radius:1px}
   .layers span.off{color:var(--muted-4)}
   .globe{position:absolute;left:50%;top:94px;transform:translateX(-50%);width:412px;height:412px;border:1px solid rgba(217,148,5,.25);border-radius:50%}
@@ -335,9 +342,9 @@
   @media(max-width:1100px){.news{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:620px){.news{grid-template-columns:1fr}}
   .fxrow{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 40px;margin-top:22px}
-  .fxrow div{display:flex;align-items:baseline;font-size:12.5px;color:#c0ccda}
+  .fxrow div{display:flex;align-items:baseline;font-size:12.5px;color:var(--copy)}
   .fxrow div em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:12.5px;color:var(--text)}
-  .quake{display:flex;align-items:baseline;gap:14px;padding:6px 0;font-size:11.5px;color:#c0ccda}
+  .quake{display:flex;align-items:baseline;gap:14px;padding:6px 0;font-size:11.5px;color:var(--copy)}
   .quake b{font-family:var(--display);font-weight:700;font-size:11.5px;width:32px;flex:none}
   .quake span{margin-left:auto;font-size:10.5px;color:var(--muted-2)}
   .domain{border:1px solid var(--line);border-radius:2px;background:var(--panel);padding:20px}
@@ -356,7 +363,7 @@
     gap:14px;padding:0 14px;font-size:13px;color:var(--muted-2);margin-bottom:26px}
   .listnav h6{font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em;margin:0 0 12px}
   .listnav a{display:flex;align-items:center;gap:18px;height:34px;padding:0 14px;font-size:13px;color:var(--text-2);border-radius:2px}
-  .listnav a.on{background:#2a1f0a;color:var(--amber);font-weight:700;position:relative}
+  .listnav a.on{background:var(--amber-wash);color:var(--amber-wash-ink);font-weight:700;position:relative}
   .listnav a.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
   .listnav a i{width:8px;height:8px;border-radius:1px;flex:none}
   .listnav a:hover{color:var(--text)}
@@ -376,7 +383,7 @@
   /* category + state flags, on their own line above the title */
   .post .toprow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .post .toprow .cat{display:inline-flex;align-items:center;gap:7px;
-    font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)}
   .post .toprow .cat i{width:7px;height:7px;border-radius:1px;flex:none}
   .post .toprow .flag{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--muted-2)}
   .post .toprow .flag.on{color:var(--amber)}
@@ -389,6 +396,203 @@
   /* sidebar post counts */
   .listnav a em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted-2)}
   .listnav a.on em{color:var(--amber)}
+
+  /* ---- community feed (single centred column) ------------------------
+     The forum used a 280px category rail beside a row list. This is the same
+     data as a centred social feed: one 640px column, composer at the top,
+     sort + search + category chips as one filter band, then cards.
+
+     The surface hexes are the ones the redesign specifies, held as tokens so
+     html.light can restate them — atlas-light.css already learned this lesson
+     with --copy / --pill-bg. Literals here would paint a dark card stack onto
+     the light theme. */
+  --cf-composer-bg:#0A0F18; --cf-composer-line:#182333;
+  --cf-card-bg:#080D16;     --cf-card-line:#131E2C;
+  --cf-card-rule:#0E1622;   --cf-card-body:#8DA0B2;
+  --cf-chip-line:#182333;  --cf-shot-bg:#0B111B;
+
+  /* One container, one left edge. The 640px column left ~500px of dead gutter
+     on each side at 1650px; 1120px with a 300px rail uses that space for the
+     filters instead of padding. Header sits outside the grid so it shares the
+     left column edge. */
+  .cfeed{max-width:1120px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px)}
+  .cfeed .cf-grid{display:block}
+  .cfeed .cf-main{min-width:0}
+
+  @media (min-width:1024px){
+    .cfeed .cf-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start}
+    .cfeed .cf-rail{position:sticky;top:24px;align-self:start;min-width:0}
+  }
+
+  /* composer */
+  .cfeed .cf-composer{background:var(--cf-composer-bg);border:1px solid var(--cf-composer-line);
+    border-radius:8px;padding:12px;margin-bottom:14px}
+  .cfeed .cf-composer .cf-crow{display:flex;align-items:center;gap:10px}
+  .cfeed .cf-composer .cf-me{width:30px;height:30px;border-radius:50%;flex:none;background:var(--amber);
+    color:var(--ink);font-family:var(--display);font-weight:700;font-size:12px;
+    display:flex;align-items:center;justify-content:center}
+  .cfeed .cf-composer .cf-stub{flex:1;min-width:0;height:36px;line-height:34px;padding:0 16px;border-radius:999px;
+    border:1px solid var(--cf-composer-line);background:var(--panel-2);color:var(--muted-2);
+    font-size:12.5px;text-align:left;cursor:pointer;transition:border-color .15s}
+  .cfeed .cf-composer .cf-stub:hover{border-color:rgba(217,148,5,.3)}
+  /* border/outline/box-shadow are zeroed explicitly: this is also rendered as
+     an <a> when signed out, and a stray inherited box reads as a second
+     rectangle behind the pill. */
+  .cfeed .cf-composer .cf-post{display:inline-flex;align-items:center;gap:6px;height:36px;
+    padding:0 18px;flex:none;border:0;outline:0;box-shadow:none;border-radius:999px;
+    background:var(--amber);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}
+  .cfeed .cf-composer .cf-post:disabled{opacity:.5;cursor:default}
+  .cfeed .cf-composer .cf-expand{margin-top:14px;padding-top:14px;border-top:1px solid var(--cf-card-rule)}
+
+  /* filter band */
+  .cfeed .cf-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    flex-wrap:wrap;min-height:32px;margin-bottom:10px}
+  .cfeed .cf-sorts{display:flex;align-items:center;gap:8px}
+  .cfeed .cf-sort{height:30px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:700;
+    text-transform:capitalize;cursor:pointer;border:1px solid var(--cf-chip-line);color:var(--muted-2);
+    background:none;transition:border-color .15s,color .15s,background .15s}
+  .cfeed .cf-sort:hover{color:var(--text-2)}
+  .cfeed .cf-sort.on{border-color:var(--amber);color:var(--amber-wash-ink);background:rgba(217,148,5,.08)}
+  .cfeed .cf-count{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;
+    font-family:var(--mono);font-size:11.5px;color:var(--muted-2)}
+  .cfeed .cf-clear{background:none;cursor:pointer;color:var(--amber);font-weight:700;
+    font-family:var(--body);font-size:11.5px}
+  /* The wrapper owns the border, the radius and the background; the icon is a
+     flex child rather than something floated over the field, and the input is
+     fully transparent. overflow:hidden keeps the input from painting a corner
+     outside the pill. */
+  .cfeed .cf-search{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;
+    border-radius:999px;border:1px solid var(--cf-chip-line);background:var(--panel-2);
+    color:var(--muted-2);font-size:12px;width:100%;cursor:text;overflow:hidden;
+    transition:border-color .15s}
+  .cfeed .cf-search:focus-within{border-color:rgba(217,148,5,.5)}
+  .cfeed .cf-search .cf-sicon{flex:none}
+  .cfeed .cf-search .cf-sclear{flex:none;display:flex;background:none;cursor:pointer;color:var(--muted-2)}
+  /* globals.css styles bare inputs with
+     input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) — (0,4,1),
+     which outranks a plain `.cfeed .cf-search input` (0,2,1) and drew its own
+     bordered, rounded, padded box on top of the search pill. Matching the same
+     shape takes this to (0,5,1). */
+  .cfeed .cf-search input:not([type="checkbox"]):not([type="radio"]):not([type="range"]){
+    flex:1;min-width:0;width:auto;height:100%;background:transparent;border:0;border-radius:0;
+    outline:0;box-shadow:none;font:inherit;color:var(--text);padding:0}
+  .cfeed .cf-search input:focus{border:0;box-shadow:none}
+
+  /* category chips — one scrollable row, never wrapping */
+  /* ---- category picker: one control, two shapes -----------------------
+     Shared look first, then the strip and the rail add only what differs.
+     The base used to live under .cf-chips, so the rail buttons inherited no
+     display:flex at all and rendered as centred text with the count welded to
+     the name. */
+  .cfeed .cf-chip{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+    cursor:pointer;color:var(--muted-2);background:none;border:1px solid transparent;
+    transition:border-color .15s,color .15s,background .15s}
+  .cfeed .cf-chip:hover{color:var(--text-2)}
+  .cfeed .cf-chip i{width:7px;height:7px;border-radius:2px;flex:none}
+  .cfeed .cf-chip em{font-style:normal;font-family:var(--mono);font-weight:400;font-size:10.5px;opacity:.75}
+  /* a category nobody has posted in is still somewhere you can post — keep it
+     reachable, just visibly quiet */
+  .cfeed .cf-chip.empty{opacity:.45}
+  /* The active chip, the avatar tint and the category label all key off one
+     --cat custom property set on the element, instead of three inline
+     colours. That is what lets html.light darken the category colour in one
+     place: the palette is chosen against a #080D16 card, and on a white one
+     #F59E0B / #22C55E / #06B6D4 measure 2.15–2.43:1 as 10.5px text. */
+  .cfeed .cf-chip.on{opacity:1;color:var(--cat);border-color:var(--cat);
+    background:color-mix(in srgb, var(--cat) 12%, transparent)}
+
+  /* strip — below 1024px. The mask fades the right edge so a row that runs
+     past the viewport reads as scrollable instead of cut. */
+  .cfeed .cf-chips{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-right:16px;
+    padding-bottom:12px;margin-bottom:6px;scrollbar-width:none;-ms-overflow-style:none;
+    mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  .cfeed .cf-chips::-webkit-scrollbar{display:none}
+  .cfeed .cf-chips .cf-chip{flex:0 0 auto;white-space:nowrap;height:28px;padding:0 13px;
+    border-radius:999px;border-color:var(--cf-chip-line)}
+
+  /* rail — 1024px and up. No pill outline: a vertical stack of seven outlined
+     pills is noisier than the list it is meant to be. */
+  .cfeed .cf-catshead{font-weight:700;font-size:9.5px;color:var(--muted-2);letter-spacing:.04em;
+    margin:22px 0 10px}
+  .cfeed .cf-cats{display:flex;flex-direction:column;gap:2px}
+  .cfeed .cf-cats .cf-chip{width:100%;height:34px;padding:0 12px;border-width:0;border-radius:4px;
+    justify-content:flex-start}
+  .cfeed .cf-cats .cf-chip em{margin-left:auto}
+  .cfeed .cf-cats .cf-chip:hover{background:var(--cf-card-rule)}
+  /* post card */
+  .cfeed .cf-card{display:block;width:100%;min-width:0;box-sizing:border-box;text-align:left;
+    background:var(--cf-card-bg);
+    border:1px solid var(--cf-card-line);border-radius:8px;padding:14px;margin-bottom:10px;
+    cursor:pointer;transition:border-color .2s ease}
+  .cfeed .cf-card:hover{border-color:rgba(217,148,5,.3)}
+  .cfeed .cf-card .cf-head{display:flex;align-items:flex-start;gap:10px}
+  .cfeed .cf-card .cf-av{width:32px;height:32px;border-radius:50%;flex:none;display:flex;
+    align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:12px;
+    color:var(--cat);background:color-mix(in srgb, var(--cat) 15%, transparent);
+    border:1px solid color-mix(in srgb, var(--cat) 33%, transparent)}
+  .cfeed .cf-card .cf-who{min-width:0;flex:1}
+  .cfeed .cf-card .cf-who b{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text)}
+  .cfeed .cf-card .cf-who .cf-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:2px;font-size:10.5px}
+  .cfeed .cf-card .cf-who .cf-meta .cf-when{font-family:var(--mono);color:var(--muted-2)}
+  .cfeed .cf-card .cf-who .cf-meta .cf-dot{color:var(--muted-2)}
+  .cfeed .cf-card .cf-who .cf-meta .cf-catname{font-weight:700;color:var(--cat)}
+  .cfeed .cf-card .cf-flag{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--muted-2)}
+  .cfeed .cf-card .cf-flag.on{color:var(--amber)}
+  .cfeed .cf-card h5{font-family:var(--display);font-weight:700;font-size:14px;line-height:19px;
+    margin:11px 0 0;color:var(--text)}
+  .cfeed .cf-card .cf-body{font-size:11.5px;line-height:17px;color:var(--cf-card-body);margin:5px 0 0}
+  /* object-fit:cover cropped through the middle of whatever was posted — a
+     chart with its axes gone is worse than a short card. contain inside a
+     letterbox shows the file as uploaded, and the dark plate takes the glare
+     off screenshots with white backgrounds. */
+  .cfeed .cf-card .cf-figure{display:flex;justify-content:center;margin-top:11px;
+    background:var(--cf-shot-bg);border:1px solid var(--cf-card-line);border-radius:6px;overflow:hidden}
+  .cfeed .cf-card .cf-shot{display:block;width:100%;height:auto;max-height:360px;object-fit:contain}
+  .cfeed .cf-card .cf-acts{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:11px;
+    border-top:1px solid var(--cf-card-rule)}
+  .cfeed .cf-card .cf-pill{display:inline-flex;align-items:center;gap:9px;height:28px;padding:0 12px;
+    border-radius:999px;border:1px solid var(--cf-card-rule);background:var(--panel-2);
+    font-size:11.5px;color:var(--muted-2);transition:border-color .15s,color .15s}
+  .cfeed .cf-card .cf-pill:hover{border-color:var(--cf-chip-line);color:var(--text-2)}
+  .cfeed .cf-card .cf-pill button{display:flex;cursor:pointer;color:inherit}
+  .cfeed .cf-card .cf-pill b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--text);
+    min-width:12px;text-align:center}
+  .cfeed .cf-card .cf-pill .cf-up.on{color:var(--amber)}
+  .cfeed .cf-card .cf-pill .cf-down.on{color:var(--red)}
+
+  /* skeletons — sized to the real card so the feed does not jump on resolve */
+  .cfeed .cf-skel{background:var(--cf-card-bg);border:1px solid var(--cf-card-line);border-radius:8px;
+    padding:14px;margin-bottom:10px}
+  .cfeed .cf-skel span{display:block;border-radius:4px;background:var(--cf-card-rule);
+    animation:cfpulse 1.4s ease-in-out infinite}
+
+  /* motion — fade-up on mount, restaged whenever the filter key changes */
+  .cfeed .cf-card{animation:cfrise .4s ease both}
+  .cfeed .cf-bump{display:inline-block;animation:cfbump .22s ease}
+
+  /* Respect the OS setting. The stagger is applied as an inline
+     animation-delay, so the delay is reset here too, not just the animation. */
+  @media (prefers-reduced-motion:reduce){
+    .cfeed .cf-card{animation:none}
+    .cfeed .cf-card[style*="animation-delay"]{animation-delay:0s !important}
+    .cfeed .cf-bump{animation:none}
+    .cfeed .cf-skel span{animation:none}
+  }
+
+  /* Below the rail breakpoint search and the chips render inside the main
+     column, stacked under the sort row. */
+  /* Below the rail breakpoint search sits on the sort row when the row has
+     room for it and drops to a full-width line of its own when it does not. */
+  @media (max-width:1023px){
+    .cfeed .cf-bar .cf-search{flex:1 1 200px;min-width:170px;max-width:320px;margin-left:auto}
+  }
+  @media (max-width:560px){
+    .cfeed .cf-bar .cf-search{flex:1 0 100%;max-width:none;margin-left:0}
+  }
+  @media (max-width:767px){
+    .cfeed .cf-composer .cf-post{padding:0 12px}
+    .cfeed .cf-composer .cf-post .cf-lbl{display:none}
+  }
 
   /* ---- journal ---- */
   .jcal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:22px}
@@ -409,7 +613,7 @@
   @media(max-width:1240px){.jstats{grid-template-columns:repeat(4,1fr)}}
   @media(max-width:760px){.jstats{grid-template-columns:repeat(2,1fr)}}
   .qrow{display:flex;align-items:center;min-height:40px;margin-top:8px;border:1px solid var(--line);border-radius:2px;
-    background:var(--panel-2);padding:0 16px;font-size:12.5px;color:#c0ccda}
+    background:var(--panel-2);padding:0 16px;font-size:12.5px;color:var(--copy)}
   .qrow em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:12.5px}
 
   /* ---- subscription modal ---- */
@@ -420,7 +624,7 @@
   .modal .sub{margin:14px 0 0;font-size:14.5px;color:var(--muted)}
   .modal .switches{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
   .modal .switches button{height:32px;padding:0 20px;border-radius:2px;border:1px solid var(--line);background:var(--panel-2);
-    font-weight:700;font-size:12.5px;color:#c0ccda;display:inline-flex;align-items:center;gap:10px}
+    font-weight:700;font-size:12.5px;color:var(--copy);display:inline-flex;align-items:center;gap:10px}
   .modal .switches button.on{background:var(--amber);border-color:var(--amber);color:var(--ink)}
   .modal .switches button.out{background:none;border-color:var(--amber);color:var(--amber)}
   .modal .switches button small{font-weight:700;font-size:10px;color:var(--green)}
@@ -434,7 +638,7 @@
   .plan4 .price b{font-family:var(--display);font-weight:700;font-size:32px;line-height:35px}
   .plan4 .price span{font-size:12.5px;color:var(--muted)}
   .plan4 ul{list-style:none;margin:24px 0 0;padding:24px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
-  .plan4 li{display:grid;grid-template-columns:12px 1fr;gap:6px;align-items:start;font-size:11.5px;line-height:16px;color:#c0ccda}
+  .plan4 li{display:grid;grid-template-columns:12px 1fr;gap:6px;align-items:start;font-size:11.5px;line-height:16px;color:var(--copy)}
   .plan4 li svg{margin-top:3px}
   .plan4 .cta{display:flex;align-items:center;justify-content:center;height:40px;margin-top:auto;border-radius:2px;
     font-weight:700;font-size:12.5px}
@@ -454,7 +658,7 @@
   .pcard h3{font-family:var(--display);font-weight:700;font-size:30px;line-height:33px;margin:0;color:var(--text)}
   .pcard .handle{margin:10px 0 0;font-size:14px;line-height:17px;color:var(--muted)}
   .pcard .nudge{display:flex;align-items:center;gap:16px;height:40px;margin-top:18px;border:1px solid #3a2a12;border-radius:2px;
-    background:#14100a;padding:0 15px;font-size:12.5px;color:#c0ccda}
+    background:#14100a;padding:0 15px;font-size:12.5px;color:var(--copy)}
   .pcard .nudge a{margin-left:auto;flex:none;font-weight:700;font-size:12.5px;color:var(--amber);border-bottom:1px solid var(--amber);
     line-height:16px}
   .pcard .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px -20px 0}
@@ -617,7 +821,7 @@
      even after the broader .lbl legibility pass. Full-bright --text for this
      one label, since it's effectively the hero card's title. */
   .hero .row1 .lbl{color:var(--text);opacity:1}
-  .pill{height:20px;padding:0 12px;border-radius:2px;background:#0f2018;display:inline-flex;align-items:center;
+  .pill{height:20px;padding:0 12px;border-radius:2px;background:var(--pill-bg);display:inline-flex;align-items:center;
     font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green);opacity:1}
   .bignum{font-family:var(--mono);font-weight:500;font-size:44px;line-height:57px;margin:6px 0 0;color:var(--text)}
   .wl{display:flex;gap:0;align-items:center;margin-top:4px;font-family:var(--mono);font-size:13px}
@@ -741,3 +945,9 @@
   .viewall{margin-left:auto;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13px;color:var(--amber)}
   .cardhead{display:flex;align-items:flex-start}
 }
+
+/* Community feed keyframes. Declared at the top level: @keyframes inside a
+   nested style rule is not something every engine resolves the same way. */
+@keyframes cfpulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes cfrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cfbump{0%{transform:scale(1.15)}100%{transform:scale(1)}}

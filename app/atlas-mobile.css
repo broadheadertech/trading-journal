@@ -55,16 +55,15 @@
   .sec10 { padding-top: 38px; margin-top: 32px; }
 
   /* the large decorative margin-tops on inner blocks, same treatment */
-  .sec01 .grid   { margin-top: 34px; }
+  .cap-bento     { margin-top: 24px; }
   .chartcard     { margin-top: 26px; height: 220px; }
   .statrow       { margin-top: 24px; }
   .method        { margin-top: 44px; }
   .hiw           { margin-top: 40px; gap: 20px; }
-  .numbers       { margin-top: 26px; }
+  .ticker        { margin-top: 26px; }
   .tools         { margin-top: 36px; }
   .step          { padding-top: 28px; }
   .tool          { padding: 22px 0 28px; }
-  .num           { padding: 18px 16px 22px; }
   .solve         { margin-top: 32px; }
 
   .cta    { padding: 36px 0 40px; height: auto; margin-top: 36px; }
@@ -79,8 +78,14 @@
      Exceptions, deliberately left alone: two-cell "marker + content"
      grids (`.plan li`, `.timeline`, `.rel`) which are icon+text rows,
      not layout columns; and `.heat` (a 28-cell heatmap), handled by
-     horizontal scroll in §6 instead. */
-  .sechead, .sec01 .grid, .statrow, .steps, .hiw, .tools,
+     horizontal scroll in §6 instead.
+
+     .cap-bento is NOT in this list: it carries its own two-step response
+     (2 columns under 1024px, 1 under 640px) in atlas.css. Collapsing it here
+     at 768px left its explicit grid-column placements pointing at a column
+     that no longer existed, so between 640 and 768 the browser opened an
+     implicit second track, gave it everything, and starved column 1 to 0px. */
+  .sechead, .statrow, .steps, .hiw, .tools,
   .failgrid, .exprow, .pricehead, .plans,
   .atlas-site .bounds, .atlas-site .numbered, .atlas-site .scope,
   .atlas-site .bprin, .atlas-site .brokgrid, .atlas-site .howsteps,
@@ -95,7 +100,7 @@
      than the track (a 180px sparkline next to 40px-margin KPIs) refuses
      to shrink and punches out of the viewport instead. This is the
      actual cause of the pre-existing 32px overflow in sec01. */
-  .sec01 .grid > *, .failgrid > *, .exprow > *, .hiw > *, .tools > *,
+  .cap-bento > *, .failgrid > *, .exprow > *, .hiw > *, .tools > *,
   .atlas-site .artwrap > *, .atlas-site .drow > * { min-width: 0; }
 
   /* --- 1c-bis. the two deliberate exceptions to "one column". ---------
@@ -106,21 +111,20 @@
      block on the page, above the hero. Both of these are compact list
      content, the same reasoning the brief applies to the hero's
      4-item feature checklist. */
-  .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .num:nth-child(odd) { border-left: 0; }
+  /* (.numbers was the other exception; it is a ticker strip now and
+     scrolls horizontally instead of gridding.) */
 
   .footcols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
   .foot-brand { grid-column: 1 / -1; }
   .footbar { flex-direction: column; align-items: flex-start; gap: 10px; }
   .footbar nav { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 
-  .edge { flex-wrap: wrap; gap: 12px 0; }
-  .edge .kpi { margin-right: 28px; }
-  .edge .spark { margin-left: 0; width: 100%; max-width: 180px; }
-  .leakcard { padding: 22px 20px 26px; }
-  .minicard { padding: 16px 18px; }
-  .sidecards { gap: 20px; }
-  .disc { gap: 16px; }
+  /* Capability map. The single-column stack and the 34px hero numbers are
+     in atlas.css’s own @media(max-width:639px) block, next to the bento
+     rules they override — only the padding squeeze belongs here.
+     .capcard / .caphead / .leak / .edgefoot / .disc no longer exist. */
+  .cap-bento .tile { padding: 20px 18px; }
+  .cap-bento .edge { gap: 26px; }
 
   /* --- 1d. media inside cards never dominates a narrow card. -------- */
   .card img, .card svg, .panel svg, .atlas-site .bound svg,
@@ -154,8 +158,13 @@
   .nav, .nav-in { height: 64px; }
   /* The wordmark is ~6.6:1, far wider per unit height than the old
      emblem+wordmark banner at 2.5:1. At the previous 38px it would render
-     252px wide and leave no room for the CTA and burger in a 350px bar. */
-  .brand img { height: 17px !important; }
+     252px wide and leave no room for the CTA and burger in a 350px bar.
+     !important because both call sites set the height inline.
+     The footer had no rule at all, so it kept the full desktop size in a
+     350px column; it has more room than the nav bar, hence the larger of
+     the two values. */
+  .brand img { height: 15px !important; }
+  .foot-brand img { height: 18px !important; }
   .burger { margin-left: 8px; width: 44px; height: 44px; }
 
   /* Pairs with the 64px bar above — the panel starts where the nav ends.
@@ -208,16 +217,10 @@
 
   /* ===============================================================
      §5  Three-step process cards (Connect / Discover / Build)
-     atlas.css:1494-1502 already flattens rotateY and pins rotateX to
-     8deg at this breakpoint. Remaining work: height and badge depth.
+     Nothing to do here any more: the 3D shell is gone and .hiwc
+     carries its own 899px and 479px breakpoints in atlas.css, next
+     to the rules they override.
      =============================================================== */
-
-  .hiw3d-card { min-height: 0; }
-  .hiw3d-panel { height: auto; min-height: 0; }
-  /* badge sits nearly flush; 18px of translateZ reads as detached once
-     the card is only ~350px wide */
-  .hiw3d-badge { transform: translateZ(6px); }
-  .hiw3d-face1, .hiw3d-face2, .hiw3d-face3 { transform: translateZ(6px); }
 
   /* ===============================================================
      §6  Demo page

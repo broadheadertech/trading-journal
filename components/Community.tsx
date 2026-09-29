@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useSyncExternalStore } from 'react';
+import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import type { FunctionReturnType } from 'convex/server';
 import {
   Chats as MessagesSquare, ArrowLeft, Plus, PencilSimple as Edit2, Trash as Trash2, Gear as Settings,
   CaretUp as ChevronUp, CaretDown as ChevronDown, Lock, ChatCircle as MessageCircle, Image as ImageIcon,
@@ -15,6 +17,11 @@ import { useToast } from '@/components/ui/Toast';
 import { useSubscription } from '@/hooks/useSubscription';
 import TierBadge from '@/components/TierBadge';
 import BrainMascot from '@/components/BrainMascot';
+
+/* Derived from the Convex functions rather than hand-written, so the feed
+   cannot drift from what the queries actually return. */
+type ForumCategory = FunctionReturnType<typeof api.forum.listCategories>[number];
+type ForumPost = FunctionReturnType<typeof api.forum.listPosts>[number];
 
 type View = 'list' | 'detail' | 'admin';
 type SortMode = 'hot' | 'new' | 'top';
@@ -40,6 +47,41 @@ const atlasLabel: React.CSSProperties = {
   marginBottom: 9,
 };
 
+/* Category colours for the feed. The seeded rows already carry a colour, but
+   Trade Reviews ships #10b981 where the feed design calls for #22C55E — so the
+   palette is applied by slug at the presentation layer and the stored category
+   data is left untouched. Anything not in the map keeps its own colour. */
+const CAT_COLOR: Record<string, string> = {
+  general: '#6366F1',
+  'trade-reviews': '#22C55E',
+  psychology: '#A855F7',
+  strategy: '#F59E0B',
+  qa: '#06B6D4',
+  announcements: '#EF4444',
+};
+const catColor = (c?: { slug?: string; color?: string } | null) =>
+  (c && (CAT_COLOR[c.slug ?? ''] ?? c.color)) || 'var(--amber)';
+
+/* One or two letters for the round avatars. */
+function initials(name?: string) {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  return (parts[0][0] + (parts[1]?.[0] ?? '')).toUpperCase();
+}
+
+/* The rail exists above 1024px and dissolves below it. Read through
+   useSyncExternalStore rather than an effect so the first render already has
+   the answer; the server snapshot is the wide layout. Same shape as
+   lib/webgl.ts. */
+const WIDE_Q = '(min-width: 1024px)';
+function subscribeWide(cb: () => void) {
+  const m = window.matchMedia(WIDE_Q);
+  m.addEventListener('change', cb);
+  return () => m.removeEventListener('change', cb);
+}
+const getWideSnapshot = () => window.matchMedia(WIDE_Q).matches;
+const getWideServerSnapshot = () => true;
+
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
   if (diff < 60) return 'just now';
@@ -50,12 +92,12 @@ function timeAgo(iso: string) {
 }
 
 export default function Community() {
-  const { user } = useUser();
+  /* the signed-in identity now lives in Composer, which is the only thing on
+     this screen that needed it once the top-right New Post button went away */
   const [view, setView] = useState<View>('list');
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [sort, setSort] = useState<SortMode>('hot');
-  const [showNew, setShowNew] = useState(false);
   const [query, setQuery] = useState('');
 
   /* Convex returns undefined while a query is in flight. Collapsing that to []
@@ -93,262 +135,442 @@ export default function Community() {
 
   const postIds = useMemo(() => posts.map((p: any) => p.id), [posts]);
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
-  const myVotes = useQuery(api.forum.myVotesForPosts, { postIds }) ?? {};
+  const myVotes: Record<string, 1 | -1> = useQuery(api.forum.myVotesForPosts, { postIds }) ?? {};
   const vote = useMutation(api.forum.vote);
+
+  /* Where search and the category list live is a markup decision, not just a
+     CSS one: each exists exactly once and moves between the rail and the
+     filter row, so there is never a second <input> bound to the same `query`.
+
+     MUST stay above the detail-view early return below: React counts hooks
+     per render, and having this one after it meant opening a post rendered
+     one hook fewer than the list did — "Rendered fewer hooks than expected".
+     Same constraint the comment tree in PostDetail is under. */
+  const wide = useSyncExternalStore(subscribeWide, getWideSnapshot, getWideServerSnapshot);
 
   if (view === 'detail' && activePostId) {
     return <PostDetail postId={activePostId} onBack={() => { setActivePostId(null); setView('list'); }} />;
   }
 
+  /* Cards fade up on mount. Keying the feed on the active filter remounts the
+     list whenever sort / category / search changes, which is what restages the
+     animation — there is no other reason to force a remount here. */
+  const feedKey = `${sort}|${activeCategoryId ?? 'all'}|${query.trim()}`;
+
+
+  const search = (
+    <label className="cf-search">
+      <MagnifyingGlass size={14} className="cf-sicon" />
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search posts…"
+        aria-label="Search posts"
+      />
+      {query && (
+        <button onClick={() => setQuery('')} aria-label="Clear search" className="cf-sclear">
+          <X size={11} />
+        </button>
+      )}
+    </label>
+  );
+
+  const categoryList = (
+    <CategoryList
+      variant={wide ? 'rail' : 'chips'}
+      categories={categories}
+      loaded={categoriesResult !== undefined}
+      countByCategory={countByCategory}
+      total={allPosts.length}
+      loading={postsLoading}
+      activeCategoryId={activeCategoryId}
+      onPick={setActiveCategoryId}
+    />
+  );
+
   return (
     <div>
-      <div className="phead pwrap">
-        <p className="eyebrow">Live discussions</p>
-        <h2>Join the conversation</h2>
-        <p className="sub">
-          Discuss trades, share insights, ask questions. Read freely, post when logged in.
-        </p>
-        {user && (
-          <div className="actions" style={{ top: 34 }}>
-            <button onClick={() => setShowNew(true)} className="btn-a" style={{ height: 44 }}>
-              <Plus size={14} /> New Post
-            </button>
-          </div>
-        )}
-      </div>
+      <div className="cfeed">
+        {/* outside the grid, so it lines up with the left column's left edge */}
+        <div className="phead" style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <p className="eyebrow">Live discussions</p>
+          <h2>Join the conversation</h2>
+          <p className="sub">
+            Discuss trades, share insights, ask questions. Read freely, post when logged in.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
-        {/* Categories sidebar */}
-        <div className="listnav">
-          {/* Search across the loaded posts. .listnav .search has been styled in
-              atlas-dashboard.css all along with no input wired to it, so the
-              forum had no way to find an old thread. Client-side over the same
-              rows the list already holds — no extra query. */}
-          <label className="search" style={{ cursor: 'text' }}>
-            <MagnifyingGlass size={14} style={{ flex: 'none' }} />
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Search posts…"
-              aria-label="Search posts"
-              style={{ flex: 1, minWidth: 0, background: 'none', border: 0, outline: 'none', font: 'inherit', color: 'var(--text)', padding: 0 }}
+        <div className="cf-grid">
+          <div className="cf-main">
+            {/* The composer replaces the old top-right "New Post" button as the
+                way in. Signed out it is still the same control, pointing at
+                sign-in, so the primary action never disappears from the page. */}
+            <Composer
+              categories={categories}
+              defaultCategoryId={activeCategoryId ?? categories[0]?.id}
             />
-            {query && (
-              <button onClick={() => setQuery('')} aria-label="Clear search" style={{ background: 'none', cursor: 'pointer', color: 'var(--muted-2)', display: 'flex' }}>
-                <X size={12} />
-              </button>
+
+            <div className="cf-bar">
+              <div className="cf-sorts">
+                {(['hot', 'new', 'top'] as SortMode[]).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSort(s)}
+                    className={`cf-sort${sort === s ? ' on' : ''}`}
+                    aria-pressed={sort === s}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+
+              {/* Which slice of the forum is on screen. The category list
+                  highlights the active one, but the feed itself gave no
+                  confirmation that it had been filtered — so a quiet category
+                  looked like a quiet forum. */}
+              <div className="cf-count">
+                <span>
+                  {postsLoading
+                    ? 'loading…'
+                    : `${posts.length} post${posts.length === 1 ? '' : 's'}${activeCategory ? ' in ' + activeCategory.name : ''}`}
+                </span>
+                {activeCategory && !postsLoading && (
+                  <button onClick={() => setActiveCategoryId(null)} className="cf-clear">
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* below the rail breakpoint the search rejoins the filter row */}
+              {!wide && search}
+            </div>
+
+            {!wide && categoryList}
+
+            {postsLoading ? (
+              /* Three skeletons at the real card's dimensions, so the feed does
+                 not jump when the query resolves. */
+              <div aria-busy="true" aria-label="Loading posts">
+                {[0, 1, 2].map(i => (
+                  <div className="cf-skel" key={i}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ width: 32, height: 32, borderRadius: '50%', flex: 'none' }} />
+                      <div style={{ flex: 1 }}>
+                        <span style={{ width: '32%', height: 9 }} />
+                        <span style={{ width: '22%', height: 8, marginTop: 6 }} />
+                      </div>
+                    </div>
+                    <span style={{ width: '70%', height: 12, marginTop: 14 }} />
+                    <span style={{ width: '100%', height: 9, marginTop: 8 }} />
+                    <span style={{ width: '88%', height: 9, marginTop: 6 }} />
+                    <span style={{ width: 150, height: 28, borderRadius: 999, marginTop: 17 }} />
+                  </div>
+                ))}
+              </div>
+            ) : posts.length === 0 ? (
+              /* Three different reasons the list can be empty, and they call for
+                 three different messages. Telling someone whose search missed to
+                 "be the first to start the conversation" is the same mistake as
+                 telling it to someone who just filtered into a quiet category —
+                 the forum is not empty, their view is. */
+              <div style={{ textAlign: 'center', padding: '54px 20px', color: 'var(--muted-2)' }}>
+                <MessagesSquare size={26} style={{ color: 'var(--muted-3)', margin: '0 auto 14px' }} />
+                {query.trim() ? (
+                  <>
+                    <p style={{ fontSize: 13, color: 'var(--text-2)' }}>No posts match “{query.trim()}”</p>
+                    <p style={{ marginTop: 8 }}>
+                      <button
+                        onClick={() => setQuery('')}
+                        style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, fontSize: 12.5 }}
+                      >
+                        Clear search
+                      </button>
+                    </p>
+                  </>
+                ) : activeCategory ? (
+                  <>
+                    <p style={{ fontSize: 13, color: 'var(--text-2)' }}>No posts in {activeCategory.name} yet</p>
+                    <p style={{ marginTop: 8 }}>
+                      <button
+                        onClick={() => setActiveCategoryId(null)}
+                        style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, fontSize: 12.5 }}
+                      >
+                        View all posts
+                      </button>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ fontSize: 13, color: 'var(--text-2)' }}>No posts yet</p>
+                    <p style={{ marginTop: 6, fontSize: 12.5 }}>Be the first to start the conversation.</p>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div key={feedKey}>
+                {posts.map((p, i) => (
+                  <PostCard
+                    key={p.id}
+                    post={p}
+                    category={categories.find((c) => c.id === p.categoryId)}
+                    myVote={myVotes[p.id]}
+                    onVote={(value) => vote({ targetType: 'post', targetId: p.id, value })}
+                    onOpen={() => { setActivePostId(p.id); setView('detail'); }}
+                    /* capped so a long feed does not end up waiting a second and
+                       a half before the last card appears */
+                    delay={Math.min(i, 8) * 0.06}
+                  />
+                ))}
+              </div>
             )}
-          </label>
-
-          <h6>CATEGORIES</h6>
-          <a
-            onClick={() => setActiveCategoryId(null)}
-            className={activeCategoryId === null ? 'on' : undefined}
-            style={{ cursor: 'pointer' }}
-          >
-            All Posts
-            <em>{postsLoading ? '' : allPosts.length}</em>
-          </a>
-          {categories.map((c: any) => (
-            <a
-              key={c.id}
-              onClick={() => setActiveCategoryId(c.id)}
-              className={activeCategoryId === c.id ? 'on' : undefined}
-              style={{ cursor: 'pointer' }}
-              /* each category carries a description that was never rendered
-                 anywhere; as a tooltip it costs no layout */
-              title={c.description || undefined}
-            >
-              {c.color && <i style={{ background: c.color }} />}
-              {c.name}
-              {/* how busy each category is, before clicking into it */}
-              <em>{postsLoading ? '' : (countByCategory.get(c.id) ?? 0)}</em>
-            </a>
-          ))}
-          {categoriesResult !== undefined && categories.length === 0 && (
-            <p style={{ margin: '4px 14px', fontSize: 12, color: 'var(--muted-2)' }}>No categories yet.</p>
-          )}
-        </div>
-
-        {/* Posts list */}
-        <div>
-          <div className="tabs line" style={{ marginBottom: 20 }}>
-            {(['hot', 'new', 'top'] as SortMode[]).map((s) => (
-              <button
-                key={s}
-                onClick={() => setSort(s)}
-                className={sort === s ? 'on' : undefined}
-                style={{ textTransform: 'capitalize' }}
-              >
-                {s}
-              </button>
-            ))}
-
-            {/* Which slice of the forum is on screen. The sidebar highlights the
-                active category, but the list itself gave no confirmation that it
-                had been filtered — so a quiet category looked like a quiet forum. */}
-            <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10, fontFamily: 'var(--mono)', fontSize: 11.5, color: 'var(--muted-2)' }}>
-              {postsLoading
-                ? 'loading…'
-                : `${posts.length} post${posts.length === 1 ? '' : 's'}${activeCategory ? ' in ' + activeCategory.name : ''}`}
-              {activeCategory && !postsLoading && (
-                <button
-                  onClick={() => setActiveCategoryId(null)}
-                  style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700 }}
-                >
-                  Clear
-                </button>
-              )}
-            </span>
           </div>
 
-          {postsLoading ? (
-            <div className="blank" style={{ minHeight: 300, color: 'var(--amber)' }}>
-              <Loader2 size={22} className="animate-spin" />
-            </div>
-          ) : posts.length === 0 ? (
-            <div className="blank" style={{ minHeight: 300 }}>
-              <span className="corner" style={{ left: 0, top: 0, borderRight: 0, borderBottom: 0 }} />
-              <span className="corner" style={{ right: 0, top: 0, borderLeft: 0, borderBottom: 0 }} />
-              <span className="corner" style={{ left: 0, bottom: 0, borderRight: 0, borderTop: 0 }} />
-              <span className="corner" style={{ right: 0, bottom: 0, borderLeft: 0, borderTop: 0 }} />
-              <span className="badge" style={{ border: '1px solid rgba(217,148,5,.5)' }}>
-                <MessagesSquare size={24} style={{ color: 'var(--amber)' }} />
-              </span>
-              {/* an empty category is not an empty forum, and telling someone to
-                  "be the first" when they have simply filtered themselves into a
-                  quiet corner sends them to the wrong conclusion */}
-              {/* Three different reasons the list can be empty, and they call for
-                  three different messages. Telling someone whose search missed
-                  to "be the first to start the conversation" is the same mistake
-                  as telling it to someone who just filtered into a quiet
-                  category — the forum is not empty, their view is. */}
-              {query.trim() ? (
-                <>
-                  <h4>No posts match “{query.trim()}”</h4>
-                  <p>
-                    <button
-                      onClick={() => setQuery('')}
-                      style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, textDecoration: 'underline' }}
-                    >
-                      Clear search
-                    </button>
-                  </p>
-                </>
-              ) : activeCategory ? (
-                <>
-                  <h4>No posts in {activeCategory.name} yet</h4>
-                  <p>
-                    <button
-                      onClick={() => setActiveCategoryId(null)}
-                      style={{ background: 'none', cursor: 'pointer', color: 'var(--amber)', fontWeight: 700, textDecoration: 'underline' }}
-                    >
-                      View all posts
-                    </button>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h4>No posts yet</h4>
-                  <p>Be the first to start the conversation.</p>
-                </>
-              )}
-            </div>
-          ) : (
-            posts.map((p: any) => {
-              const myVote = (myVotes as any)[p.id];
-              const cat = categories.find((c: any) => c.id === p.categoryId);
-              return (
-                <div
-                  key={p.id}
-                  className="post"
-                  /* height/padding used to be overridden here because .post
-                     hardcoded a 104px row; the stylesheet now sizes to content,
-                     so only the per-category rail colour stays inline */
-                  style={{ borderLeftColor: cat?.color ?? 'var(--amber)' }}
-                >
-                  {/* Vote column */}
-                  <div className="vote">
-                    <button
-                      onClick={() => vote({ targetType: 'post', targetId: p.id, value: myVote === 1 ? 0 : 1 })}
-                      style={{ display: 'flex', color: myVote === 1 ? 'var(--amber)' : 'inherit' }}
-                    >
-                      <ChevronUp size={16} />
-                    </button>
-                    <b>{p.score}</b>
-                    <button
-                      onClick={() => vote({ targetType: 'post', targetId: p.id, value: myVote === -1 ? 0 : -1 })}
-                      style={{ display: 'flex', color: myVote === -1 ? 'var(--red)' : 'inherit' }}
-                    >
-                      <ChevronDown size={16} />
-                    </button>
-                  </div>
-
-                  {/* Body */}
-                  <div
-                    style={{ minWidth: 0, cursor: 'pointer' }}
-                    onClick={() => { setActivePostId(p.id); setView('detail'); }}
-                  >
-                    {/* Category sits on its own line as a colour dot + name.
-                        It used to lead the meta row as a pill pinned to a
-                        104px min-width — that width existed purely so "by
-                        <author>" would start at the same x on every row, i.e.
-                        a fixed gap was paying for alignment. Lifting it out
-                        removes both the gap and the alignment problem, and
-                        lets the title become the first thing read. */}
-                    <div className="toprow">
-                      {cat && (
-                        <span className="cat" style={{ color: cat.color ?? 'var(--amber)' }}>
-                          <i style={{ background: cat.color ?? 'var(--amber)' }} />
-                          {cat.name}
-                        </span>
-                      )}
-                      {p.isPinned && <span className="flag on"><Pin size={10} /> Pinned</span>}
-                      {p.isLocked && <span className="flag"><Lock size={10} /> Locked</span>}
-                    </div>
-
-                    <h5>{p.title}</h5>
-                    <p className="body line-clamp-2">{p.body}</p>
-
-                    {/* Author and engagement collapsed into one line — they were
-                        two rows saying very little, which is what made every
-                        card tall and mostly empty. */}
-                    <div className="foot">
-                      <span className="who">
-                        {p.authorName}
-                        <TierBadge tier={p.authorTier} />
-                      </span>
-                      <span>{timeAgo(p.createdAt)}</span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                        <MessageCircle size={12} /> {p.commentCount}
-                      </span>
-                      {p.images && p.images.length > 0 && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                          <ImageIcon size={12} /> {p.images.length}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+          {wide && (
+            <aside className="cf-rail">
+              {search}
+              {categoryList}
+            </aside>
           )}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {showNew && user && (
-        <NewPostModal
-          categories={categories}
-          defaultCategoryId={activeCategoryId ?? categories[0]?.id}
-          onClose={() => setShowNew(false)}
-        />
+// ──────────────────────────────────────────────────────────────────────
+/* One component, two shapes: a vertical list in the rail at ≥1024px, a single
+   scrollable chip row below it. Same categories, counts, active and dimmed
+   states either way — only the chrome differs. */
+function CategoryList({
+  variant, categories, loaded, countByCategory, total, loading, activeCategoryId, onPick,
+}: {
+  variant: 'rail' | 'chips';
+  categories: ForumCategory[];
+  loaded: boolean;
+  countByCategory: Map<string, number>;
+  total: number;
+  loading: boolean;
+  activeCategoryId: string | null;
+  onPick: (id: string | null) => void;
+}) {
+  const chips = variant === 'chips';
+  /* A chip that scrolls out of the strip is a filter you cannot see you have
+     applied, so the selected one is always pulled back into view. */
+  const reveal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (chips) e.currentTarget.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  };
+
+  return (
+    <div className={chips ? 'cf-chips' : 'cf-cats'}>
+      {!chips && <h6 className="cf-catshead">CATEGORIES</h6>}
+      <button
+        onClick={(e) => { onPick(null); reveal(e); }}
+        className={`cf-chip${activeCategoryId === null ? ' on' : ''}`}
+        aria-pressed={activeCategoryId === null}
+        style={{ '--cat': 'var(--amber)' } as React.CSSProperties}
+      >
+        <i style={{ background: 'var(--amber)' }} />
+        All Posts
+        <em>{loading ? '' : total}</em>
+      </button>
+      {categories.map((c) => {
+        const n = countByCategory.get(c.id) ?? 0;
+        const col = catColor(c);
+        const on = activeCategoryId === c.id;
+        return (
+          <button
+            key={c.id}
+            onClick={(e) => { onPick(c.id); reveal(e); }}
+            /* a category nobody has posted in is still somewhere you can post —
+               keep it reachable, just visibly quiet */
+            className={`cf-chip${on ? ' on' : ''}${!loading && n === 0 ? ' empty' : ''}`}
+            aria-pressed={on}
+            /* each category carries a description that was never rendered
+               anywhere; as a tooltip it costs no layout */
+            title={c.description || undefined}
+            style={{ '--cat': col } as React.CSSProperties}
+          >
+            <i style={{ background: col }} />
+            {c.name}
+            <em>{loading ? '' : n}</em>
+          </button>
+        );
+      })}
+      {loaded && categories.length === 0 && (
+        <p style={{ margin: '4px 2px', fontSize: 12, color: 'var(--muted-2)' }}>No categories yet.</p>
       )}
     </div>
   );
 }
 
 // ──────────────────────────────────────────────────────────────────────
-function NewPostModal({
+/* The composer is the only way into the post form now, so it carries the
+   signed-out case too: same control, same position, pointing at sign-in. */
+function Composer({ categories, defaultCategoryId }: { categories: ForumCategory[]; defaultCategoryId?: string }) {
+  const { user } = useUser();
+  const [open, setOpen] = useState(false);
+
+  if (!user) {
+    return (
+      <div className="cf-composer">
+        <div className="cf-crow">
+          <span className="cf-me" aria-hidden="true"><Lock size={13} /></span>
+          <Link href="/sign-in" className="cf-stub" style={{ display: 'flex', alignItems: 'center' }}>
+            Log in to post
+          </Link>
+          <Link href="/sign-in" className="cf-post">
+            <Plus size={13} /><span className="cf-lbl">Post</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cf-composer">
+      <div className="cf-crow">
+        <span className="cf-me" aria-hidden="true">{initials(user.fullName || user.username || 'A')}</span>
+        <button className="cf-stub" onClick={() => setOpen(true)}>
+          Share a trade, insight, or question…
+        </button>
+        <button className="cf-post" onClick={() => setOpen(true)}>
+          <Plus size={13} /><span className="cf-lbl">Post</span>
+        </button>
+      </div>
+
+      {open && (
+        <div className="cf-expand">
+          <NewPostForm
+            categories={categories}
+            defaultCategoryId={defaultCategoryId}
+            onClose={() => setOpen(false)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+/* Pulled out of the map so the vote-count bump can hold a little state of its
+   own without giving every card in the feed a re-render budget. */
+function PostCard({
+  post: p, category: cat, myVote, onVote, onOpen, delay,
+}: {
+  post: ForumPost;
+  category?: ForumCategory;
+  myVote?: 1 | -1;
+  onVote: (value: 0 | 1 | -1) => void;
+  onOpen: () => void;
+  delay: number;
+}) {
+  const col = catColor(cat);
+  const shot = p.images?.[0];
+
+  return (
+    <div
+      className="cf-card"
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(); } }}
+      style={{ animationDelay: `${delay}s`, '--cat': col } as React.CSSProperties}
+    >
+      <div className="cf-head">
+        {/* the category colour moved off the old left rail and into the avatar
+            tint, the category label and the chip */}
+        <span
+          className="cf-av"
+          aria-hidden="true"
+          style={{ '--cat': col } as React.CSSProperties}
+        >
+          {initials(p.authorName)}
+        </span>
+        <div className="cf-who">
+          <b>
+            {p.authorName}
+            <TierBadge tier={p.authorTier} />
+          </b>
+          <div className="cf-meta">
+            <span className="cf-when">{timeAgo(p.createdAt)}</span>
+            {cat && (
+              <>
+                <span className="cf-dot">·</span>
+                <span className="cf-catname">{cat.name}</span>
+              </>
+            )}
+            {p.isPinned && <span className="cf-flag on"><Pin size={10} /> Pinned</span>}
+            {p.isLocked && <span className="cf-flag"><Lock size={10} /> Locked</span>}
+          </div>
+        </div>
+      </div>
+
+      <h5>{p.title}</h5>
+      <p className="cf-body line-clamp-2">{p.body}</p>
+      {shot && (
+        <div className="cf-figure">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="cf-shot" src={shot} alt="" loading="lazy" />
+        </div>
+      )}
+
+      <div className="cf-acts">
+        {/* both directions, because the forum has always supported both */}
+        <span className="cf-pill" onClick={e => e.stopPropagation()}>
+          <button
+            className={`cf-up${myVote === 1 ? ' on' : ''}`}
+            aria-label="Upvote"
+            onClick={() => onVote(myVote === 1 ? 0 : 1)}
+          >
+            <ChevronUp size={14} />
+          </button>
+          <VoteCount score={p.score} />
+          <button
+            className={`cf-down${myVote === -1 ? ' on' : ''}`}
+            aria-label="Downvote"
+            onClick={() => onVote(myVote === -1 ? 0 : -1)}
+          >
+            <ChevronDown size={14} />
+          </button>
+        </span>
+
+        {/* the replies pill opens the thread itself rather than being a label
+            that swallows the card's own click */}
+        <button
+          className="cf-pill"
+          onClick={e => { e.stopPropagation(); onOpen(); }}
+          aria-label={`${p.commentCount} replies`}
+        >
+          <MessageCircle size={13} /> {p.commentCount}
+        </button>
+
+        {p.images && p.images.length > 1 && (
+          <span className="cf-pill" style={{ cursor: 'default' }} onClick={e => e.stopPropagation()}>
+            <ImageIcon size={13} /> {p.images.length}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* Bumps only when the number actually moves — the state update happens during
+   render (React's supported derived-state pattern) rather than in an effect, so
+   there is no extra paint at the old value and no set-state-in-effect. */
+function VoteCount({ score }: { score: number }) {
+  const [seen, setSeen] = useState(score);
+  const [bump, setBump] = useState(false);
+  if (seen !== score) { setSeen(score); setBump(true); }
+  return (
+    <b className={bump ? 'cf-bump' : undefined} onAnimationEnd={() => setBump(false)}>{score}</b>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+/* Was NewPostModal — same fields, same mutation, same validation and toasts.
+   Only the chrome changed: it renders inside the composer card instead of a
+   fixed overlay, so "expand the composer" and "open the form" are one thing. */
+function NewPostForm({
   categories, defaultCategoryId, onClose,
 }: {
   categories: any[];
@@ -366,10 +588,8 @@ function NewPostModal({
   const [busy, setBusy] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-      <div className="card max-w-2xl w-full space-y-4 max-h-[90vh] overflow-y-auto">
-        <span className="accent" style={{ width: 56, background: 'var(--amber)' }} />
-        <h3>New Post</h3>
+    <div className="space-y-4">
+      <div className="space-y-4">
 
         <div className="field">
           <label style={atlasLabel}>Category</label>
@@ -503,7 +723,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
             <span>·</span>
             <span>{timeAgo(c.createdAt)}</span>
           </div>
-          <p className="whitespace-pre-wrap mb-2" style={{ fontSize: 13, lineHeight: '19px', color: '#c0ccda' }}>{c.body}</p>
+          <p className="whitespace-pre-wrap mb-2" style={{ fontSize: 13, lineHeight: '19px', color: 'var(--copy)' }}>{c.body}</p>
           <div className="flex items-center gap-3" style={{ fontSize: 11, color: 'var(--muted-2)' }}>
             <button
               onClick={() => vote({ targetType: 'comment', targetId: c.id, value: cmVote === 1 ? 0 : 1 })}
@@ -593,7 +813,7 @@ function PostDetail({ postId, onBack }: { postId: string; onBack: () => void }) 
             </div>
             <h3 style={{ marginBottom: 12 }}>{post.title}</h3>
             {/* the 680px cap moved up to the column; the body now fills it */}
-            <p className="whitespace-pre-wrap mb-4" style={{ fontSize: 13.5, lineHeight: '20px', color: '#c0ccda' }}>{post.body}</p>
+            <p className="whitespace-pre-wrap mb-4" style={{ fontSize: 13.5, lineHeight: '20px', color: 'var(--copy)' }}>{post.body}</p>
 
             {post.images && post.images.length > 0 && (
               post.images.length === 1 ? (

@@ -34,14 +34,15 @@ const THRESHOLD = 0.25;
 const TARGETS = [
   '[class*="statValue"]', // world-map stat block (CSS-module hashed class)
   '.statrow .stat b',
-  '.numbers .num b',
-  '.dial .score b',
-  '.edge .kpi b',
-  '.leakrow .v',
+  '.cap-bento .thero b',
+  '.cap-bento .edge .kpi b',
 ].join(',');
 
 /* Containers whose stats read as one group, for the stagger. */
-const GROUPS = '.statrow, .numbers, .edge, .leakcard';
+/* .numbers is gone: that section is now a ticker, and a digit-scroll
+   running inside a strip that is already scrolling reads as two competing
+   motions. Its values render final. */
+const GROUPS = '.statrow, .cap-bento .tile';
 
 /* prefix may hold symbols only ($, −, +) — never letters, so "W1" is not a
    stat — then the number, then any suffix (+, ×, %, K+, " SEC", " YEAR"). */

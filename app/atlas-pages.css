@@ -157,7 +157,7 @@
      was dropped with the teal colour — its 4 call sites now use `amber`.) */
   .amber { color: var(--amber); }
 
-  /* atlas.css defines .kicker only scoped (.leakcard/.minicard/.cta). The
+  /* atlas.css defines .kicker only scoped (.cta). The
      sub-page heroes and CTA bands use it bare, so mirror .cta .kicker here.
      display:flex also activates the inline justifyContent some pages set. */
   .phero .kicker,
