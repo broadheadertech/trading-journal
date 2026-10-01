@@ -140,8 +140,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-display);
-  --font-mono: var(--font-geist-mono);
+  /* sourced from the next/font variables, not from --font-display: that
+     now resolves back through here, and a theme key defined as var() of
+     itself is a cycle. */
+  --font-sans: var(--font-manrope),system-ui,sans-serif;
+  --font-mono: var(--font-dm-mono),ui-monospace,Menlo,monospace;
 }
 
 /* ── ATLAS rebrand: pink/fuchsia → amber compatibility shim ────────────────
@@ -178,7 +181,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-display), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-manrope),system-ui,sans-serif;
   font-feature-settings: "ss01", "cv11";
   -webkit-tap-highlight-color: transparent;
   transition: --accent 2s ease, --accent-glow 2s ease, --bg-tint 2s ease,
@@ -396,14 +399,15 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--border);
 }
 
-/* Brand wordmark utility — wide-tracking geometric look matching the ATLAS logo */
+/* Brand wordmark utility — wide-tracking geometric look matching the ATLAS logo.
+   League Spartan is no longer loaded; Manrope carries headlines and wordmark. */
 .font-brand {
-  font-family: var(--font-brand), system-ui, -apple-system, sans-serif !important;
+  font-family: var(--font-manrope),system-ui,sans-serif !important;
   letter-spacing: 0.16em;
 }
 
 .brand-wordmark {
-  font-family: var(--font-brand), system-ui, sans-serif;
+  font-family: var(--font-manrope),system-ui,sans-serif;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -411,7 +415,7 @@ input::placeholder, textarea::placeholder {
 
 /* All headlines use League Spartan for the geometric impact */
 h1, h2, h3 {
-  font-family: var(--font-brand), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-manrope),system-ui,sans-serif;
   letter-spacing: -0.01em;
 }
 

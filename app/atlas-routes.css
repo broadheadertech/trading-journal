@@ -375,6 +375,9 @@
     padding: 26px 24px 28px;
   }
   .conn:hover { background: var(--card-2); }
+  /* the marks inherit currentColor so the grid stays on one token rather
+     than hardcoding five brand palettes into the section */
+  .conn { color: var(--amber); }
   .conn .ic {
     display: block;
     margin-bottom: 20px;

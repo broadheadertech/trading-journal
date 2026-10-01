@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Button from '@/components/ui/Button';
 
 /* The five leaks. Held as data, not as hand-written rows: the share-of-total
    bar, the legend swatches and the total all derive from these amounts, so the
@@ -127,9 +127,9 @@ export default function DashboardPreview() {
           </div>
         </div>
 
-        <Link className="btn btn-amber" style={{ marginTop: '28px' }} href="/pricing">{'Start Free  · See Your Own Dashboard'}
-          <svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg>
-        </Link>
+        <div style={{ marginTop: 28 }}>
+          <Button href="/pricing" size="lg">{'Start Free  · See Your Own Dashboard'}</Button>
+        </div>
       </div>
     </div>
   );

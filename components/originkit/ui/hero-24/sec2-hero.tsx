@@ -10,13 +10,12 @@ import { ScaleFrame } from "@/components/originkit/ui/hero-24/scale-frame";
 
 const A = "/originkit/hero-24";
 
-/* Restyled to the Atlas design system: Archivo for display type (--display /
- * --font-archivo, same as .hero h1 in app/atlas.css), Inter for body copy
- * (--body / --font-inter). Both are already loaded site-wide via
- * app/layout.tsx's next/font classes on <body>, so the CSS vars resolve
- * without any extra font loading here. */
-const DISPLAY_FONT = "var(--font-archivo), Archivo, system-ui, sans-serif";
-const BODY_FONT = "var(--font-inter), Inter, system-ui, sans-serif";
+/* Restyled to the Atlas design system: Manrope for both display and body
+ * (--display / --body in app/atlas.css). Loaded site-wide via app/layout.tsx's
+ * next/font class on <body>, so the var resolves without any extra font
+ * loading here. Archivo and Inter are no longer shipped. */
+const DISPLAY_FONT = "var(--font-manrope), system-ui, sans-serif";
+const BODY_FONT = "var(--font-manrope), system-ui, sans-serif";
 
 const AMBER = "#D99405";
 const INK = "#0A0A0A";

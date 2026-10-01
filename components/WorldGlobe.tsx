@@ -234,7 +234,7 @@ export default function WorldGlobe() {
           pointLabel={(d: object) => {
             const p = d as PointMarker;
             const layer = LAYERS.find(l => l.id === p.layer)?.label ?? p.layer;
-            return `<div style="background:#0a0f17;padding:9px 13px;border-radius:2px;border:1px solid #182432;font-family:Inter,system-ui,sans-serif;color:#edf2f7;font-size:12px;line-height:1.35"><div style="font-weight:700;font-size:12.5px;color:${colorFor(p.layer)}">${p.name}</div><div style="color:#7f8ea3;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-top:5px">${layer}</div></div>`;
+            return `<div style="background:#0a0f17;padding:9px 13px;border-radius:2px;border:1px solid #182432;font-family:var(--font-manrope),system-ui,sans-serif;color:#edf2f7;font-size:12px;line-height:1.35"><div style="font-weight:700;font-size:12.5px;color:${colorFor(p.layer)}">${p.name}</div><div style="color:#7f8ea3;font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-top:5px">${layer}</div></div>`;
           }}
           arcsData={visibleArcs}
           arcStartLat={(d: object) => (d as ArcEdge).startLat}

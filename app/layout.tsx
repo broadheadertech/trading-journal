@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, League_Spartan, Montserrat, Archivo, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Manrope, DM_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import ConvexClientProvider from '@/components/ConvexClientProvider';
 import "./globals.css";
@@ -23,49 +23,36 @@ import "./atlas-mobile.css";
 // so it has the final say on theming. See app/atlas-light.css.
 import "./atlas-light.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* ── Type stack: Manrope + DM Mono ──────────────────────────────────────
+   next/font self-hosts both and emits @font-face with size-adjust metrics,
+   so there is no layout shift and no request to fonts.googleapis.com at
+   runtime. Seven faces used to ship here (Geist, Geist Mono, League
+   Spartan, Montserrat, Archivo, Inter, IBM Plex Mono); only these two do
+   now, and the --font-* variables the stylesheets already read are
+   repointed rather than renamed.
+
+   The variables are --font-manrope / --font-dm-mono rather than
+   --font-sans / --font-mono: those two names are Tailwind 4 @theme keys in
+   globals.css, and a theme key defined as var() of itself is a cycle. They
+   are mapped onto --font-sans / --font-mono there. */
+
+// nav, headlines, body, buttons, uppercase labels
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
+  // variable font: one file covers the whole 400-800 range
+  weight: ["400", "500", "600", "700", "800"],
+  fallback: ["system-ui", "sans-serif"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// every number — figures, prices, badges, small data labels
+const dmMono = DM_Mono({
+  variable: "--font-dm-mono",
   subsets: ["latin"],
-});
-
-// Brand font — used for the ATLAS wordmark and headlines
-const leagueSpartan = League_Spartan({
-  variable: "--font-brand",
-  subsets: ["latin"],
-  weight: ["500", "700", "800", "900"],
-});
-
-// Body / supporting copy font
-const montserrat = Montserrat({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-// ── ATLAS type stack — the four faces uiux/atlass.html loads from Google ──
-// Archivo = display/headlines, Inter = body, Geist Mono = figures,
-// IBM Plex Mono = micro labels. Wired to the --font-* vars atlas.css reads.
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400"],
+  display: "swap",
+  weight: ["300", "400", "500"],
+  fallback: ["ui-monospace", "Menlo", "monospace"],
 });
 
 export const metadata: Metadata = {
@@ -81,7 +68,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} ${leagueSpartan.variable} ${montserrat.variable} ${archivo.variable} ${inter.variable} ${plexMono.variable} antialiased`}>
+        <body className={`${manrope.variable} ${dmMono.variable} antialiased`}>
           <ConvexClientProvider>
             {children}
           </ConvexClientProvider>

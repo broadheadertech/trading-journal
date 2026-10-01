@@ -496,7 +496,7 @@ export default function WorldMap() {
                 <Marker key={`pt-${i}`} coordinates={p.coords}>
                   <circle r={2.5 / Math.max(1, zoom * 0.4)} fill={colorFor(p.layer)} stroke="#000" strokeWidth={0.4} />
                   {zoom > 2 && (
-                    <text textAnchor="middle" y={-6} fontSize={6 / Math.max(1, zoom * 0.3)} fill="#fff" stroke="#000" strokeWidth={0.3} paintOrder="stroke">
+                    <text textAnchor="middle" y={-6} fontSize={6 / Math.max(1, zoom * 0.3)} fill="#fff" stroke="#000" strokeWidth={0.3} paintOrder="stroke" fontFamily="var(--font-manrope), system-ui, sans-serif" fontWeight={500}>
                       {p.name}
                     </text>
                   )}

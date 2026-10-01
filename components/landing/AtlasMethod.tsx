@@ -1,3 +1,14 @@
+/* The five stages, in order. The rail runs amber -> green across them, which
+   is the same "first trade to funded success" arc the lede describes, so the
+   colour is carrying the story rather than decorating it. */
+const STEPS = [
+  { name: 'Learn', desc: 'Master trading from beginner to advanced.' },
+  { name: 'Execute', desc: 'Apply proven market structure concepts.' },
+  { name: 'Analyze', desc: 'Review every trade with data.' },
+  { name: 'Improve', desc: 'Refine your process continuously.' },
+  { name: 'Scale', desc: 'Pass funding challenges and grow capital.' },
+];
+
 export default function AtlasMethod() {
   return (
     <div className="sec03">
@@ -7,18 +18,24 @@ export default function AtlasMethod() {
         <p className="lede-lg" style={{ marginTop: '23px' }}>A simple, repeatable path from your first trade to funded success.</p>
 
         <div className="method">
-          <div className="steps">
-            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
-              <h4>Learn</h4><p>Master trading from beginner to advanced.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
-              <h4>Execute</h4><p>Apply proven market structure concepts.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
-              <h4>Analyze</h4><p>Review every trade with data.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
-              <h4>Improve</h4><p>Refine your process continuously.</p></div>
-            <div className="step"><i className="tick" style={{ background: 'var(--amber)' }}></i><i className="dot" style={{ background: 'var(--amber)' }}></i>
-              <h4>Scale</h4><p>Pass funding challenges and grow capital.</p></div>
+          {/* The rail used to be a bare 1px border with 1.5px ticks and 8px
+              specks on it — at a glance it read as a stray hairline, not a
+              path. It is its own element now, with a gradient and an arrow
+              head so the direction of travel is visible. */}
+          <div className="mrail" aria-hidden="true">
+            <span className="mrail-line" />
+            <span className="mrail-tip" />
           </div>
+
+          <ol className="steps">
+            {STEPS.map((s, i) => (
+              <li className="step" key={s.name} style={{ ['--i' as string]: i }}>
+                <span className="step-node" aria-hidden="true" />
+                <h4>{s.name}</h4>
+                <p>{s.desc}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </div>

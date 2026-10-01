@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -127,10 +128,14 @@ export default function LandingNav() {
             {/* The reference mockup has no auth, so it points these at / and
                 /pricing. Real routes restored — visual treatment unchanged. */}
             <Link className="nav-login" href="/sign-in">Log in</Link>
-            <Link className="nav-cta" href="/sign-up">
-              <svg width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M6 0 L0 9 L5 9 L3 16 L10 7 L5 7 L6 0 Z" fill="#0a0a0a" /></svg>
+            <Button
+              href="/sign-up"
+              size="md"
+              className="nav-cta"
+              icon={<svg width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M6 0 L0 9 L5 9 L3 16 L10 7 L5 7 L6 0 Z" fill="currentColor" /></svg>}
+            >
               Start Free Trial
-            </Link>
+            </Button>
             <button
               className="burger"
               id="burger"
@@ -172,8 +177,8 @@ export default function LandingNav() {
           ))}
 
           <div className="mnav-cta">
-            <Link onClick={closeMenu} className="btn btn-ghost" href="/sign-in">Log in</Link>
-            <Link onClick={closeMenu} className="btn btn-amber" href="/sign-up">Start Free Trial</Link>
+            <Button onClick={closeMenu} href="/sign-in" size="md" variant="secondary" fullWidth>Log in</Button>
+            <Button onClick={closeMenu} href="/sign-up" size="md" fullWidth>Start Free Trial</Button>
           </div>
         </div>
       </div>

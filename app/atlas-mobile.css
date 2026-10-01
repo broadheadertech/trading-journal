@@ -144,16 +144,26 @@
      =============================================================== */
 
   /* "Start Free Trial" stays in the collapsed bar. atlas.css's 1080px
-     block hides it; this sheet loads later, so this wins. */
+     block hides it; this sheet loads later, so this wins.
+
+     Sized for the new two-cell button. The old rules here were written for a
+     single box: `padding:0 14px` on the element stacked on top of the label's
+     own 18px, and `svg{display:none}` blanked the arrow while its 42px cell
+     kept the width. The result was a 193px button that left a 0px gap to the
+     wordmark at 360px. Only the leading bolt is hidden now. */
   .nav-cta {
     display: inline-flex;
-    height: 36px;
-    padding: 0 14px;
     margin-left: 0;
     font-size: 12px;
     white-space: nowrap;
   }
-  .nav-cta svg { display: none; }
+  /* 11px vertical keeps a 40px button inside the 64px bar — zeroing it with
+     the horizontal padding collapsed the CTA to an 18px tap target. */
+  .nav-cta .ab-label { padding: 11px 12px; gap: 0; }
+  /* the bolt glyph, not the arrow */
+  .nav-cta .ab-label > svg { display: none; }
+  .nav-cta .ab-arrow { width: 32px; }
+  .nav-cta .ab-arrow svg { width: 14px; height: 14px; }
 
   .nav, .nav-in { height: 64px; }
   /* The wordmark is ~6.6:1, far wider per unit height than the old

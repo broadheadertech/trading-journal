@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Button from '@/components/ui/Button';
 import GlobeRoutes from './GlobeRoutes';
 
 export default function Hero() {
@@ -25,8 +25,8 @@ export default function Hero() {
         <h1>The Complete Trading<em>ECOSYSTEM</em>for Modern Traders</h1>
         <p className="hero-copy">Atlas is a global trading community designed to help aspiring traders develop the skills, discipline, and mindset required to achieve long-term profitability and funded trader success.</p>
         <div className="hero-actions">
-          <Link className="btn btn-amber" href="/pricing">Join Atlas Now</Link>
-          <Link className="btn btn-ghost" href="/demo">Watch Free Training</Link>
+          <Button href="/pricing" size="lg">Join Atlas Now</Button>
+          <Button href="/demo" size="lg" variant="secondary">Watch Free Training</Button>
         </div>
         <div className="hero-checks">
           <div className="hero-check"><svg viewBox="0 0 11 9" fill="none"><path d="M0 4 L4 9 L11 0" stroke="#24c88a" strokeWidth="1.8" strokeLinecap="round" /></svg>Daily Live Market Analysis</div>

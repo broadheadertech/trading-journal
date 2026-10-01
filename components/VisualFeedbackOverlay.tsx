@@ -24,8 +24,8 @@ const T = {
   text2: '#9fb0c2',
   muted: '#7f8ea3',
   muted2: '#5c6b7e',
-  display: "'Archivo', system-ui, sans-serif",
-  mono: "'Geist Mono', ui-monospace, monospace",
+  display: "var(--font-manrope), system-ui, sans-serif",
+  mono: "var(--font-dm-mono), ui-monospace, Menlo, monospace",
 };
 
 const LABEL: React.CSSProperties = {

@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@/components/ui/Button';
 import type { CSSProperties } from 'react';
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
@@ -372,13 +373,14 @@ export default function BlogPage() {
                           : `Showing ${visibleCount} of ${total} articles${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`}
                       </p>
                     )}
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
+                      size="md"
                       className={`loadmore-btn${allShown ? ' is-done' : ''}`}
                       onClick={handleLoadMore}
                     >
-                      Load More Articles <span className="loadmore-arrow">→</span>
-                    </button>
+                      Load More Articles
+                    </Button>
                   </div>
                 </>
               )}

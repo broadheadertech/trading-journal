@@ -38,8 +38,8 @@ const T = {
   muted2: '#5c6b7e',
   muted3: '#4a5867',
   muted4: '#3a4a5c',
-  display: "'Archivo',system-ui,sans-serif",
-  mono: "'Geist Mono',ui-monospace,monospace",
+  display: "var(--font-manrope), system-ui, sans-serif",
+  mono: "var(--font-dm-mono), ui-monospace, Menlo, monospace",
 };
 
 /** Stage accent still honours any theme-provided --accent, falling back to ATLAS amber. */

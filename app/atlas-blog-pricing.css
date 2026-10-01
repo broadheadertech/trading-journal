@@ -363,23 +363,8 @@
     transition: opacity .5s ease;
   }
   .loadmore-count.is-fading { opacity: 0; }
-  .loadmore-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 32px;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    background: transparent;
-    color: var(--text);
-    font-family: var(--body);
-    font-weight: 500;
-    font-size: 14px;
-    transition: border-color .2s ease, color .2s ease;
-  }
-  .loadmore-btn:hover { border-color: rgba(217, 148, 5, .5); color: var(--amber); }
-  .loadmore-btn .loadmore-arrow { display: inline-block; transition: transform .2s ease; }
-  .loadmore-btn:hover .loadmore-arrow { transform: translateX(4px); }
+  /* The box, the hover and the arrow nudge all come from .ab now. Only the
+     done state is this section’s business. */
   .loadmore-btn.is-done { display: none; }
 
   /* zero matches for the active category — replaces colA/colB + the

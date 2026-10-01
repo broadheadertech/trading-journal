@@ -14,7 +14,6 @@ import Testimonials from '@/components/landing/Testimonials';
 import Footer from '@/components/landing/Footer';
 import ScrollReveal from '@/components/landing/ScrollReveal';
 import StatCountUp from '@/components/landing/StatCountUp';
-import ButtonShimmer from '@/components/landing/ButtonShimmer';
 
 export default function LandingPage() {
   return (
@@ -31,7 +30,6 @@ export default function LandingPage() {
       <ScrollReveal selector=".sec07" threshold={0.2} />
       <ScrollReveal selector=".sec09" threshold={0.2} />
       <StatCountUp />
-      <ButtonShimmer />
       <AtlasMethod />
       <HowItWorks />
       <PlatformStats />

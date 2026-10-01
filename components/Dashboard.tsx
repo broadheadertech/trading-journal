@@ -471,10 +471,10 @@ export default function Dashboard({
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#0e1725" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#5c6b7e' }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: '#5c6b7e' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#5c6b7e', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#5c6b7e', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
                   <Tooltip
-                    contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7' }}
+                    contentStyle={{ background: '#0c1119', border: '1px solid #182432', borderRadius: '2px', fontSize: '12px', color: '#edf2f7', fontFamily: 'var(--font-manrope), system-ui, sans-serif' }}
                     formatter={(val: unknown) => [formatCurrency(val as number), equityMode === 'drawdown' ? 'Drawdown' : 'Equity']}
                   />
                   <Area

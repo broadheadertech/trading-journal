@@ -21,7 +21,7 @@ const T = {
   line2: '#24344a',
   rail: '#141e2a',
   muted: '#7f8ea3',
-  mono: "'Geist Mono', ui-monospace, monospace",
+  mono: "var(--font-dm-mono), ui-monospace, Menlo, monospace",
 };
 
 /** Stage accent still honours any theme-provided --accent, falling back to ATLAS amber. */

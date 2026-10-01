@@ -485,8 +485,8 @@ export default function PsychologyJournal({
               <circle cx="100" cy="100" r="85" fill="none" stroke="#24c88a" strokeWidth="12" strokeLinecap="round"
                 strokeDasharray={`${85 * 2 * Math.PI * 0.75 * (m.healthScore / 100)} ${85 * 2 * Math.PI}`}
                 transform="rotate(135 100 100)" className="transition-all duration-700" />
-              <text x="100" y="95" textAnchor="middle" className="fill-[var(--text)]" fontSize="42" fontWeight="500" fontFamily="var(--mono)">{m.healthScore}</text>
-              <text x="100" y="120" textAnchor="middle" className={m.healthScore >= 60 ? 'fill-[var(--green)]' : m.healthScore >= 40 ? 'fill-[var(--amber)]' : 'fill-[var(--red)]'} fontSize="14" fontWeight="600">{m.healthLabel.toUpperCase()}</text>
+              <text x="100" y="95" textAnchor="middle" className="fill-[var(--text)]" fontSize="42" fontWeight="300" fontFamily="var(--mono)">{m.healthScore}</text>
+              <text x="100" y="120" textAnchor="middle" className={m.healthScore >= 60 ? 'fill-[var(--green)]' : m.healthScore >= 40 ? 'fill-[var(--amber)]' : 'fill-[var(--red)]'} fontSize="14" fontWeight="700" fontFamily="var(--font-manrope), system-ui, sans-serif">{m.healthLabel.toUpperCase()}</text>
             </svg>
             <div className="text-sm font-medium text-[var(--muted-foreground)] mt-2">Behavioral Health Score</div>
           </div>

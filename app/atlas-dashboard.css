@@ -92,9 +92,9 @@
     --copy:#c0ccda; --copy-alt:#c3cdda; --copy-hi:#d0e5ff; --copy-3:#919eaf;
     --link-soft:#668298; --teal:#33edc8;
     --amber-wash:#2a1f0a; --amber-wash-ink:#d99405; --pill-bg:#0f2018;
-    --display:'Archivo',system-ui,sans-serif;
-    --body:'Inter',system-ui,sans-serif;
-    --mono:'Geist Mono',ui-monospace,monospace;
+    --display:var(--font-manrope),system-ui,sans-serif;
+    --body:var(--font-manrope),system-ui,sans-serif;
+    --mono:var(--font-dm-mono),ui-monospace,Menlo,monospace;
     --side:240px; --top:72px;
   }
   & *, & *::before, & *::after{box-sizing:border-box}
@@ -154,6 +154,11 @@
   .klist div{display:grid;grid-template-columns:4px 1fr;gap:14px;align-items:start;padding:11px 0;border-bottom:1px solid var(--hair);
     font-size:13.5px;line-height:18px;color:var(--copy)}
   .klist div i{width:4px;height:4px;background:var(--amber);margin-top:7px}
+  /* atlas.css now defines a global .num (the shared figure class) that sets
+     font-family:var(--mono) and weight 300. .klist.num is the Trading rules
+     LIST, not a number — it would have gone monospace and thin. Restated
+     here, where .klist.num (0,2,0) outranks .num (0,1,0). */
+  .klist.num{font-family:var(--body);font-weight:400;letter-spacing:normal}
   .klist.num div{grid-template-columns:22px 1fr;gap:0}
   .klist.num div b{font-family:var(--display);font-weight:700;font-size:12px;color:var(--amber)}
 
@@ -165,11 +170,11 @@
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .provider .meta{margin:8px 0 0;font-size:12px;color:var(--muted-2)}
   .provider .big{margin-top:16px;border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:11px}
-  .provider .big b{display:block;font-family:var(--mono);font-weight:500;font-size:30px;line-height:38px}
+  .provider .big b{display:block;font-family:var(--mono);font-weight:300;font-size:30px;line-height:38px}
   .provider .big span{display:block;font-weight:700;font-size:10px;color:var(--muted-2);letter-spacing:.03em}
   .provider .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
   .provider .row3 div{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:9px 4px}
-  .provider .row3 b{display:block;font-family:var(--mono);font-weight:500;font-size:15px;line-height:20px}
+  .provider .row3 b{display:block;font-family:var(--mono);font-weight:400;font-size:15px;line-height:20px}
   .provider .row3 span{display:block;font-weight:700;font-size:9px;color:var(--muted-2);margin-top:4px}
   .provider .last{margin:9px 0 0;font-size:11px;color:var(--muted-2)}
   .provider .follow{display:flex;align-items:center;justify-content:center;gap:8px;height:38px;margin-top:14px;border-radius:2px;
@@ -180,7 +185,7 @@
   .analyst{border:1px solid var(--line);border-radius:2px;background:rgba(10,15,23,.2);padding:16px 18px;position:relative;margin-bottom:20px}
   .analyst .rank{position:absolute;left:12px;top:14px;width:19px;height:19px;display:flex;align-items:center;justify-content:center;
     border:1px solid var(--line-2);border-radius:2px;background:var(--panel-2);
-    font-family:var(--mono);font-weight:500;font-size:10px;color:var(--muted-2)}
+    font-family:var(--mono);font-weight:400;font-size:10px;color:var(--muted-2)}
   /* the top three carry the ranking, so they get the accent */
   .analyst:nth-child(-n+3) .rank{border-color:var(--amber);color:var(--amber)}
   .analyst .whorow{display:flex;align-items:center;gap:12px;margin-left:27px}
@@ -189,7 +194,7 @@
   .analyst .whorow p{margin:5px 0 0;font-size:11px;color:var(--muted-2)}
   .analyst .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
   .analyst .row3 div{border:1px solid var(--line);border-radius:2px;background:var(--panel-2);padding:7px 4px;text-align:center}
-  .analyst .row3 b{display:block;font-family:var(--mono);font-weight:500;font-size:14px;line-height:18px}
+  .analyst .row3 b{display:block;font-family:var(--mono);font-weight:400;font-size:14px;line-height:18px}
   .analyst .row3 span{display:block;font-weight:700;font-size:8.5px;color:var(--muted-2);margin-top:4px}
   .analyst .follow{display:flex;align-items:center;justify-content:center;height:32px;margin-top:12px;border-radius:2px;
     background:transparent;border:1px solid var(--amber);color:var(--amber);font-weight:700;font-size:12.5px;transition:background .15s,color .15s}
@@ -555,7 +560,7 @@
     font-size:11.5px;color:var(--muted-2);transition:border-color .15s,color .15s}
   .cfeed .cf-card .cf-pill:hover{border-color:var(--cf-chip-line);color:var(--text-2)}
   .cfeed .cf-card .cf-pill button{display:flex;cursor:pointer;color:inherit}
-  .cfeed .cf-card .cf-pill b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--text);
+  .cfeed .cf-card .cf-pill b{font-family:var(--mono);font-weight:400;font-size:12px;color:var(--text);
     min-width:12px;text-align:center}
   .cfeed .cf-card .cf-pill .cf-up.on{color:var(--amber)}
   .cfeed .cf-card .cf-pill .cf-down.on{color:var(--red)}
@@ -822,8 +827,8 @@
      one label, since it's effectively the hero card's title. */
   .hero .row1 .lbl{color:var(--text);opacity:1}
   .pill{height:20px;padding:0 12px;border-radius:2px;background:var(--pill-bg);display:inline-flex;align-items:center;
-    font-family:var(--mono);font-weight:500;font-size:10px;color:var(--green);opacity:1}
-  .bignum{font-family:var(--mono);font-weight:500;font-size:44px;line-height:57px;margin:6px 0 0;color:var(--text)}
+    font-family:var(--mono);font-weight:400;font-size:10px;color:var(--green);opacity:1}
+  .bignum{font-family:var(--mono);font-weight:300;font-size:44px;line-height:57px;margin:6px 0 0;color:var(--text)}
   .wl{display:flex;gap:0;align-items:center;margin-top:4px;font-family:var(--mono);font-size:13px}
   .wl span{display:flex;align-items:center;gap:7px}
   .wl .l{margin-left:69px}
@@ -842,7 +847,7 @@
      dial. `.scoredial` cannot collide with any Tailwind utility name. */
   .scoredial{position:relative;width:80px;height:80px;margin:0 auto}
   .scoredial .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    font-family:var(--mono);font-size:34px;color:var(--text)}
+    font-family:var(--mono);font-weight:300;font-size:34px;color:var(--text)}
   /* .score .ttl sits directly under the 80px dial with only 14px of margin;
      on the "Execution Score" title that reads as touching/overlapping the
      ring's bottom edge. Give it real clearance. */
@@ -859,7 +864,7 @@
   /* Same role as .lbl (stat-tile caption e.g. "TOTAL TRADES") — matched to the
      same tone for consistency. */
   .stat b{display:block;font-weight:700;font-size:9.5px;color:var(--text-2);letter-spacing:.04em}
-  .stat em{display:block;font-style:normal;font-family:var(--mono);font-size:26px;line-height:34px;margin-top:8px}
+  .stat em{display:block;font-style:normal;font-family:var(--mono);font-weight:300;font-size:26px;line-height:34px;margin-top:8px}
   @media(max-width:1080px){.stats{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:560px){.stats{grid-template-columns:1fr}}
 
@@ -878,7 +883,7 @@
   .mrow:last-child{border-bottom:1px solid var(--hair)}
   .mrow .ic{width:16px;flex:none;color:var(--muted-3)}
   .mrow .lb{margin-left:24px}
-  .mrow .val{margin-left:auto;font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--text)}
+  .mrow .val{margin-left:auto;font-family:var(--mono);font-weight:400;font-size:12.5px;color:var(--text)}
   .mrow .val.dash{font-family:var(--body);font-weight:700;color:var(--muted)}
 
   /* activity map */
