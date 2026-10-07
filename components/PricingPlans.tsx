@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from 'convex/react';
+import Link from 'next/link';
+import { useQuery, useMutation } from 'convex/react';
+import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useSubscription } from '@/hooks/useSubscription';
+import { SUBSCRIPTION_AGREEMENT_VERSION } from '@/lib/agreement';
 import { X, Check, Loader2, Crown, QrCode } from 'lucide-react';
 import QrPaymentModal from '@/components/QrPaymentModal';
 
@@ -22,19 +25,36 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [qrPlan, setQrPlan] = useState<{ planId: string; name: string; price: number } | null>(null);
+  const [agreed, setAgreed] = useState(false);
+  const { user } = useUser();
+  const recordConsent = useMutation(api.consents.recordConsent);
 
   if (!open) return null;
 
   type Plan = NonNullable<typeof plans>[number];
 
   const handleSubscribe = async (plan: Plan) => {
+    // Subscription Agreement must be accepted before any paid flow.
+    if (!agreed) {
+      setError('Please accept the Subscription Agreement to continue.');
+      return;
+    }
     // QR payment is a manual, admin-verified flow — open the upload modal
-    // instead of redirecting to a hosted checkout.
+    // instead of redirecting to a hosted checkout. Consent is recorded on submit.
     if (provider === 'qr') {
       const price = interval === 'year' ? plan.priceYearly : plan.priceMonthly;
       setQrPlan({ planId: plan.planId, name: plan.name, price });
       return;
     }
+    // Log consent for the card/e-wallet flow before redirecting to checkout.
+    recordConsent({
+      flow: provider,
+      planId: plan.planId,
+      interval,
+      agreementVersion: SUBSCRIPTION_AGREEMENT_VERSION,
+      userName: user?.fullName ?? undefined,
+      userEmail: user?.primaryEmailAddress?.emailAddress ?? undefined,
+    }).catch(() => {});
     setLoading(plan.planId);
     setError(null);
     try {
@@ -176,6 +196,27 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
             </p>
           )}
 
+          <label
+            style={{
+              display: 'flex', alignItems: 'flex-start', gap: 9, margin: '16px auto 0',
+              maxWidth: 460, textAlign: 'left', fontSize: 12, lineHeight: '17px',
+              color: 'var(--muted)', cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              style={{ marginTop: 1, flex: 'none', width: 15, height: 15, accentColor: 'var(--amber)', cursor: 'pointer' }}
+            />
+            <span>
+              I have read and agree to the{' '}
+              <Link href="/subscription-agreement" target="_blank" style={{ color: 'var(--amber)' }}>Subscription Agreement</Link>,{' '}
+              <Link href="/terms" target="_blank" style={{ color: 'var(--amber)' }}>Terms</Link> and{' '}
+              <Link href="/privacy" target="_blank" style={{ color: 'var(--amber)' }}>Privacy Policy</Link>.
+            </span>
+          </label>
+
         {error && (
           <div className="warn" style={{ textAlign: 'left' }}>
             <span>{error}</span>
@@ -249,8 +290,9 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
                   ) : (
                     <button
                       onClick={() => handleSubscribe(plan)}
-                      disabled={loading === plan.planId || !canSubscribe}
+                      disabled={loading === plan.planId || !canSubscribe || !agreed}
                       className="cta amber disabled:opacity-50"
+                      title={!agreed ? 'Accept the Subscription Agreement first' : undefined}
                     >
                       {loading === plan.planId && <Loader2 size={14} className="animate-spin" />}
                       {!canSubscribe ? 'Coming Soon' : provider === 'qr' ? 'Pay via QR' : 'Subscribe'}
@@ -282,6 +324,7 @@ export default function PricingPlans({ open, onClose }: PricingPlansProps) {
         onClose={() => setQrPlan(null)}
         plan={qrPlan}
         interval={interval}
+        initialAgreed={agreed}
       />
     </div>
   );

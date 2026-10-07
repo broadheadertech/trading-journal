@@ -73,11 +73,14 @@ export const submitPayment = mutation({
     note: v.optional(v.string()),
     userName: v.optional(v.string()),
     userEmail: v.optional(v.string()),
+    agreedToTerms: v.optional(v.boolean()),
+    agreementVersion: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
     if (!args.referenceId.trim()) throw new Error("Reference ID is required");
     if (!args.screenshotUrl) throw new Error("Payment screenshot is required");
+    if (!args.agreedToTerms) throw new Error("You must accept the Subscription Agreement");
 
     const now = new Date().toISOString();
     const id = await ctx.db.insert("qrPaymentSubmissions", {
@@ -94,8 +97,23 @@ export const submitPayment = mutation({
       referenceId: args.referenceId.trim(),
       screenshotUrl: args.screenshotUrl,
       note: args.note,
+      agreedToTerms: true,
+      agreedAt: now,
+      agreementVersion: args.agreementVersion,
       status: "pending",
       createdAt: now,
+    });
+
+    // Mirror the acceptance into the central consent log.
+    await ctx.db.insert("subscriptionConsents", {
+      userId,
+      userName: args.userName,
+      userEmail: args.userEmail,
+      flow: "qr",
+      planId: args.planId,
+      interval: args.interval,
+      agreementVersion: args.agreementVersion ?? "unversioned",
+      agreedAt: now,
     });
 
     await ctx.db.insert("adminEvents", {

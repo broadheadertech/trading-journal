@@ -119,6 +119,13 @@ function SubmissionCard({ s, onApprove, onReject }: { s: any; onApprove: () => P
           <span className="font-mono font-semibold text-[var(--foreground)] break-all">{s.referenceId}</span>
         </div>
         {s.note && <div className="text-xs text-[var(--muted-foreground)]">Note: {s.note}</div>}
+        {s.agreedToTerms && (
+          <div className="text-[11px] text-emerald-400 inline-flex items-center gap-1">
+            <Check size={11} /> Agreed to Subscription Agreement
+            {s.agreementVersion ? ` (v${s.agreementVersion})` : ''}
+            {s.agreedAt ? ` · ${new Date(s.agreedAt).toLocaleString()}` : ''}
+          </div>
+        )}
         <div className="text-[11px] text-[var(--muted-foreground)]">{new Date(s.createdAt).toLocaleString()}</div>
       </div>
       <div className="flex sm:flex-col items-center justify-center gap-2">

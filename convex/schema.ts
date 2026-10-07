@@ -993,6 +993,11 @@ export default defineSchema({
     referenceId: v.string(),              // txn ref / on-chain hash entered by user
     screenshotUrl: v.string(),            // uploaded proof screenshot
     note: v.optional(v.string()),         // optional user note
+    // Subscription Agreement consent captured at submit time (optional for
+    // back-compat with rows created before the agreement gate existed).
+    agreedToTerms: v.optional(v.boolean()),
+    agreedAt: v.optional(v.string()),
+    agreementVersion: v.optional(v.string()),
     status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
     reviewNote: v.optional(v.string()),   // admin note (esp. on reject)
     reviewedBy: v.optional(v.string()),
@@ -1001,4 +1006,19 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_status", ["status"]),
+
+  // ─── Subscription Agreement consent log ────────────────────────────
+  // One row per acceptance of the Subscription Agreement, across every
+  // subscribe path (card/Stripe, e-wallet/PayMongo, manual QR). Auditable
+  // record of who agreed, to which version, and when.
+  subscriptionConsents: defineTable({
+    userId: v.string(),
+    userName: v.optional(v.string()),
+    userEmail: v.optional(v.string()),
+    flow: v.union(v.literal("stripe"), v.literal("paymongo"), v.literal("qr")),
+    planId: v.optional(v.string()),
+    interval: v.optional(v.union(v.literal("month"), v.literal("year"))),
+    agreementVersion: v.string(),
+    agreedAt: v.string(),
+  }).index("by_user", ["userId"]),
 });

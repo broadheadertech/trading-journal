@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useQuery, useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useToast } from '@/components/ui/Toast';
+import { SUBSCRIPTION_AGREEMENT_VERSION } from '@/lib/agreement';
 import { X, Loader2, Upload, Check, Copy, QrCode, ShieldCheck } from 'lucide-react';
 import type { Id } from '@/convex/_generated/dataModel';
 
@@ -13,9 +15,10 @@ interface QrPaymentModalProps {
   onClose: () => void;
   plan: { planId: string; name: string; price: number } | null;
   interval: 'month' | 'year';
+  initialAgreed?: boolean;
 }
 
-export default function QrPaymentModal({ open, onClose, plan, interval }: QrPaymentModalProps) {
+export default function QrPaymentModal({ open, onClose, plan, interval, initialAgreed = false }: QrPaymentModalProps) {
   const { user } = useUser();
   const { showToast } = useToast();
   const methods = useQuery(api.qrPayments.getActiveMethods);
@@ -30,6 +33,12 @@ export default function QrPaymentModal({ open, onClose, plan, interval }: QrPaym
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [agreed, setAgreed] = useState(initialAgreed);
+
+  // Re-sync consent each time the modal opens (it may be pre-accepted upstream).
+  useEffect(() => {
+    if (open) setAgreed(initialAgreed);
+  }, [open, initialAgreed]);
 
   if (!open || !plan) return null;
 
@@ -61,6 +70,7 @@ export default function QrPaymentModal({ open, onClose, plan, interval }: QrPaym
   const handleSubmit = async () => {
     if (!referenceId.trim()) return showToast('Please enter the payment reference ID', 'error');
     if (!screenshotUrl) return showToast('Please upload your payment screenshot', 'error');
+    if (!agreed) return showToast('Please accept the Subscription Agreement', 'error');
     setSubmitting(true);
     try {
       await submitPayment({
@@ -76,6 +86,8 @@ export default function QrPaymentModal({ open, onClose, plan, interval }: QrPaym
         note: note.trim() || undefined,
         userName: user?.fullName ?? user?.username ?? undefined,
         userEmail: user?.primaryEmailAddress?.emailAddress ?? undefined,
+        agreedToTerms: agreed,
+        agreementVersion: SUBSCRIPTION_AGREEMENT_VERSION,
       });
       setSubmitted(true);
     } catch (err) {
@@ -258,9 +270,26 @@ export default function QrPaymentModal({ open, onClose, plan, interval }: QrPaym
                   />
                 </div>
 
+                {/* Subscription Agreement consent */}
+                <label className="flex items-start gap-2 text-xs text-[var(--muted-foreground)] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                    className="mt-0.5 shrink-0"
+                    style={{ accentColor: 'var(--accent)' }}
+                  />
+                  <span>
+                    I have read and agree to the{' '}
+                    <Link href="/subscription-agreement" target="_blank" className="text-[var(--accent)] hover:underline">Subscription Agreement</Link>,{' '}
+                    <Link href="/terms" target="_blank" className="text-[var(--accent)] hover:underline">Terms</Link> and{' '}
+                    <Link href="/privacy" target="_blank" className="text-[var(--accent)] hover:underline">Privacy Policy</Link>.
+                  </span>
+                </label>
+
                 <button
                   onClick={handleSubmit}
-                  disabled={submitting || uploading}
+                  disabled={submitting || uploading || !agreed}
                   className="w-full py-2.5 rounded-lg text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {submitting ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}

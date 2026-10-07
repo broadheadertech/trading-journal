@@ -23,6 +23,7 @@ import type * as coachReviews from "../coachReviews.js";
 import type * as coachSessions from "../coachSessions.js";
 import type * as coaches from "../coaches.js";
 import type * as cohorts from "../cohorts.js";
+import type * as consents from "../consents.js";
 import type * as courses from "../courses.js";
 import type * as crons from "../crons.js";
 import type * as discover from "../discover.js";
@@ -79,6 +80,7 @@ declare const fullApi: ApiFromModules<{
   coachSessions: typeof coachSessions;
   coaches: typeof coaches;
   cohorts: typeof cohorts;
+  consents: typeof consents;
   courses: typeof courses;
   crons: typeof crons;
   discover: typeof discover;

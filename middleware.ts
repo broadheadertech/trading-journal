@@ -19,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
   '/use-cases',
   '/privacy',
   '/terms',
+  '/subscription-agreement',
   '/u/(.*)',           // public profile pages
   '/api/stripe/webhook',
   '/originkit-preview', // throwaway Originkit component preview
