@@ -426,6 +426,7 @@ export default defineSchema({
       v.literal("expired"),     // timed out
     ),
     tpHit: v.optional(v.number()),      // which TP level hit (1-based) when status=won
+    tpsHit: v.optional(v.array(v.number())), // 1-based TP levels hit while still ACTIVE (partial take-profit)
     // Per-signal pip / lot overrides — broker conventions vary, especially for gold
     // (MT4 standard: 1 pip = $0.01; some signal providers: 1 pip = $0.10).
     pipSize: v.optional(v.number()),

@@ -44,6 +44,7 @@ type Signal = {
   rationale: string;
   status: Status;
   tpHit?: number;
+  tpsHit?: number[];
   postedAt: string;
   expiresAt?: string;
   closedAt?: string;
@@ -418,10 +419,9 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
         </div>
 
         {s.takeProfits.map((tp, i) => {
-          // Only the specific TP the poster marked as the closing fill gets the
-          // emerald "hit" treatment. Earlier TPs stay neutral — the bullseye now
-          // means "this is where the position closed", not "the market passed here".
-          const hit = s.tpHit === i + 1;
+          // A TP reads as hit if it's the closing fill (status=won → tpHit) or it
+          // was marked as a partial hit while the signal is still running (tpsHit).
+          const hit = s.tpHit === i + 1 || (s.tpsHit?.includes(i + 1) ?? false);
           // Per-TP R:R — risk anchored at entryLow → SL, reward at this TP. Shown
           // as "1:N.N" so posters and followers can see how R:R climbs with each TP.
           const tpRisk = Math.abs(s.entryLow - s.stopLoss);
@@ -493,7 +493,7 @@ function SignalCard({ signal: s, isOwn, onUpdate, onViewHistory, onEdit }: {
         </span>
 
         {isOwn && (s.status === 'pending' || s.status === 'active') && (
-          <OwnerActions takeProfits={s.takeProfits} onUpdate={onUpdate} status={s.status} onEdit={() => onEdit(s)} />
+          <OwnerActions signalId={s._id} takeProfits={s.takeProfits} tpsHit={s.tpsHit} onUpdate={onUpdate} status={s.status} onEdit={() => onEdit(s)} />
         )}
       </div>
 
@@ -604,13 +604,37 @@ function PosterWinRateBadge({ stats }: { stats: PosterStats }) {
   );
 }
 
-function OwnerActions({ takeProfits, onUpdate, status, onEdit }: { takeProfits: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status; onEdit: () => void }) {
+function OwnerActions({ signalId, takeProfits, tpsHit, onUpdate, status, onEdit }: { signalId: Id<'signals'>; takeProfits: number[]; tpsHit?: number[]; onUpdate: (status: Status, tpHit?: number) => Promise<unknown>; status: Status; onEdit: () => void }) {
   const [tpPickerOpen, setTpPickerOpen] = useState(false);
+  const toggleTpHit = useMutation(api.signals.toggleTpHit);
+  const hits = tpsHit ?? [];
+  const canMarkPartial = (status === 'active' || status === 'pending') && takeProfits.length > 0;
 
   const act: React.CSSProperties = { height: 24, padding: '0 10px', gap: 6, fontSize: 11 };
 
   return (
     <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', position: 'relative' }}>
+      {/* Partial TP hits — mark a level reached while the signal keeps running.
+          Toggling does not close the signal; use "Target hit" / "SL" for that. */}
+      {canMarkPartial && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginRight: 2 }}>
+          {takeProfits.map((_, i) => {
+            const on = hits.includes(i + 1);
+            return (
+              <button
+                key={i}
+                onClick={() => toggleTpHit({ id: signalId, tp: i + 1 })}
+                className="chip"
+                style={{ ...act, padding: '0 8px', gap: 4, color: on ? 'var(--green)' : 'var(--muted-2)', borderColor: on ? 'var(--green)' : 'var(--line-2)' }}
+                title={on ? `TP${i + 1} marked hit — click to undo` : `Mark TP${i + 1} hit (keeps running)`}
+              >
+                <Target size={10} weight={on ? 'bold' : undefined} /> TP{i + 1}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <button onClick={onEdit} title="Edit signal" className="chip" style={{ ...act, color: 'var(--amber)', borderColor: 'var(--amber)' }}>
         <Pencil size={10} /> Edit
       </button>

@@ -390,6 +390,34 @@ export const updateStatus = mutation({
   },
 });
 
+/** Toggle a single take-profit level as hit while the signal is still running
+ *  (partial take-profit). Does NOT change status — use updateStatus to close
+ *  the signal won/lost. Poster (or admin) only. */
+export const toggleTpHit = mutation({
+  args: {
+    id: v.id("signals"),
+    tp: v.number(), // 1-based TP level
+  },
+  handler: async (ctx, { id, tp }) => {
+    const userId = await requireUser(ctx);
+    const signal = await ctx.db.get(id);
+    if (!signal) throw new Error("Signal not found");
+
+    const adminId = process.env.ADMIN_USER_ID;
+    if (signal.posterId !== userId && userId !== adminId) {
+      throw new Error("Only the poster (or admin) can update this signal.");
+    }
+    if (tp < 1 || tp > signal.takeProfits.length) throw new Error("Invalid TP level");
+
+    const current = signal.tpsHit ?? [];
+    const next = current.includes(tp)
+      ? current.filter((n) => n !== tp)
+      : [...current, tp].sort((a, b) => a - b);
+
+    await ctx.db.patch(id, { tpsHit: next });
+  },
+});
+
 // ─── Analyst leaderboard: per-poster hit-rate from closed signals ────
 export const leaderboard = query({
   args: {},

@@ -858,7 +858,7 @@ function SignalDetailModal({ signal, onClose }: { signal: ProfileSignal | null; 
             <div style={sigLabelStyle}>Take profit{s.takeProfits.length > 1 ? 's' : ''}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
               {s.takeProfits.map((tp, i) => {
-                const hit = typeof s.tpHit === 'number' && (i + 1) <= s.tpHit;
+                const hit = (typeof s.tpHit === 'number' && (i + 1) <= s.tpHit) || (s.tpsHit?.includes(i + 1) ?? false);
                 return (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'var(--mono)', fontSize: 13, padding: '7px 11px', border: '1px solid var(--line)', borderRadius: 2, background: 'var(--bg)' }}>
                     <span style={{ color: 'var(--atlas-muted)' }}>TP{i + 1}</span>
