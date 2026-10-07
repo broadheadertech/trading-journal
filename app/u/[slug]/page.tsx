@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
@@ -535,6 +535,7 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
   const [direction, setDirection] = useState<'all' | 'long' | 'short'>('all');
   const [sort, setSort] = useState<SigSort>('new');
   const [visible, setVisible] = useState(SIG_BATCH);
+  const [detail, setDetail] = useState<ProfileSignal | null>(null);
 
   const all = useMemo(() => signals ?? [], [signals]);
   const symbols = useMemo(
@@ -661,7 +662,7 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
       ) : (
         <>
           <div className="pp-grid2">
-            {shown.map(s => <SignalCard key={s._id} s={s} />)}
+            {shown.map(s => <SignalCard key={s._id} s={s} onOpen={() => setDetail(s)} />)}
           </div>
 
           {visible < filtered.length && (
@@ -676,6 +677,8 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
           )}
         </>
       )}
+
+      <SignalDetailModal signal={detail} onClose={() => setDetail(null)} />
     </>
   );
 }
@@ -684,7 +687,7 @@ function SignalsPanel({ signals }: { signals: ProfileSignal[] | undefined }) {
  *  rationale belongs to the card that owns it — keeping it in the panel would
  *  mean a shared map keyed by id and would re-render all twelve cards on every
  *  toggle. */
-function SignalCard({ s }: { s: ProfileSignal }) {
+function SignalCard({ s, onOpen }: { s: ProfileSignal; onOpen: () => void }) {
   const [expanded, setExpanded] = useState(false);
 
   const outcome = s.status === 'won' ? 'won' : s.status === 'lost' ? 'lost' : 'open';
@@ -696,7 +699,14 @@ function SignalCard({ s }: { s: ProfileSignal }) {
 
   return (
     <div className={'pp-item pp-sigcard ' + outcome}>
-      <div className="pp-sigmain">
+      <div
+        className="pp-sigmain"
+        role="button"
+        tabIndex={0}
+        style={{ cursor: 'pointer' }}
+        onClick={onOpen}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(); } }}
+      >
         {/* line 1 — what the signal is */}
         <div className="pp-sigtop">
           <span className="pp-sym">{s.symbol}</span>
@@ -744,7 +754,7 @@ function SignalCard({ s }: { s: ProfileSignal }) {
                 type="button"
                 className="pp-seemore"
                 aria-expanded={expanded}
-                onClick={() => setExpanded(v => !v)}
+                onClick={(e) => { e.stopPropagation(); setExpanded(v => !v); }}
               >
                 {expanded ? 'See less' : 'See more'}
                 <CaretDown size={11} weight="bold" className={expanded ? 'is-up' : undefined} />
@@ -754,6 +764,127 @@ function SignalCard({ s }: { s: ProfileSignal }) {
         )}
       </div>
       <SignalSocialBar signalId={s._id} />
+    </div>
+  );
+}
+
+const sigLabelStyle: React.CSSProperties = {
+  fontSize: 9.5, fontWeight: 700, letterSpacing: '.08em',
+  color: 'var(--muted-2)', textTransform: 'uppercase',
+};
+
+function cap(x: string) {
+  return x.charAt(0).toUpperCase() + x.slice(1);
+}
+
+function SigField({ label, value, color }: { label: string; value: string; color?: string }) {
+  return (
+    <div style={{ border: '1px solid var(--line)', borderRadius: 2, padding: '9px 11px', background: 'var(--bg)' }}>
+      <div style={sigLabelStyle}>{label}</div>
+      <div style={{ marginTop: 4, fontFamily: 'var(--mono)', fontSize: 14, fontWeight: 600, color: color ?? 'var(--text)' }}>{value}</div>
+    </div>
+  );
+}
+
+/** Full detail of a single signal — opened by clicking a card. Shows entry,
+ *  stop, every take-profit level, R:R, risk, the full description and dates. */
+function SignalDetailModal({ signal, onClose }: { signal: ProfileSignal | null; onClose: () => void }) {
+  useEffect(() => {
+    if (!signal) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [signal, onClose]);
+
+  if (!signal) return null;
+  const s = signal;
+
+  const isLong = s.direction === 'long';
+  const dirColor = isLong ? 'var(--green)' : 'var(--red)';
+  const order = s.orderType && s.orderType !== 'market'
+    ? `${isLong ? 'Buy' : 'Sell'} ${cap(s.orderType)}`
+    : `${isLong ? 'Buy' : 'Sell'} Market`;
+  const outcome = s.status === 'won' ? 'won' : s.status === 'lost' ? 'lost' : 'open';
+  const tone = outcome === 'won' ? 'var(--green)' : outcome === 'lost' ? 'var(--red)' : 'var(--atlas-muted)';
+  const pips = s.rationale ? extractPips(s.rationale) : null;
+  const entry = s.entryHigh !== s.entryLow ? `${s.entryLow} – ${s.entryHigh}` : `${s.entryLow}`;
+  const riskColor = s.riskLevel === 'high' ? 'var(--red)' : s.riskLevel === 'low' ? 'var(--green)' : 'var(--amber)';
+
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(0,0,0,.6)', backdropFilter: 'blur(4px)' }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto', background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 4, padding: '22px 22px 24px', position: 'relative' }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{ position: 'absolute', top: 14, right: 14, color: 'var(--atlas-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <X size={18} />
+        </button>
+
+        {/* header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', paddingRight: 28 }}>
+          <span style={{ fontFamily: 'var(--mono)', fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{s.symbol}</span>
+          <span style={{ fontWeight: 700, fontSize: 10, letterSpacing: '.05em', color: dirColor, border: `1px solid ${dirColor}`, borderRadius: 2, padding: '2px 7px' }}>{s.direction.toUpperCase()}</span>
+          <span style={{ fontSize: 11, color: 'var(--atlas-muted)' }}>{order}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', color: tone }}>{s.status}</span>
+        </div>
+
+        {/* headline result */}
+        <div style={{ marginTop: 14, fontFamily: 'var(--mono)', fontSize: 22, fontWeight: 700, color: tone }}>
+          {typeof s.actualR === 'number'
+            ? `${s.actualR >= 0 ? '+' : ''}${s.actualR}R`
+            : pips !== null
+              ? `${pips > 0 ? '+' : ''}${pips.toLocaleString()} pips`
+              : 'Awaiting result'}
+        </div>
+
+        {/* levels */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18 }}>
+          <SigField label="Entry" value={entry} />
+          <SigField label="Stop Loss" value={String(s.stopLoss)} color="var(--red)" />
+          <SigField label="Risk : Reward" value={s.rrRatio ? `1 : ${s.rrRatio}` : '—'} />
+          <SigField label="Risk Level" value={cap(s.riskLevel)} color={riskColor} />
+        </div>
+
+        {/* take profits */}
+        {s.takeProfits.length > 0 && (
+          <div style={{ marginTop: 18 }}>
+            <div style={sigLabelStyle}>Take profit{s.takeProfits.length > 1 ? 's' : ''}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {s.takeProfits.map((tp, i) => {
+                const hit = typeof s.tpHit === 'number' && (i + 1) <= s.tpHit;
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'var(--mono)', fontSize: 13, padding: '7px 11px', border: '1px solid var(--line)', borderRadius: 2, background: 'var(--bg)' }}>
+                    <span style={{ color: 'var(--atlas-muted)' }}>TP{i + 1}</span>
+                    <span style={{ color: hit ? 'var(--green)' : 'var(--text)', fontWeight: 600 }}>{tp}{hit ? '  ✓' : ''}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* description */}
+        {s.rationale && (
+          <div style={{ marginTop: 18 }}>
+            <div style={sigLabelStyle}>Description</div>
+            <p style={{ margin: '8px 0 0', fontSize: 13.5, lineHeight: '21px', color: 'var(--atlas-muted)', whiteSpace: 'pre-wrap' }}>{s.rationale}</p>
+          </div>
+        )}
+
+        {/* dates */}
+        <div style={{ marginTop: 18, paddingTop: 14, borderTop: '1px solid var(--line)', display: 'flex', flexWrap: 'wrap', gap: '4px 16px', fontSize: 11, color: 'var(--muted-2)' }}>
+          <span>Posted {new Date(s.postedAt).toLocaleString()}</span>
+          {s.closedAt && <span>· Closed {new Date(s.closedAt).toLocaleString()}</span>}
+          {!s.closedAt && s.expiresAt && <span>· Expires {new Date(s.expiresAt).toLocaleString()}</span>}
+        </div>
+      </div>
     </div>
   );
 }
