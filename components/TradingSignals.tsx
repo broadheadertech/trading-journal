@@ -162,6 +162,9 @@ export default function TradingSignals() {
               <Lock size={14} style={{ marginRight: 9 }} /> Post (Core+)
             </button>
           )}
+          <a className="btn-g" href="/guide/post-signal" target="_blank" rel="noopener noreferrer" title="How to post a signal">
+            How to post
+          </a>
         </div>
       </div>
 
