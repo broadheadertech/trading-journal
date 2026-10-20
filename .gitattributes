@@ -1,0 +1,24 @@
+# Normalize line endings for text files; let Git auto-detect.
+* text=auto
+
+# Binary assets — never apply EOL/text conversion (prevents corruption).
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.svg  -text
+*.mp4  binary
+*.webm binary
+*.mov  binary
+*.m4v  binary
+*.mp3  binary
+*.wav  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.eot  binary
+*.zip  binary
