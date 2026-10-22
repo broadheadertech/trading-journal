@@ -94,7 +94,7 @@ export default function Pricing() {
             <Features items={CORE_FEATURES} stroke="#24c88a" />
             <div className="foot">
               <div className="best"><em>BEST</em><p>Best for traders who want to build a track record</p></div>
-              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <Link className="buy" href="/sign-up">Start 30-Day Free Trial</Link>
               <p className="nocard">No credit card required</p>
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function Pricing() {
             <Features items={PRO_FEATURES} stroke="#d99405" />
             <div className="foot">
               <div className="best"><em>BEST</em><p>Best for traders who want data-driven performance</p></div>
-              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <Link className="buy" href="/sign-up">Start 30-Day Free Trial</Link>
               <p className="nocard">No credit card required</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function Pricing() {
             <Features items={ELITE_FEATURES} stroke="#24c88a" />
             <div className="foot">
               <div className="best"><em>BEST</em><p>Best for communities that need visibility across every account</p></div>
-              <Link className="buy" href="/pricing">Start 30-Day Free Trial</Link>
+              <Link className="buy" href="/sign-up">Start 30-Day Free Trial</Link>
               <p className="nocard">No credit card required</p>
             </div>
           </div>

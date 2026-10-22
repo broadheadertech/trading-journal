@@ -77,7 +77,7 @@ export default function PricingPage() {
             </ul>
             <div className="foot">
               <div className="goal" style={{ marginTop: 0, paddingTop: 0, border: 0 }}><i></i><span><b>Goal:</b> Get traders consistent &amp; disciplined</span></div>
-              <Link className="buy" href="/pricing">Start 15-Day Free Trial
+              <Link className="buy" href="/sign-up">Start 15-Day Free Trial
                 <svg width="5" height="10" viewBox="0 0 5 10" fill="none" style={{ marginLeft: '10px' }}><path d="M0 0 L5 5 L0 10" stroke="#edf2f7" strokeWidth="1.6"/></svg></Link>
               <p className="nocard">No credit card required</p>
             </div>
@@ -103,7 +103,7 @@ export default function PricingPage() {
             </ul>
             <div className="foot">
               <div className="goal" style={{ marginTop: 0, paddingTop: 0, border: 0 }}><i></i><span><b>Goal:</b> Turn traders into data-driven performers</span></div>
-              <Link className="buy" href="/pricing">Start 15-Day Free Trial
+              <Link className="buy" href="/sign-up">Start 15-Day Free Trial
                 <svg width="5" height="10" viewBox="0 0 5 10" fill="none" style={{ marginLeft: '10px' }}><path d="M0 0 L5 5 L0 10" stroke="#0a0a0a" strokeWidth="1.6"/></svg></Link>
               <p className="nocard">No credit card required</p>
             </div>
@@ -129,7 +129,7 @@ export default function PricingPage() {
             </ul>
             <div className="foot">
               <div className="goal" style={{ marginTop: 0, paddingTop: 0, border: 0 }}><i></i><span><b>Goal:</b> Build your Atlas Trading Academy ecosystem</span></div>
-              <Link className="buy" href="/pricing">Start 15-Day Free Trial
+              <Link className="buy" href="/sign-up">Start 15-Day Free Trial
                 <svg width="5" height="10" viewBox="0 0 5 10" fill="none" style={{ marginLeft: '10px' }}><path d="M0 0 L5 5 L0 10" stroke="#edf2f7" strokeWidth="1.6"/></svg></Link>
               <p className="nocard">No credit card required</p>
             </div>
@@ -273,7 +273,7 @@ export default function PricingPage() {
             <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>Full Pro access for 14 days</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>Cancel anytime — one click</span>
           </div>
-          <div className="row" style={{ marginTop: '26px' }}><Link className="btn btn-amber" href="/pricing">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round"/></svg></Link></div>
+          <div className="row" style={{ marginTop: '26px' }}><Link className="btn btn-amber" href="/sign-up">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round"/></svg></Link></div>
           <p style={{ margin: '44px 0 0', fontSize: '12.5px', color: 'var(--muted-2)' }}>15-day free trial · No credit card · Cancel in one click</p>
         </div>
       </div>
