@@ -131,18 +131,16 @@ export default function Sidebar({
           {!collapsed && <h5>UTILITIES</h5>}
           {collapsed && <h5 style={{ height: 1, margin: '24px 0 8px', padding: 0 }} />}
 
-          {isFree && (
-            <a
-              role="button"
-              tabIndex={0}
-              onClick={() => setPricingOpen(true)}
-              style={{ cursor: 'pointer' }}
-              title={collapsed ? 'Subscription' : undefined}
-            >
-              <span className="ic"><CreditCard size={16} /></span>
-              {!collapsed && <span className="lb">Subscription</span>}
-            </a>
-          )}
+          <a
+            role="button"
+            tabIndex={0}
+            onClick={() => setPricingOpen(true)}
+            style={{ cursor: 'pointer' }}
+            title={collapsed ? (isFree ? 'Upgrade' : 'Subscription') : undefined}
+          >
+            <span className="ic"><CreditCard size={16} /></span>
+            {!collapsed && <span className="lb">{isFree ? 'Upgrade' : 'Subscription'}</span>}
+          </a>
 
           <a role="button" tabIndex={0} onClick={onImport} style={{ cursor: 'pointer' }} title={collapsed ? 'Imports' : undefined}>
             <span className="ic"><UploadSimple size={16} /></span>
