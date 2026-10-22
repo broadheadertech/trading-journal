@@ -349,9 +349,9 @@ export default function Sidebar({
                 )}
               </div>
 
-              {/* 5. Plan chip */}
+              {/* 5. Plan chip — clickable to open the pricing / manage modal */}
               <span className="plan" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <SubscriptionBadge />
+                <SubscriptionBadge onClick={() => setPricingOpen(true)} />
               </span>
 
               {/* 6. Profile link */}

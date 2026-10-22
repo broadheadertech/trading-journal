@@ -10,7 +10,7 @@ const TIER_COLOR: Record<string, string> = {
   elite: 'var(--amber)',
 };
 
-export default function SubscriptionBadge() {
+export default function SubscriptionBadge({ onClick }: { onClick?: () => void }) {
   const { planId, isActive, isLoading } = useSubscription();
 
   if (isLoading) return null;
@@ -23,6 +23,11 @@ export default function SubscriptionBadge() {
   return (
     <span
       className="chip"
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
+      title={onClick ? (isFreeTier ? 'Upgrade your plan' : 'Manage subscription') : undefined}
       style={{
         height: 18,
         padding: '0 7px',
@@ -36,6 +41,7 @@ export default function SubscriptionBadge() {
         textTransform: 'uppercase',
         lineHeight: 1,
         verticalAlign: 'middle',
+        cursor: onClick ? 'pointer' : undefined,
       }}
     >
       {isFreeTier ? 'Free' : label}

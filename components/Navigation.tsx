@@ -160,7 +160,7 @@ export default function Navigation({
             <button onClick={onThemeToggle} className="p-2 rounded-lg hover:bg-[var(--muted)] text-[var(--muted-foreground)] transition-colors" title="Toggle Theme">
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <SubscriptionBadge />
+            <SubscriptionBadge onClick={() => setPricingOpen(true)} />
             <UserButton afterSignOutUrl="/sign-in" />
             {/* Menu button — visible on mobile only (desktop uses bottom bar for all tabs) */}
             <button
