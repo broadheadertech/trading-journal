@@ -68,11 +68,11 @@ export default function SubscriptionAgreementPage() {
             </section>
 
             <section>
-              <h2>3. Billing &amp; Auto-Renewal (Card / E-Wallet)</h2>
+              <h2>3. Billing &amp; Renewal</h2>
               <ul>
-                <li>Card (Stripe) and e-wallet (PayMongo) subscriptions are billed in advance and <strong>auto-renew</strong> each period until cancelled.</li>
-                <li>By subscribing you authorize us and our payment processors to charge your payment method for each renewal at the then-current price.</li>
-                <li>If a renewal payment fails, your plan may be downgraded or suspended until payment succeeds.</li>
+                <li><strong>Card (Stripe):</strong> billed in advance and <strong>auto-renews</strong> each period until cancelled. By subscribing you authorize us and our payment processors to charge your card for each renewal at the then-current price.</li>
+                <li><strong>E-wallet (PayMongo — GCash, Maya, GrabPay):</strong> charged <strong>once per period and does not auto-renew.</strong> Your access runs for the period you paid for; to continue, complete a new payment for the next period.</li>
+                <li>If an auto-renewing (card) payment fails, your plan may be downgraded or suspended until payment succeeds.</li>
               </ul>
             </section>
 
@@ -90,8 +90,8 @@ export default function SubscriptionAgreementPage() {
             <section>
               <h2>5. Cancellation</h2>
               <ul>
-                <li>You may cancel an auto-renewing subscription at any time; cancellation stops future renewals and takes effect at the end of the current paid period. You keep access until then.</li>
-                <li>Manual QR subscriptions simply lapse at the end of the paid period if you do not renew.</li>
+                <li>You may cancel an auto-renewing (card) subscription at any time; cancellation stops future renewals and takes effect at the end of the current paid period. You keep access until then.</li>
+                <li>E-wallet (PayMongo) and manual QR subscriptions simply lapse at the end of the paid period if you do not renew.</li>
               </ul>
             </section>
 

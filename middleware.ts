@@ -23,6 +23,7 @@ const isPublicRoute = createRouteMatcher([
   '/guide/(.*)',
   '/u/(.*)',           // public profile pages
   '/api/stripe/webhook',
+  '/api/paymongo/webhook', // PayMongo posts here with no Clerk session — must be public
   '/originkit-preview', // throwaway Originkit component preview
   /* Static land geometry for the landing-page globe. It needs an explicit
      entry because the matcher below excludes static extensions with
