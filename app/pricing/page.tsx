@@ -267,7 +267,7 @@ export default function PricingPage() {
         <div className="gridwash"></div><div className="glow"></div>
         <div className="wrap">
           <p className="kicker" style={{ justifyContent: 'center', color: 'var(--amber)', fontWeight: 700, fontSize: '12px', marginBottom: '12px' }}>EVERY PLAN</p>
-          <h2>14-day free trial on every plan</h2>
+          <h2>15-day free trial on every plan</h2>
           <div style={{ display: 'flex', gap: '52px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '26px', fontSize: '14px', color: 'var(--text-3)' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>No credit card required</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '9px' }}><svg width="12" height="9" viewBox="0 0 11.5 9" fill="none"><path d="M0 4.5 L4 9 L11.5 0" stroke="#24c88a" strokeWidth="1.7"/></svg>Full Pro access for 14 days</span>

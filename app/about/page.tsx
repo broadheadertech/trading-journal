@@ -95,7 +95,7 @@ export default function AboutPage() {
         <div className="gridwash"></div><div className="glow"></div>
         <div className="wrap">
           <h2>See your own dashboard</h2>
-          <p className="sub">14-day free trial. No credit card. Setup in 60 seconds.</p>
+          <p className="sub">15-day free trial. No credit card. Setup in 60 seconds.</p>
           <div className="row">
             <Link className="btn btn-amber" href="/pricing">Start Free Trial<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg></Link>
             <Link className="btn btn-ghost" href="/demo">See Demo</Link>

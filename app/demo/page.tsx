@@ -299,7 +299,7 @@ export default function DemoPage() {
           <h2>Ready to see your own numbers?</h2>
           <p className="sub">Upload your first CSV and get your real dashboard — with your actual trades, your actual patterns, your actual dollar costs. Takes 60 seconds.</p>
           <div className="row"><Link className="btn btn-amber" href="/pricing">Start with Your Own Trades<svg className="arrow-r" viewBox="0 0 12 9" fill="none"><path d="M0 4.5 H12 M12 4.5 L7 0 M12 4.5 L7 9" stroke="#0a0a0a" strokeWidth="1.7" strokeLinecap="round" /></svg></Link></div>
-          <p style={{ margin: '44px 0 0', fontSize: '12.5px', color: 'var(--muted-2)' }}>No credit card · 14-day full Pro access · 67+ broker formats</p>
+          <p style={{ margin: '44px 0 0', fontSize: '12.5px', color: 'var(--muted-2)' }}>No credit card · 15-day full Pro access · 67+ broker formats</p>
         </div>
       </div>
 
